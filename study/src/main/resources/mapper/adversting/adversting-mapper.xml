@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="adversting">
+
+	<insert id="insertAdversting">
+		INSERT INTO ADVERSTING VALUES(SEQ_ADVERSTING.NEXTVAL, #{title, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, #{advImg, jdbcType=VARCHAR}, #{url, jdbcType=VARCHAR}, #{position, jdbcType=VARCHAR}, #{status, jdbcType=VARCHAR}, #{backColor, jdbcType=VARCHAR},  #{startAd}, #{endAd}, DEFAULT)
+		<!-- 전달한 board vo객체의 boardNo 프로퍼티에 결과값을 담는다. -->
+		<selectKey keyProperty="ano" resultType="_int" order="AFTER">
+			SELECT SEQ_ADVERSTING.CURRVAL FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<update id="updateAdversting">
+		UPDATE ADVERSTING SET TITLE=#{title}, CONTENT=#{content}, ADVIMG=#{advImg, jdbcType=VARCHAR}, URL = #{url, jdbcType=VARCHAR}, POSITION = #{position, jdbcType=VARCHAR}, STATUS = #{status, jdbcType=VARCHAR},  BACKCOLOR = #{backColor, jdbcType=VARCHAR}, STARTAD = #{startAd}, ENDAD = #{endAd} WHERE ANO = #{ano}
+	</update>
+	
+	<select id="adverstingTotalCount" resultType="_int">
+		SELECT COUNT(*) TOTALCOUNT FROM ADVERSTING
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="searchKeyword != null and searchKeyword != '' ">
+				AND TITLE LIKE '%'||#{searchKeyword}||'%' OR CONTENT LIKE '%'||#{searchKeyword}||'%'				
+			</if>
+			<if test="type != null and type != '' ">
+				<if test="type eq '베너'">
+				AND POSITION = #{type}
+				</if>
+				<if test="type neq '베너' ">
+				AND POSITION like '%'||#{type}||'%'
+				</if>
+			</if>
+		</trim>
+	</select>
+	
+	<select id="selectOneAttachCount" resultType="_int">
+		SELECT COUNT(*) ONECOUNT FROM ATTACHMENT WHERE BOARDNO = #{boardNo}
+	</select>
+	
+	
+	<select id="adverstingListPaging" resultMap="adverstingMap">
+		SELECT A.*, TO_CHAR(A.STARTAD,'YYYY-MM-DD') STARTDATE, TO_CHAR(A.ENDAD,'YYYY-MM-DD') ENDDATE FROM ADVERSTING A
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="searchKeyword != null and searchKeyword != '' ">
+				AND TITLE LIKE '%'||#{searchKeyword}||'%' OR CONTENT LIKE '%'||#{searchKeyword}||'%'				
+			</if>
+			<if test="type != null and type != '' ">
+				<if test="type eq '베너'">
+				AND POSITION = #{type}
+				</if>
+				<if test="type neq '베너' ">
+				AND POSITION like '%'||#{type}||'%'
+				</if>
+			</if>
+		</trim>
+		ORDER BY ANO DESC
+	</select>
+	
+	
+	<select id="selectOneAttach" resultMap="boardMap">
+		SELECT A.*, B.* FROM BOARD B, ATTACHMENT A WHERE B.BOARDNO = A.BOARDNO AND A.BOARDNO =  #{boardNo}
+	</select>
+	
+	<select id="selectAdverstingOne" resultMap="boardMap">
+		SELECT A.*, TO_CHAR(A.STARTAD,'YYYY-MM-DD') STARTDATE, TO_CHAR(A.ENDAD,'YYYY-MM-DD') ENDDATE FROM ADVERSTING A WHERE ANO = #{ano}
+	</select>
+	
+	<select id="adverstingCall" resultMap="adverstingMap">
+		SELECT A.*, TO_CHAR(A.STARTAD,'YYYY-MM-DD') STARTDATE, TO_CHAR(A.ENDAD,'YYYY-MM-DD') ENDDATE FROM (SELECT * FROM ADVERSTING WHERE STATUS='Y' AND POSITION=#{type} AND ENDAD > SYSDATE ORDER BY ANO DESC) A WHERE ROWNUM=1
+	</select>
+	
+	<delete id="adverstingDelete">
+		DELETE FROM ADVERSTING WHERE ANO = #{ano}
+	</delete>
+	
+	
+	<resultMap type="map" id="boardMap">
+	</resultMap>
+	
+	<resultMap type="map" id="adverstingMap">
+	</resultMap>
+	
+	
+</mapper>

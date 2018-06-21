@@ -1,0 +1,787 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="member">
+	<insert id="memberEnrollEnd">
+		insert into member values (seq_member.nextval, 
+										#{mid},
+										#{mname},
+										#{pwd},
+										#{phone},
+										#{addr1},
+										#{addr2},
+										#{addrDetail},
+										#{post},
+										#{mprofile},
+										#{cover},
+										#{email},
+										#{birth},
+										#{gender},
+										#{favor, typeHandler=strArrTypeHandler},
+										default,
+										default,
+										default,
+										default,
+										null
+										)
+	</insert>
+	<select id="selectKind" resultMap="kindMap">
+		select * from kind
+	</select>
+	<resultMap type="map" id="kindMap"></resultMap>
+	
+	<resultMap type="member" id="memberMap">
+		<result column="favor" property="favor" typeHandler="strArrTypeHandler"/>
+	</resultMap>
+	<select id="selectOneMember" parameterType="string" resultMap="memberMap">
+		select * from member where mid=#{userId}
+	</select>
+	<select id="selectOneMemberId" parameterType="member" resultMap="memberMap">
+		select * from member where mname=#{mname} and email=#{email} 
+					<if test="mno != 0">
+						and mno=#{mno}
+					</if>
+	</select>
+	<update id="updatePwd">
+		update member set pwd=#{pwd} where mid=#{mid}
+	</update>
+	<select id="selectCntMember" parameterType="member" resultType="_int">
+		select count(*) from member where mid=#{mid} and email=#{email}
+	</select>
+	<update id="updateMember" >
+		update member set 
+							mname=#{mname},
+						<if test="phone != null">
+							phone=#{phone},
+						</if>
+						<if test="addr1 != null">
+							addr1=#{addr1}, 
+						</if>
+						<if test="addr2 != null">
+							addr2=#{addr2}, 
+						</if>
+						<if test="addrDetail != null">
+							addrDetail=#{addrDetail}, 
+						</if>
+						<if test="post != null">
+							post=#{post}, 
+						</if>
+						<if test="mprofile != null">
+							mprofile=#{mprofile}, 
+						</if>
+						<if test="email != null">
+							email=#{email},
+						</if>
+						<if test="birth != null">
+							birth=#{birth}, 
+						</if>
+						<if test="gender != null">
+							gender=#{gender}, 
+						</if>
+						<if test="favor != null">
+							favor=#{favor, typeHandler=strArrTypeHandler}, 
+						</if>
+						<if test="cover != null">
+							cover=#{cover}
+						</if>
+			where mno=#{mno}
+	</update>
+	<update id="dropMember">
+		update member set qdate=sysdate where mid=#{mid}
+	</update>
+	<update id="updateEmail">
+		update member set email=#{email} where mid=#{mid}
+	</update>
+	<select id="selectApplyList" parameterType="_int" resultMap="applyList">
+		select distinct
+			a.ano as "ano", -- 신청 번호
+			a.mno as "mno", -- 신청한 회원 번호
+			a.sno as "sno", -- 신청한 스터디 번호
+			to_char(a.adate,'yyyy/mm/dd') as "adate", -- 신청한 날짜
+			m.mid as "mid", -- 신청한 회원 아이디
+			m.mname as "mname", -- 신청한 회원 이름
+			m.phone as "phone", -- 신청한 회원 연락처
+			m.addr1 as "addr1", -- 신청한 회원 지번주소
+			m.addr2 as "addr2", -- 신청한 회원 도로명주소
+			m.addrdetail as "addrdetail", -- 신청한 회원 상세주소
+			m.post as "post", -- 신청한 회원 우편번호
+			m.mprofile as "mprofile", -- 신청한 회원 프로필
+			m.cover as "cover", -- 신청한 회원 자기소개서
+			m.email as "email", -- 신청한 회원 이메일
+			m.birth as "birth", -- 신청한 회원 생년월일 
+			m.gender as "gender", -- 신청한 회원 성별
+			m.favor as "favor", -- 신청한 회원 관심사
+			m.exp as "exp", -- 신청한 회원 경험치
+			m.point as "point", -- 신청한 회원 평가점수
+			m.npoint as "npoint", -- 신청한 회원 지식점수
+			m.regdate as "mregdate", -- 신청한 회원의 가입일
+			m.qdate as "qdate", -- 신청한 회원의 탈퇴일
+			(select mm.mname from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
+			(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+			(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+			(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+			s.title as "title", -- 스터디 제목
+			s.freq as "freq", -- 스터디 주기
+			s.content as "content", -- 스터디 내용
+			s.price as "price", --스터디 가격
+			s.upfile as "upfile", -- 스터디 사진들
+			(select count(*) from apply where sno=s.sno ) as "applycnt", -- 신청한 인원
+			s.recruit as "recruit", -- 스터디 모집 인원
+			s.status as "status", -- 스터디 상태(진행중, 완료, 취소, 모집중)
+			s.time as "time", -- 스터디 시간(11:00~12:00)
+			s.type as "type", -- 스터디/강의 분류
+			to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
+			to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
+			to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
+			to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+		from apply a join study s on s.sno=a.sno
+			            join member m on m.mno=a.mno
+		where a.mno=#{mno}
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>
+		<if test="applyDate == 'present'">
+		and s.ldate <![CDATA[ >= ]]> sysdate
+		</if>    
+		<if test="applyDate == 'last'">
+		and s.ldate <![CDATA[ < ]]> sysdate
+		</if>    
+	</select>
+	<select id="selectApplyListCnt" parameterType="_int" resultType="_int">
+		select distinct count(*) 
+		from apply a join study s on s.sno=a.sno
+				    join member m on m.mno=a.mno
+		where a.mno=#{mno} 
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>
+		<if test="applyDate == 'present'">
+		and s.ldate <![CDATA[ >= ]]> sysdate
+		</if>    
+		<if test="applyDate == 'last'">
+		and s.ldate <![CDATA[ < ]]> sysdate
+		</if>    
+	</select>
+	<resultMap type="map" id="applyList"></resultMap>
+	
+	<select id="selectLeaderList" parameterType="map" resultMap="LeaderList">
+		select distinct
+				m.mno as "mno", -- 스터디 팀원의 회원 번호
+				s.sno as "sno", -- 스터디 번호
+				m.mid as "mid", -- 해당 스터디 팀원 아이디
+				m.mname as "mname", -- 팀원 이름
+				m.phone as "phone", -- 팀원 연락처
+				m.addr1 as "addr1", -- 팀원 지번주소
+				m.addr2 as "addr2", -- 팀원 도로명주소
+				m.addrdetail as "addrdetail", -- 팀원 상세주소
+				m.post as "post", -- 팀원 우편번호
+				m.mprofile as "mprofile", -- 팀원 프로필
+				m.cover as "cover", -- 팀원 자기소개서
+				m.email as "email", -- 팀원 이메일
+				m.birth as "birth", -- 팀원 생년월일
+				m.gender as "gender", -- 팀원 성별
+				m.favor as "favor", -- 팀원 관심사
+				m.exp as "exp", -- 팀원 경험치
+				m.point as "point", -- 팀원 평가점수
+				m.npoint as "npoint", -- 팀원 지식점수
+				m.regdate as "mregdate", -- 팀원 회원으로서 가입일
+				m.qdate as "qdate", -- 팀원 회원으로서 탈퇴일
+				(select mm.mname||'('||mm.mid||')' from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
+				(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+				(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+				(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+				s.title as "title", -- 스터디 제목
+				s.freq as "freq", -- 스터디 주기
+				s.content as "content", -- 스터디 내용
+				s.price as "price", --스터디 가격
+				s.upfile as "upfile", -- 스터디 사진들
+				s.recruit as "recruit", -- 스터디 모집 인원
+				s.status as "status", -- 스터디 상태(진행중, 완료, 취소, 모집중)
+				s.time as "time", -- 스터디 시간(11:00~12:00)
+				s.type as "type", -- 스터디/강의 분류
+				to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
+				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
+				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
+				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+		from study s join member m on m.mno=s.mno
+		where s.mno=#{mno}
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>
+	</select>
+	
+	<select id="selectLeaderListCnt" parameterType="map" resultType="_int">
+		select distinct count(*) 
+		from study s join member m on m.mno=s.mno
+		where s.mno=#{mno}
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>
+	</select>
+	<resultMap type="map" id="LeaderList"></resultMap>
+	
+ 	<select id="selectMyStudyList" parameterType="map" resultMap="mystudyList">
+		select distinct
+				c.cno as "cno", -- 스터디 팀원 목록 번호
+				m.mno as "mno", -- 스터디 팀원의 회원 번호
+				s.sno as "sno", -- 스터디 번호
+				m.mid as "mid", -- 해당 스터디 팀원 아이디
+				m.mname as "mname", -- 팀원 이름
+				m.phone as "phone", -- 팀원 연락처
+				m.addr1 as "addr1", -- 팀원 지번주소
+				m.addr2 as "addr2", -- 팀원 도로명주소
+				m.addrdetail as "addrdetail", -- 팀원 상세주소
+				m.post as "post", -- 팀원 우편번호
+				m.mprofile as "mprofile", -- 팀원 프로필
+				m.cover as "cover", -- 팀원 자기소개서
+				m.email as "email", -- 팀원 이메일
+				m.birth as "birth", -- 팀원 생년월일
+				m.gender as "gender", -- 팀원 성별
+				m.favor as "favor", -- 팀원 관심사
+				m.exp as "exp", -- 팀원 경험치
+				m.point as "point", -- 팀원 평가점수
+				m.npoint as "npoint", -- 팀원 지식점수
+				m.regdate as "mregdate", -- 팀원 회원으로서 가입일
+				m.qdate as "qdate", -- 팀원 회원으로서 탈퇴일
+				(select mm.mname||'('||mm.mid||')' from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
+				(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+				(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+				(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+				s.title as "title", -- 스터디 제목
+				s.freq as "freq", -- 스터디 주기
+				s.content as "content", -- 스터디 내용
+				s.price as "price", --스터디 가격
+				s.upfile as "upfile", -- 스터디 사진들
+				s.recruit as "recruit", -- 스터디 모집 인원
+				s.status as "status", -- 스터디 상태(진행중, 완료, 취소, 모집중)
+				s.time as "time", -- 스터디 시간(11:00~12:00)
+				s.type as "type", -- 스터디/강의 분류
+				to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
+				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
+				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
+				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+		from crew c join study s on s.sno=c.sno
+				    join member m on m.mno=c.mno
+		where c.mno=#{mno}
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>
+	</select>
+	
+	<select id="selectMyStudyListCnt" parameterType="map" resultType="_int">
+		select distinct count(*) 
+		from crew c join study s on s.sno=c.sno
+					join member m on m.mno=c.mno
+		where c.mno=#{mno}
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>
+	</select>
+	<resultMap type="map" id="mystudyList"></resultMap>
+	<select id="selectWishList" parameterType="_int" resultMap="wishList">
+		select distinct
+				w.wno as "wno", --찜번호
+				m.mno as "mno", --찜한 회원 번호
+				s.sno as "sno", --찜한 스터디 번호
+				to_char(w.wdate,'yyyy/mm/dd') as "wdate", --찜한 날짜
+				m.mid as "mid", -- 해당 스터디 찜한 회원 아이디
+				m.mname as "mname", -- 찜한 회원 이름
+				m.phone as "phone", -- 찜한 회원 연락처
+				m.addr1 as "addr1", -- 찜한 회원 지번주소
+				m.addr2 as "addr2", -- 찜한 회원 도로명주소
+				m.addrdetail as "addrdetail", -- 찜한 회원 상세주소
+				m.post as "post", -- 찜한 회원 우편번호
+				m.mprofile as "mprofile", -- 찜한 회원 프로필
+				m.cover as "cover", -- 찜한 회원 자기소개서
+				m.email as "email", -- 찜한 회원 이메일
+				m.birth as "birth", -- 찜한 회원 생년월일 
+				m.gender as "gender", -- 찜한 회원 성별
+				m.favor as "favor", -- 찜한 회원 관심사
+				m.exp as "exp", -- 찜한 회원 경험치
+				m.point as "point", -- 찜한 회원 평가점수
+				m.npoint as "npoint", -- 찜한 회원 지식점수
+				m.regdate as "mregdate", -- 찜한 회원 회원으로서 가입일
+				m.qdate as "qdate", -- 찜한 회원 회원으로서 탈퇴일
+				(select mm.mname||'('||mm.mid||')' from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
+				(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+				(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+				(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+				s.title as "title", -- 스터디 제목
+				s.freq as "freq", -- 스터디 주기
+				s.content as "content", -- 스터디 내용
+				s.price as "price", --스터디 가격
+				s.upfile as "upfile", -- 스터디 사진들
+				(select count(*) from apply where sno=s.sno ) as "applycnt", -- 신청한 인원
+				s.recruit as "recruit", -- 스터디 모집 인원
+				s.status as "status", -- 스터디 상태(진행중, 완료, 취소, 모집중)
+				s.time as "time", -- 스터디 시간(11:00~12:00)
+				s.type as "type", -- 스터디/강의 분류
+				to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
+				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
+				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
+				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+		from wish w join member m on w.mno=m.mno
+				    join study s on w.sno=s.sno
+		where w.mno=#{mno}		
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>    
+		<if test="applyDate == 'present'">
+		and s.ldate <![CDATA[ >= ]]> sysdate
+		</if>    
+		<if test="applyDate == 'last'">
+		and s.ldate <![CDATA[ < ]]> sysdate
+		</if>
+	</select>
+	<select id="selectWishListCnt" parameterType="_int" resultType="_int">
+		select distinct count(*) 
+		from wish w join member m on w.mno=m.mno
+				    join study s on w.sno=s.sno
+		where w.mno=#{mno}
+		<if test="type== 'study'">
+		and s.type='study'
+		</if>
+		<if test="type== 'lecture'">
+		and s.type='lecture'
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'subject'">
+		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'place'">
+		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'diff'">
+		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.sdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.sdate)
+		</if>
+		<if test="searchKwd=='freq'">
+		and ( 1=0
+		</if>
+		<if test="kwd != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd1 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd1}||'%'
+		</if>
+		<if test="kwd2 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd2}||'%'
+		</if>
+		<if test="kwd3 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd3}||'%'
+		</if>
+		<if test="kwd4 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd4}||'%'
+		</if>
+		<if test="kwd5 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd5}||'%'
+		</if>
+		<if test="kwd6 != null and searchKwd=='freq'">
+		or s.freq like '%'||#{kwd6}||'%'
+		</if>
+		<if test="searchKwd=='freq'">
+		or 1=0 )
+		</if>
+		<if test="applyDate == 'present'">
+		and s.ldate <![CDATA[ >= ]]> sysdate
+		</if>    
+		<if test="applyDate == 'last'">
+		and s.ldate <![CDATA[ < ]]> sysdate
+		</if>
+	</select>
+	<resultMap type="map" id="wishList"></resultMap>
+ 
+ 	<insert id="insertMailCertification">
+ 		INSERT INTO CERTIFICATION VALUES(#{tomail}, #{ranstr})
+ 	</insert>
+ 	<select id="checkEmail" resultType="_int">
+ 		SELECT COUNT(*) cnt FROM CERTIFICATION WHERE EMAIL = #{tomail}
+ 	</select>
+ 	<update id="uploadMailCertification">
+ 		UPDATE CERTIFICATION SET CERTIFICATION = #{encoded} WHERE EMAIL = #{tomail}
+ 	</update>
+ 	<select id="selectCheckJoinCode" resultType="map">
+ 		SELECT * FROM CERTIFICATION WHERE EMAIL = #{email}
+ 	</select>
+ 	<select id="checkIdDuplicate" resultType="_int">
+ 		SELECT COUNT (*) COUNT FROM MEMBER WHERE MID = #{userId}
+ 	</select>
+	<delete id="deleteCertification">
+		DELETE FROM CERTIFICATION WHERE EMAIL = #{email}
+	</delete>
+	<select id="selectCategory" resultType="map" >
+		select kindname from kind 
+	</select>
+	<select id="serviceagree" resultType="map" >
+		select * from serviceagree
+	</select>
+	<select id="informationagree" resultType="map" >
+		select * from informationagree
+	</select>
+</mapper>

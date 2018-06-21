@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+body {font-family:"dotum";}
+
+/********** 전체컨테이너 **********/
+div#container	{}
+
+/********** header **********/
+
+
+/********** content **********/
+section#content{min-height:600px;}
+
+/* 센터로고 이미지 */
+section#content img#center-image {
+    display:  block;
+    margin: 100px auto;
+}
+
+
+/********** footer **********/
+ 

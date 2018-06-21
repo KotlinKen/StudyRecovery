@@ -1,0 +1,18 @@
+* {
+	padding: 0px;
+	margin: 0px;
+	text-decoration: none;
+	outline: none;
+	list-style: none;
+	font-family: 'Tajawal', sans-serif;
+}
+a:active, a:hover, a:visited{
+	color:#000;
+	text-decoration: none;
+}
+body{
+	background:#f8f9fb;
+}
+header{
+	background:#fff;
+}
