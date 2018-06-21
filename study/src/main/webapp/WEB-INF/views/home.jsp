@@ -41,8 +41,17 @@
 
 
 
-<div id="container" class="container rm_study_list">
+<div id="container" class="container rm_study_list studies">
 	<div id="content">
+	<h4>스터디</h4>
+		<ul class="list">
+		</ul>
+	</div>
+</div>
+
+<div id="container" class="container rm_study_list lectures">
+	<div id="content">
+	<h4>강의</h4>
 		<ul class="list">
 		</ul>
 	</div>
@@ -92,7 +101,43 @@ $(function(){
 	        		rmHtml += "</li>"
         		}
         	}
-			$(".rm_study_list ul").html(rmHtml);
+			$(".studies ul").html(rmHtml);
+		},error:function(){
+			
+		}
+	});
+	
+	
+	
+	
+	$.ajax({
+		url:"${rootPath}/rest/lecture/8",
+		dataType:"json",
+		success:function(data){
+			var rmHtml = "";
+        	for(index in data.list){
+        		console.log(data.list[index].TNAME);
+        		/* var upfile = (data.list[index].UPFILE); */
+/*         		if(upfile != undefined){ */
+        			/* upfiles = upfile.split(",")[0]; */
+	        		rmHtml += "<li class='col-md-3'>";
+	        		rmHtml += "<div class='pixel'>";
+	       			rmHtml += "<a href=''>";
+	   				rmHtml += "<div class='photoSection'>";
+	   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfiles+")'></div>";
+	   				rmHtml += "</div>";
+					rmHtml += "<div class='inforSection'>";
+	  				rmHtml += 	"<h4>"+data.list[index].KNAME+"</h4>";
+	   				rmHtml += "</div>";
+					rmHtml += "<div class='metaSection'>";
+	  				rmHtml += 	"<p></p>";
+	   				rmHtml += "</div>";
+	   				rmHtml += "</a>"
+	        		rmHtml += "</div>"
+	        		rmHtml += "</li>"
+/*         		} */
+        	}
+			$(".lectures ul").html(rmHtml);
 		},error:function(){
 			
 		}

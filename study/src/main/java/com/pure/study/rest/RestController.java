@@ -17,17 +17,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.pure.study.adversting.model.vo.Adversting;
+import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.study.model.service.StudyService;
 
 @Controller
 public class RestController {
 	@Autowired
 	private StudyService studyService;
+	
+	@Autowired
+	private LectureService lectureService;
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	@RequestMapping(value="/rest/study/{count}", method=RequestMethod.GET)
 	@ResponseBody
-	public ModelAndView selectAdverstingRest(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
+	public ModelAndView selectStudyCount(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
 
 		Adversting adversting = new Adversting();
 		Map<String, String> map = new HashMap<>();
@@ -38,6 +42,18 @@ public class RestController {
 		
 		ModelAndView mav = new ModelAndView("jsonView");
 		List<Map<String,String>> list = studyService.selectStudyList(1, count);
+		mav.addObject("list", list);
+		return mav;
+	}
+	
+	
+	@RequestMapping(value="/rest/lecture/{count}", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView selectLectureCount(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
+		
+		
+		ModelAndView mav = new ModelAndView("jsonView");
+		List<Map<String,String>> list = lectureService.selectLectureList(1, count);
 		mav.addObject("list", list);
 		return mav;
 	}
