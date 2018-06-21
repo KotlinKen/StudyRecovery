@@ -24,7 +24,7 @@ public class RestController {
 	@ResponseBody
 	public List<Map<String,String>> selectAdverstingRest(@RequestParam(value="filter", required=false) String filter) {
 		
-		List<Map<String,String>> list = studyService.selectStudyList();
+		List<Map<String,String>> list = studyService.selectStudyList(1, 5);
 		
 		return list;
 	}
