@@ -24,7 +24,7 @@ public class RestController {
 	@ResponseBody
 	public List<Map<String,String>> selectAdverstingRest(@RequestParam(value="filter", required=false) String filter) {
 		
-		//12345678 0045534523432
+		//12345678 0045534523432trtse
 		List<Map<String,String>> list = studyService.selectStudyList(1, 5);
 		
 		//test
