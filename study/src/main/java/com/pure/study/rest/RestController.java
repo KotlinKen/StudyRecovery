@@ -26,6 +26,8 @@ public class RestController {
 		
 		List<Map<String,String>> list = studyService.selectStudyList(1, 5);
 		
+		//test
+		
 		return list;
 	}
 	
