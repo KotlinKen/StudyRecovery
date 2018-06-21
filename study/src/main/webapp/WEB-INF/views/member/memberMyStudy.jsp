@@ -70,7 +70,7 @@
 		
 		
 		<input type="hidden" name="type" value="${type }" />
-		<%-- <input type="hidden" name="leader" value="${leader }" /> --%>
+		<input type="hidden" name="myPage" value="${myPage}" />
 		<button type='submit' id='btn-search'>검색</button>
 	</form>
 	<c:if test="${leader eq 'n' }"> <!-- 나중에 처리해줘야함 -->
@@ -80,20 +80,26 @@
 		<p>총 ${leaderCount }의 스터디 팀장 건이 있습니다.</p> <!--  스터디 가져올 경우 기간 마감된 것도 표시해줌. -->
 	</c:if>
 	<table>
-		<tr>
-			<th>번호</th>
-			<th>강의/스터디명</th>
-			<th>팀장/강사명</th>
-			<th>분류</th>
-			<th>과목</th>
-			<th>스터디 장소</th>
-			<th>난이도</th>
-			<th>수업일정(주기)</th>
-			<th>스터디 기간 및 시간</th> <!-- 18/5/6 ~ 18/6/6(시간) -->
-			<th>보기</th>
-		</tr>
-		<c:if test="${myStudyList != null and leader eq 'y'}">
-			<c:forEach var="ms" items="${myStudyList}" varStatus="vs" >
+		<c:if test="${count != 0 or leaderCount != 0 }">
+			<tr>
+				<th>번호</th>
+				<th>강의/스터디명</th>
+				<th>팀장/강사명</th>
+				<th>분류</th>
+				<th>과목</th>
+				<th>스터디 장소</th>
+				<th>난이도</th>
+				<th>수업일정(주기)</th>
+				<th>스터디 기간 및 시간</th> <!-- 18/5/6 ~ 18/6/6(시간) -->
+				<th>보기</th>
+				<th>평가</th>
+			</tr>
+		</c:if>
+		<c:if test="${count == 0 and leaderCount == 0 }">
+			<p>검색 결과가 없습니다.</p>
+		</c:if>
+		<c:if test="${myPageList != null and leader eq 'n' }">
+			<c:forEach var="ms" items="${myPageList}" varStatus="vs" >
 				<tr>
 					<td>${vs.index+1 }</td>
 					<td>${ms.title }</td>
@@ -106,6 +112,9 @@
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
 						<button type=button>자세히</button>
+					</td>
+					<td>
+						<button type=button>평가</button>
 					</td>
 				</tr>
 			</c:forEach>
@@ -125,6 +134,9 @@
 					<td>
 						<button type=button>자세히</button>
 					</td>
+					<td>
+						<button type=button>신청 현황</button>
+					</td>
 				</tr>
 			</c:forEach>
 		</c:if>
@@ -139,6 +151,7 @@
 		String kwd = String.valueOf(request.getAttribute("kwd"));
 		String type = String.valueOf(request.getAttribute("type"));
 		String leader = String.valueOf(request.getAttribute("leader"));
+		String myPage = String.valueOf(request.getAttribute("myPage"));
 		
 		int cPage = 1;
 		try{
@@ -147,7 +160,7 @@
 			
 		}
 	%>
-	<%=com.pure.study.common.util.Utils.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader) %>
+	<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader, myPage) %>
 	
 	<script>
 		var exec = 0;
@@ -235,6 +248,7 @@
 				}
 				html+="<button type='submit' id='btn-search'>검색</button>";
 				html+="<input type='hidden' name='type' value='${type}' />";
+				html+="<input type='hidden' name='myPage' value='${myPage}' />";
 				$("form#formSearch").html(html);
 				
 			});
@@ -243,6 +257,7 @@
 				var html="<input type='hidden' name='kwd' id='titleKwd' placeholder='강의/스터디명' />";
 				html+="<input type='hidden' name='searchKwd' value='title' />";
 				html+="<input type='hidden' name='type' value='study' />";
+				html+="<input type='hidden' name='myPage' value='${myPage}' />";
 				$("#formSearch").html(html);
 				$("#formSearch").submit();
 			});
@@ -250,6 +265,7 @@
 				var html="<input type='hidden' name='kwd' id='titleKwd' placeholder='강의/스터디명' />";
 				html+="<input type='hidden' name='searchKwd' value='title' />";
 				html+="<input type='hidden' name='type' value='lecture' />";
+				html+="<input type='hidden' name='myPage' value='${myPage}' />";
 				$("#formSearch").html(html);
 				$("#formSearch").submit();
 			});
