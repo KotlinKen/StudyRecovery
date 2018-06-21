@@ -32,7 +32,7 @@
 	
 	<!-- Application Loggers -->
 	<logger name="com.pure.study">
-		<level value="FATAL" />
+		<level value="INFO" />
 	</logger>
 	
 	<!-- 3rdparty Loggers -->

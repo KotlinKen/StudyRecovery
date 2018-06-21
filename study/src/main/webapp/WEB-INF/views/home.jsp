@@ -63,7 +63,7 @@ $(function(){
 	$('.carousel').carousel();
 	
 	$.ajax({
-		url:"${rootPath}/study/selectStudyList.do",
+		url:"${rootPath}/rest/study/4",
 		dataType:"json",
 		success:function(data){
 			$("input#total").val(data.total);
