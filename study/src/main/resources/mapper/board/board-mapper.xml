@@ -3,47 +3,70 @@
 <mapper namespace="board">
 
 	<insert id="insertBoard">
-		INSERT INTO BOARD (BOARDNO, BOARDTITLE, BOARDWRITER, BOARDCONTENT)
-		VALUES (SEQ_BOARDNO.NEXTVAL, #{boardTitle}, #{boardWriter}, #{boardContent})
+		INSERT INTO BOARD (BNO, MNO, TITLE, CONTENT,TYPE)
+		VALUES (SEQ_BNO.NEXTVAL, #{mNo}, #{title}, #{content},'일반')
 		
 		<!-- 전달한 board vo객체의 boardNo 프로퍼티에 결과값을 담는다. -->
-		<selectKey keyProperty="boardNo" resultType="_int" order="AFTER">
-			SELECT SEQ_BOARDNO.CURRVAL FROM DUAL
+	 <selectKey keyProperty="bNo" resultType="_int" order="AFTER">
+			SELECT SEQ_BNO.CURRVAL FROM DUAL
 		</selectKey>
-	
+	 
 	</insert>
 	
-	<insert id="insertAttachment">
-		INSERT INTO ATTACHMENT (ATTACHMENTNO, BOARDNO, ORIGINALFILENAME, RENAMEDFILENAME)
-		VALUES(SEQ_ATTACHMENTNO.NEXTVAL, #{boardNo}, #{originalFileName}, #{renamedFileName})
+<!-- 	<insert id="insertAttachment">
+		INSERT INTO ATTACHMENT (ATTACHMENTNO, BNO, ORIGINALFILENAME, RENAMEDFILENAME)
+		VALUES(SEQ_ATTACHMENTNO.NEXTVAL, #{bNo}, #{originalFileName}, #{renamedFileName})
 	
 	</insert>
-	
+	 -->
 	
 	<select id="boardCount" resultType="_int">
 		SELECT COUNT(*) TOTALCOUNT FROM BOARD
+	</select> 
+	
+ 	<select id="selectOneAttachCount" resultType="_int">
+		SELECT COUNT(*) ONECOUNT FROM ATTACHMENT WHERE BNO = #{bNo}
+	</select>
+
+	
+ 	
+  <select id="boardList" resultMap="boardMap">
+ 	select * from board 
 	</select>
 	
-	<select id="selectOneAttachCount" resultType="_int">
-		SELECT COUNT(*) ONECOUNT FROM ATTACHMENT WHERE BOARDNO = #{boardNo}
-	</select>
-	
-	
-<!-- 	<select resultMap="boardMap" id="boardList"> -->
-	<select id="boardList" resultMap="boardMap">
-		SELECT A.*, (SELECT COUNT(*) FROM ATTACHMENT WHERE BOARDNO = A.BOARDNO AND STATUS = 'Y') FILECOUNT FROM BOARD A ORDER BY BOARDNO DESC
-	</select>
-	
-	<select id="selectOneAttach" resultMap="boardMap">
-		SELECT A.*, B.* FROM BOARD B, ATTACHMENT A WHERE B.BOARDNO = A.BOARDNO AND A.BOARDNO =  #{boardNo}
-	</select>
+	 <select id="selectOneAttach" resultMap="boardMap">
+ 	select * from board where bNo=#{bNo}
+	</select> 
 	
 	<select id="selectOne" resultMap="boardMap">
-		SELECT * FROM BOARD WHERE BOARDNO = #{boardNo}
+		SELECT * FROM BOARD WHERE BNO = #{bNo}
 	</select>
 	
 	<resultMap type="map" id="boardMap">
 	</resultMap>
-	
-	
+<select id="selectOneBoard" resultType="board">
+		SELECT * FROM BOARD WHERE bNo = #{bNo}
+	</select>
+	<!-- <resultMap type="attachment" id="attachment"></resultMap>
+	<select id="selectAttachmentList" parameterType="_int" resultMap="attachment">
+		SELECT * FROM ATTACHMENT WHERE BNO = #{bNo}
+	</select> -->
+<select id="selectOneBoardFix" resultType="board">
+SELECT * FROM BOARD WHERE BNO = #{bNo}
+</select>
+<update id="updateBoard">
+UPDATE BOARD SET TITLE=#{title}, CONTENT=#{content} WHERE BNO = #{bNo}
+</update>
+<delete id="deleteBoard">
+DELETE FROM BOARD WHERE BNO = #{bNo}
+</delete>
+ <insert id="replyInsert" >
+        INSERT INTO
+        REPLY (RNO, MNO, BNO, TITLE, CONTENT)
+        VALUES(#{rNo},#{mNo},#{bNo},#{title},#{content}) 
+    </insert>
+
+
+
 </mapper>
+

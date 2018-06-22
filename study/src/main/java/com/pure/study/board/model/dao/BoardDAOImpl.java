@@ -8,8 +8,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.pure.study.board.model.vo.Attachment;
 import com.pure.study.board.model.vo.Board;
+import com.pure.study.board.model.vo.Reply;
 @Repository
 public class BoardDAOImpl implements BoardDAO {
 
@@ -33,26 +33,61 @@ public class BoardDAOImpl implements BoardDAO {
 		return sqlSession.insert("board.insertBoard", board);
 	}
 
-	@Override
-	public int inserAttachment(Attachment a) {
 
-		return sqlSession.insert("board.insertAttachment", a);
+
+	@Override
+	public List<Map<String, String>> selectOne(int bNo) {
+		return sqlSession.selectList("board.selectOne", bNo);
 	}
 
 	@Override
-	public List<Map<String, String>> selectOne(int boardNo) {
-		return sqlSession.selectList("board.selectOne", boardNo);
+	public int selectOneAttachCount(int bNo) {
+		return sqlSession.selectOne("board.selectOneAttachCount", bNo);
 	}
 
 	@Override
-	public int selectOneAttachCount(int boardNo) {
-		return sqlSession.selectOne("board.selectOneAttachCount", boardNo);
+	public List<Map<String, String>> selectOneAttach(int bNo) {
+		return sqlSession.selectList("board.selectOneAttach", bNo); 
 	}
 
 	@Override
-	public List<Map<String, String>> selectOneAttach(int boardNo) {
-		return sqlSession.selectList("board.selectOneAttach", boardNo); 
+	public Board selectOneBoard(int bNo) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("board.selectOneBoard", bNo);
 	}
+
+	/*@Override
+	public List<Attachment> selectAttachmentList(int bNo) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("board.selectAttachmentList", bNo);
+	}*/
+
+	@Override
+	public Board selectOneBoardFix(int bNo) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("board.selectOneBoardFix", bNo);
+	}
+
+
+	@Override
+	public int updateBoard(Board board) {
+		// TODO Auto-generated method stub
+		return sqlSession.update("board.updateBoard", board);
+	}
+
+	@Override
+	public int deleteBoard(int bNo) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("board.deleteBoard", bNo);
+	}
+
+	@Override
+	public int replyInsert(Reply reply) {
+		return sqlSession.insert("reply.replyInsert", reply);
+	}
+
+
+
 
 
 }
