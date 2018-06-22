@@ -1108,10 +1108,20 @@ public class MemberController {
 	
 	
 	@RequestMapping("/member/instructorApply.do")
-	public String instructorApply() {
-		
-		
-		return "member/instructorApply";
+	public ModelAndView instructorApply(@RequestParam(value="mno",required=false , defaultValue="-1") int mno,
+								  @RequestParam(value="mid",required=false, defaultValue="-1") String mid ) {
+		ModelAndView mav = new ModelAndView();
+		System.out.println("mid : "+ mid);
+		System.out.println("mno : "+ mno);
+		if(mno ==-1 ||mid == "-1") {
+			mav.addObject("loc", "/");
+			mav.addObject("msg", "잘못된 경로 입니다. 관리자에게 문의하세요");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		mav.addObject("mno", mno);
+		mav.addObject("mid", mid);
+		return mav;
 	}
 	/* 회원이 강사 신청  */
 	@RequestMapping("/member/instructorApplyEnd.do")

@@ -275,8 +275,8 @@ div#userId-container span.error {
 		<form action="instructorApplyEnd.do" method="post" name='mainForm' id='mainForm'
 			onsubmit="return validate();" enctype="multipart/form-data">
 		
-		<input type="text" name="mno" id="mno" value="42" />  
-		<input type="text" name="mid" id="mno" value="jjsk109" />  
+		<input type="hidden" name="mno" id="mno" value="${mno} " />  
+		<input type="hidden" name="mid" id="mid" value="${mid} " />  
 			프로필사진 : <input type="file" name="upFile" id="upFile" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='no'>
 			<div id="div-img-ik"></div>
