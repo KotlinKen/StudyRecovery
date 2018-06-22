@@ -3,6 +3,7 @@ package com.pure.study.member.model.service;
 import java.util.List;
 import java.util.Map;
 
+import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
 
 public interface MemberService {
@@ -63,5 +64,12 @@ public interface MemberService {
 	List<Map<String, String>> selectLeaderList(Map<String, String> map, int numPerPage, int cPage);
 
 	int selectLeaderListCnt(Map<String, String> map);
+	
+	int memberCheckEmail(String em);
+
+	Member memberGetPoint(String email);
+
+	int instructorEnrollEnd(Instructor instructor);
+
 
 }

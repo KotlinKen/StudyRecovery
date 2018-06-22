@@ -44,7 +44,6 @@ div#userId-container span.error {
 </style>
 </head>
 <body>
-
 	<script>
 		$(function() {
 			/* 패스워드 */
@@ -84,12 +83,14 @@ div#userId-container span.error {
 			$("#password2").blur(function() {
 				var p1 = $("#password_").val();
 				var p2 = $(this).val();
+				
 				if(p1.trim().length==0){
 					document.getElementById("pwd2").innerHTML = "패스워드를 입력하세요.";
 					$("#pwdDuplicateCheck").val(0);
 					$("#password_").focus();
 					return;
 				}
+				
 				if (p1 != p2) {
 					document.getElementById("pwd2").innerHTML = "패스워드가 다릅니다.";
 					$("#pwdDuplicateCheck").val(0);
@@ -404,6 +405,7 @@ div#userId-container span.error {
 				processData : false
 			});
 		}
+		
 		/* 이메일 인증번호 확인 */
 		function checkJoinCode() {
 			var email = $("#email").val();
@@ -454,13 +456,49 @@ div#userId-container span.error {
 				processData : false
 			});
 		}
+		
+		$(function(){
+			//kind 리스트를 가져와 select 만듦. 프로그래밍, 회화, 운동 등등..
+			 $.ajax({
+				url:"selectKind.do",
+				dataType:"json",
+				success:function(data){
+					var html="<option>선택하세요</option>";
+					for(var index in data){
+						html +="<option value='"+data[index].KNO+"'>"+data[index].KINDNAME+"</option><br/>";
+					}
+					$("select#kind").html(html);
+					
+				},error:function(){
+					
+				}
+			}); 	
+			
+			//subject를 선택하면 해당하는 과목들을들을 가져와 리스트를 생성한다.
+			 $("select#kind").on("change",function(){
+				$.ajax({
+					url:"selectSubject.do",
+					dataType:"json",
+					data:{kno:$("select#kind option:selected").val()},
+					success:function(data){
+						var html="";
+						for(var index in data){
+							html +="<option value='"+data[index].SUBNO+"'>"+data[index].SUBJECTNAME+"</option><br/>";
+						}
+						$("select#subject").html(html);
+						
+					},error:function(){
+						
+					}
+				});
+			});
+		});
 	</script>
 
 	<div id="enroll-container">
-		<form
-			action="${pageContext.request.contextPath}/member/memberEnrollEnd.do"
+		<form action="instructorEnrollEnd.do"
 			method="post" name='mainForm' id='mainForm'
-			onsubmit="return validate();">
+			onsubmit="return validate();" enctype="multipart/form-data">
 			<div id="userId-container">
 				<input type="text" name="mid" id="userId_" placeholder="아이디" required autocomplete="off" />
 				<button type="button" onclick="fn_checkID();">아이디 확인</button>
@@ -494,21 +532,21 @@ div#userId-container span.error {
 			<input type='hidden' name='mprofile' id="mprofile" value='no'>
 			<div id="div-img-ik"></div>
 			<br />
+			포트폴리오 : <input type="file" name="psFile" required/> <br />
+			자기소개서 : <input type="file" name="psFile" required/> 
 			<div class="form-check-inline form-check">
 				관심분야 : &nbsp;
-				<c:forEach var="v" items="${list }">
-					<input type="checkbox" class="form-check-input" value="${v.KINDNAME }"
-						name="favor" id="${v.KINDNAME }" />
-					<label for="${v.KINDNAME }" class="form-check-input">${v.KINDNAME }</label>
-				</c:forEach>
+				<select name="kno" id="kind" required> <!-- ajax로 kind가져오기 -->
+				</select>&nbsp;&nbsp;&nbsp;
+				<select name="sno" id="subject" required> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
+				</select>
 			</div>
 
 			<br /> 자기소개 <br />
 			<textarea rows="10" cols="50" name="cover"></textarea>
 
 			<br />
-			<button type="button"
-				onclick="location.href='${pageContext.request.contextPath}'">취소</button>
+			<button type="button" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
 			<input type="submit" value="가입" />
 		</form>
 
