@@ -36,7 +36,7 @@ function studyApply(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//이미 신청을 했으면 return;하게 만들어야 함. 
 	//임시로 confirm. 계획은 부트스트랩 모달창에 주요 정보 나열 후 확인버튼누르면 아작스 실행.
-	if(confirm("신청하시겠습니까")%%${memberLoggedIn!=null}) {
+	if(confirm("신청하시겠습니까")&&${memberLoggedIn!=null}) {
 		$.ajax({
 			url:"applyStudy.do",
 			data:{sno:sno,mno:${memberLoggedIn.getMno()}},
