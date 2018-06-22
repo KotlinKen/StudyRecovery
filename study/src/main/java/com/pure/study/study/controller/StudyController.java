@@ -273,7 +273,7 @@ public class StudyController {
 	public ModelAndView selectStudyOne(@RequestParam(value="sno", required=true) int sno, @ModelAttribute(value="memberLoggedIn") Member m ) {
 		ModelAndView mav = new ModelAndView();
 		
-		//Member m=(Member)session.getAttribute("memberLoggedIn");
+		
 		
 		//스터디 정보 가져오기 +보고 있는 유저의 점수들 가져와야함..
 		Map<String,Object> study = studyService.selectStudyOne(sno);
