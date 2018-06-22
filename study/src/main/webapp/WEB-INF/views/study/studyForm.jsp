@@ -5,12 +5,33 @@
  <jsp:include page="/WEB-INF/views/common/header.jsp">
  	<jsp:param value="" name="pageTitle"/>
 </jsp:include>	 
+
+<!-- include summernote css/js-->
+<link href="${rootPath }/resources/plugins/summernote/summernote.css" rel="stylesheet">
+<script src="${rootPath }/resources/plugins/summernote/summernote.js"></script>
+<!-- summer note korean language pack -->
+<script src="${rootPath }/resources/plugins/summernote/lang/summernote-ko-KR.js"></script>
+
+
 <style>
 div.forCopy{
 	display:none;
 }
-
 </style>
+<script>
+
+$(document).ready(function() {
+    $('#summernote').summernote({
+      height: 300,          // 기본 높이값
+      minHeight: null,      // 최소 높이값(null은 제한 없음)
+      maxHeight: null,      // 최대 높이값(null은 제한 없음)
+      focus: true,          // 페이지가 열릴때 포커스를 지정함
+      lang: 'ko-KR'         // 한국어 지정(기본값은 en-US)
+    });
+  });
+
+</script>
+
 <script>
 function validate(){
 	// 유효성 검사 - 지역,도시
@@ -50,7 +71,6 @@ function validate(){
 	var endTime = $("#endtime option:checked").val();	
 	
 	$("#time").val(startTime + "~" + endTime);	
-	
 	return true;
 }
 
@@ -59,9 +79,6 @@ $(document).ready(function(){
 });
 
 $(function(){
-	
-	
-	
 	
 	//첨부파일 선택하면 파일 이름이 input창에 나타나게한다.
 	//첨부파일이름 표시
@@ -308,7 +325,10 @@ $(function(){
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
-		<label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control"></textarea><br />
+		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
+		<label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control summernote"></textarea><br />
+		<!-- <label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control"></textarea><br /> -->
+		<div id="summernote"></div>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;

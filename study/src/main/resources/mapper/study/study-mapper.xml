@@ -2,7 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="study">
  <select id="studyList" resultMap="mapForStudy">
- 	select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
+ 	select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
+ 	to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate, 
  	m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
  	from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
 	where s.type='study'
@@ -79,7 +80,8 @@
   
   </select>
   <select id="selectStudyAdd" resultMap="mapList">
-  	select  s.sno,s.mno,sb.subno,k.kno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
+  	select  s.sno,s.mno,sb.subno,k.kno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
+  		    to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
   			m.mprofile,l.lno,l.local lname,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
   	from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join subject sb on s.subno=sb.subno join kind k on sb.kno=k.kno  join member m on s.mno=m.mno
 	where s.type='study' order by s.regdate desc
@@ -87,7 +89,7 @@
   
   <select id="selectStudyOne" resultMap="mapList">
   	select  s.sno,s.mno,s.subno,s.tno,t.lno,s.dno,k.kno,l.lno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
-  		to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,
+  		to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate,
   		to_char(s.regdate,'yyyy-mm-dd') regdate,m.mprofile,l.lno,l.local lname,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname,
   		m.mname mname,m.cover,m.exp,m.point,m.npoint,(select count(*) cnt from apply where sno=#{sno}) cnt
   	from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno 
@@ -142,7 +144,8 @@
   </delete>
   
   <select id="selectByDeadline" resultMap="mapList">
-  select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
+  select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
+  		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
  		  m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
   from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
   where   s.type='study' and s.ldate>=sysdate
@@ -159,7 +162,7 @@
   
   <select id="selectByApply" resultMap="mapList">
 	  select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
-	  		to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
+	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
 	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME,local lname, 
 	 		mid, mname, mprofile,cover
 	  from(
@@ -187,5 +190,12 @@
   	SELECT COUNT(*) FROM APPLY WHERE SNO = #{sno} AND MNO = #{mno}
   </select>
   
+  <select id="isWishStudy" resultType="_int">
+  	select count(*) from wish where sno=#{sno} and mno=#{mno}
+  </select>
+  
+  <delete id="deletewishStudy">
+  	delete from wish where sno=#{sno} and mno=#{mno}
+  </delete>
   
 </mapper>
