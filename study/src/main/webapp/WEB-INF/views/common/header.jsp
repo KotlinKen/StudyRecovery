@@ -13,12 +13,11 @@
 <link rel="stylesheet" href="${rootPath}/resources/css/common/init.css" />
 <link rel="stylesheet" href="${rootPath}/resources/css/common/common.css" />
 <link href="https://fonts.googleapis.com/css?family=Tajawal" rel="stylesheet">
-<script src="${rootPath}/resources/js/bootstrap.min.js"></script>
+<script src="${rootPath}/resources/js/bootstrap.js"></script>
 
 <!-- 사용자작성 css -->
 <link rel="stylesheet" href="${rootPath}/resources/css/style.css" />
 <script>
-
 function imgError(img){ 
 	img.src="${rootPath}/resources/upload/adversting/20180617_161710579_2.jpg";
 }
@@ -36,7 +35,6 @@ console.log("${cookie.popupValue.value}");
 				$(".mainTop").append("<a href='"+data.adv.URL+"' ><img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG + "' onerror='imgError(this)'/></a>");
 				$(".topBanner").css({"display": "block", "background-color" : data.adv.BACKCOLOR});
 			}else{
-
 			}
 		}
 	});
@@ -45,7 +43,6 @@ console.log("${cookie.popupValue.value}");
 	
 $(function(){
 var popCookie = "${cookie.popupValue.value}";
-
 if(popCookie != "Y"){
 var type = "POPUP";
 	$.ajax({
@@ -95,7 +92,6 @@ $(function(){
 			}
 		});
 	});	
-
 </script>
 
 </head>

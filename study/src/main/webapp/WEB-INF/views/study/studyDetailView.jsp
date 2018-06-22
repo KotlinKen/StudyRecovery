@@ -17,10 +17,6 @@
 
 <script>
 var mno = "${memberLoggedIn.getMno()}";
-$(function(){
-
-	
-});
 
 function studyApply(sno){
 	
