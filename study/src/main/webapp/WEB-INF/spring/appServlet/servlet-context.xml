@@ -36,7 +36,7 @@
 		</beans:bean>
 	
 	<!-- jsonView contentType 설정하여 json, 인코딩처리. 경희 추가 -->	
-	<beans:bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView">
+	<beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
 		 <beans:property name="contentType" value="application/json;charset=UTF-8"/>
 	</beans:bean>
 	

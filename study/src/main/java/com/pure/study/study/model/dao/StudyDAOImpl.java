@@ -20,7 +20,7 @@ public class StudyDAOImpl implements StudyDAO {
 	private SqlSessionTemplate sqlSession;
 
 	@Override
-	public List<Map<String, String>> selectStudyList(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectStudyList(int cPage, int numPerPage) {
 		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
 		return sqlSession.selectList("study.studyList",null,rowBounds);
 	}
@@ -155,6 +155,18 @@ public class StudyDAOImpl implements StudyDAO {
 	public int preinsertApply(Map<String, Integer> map) {
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("study.preinsertApply", map);
+	}
+
+	@Override
+	public int isWishStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("study.isWishStudy", map);
+	}
+
+	@Override
+	public int deletewishStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("study.deletewishStudy", map);
 	}
 
 

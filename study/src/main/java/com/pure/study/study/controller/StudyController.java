@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,16 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.study.model.service.StudyService;
 import com.pure.study.study.model.vo.Study;
 
+import net.sf.json.JSONException;
 
 
-@SessionAttributes({"cPage","total","case","numPerPage","memberLoggedIn"})
+
+@SessionAttributes({"memberLoggedIn"})
 @Controller
 public class StudyController {
 	
@@ -42,7 +46,7 @@ public class StudyController {
 	
 	
 	@RequestMapping("/study/studyList.do")
-	public ModelAndView studyList(@RequestParam(value="cPage", required=false, defaultValue="1") int cPage) {
+	public ModelAndView studyList() {
 		ModelAndView mav = new ModelAndView();
 		
 		//지역 리스트
@@ -64,13 +68,16 @@ public class StudyController {
 	
 	
 	@RequestMapping("/study/selectStudyList.do")
-	public ModelAndView selectStudyList() {
+	public ModelAndView selectStudyList(){
 		int cPage=1;
-		//Map<String,Object> resultmap = new HashMap<>();
-		List<Map<String,String>> list = studyService.selectStudyList(cPage,numPerPage);
+		Map<String,Object> resultmap = new HashMap<>();
+		List<Map<String,Object>> list = studyService.selectStudyList(cPage,numPerPage);
 		int total = studyService.studyTotalCount();
-		//resultmap.put("list", list);
-		//resultmap.put("total",total);
+		/*resultmap.put("list", list);
+		resultmap.put("total",total);
+		resultmap.put("numPerPage", numPerPage);
+		resultmap.put("cPage", cPage+1);*/
+		
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("selectStudyList.do numPerPage="+numPerPage);
 		System.out.println("selectStudyList.do cPage="+cPage);
@@ -78,7 +85,7 @@ public class StudyController {
 		mav.addObject("numPerPage",numPerPage);
 		mav.addObject("cPage",cPage+1);
 		mav.addObject("total",total);
-		
+	
 		return mav;
 	}
 	
@@ -171,12 +178,13 @@ public class StudyController {
 		
 		mav.addObject("msg",msg);
 		mav.addObject("loc",loc);
+		mav.addObject("memberLoggedIn",m);
 		mav.setViewName("common/msg");
 		
 		return mav;
 	}
 	
-	
+	//검색조건으로 첫 페이징 결과를 가져옴. total, list, cPage 넘김
 	@RequestMapping("/study/searchStudy.do")
 	public ModelAndView selectStudyForSearch(@RequestParam(value="lno") int lno,@RequestParam(value="tno", defaultValue="null") int tno, @RequestParam(value="subno") int subno,
 			@RequestParam(value="kno") int kno,@RequestParam(value="dno") int dno,@RequestParam(value="leadername") String leadername
@@ -222,7 +230,6 @@ public class StudyController {
 		
 		ModelAndView mav = new ModelAndView("jsonView");
 		
-		
 		if(leadername.trim().length()<1) leadername=null;
 		
 		/* 쿼리에 넘길 조건들 Map*/
@@ -263,14 +270,27 @@ public class StudyController {
 	
 	//스터디 상세보기
 	@RequestMapping("/study/studyView.do")
-	public ModelAndView selectStudyOne(@RequestParam(value="sno", required=true) int sno) {
+	public ModelAndView selectStudyOne(@RequestParam(value="sno", required=true) int sno, @ModelAttribute(value="memberLoggedIn") Member m ) {
 		ModelAndView mav = new ModelAndView();
+		
+		//Member m=(Member)session.getAttribute("memberLoggedIn");
 		
 		//스터디 정보 가져오기 +보고 있는 유저의 점수들 가져와야함..
 		Map<String,Object> study = studyService.selectStudyOne(sno);
 		System.out.println("study="+study);
 		
+		
+		//이미 찜했는지 여부 검사 
+		Map<String,Integer> map = new HashMap<>();
+		map.put("mno", m.getMno());
+		map.put("sno", sno);
+		int isWish = studyService.isWishStudy(map);
+		
+		
 		mav.addObject("study", study);
+		mav.addObject("memberLoggedIn", m);
+			
+		mav.addObject("isWish",isWish);
 		mav.setViewName("study/studyView");
 		return mav;
 	}
@@ -304,6 +324,22 @@ public class StudyController {
 		
 		return result;
 	}
+	
+	
+	@RequestMapping("/study/deletewishStudy.do")
+	@ResponseBody
+	public int deletewishStudy(@RequestParam(value="sno") int sno,@RequestParam(value="mno") int mno) {
+		Map<String,Integer> map = new HashMap<>();
+		map.put("sno", sno);
+		map.put("mno", mno);
+		
+		int result = studyService.deletewishStudy(map);
+		
+		return result;
+		
+	}
+	
+	
 	
 	@RequestMapping("/study/studyUpdate.do")
 	public ModelAndView studyUpdate(@RequestParam(value="sno") int sno) {
