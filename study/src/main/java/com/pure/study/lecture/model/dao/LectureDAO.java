@@ -29,4 +29,6 @@ public interface LectureDAO {
 
 	int preinsertApply(Map<String, Integer> map);
 
+	int selectTotalLectureCount();
+
 }

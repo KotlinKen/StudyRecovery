@@ -71,4 +71,9 @@ public class LectureDAOImpl implements LectureDAO {
 		return session.selectOne("lecture.preinsertApply", map);
 	}
 
+	@Override
+	public int selectTotalLectureCount() {
+		return session.selectOne("lecture.selectTotalLectureCount");
+	}
+
 }

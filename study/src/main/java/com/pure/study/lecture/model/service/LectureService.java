@@ -29,4 +29,6 @@ public interface LectureService {
 
 	int preinsertApply(Map<String, Integer> map);
 
+	int selectTotalLectureCount();
+
 }

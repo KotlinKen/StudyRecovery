@@ -2,17 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-</head>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp"/>
 <script src="${pageContext.request.contextPath }/resources/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
 	$(document).ready(function(){
-		$(".lectureTr").click(function(){
-			var sno = $(this).attr("sno");			
+		$(".lectureDiv").click(function(){
+			var sno = $(this).children("#sno").val();
 			location.href="${pageContext.request.contextPath}/lecture/lectureView.do?sno=" + sno;
 		});
 	});	
@@ -22,14 +19,16 @@
 		$("#sub").hide();
 		
 		// TOWN선택
-		$("#local").on("change", 	function(){
+		$("#local").on("change", function(){
 			var localNo = $("option:selected", this).val();
 			
 			if(localNo == ""){
 				$("#town").hide();
 				return;
 			}
+			
 			$("#town").show();
+			
 			$.ajax({
 				url: "selectTown.do",
 				data: {localNo : localNo},
@@ -53,7 +52,9 @@
 				$("#sub").hide();
 				return;
 			}
+			
 			$("#sub").show();
+			
 			$.ajax({
 				url: "selectSubject.do",
 				data: {kindNo : kindNo},
@@ -68,12 +69,36 @@
 					$("#sub").html(html);
 				}			
 			});
-		});		
+		});
+		
+		// 페이징 처리
+		$(".movePageBtn").click(function(){
+			var cPage = $(this).val();
+			
+			location.href="${pageContext.request.contextPath}/lecture/lectureList.do?cPage=" + cPage;
+		});
 	});
 </script>
-<body>
-	<button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의
-	작성</button>
+<style>
+	#lectureList-container{
+		height: 1100px;
+	}
+	#beforeBtn{
+		position: absolute;
+		width: 80px;
+		height: 80px;
+		top: 735px;
+		left: 427px;		
+	}
+	#afterBtn{
+		position: absolute;
+		width: 80px;
+		height: 80px;
+		top: 735px;
+		right: 427px;
+	}
+</style>
+	<button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의	작성</button>
 	<div id="lectureList-container">	
 		<!-- 지역 -->
 		<label for="local">지역 : </label>
@@ -87,7 +112,9 @@
 		</select>
 		&nbsp; 
 		
-		<select name="tno" id="town"></select> 
+		<select name="tno" id="town">
+		
+		</select> 
 		
 		<!-- 카테고리 -->
 		<label for="kind">카테고리</label>
@@ -100,7 +127,9 @@
 			</c:forEach>
 			</c:if>
 		</select>
-		<select name="subno" id="sub"> <!-- ajax로 kind가져오기 -->
+		
+		<!-- ajax로 kind가져오기 -->
+		<select name="subno" id="sub"> 
 		
 		</select>
 		<!-- 카테고리 end -->
@@ -119,69 +148,55 @@
 		
 		<input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" /> 
 		<input type="submit" value="필터 검색" />
-
 	
 		<button type="button" id="sort-deadline">마감임박순</button>
-		<button type="button" id="sort-deadline">인기스터디순</button>
+		<button type="button" id="sort-deadline">인기스터디순</button>		
 	
 		<hr />
 		
 		<div id="lecture-container">
-	
+			<c:if test="${!empty lectureList }">
+				<c:forEach var="lecture" items="${lectureList }">
+					<div class="lectureDiv" style="border: 1px solid gray; text-align: center;">
+						<span>제목 : ${lecture.TITLE }</span>
+						<br />
+						<span>지역 : ${lecture.LOCAL} ${lecture.TNAME}</span>
+						<br />
+						<span>과목 : ${lecture.KNAME} - ${lecture.SUBNAME}</span>
+						<br />
+						<span>난이도 : ${lecture.DNAME }</span>
+						<br />
+						<span>비용 : ${lecture.PRICE}원</span>
+						<br />
+						<span>${lecture.STATUS }</span>
+						<br />
+						<span>
+							일정 :
+							<fmt:parseDate value="${lecture.SDATE}" type="date" var="sdate" pattern="yyyy-MM-dd" />
+							<fmt:formatDate value="${sdate }" pattern="yyyy/MM/dd"/> 
+							~ 
+							<fmt:parseDate value="${lecture.EDATE}" type="date" var="edate" pattern="yyyy-MM-dd" />
+							<fmt:formatDate value="${edate }" pattern="yyyy/MM/dd"/>
+							&nbsp;&nbsp;&nbsp;
+							시간 : ${lecture.TIME }							
+						</span>
+						<br />
+						<span>
+							등록일 : <fmt:parseDate value="${lecture.REGDATE }" type="date" var="regDate" pattern="yyyy-MM-dd" />
+							<fmt:formatDate value="${regDate }" pattern="yyyy/MM/dd"/>	
+						</span>
+						<input type="hidden" id="sno" value="${lecture.SNO }"/>
+					</div>
+				</c:forEach>	
+			</c:if>	
 		</div>
 	</div>
-
-	<input type="hidden" name="case" value="0" />
-	<!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부. 임시방편. -->
-	<input type="hidden" name="cPageNo" value="2" />
-	<!-- cPage 번호 저장. -->
+	<input type="hidden" name="cPage" id="cPage" value="${cPage }"/>
 	
-	<c:if test="${!empty lectureList }">
-		<table>
-			<tr>
-				<th></th>
-				<th>지역</th>
-				<th>분야</th>
-				<th>과목</th>
-				<th>난이도</th>
-				<th>비용</th>
-				<th>상태</th>
-				<th>모집일</th>
-				<th>운영일</th>
-				<th>운영시간</th>
-				<th>작성자</th>
-				<th>등록일</th>
-			</tr>
-			
-			<c:forEach var="lecture" items="${lectureList}" varStatus="vs">
-				<tr class="lectureTr" sno="${lecture.SNO}">
-					<td>${vs.index+1}</td>
-					<td>${lecture.LOCAL} ${lecture.TNAME}</td>
-					<td>${lecture.SUBNAME}</td>
-					<td>${lecture.KNAME}</td>
-					<td>${lecture.DNAME }</td>
-					<td>${lecture.PRICE}원</td>
-					<td>${lecture.STATUS }</td>
-					<td>
-						<fmt:parseDate value="${lecture.LDATE }" type="date" var="ldate" pattern="yyyy-MM-dd" />
-						<fmt:formatDate value="${ldate }" pattern="yyyy/MM/dd"/>
-					</td>
-					<td>
-						<fmt:parseDate value="${lecture.SDATE}" type="date" var="sdate" pattern="yyyy-MM-dd" />
-						<fmt:formatDate value="${sdate }" pattern="yyyy/MM/dd"/> 
-						~ 
-						<fmt:parseDate value="${lecture.EDATE}" type="date" var="edate" pattern="yyyy-MM-dd" />
-						<fmt:formatDate value="${edate }" pattern="yyyy/MM/dd"/>
-					</td>
-					<td>${lecture.TIME }</td>
-					<td>${lecture.MNAME }</td>
-					<td>
-						<fmt:parseDate value="${lecture.REGDATE }" type="date" var="regDate" pattern="yyyy-MM-dd" />
-						<fmt:formatDate value="${regDate }" pattern="yyyy/MM/dd"/>						
-					</td>
-				</tr>	
-			</c:forEach>
-		</table>
+	<c:if test="${cPage != 1 }">
+		<button type="button" class="movePageBtn" id="beforeBtn" name="beforeBtn" value="${cPage-1}">&lt;</button>
 	</c:if>
-</body>
-</html>
+	<c:if test="${cPage <= totalPage}">
+		<button type="button" class="movePageBtn" id="afterBtn" name="afterPage" value="${cPage+1}">&gt;</button>	
+	</c:if>
+<jsp:include page="/WEB-INF/views/common/footer.jsp"/>

@@ -69,4 +69,9 @@ public class LectureServiceImpl implements LectureService {
 		return ld.preinsertApply(map);
 	}
 
+	@Override
+	public int selectTotalLectureCount() {
+		return ld.selectTotalLectureCount();
+	}
+
 }
