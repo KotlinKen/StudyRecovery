@@ -8,11 +8,7 @@
 </jsp:include>	 
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 <style>
-
-.rm_cover_img{object-fit:cover; height:350px;}
-
-
-
+	.rm_cover_img{object-fit:cover; height:350px;}
 </style>
 
 <script>
@@ -266,14 +262,14 @@ position: relative;
 <span>협의비 : ${study.PRICE }</span>
 <hr />
 <label for="">리더 소개</label>
-<c:if test="${study.MPROFILE!=null }">
-<img src="${pageContext.request.contextPath}/resources/upload/member/${study.MPROFILE}" alt="" />
-</c:if>
-<c:if test="${study.MPROFILE==null }">
-<img src="${pageContext.request.contextPath}/resources/upload/member/basicprofile.png" alt="" />
-</c:if>
+		<c:if test="${study.MPROFILE!=null }">
+			<img src="${pageContext.request.contextPath}/resources/upload/member/${study.MPROFILE}" alt="" />
+		</c:if>
+		<c:if test="${study.MPROFILE==null }">
+			<img src="${pageContext.request.contextPath}/resources/upload/member/basicprofile.png" alt="" />
+		</c:if>
 
-<span>${study.COVER }</span>
+		<span>${study.COVER }</span>
 
 </div>
 
