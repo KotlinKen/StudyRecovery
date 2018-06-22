@@ -270,7 +270,7 @@ public class StudyController {
 	
 	//스터디 상세보기
 	@RequestMapping("/study/studyView.do")
-	public ModelAndView selectStudyOne(@RequestParam(value="sno", required=true) int sno, @ModelAttribute(value="memberLoggedIn") Member m ) {
+	public ModelAndView selectStudyOne(@RequestParam(value="sno", required=true) int sno,HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		
 		
@@ -279,18 +279,21 @@ public class StudyController {
 		Map<String,Object> study = studyService.selectStudyOne(sno);
 		System.out.println("study="+study);
 		
-		
-		//이미 찜했는지 여부 검사 
-		Map<String,Integer> map = new HashMap<>();
-		map.put("mno", m.getMno());
-		map.put("sno", sno);
-		int isWish = studyService.isWishStudy(map);
-		
+		Member  m= (Member)session.getAttribute("memberLoggedIn");
+		int isWish=0;
+		if(m!=null) {
+			//이미 찜했는지 여부 검사 
+			Map<String,Integer> map = new HashMap<>();
+			map.put("mno", m.getMno());
+			map.put("sno", sno);
+			isWish = studyService.isWishStudy(map);
+			
+		}
 		
 		mav.addObject("study", study);
 		mav.addObject("memberLoggedIn", m);
-			
-		mav.addObject("isWish",isWish);
+		mav.addObject("isWish",isWish);	
+		
 		mav.setViewName("study/studyView");
 		return mav;
 	}

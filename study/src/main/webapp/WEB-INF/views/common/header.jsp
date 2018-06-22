@@ -139,7 +139,7 @@ $(function(){
 					</ul>
 
 					<c:if test="${memberLoggedIn == null }">
-						<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#loginModal">로그인</button> &nbsp; &nbsp;
+						<button type="button" id="btn-login" class="btn btn-outline-success" data-toggle="modal" data-target="#loginModal">로그인</button> &nbsp; &nbsp;
 				<!-- 회원가입 버튼 시작 -->
 						<button type="button" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}/member/memberAgreement.do'">회원가입</button>
 						<!-- 회원가입 버튼 끝 -->
