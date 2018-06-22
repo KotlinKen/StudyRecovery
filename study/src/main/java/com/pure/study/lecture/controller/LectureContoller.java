@@ -95,8 +95,7 @@ public class LectureContoller {
 				String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
 				int rndNum = (int)(Math.random()*1000);
-				String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+
-										"_"+rndNum+"."+ext;
+				String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
 				
 				img += renamedFileName;
 				
@@ -131,20 +130,23 @@ public class LectureContoller {
 	@RequestMapping("/lecture/lectureList.do")
 	public ModelAndView lectureList(@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage) {
 		ModelAndView mav = new ModelAndView();
-
+		
 		int numPerPage = 5;
-
+		int total = ls.selectTotalLectureCount();
+		
+		int totalPage = (int)Math.ceil(total/numPerPage);
+		
 		List<Map<String, String>> lectureList = ls.selectLectureList(cPage, numPerPage);
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
 		List<Map<String, String>> diffList = ls.selectDiff();
 		
-		System.out.println(lectureList);
-		
 		mav.addObject("lectureList", lectureList);
 		mav.addObject("locList", locList);
 		mav.addObject("kindList", kindList);
 		mav.addObject("diffList", diffList);
+		mav.addObject("cPage", cPage);
+		mav.addObject("totalPage", totalPage);
 		
 		mav.setViewName("lecture/lectureListEnd");
 
@@ -165,8 +167,7 @@ public class LectureContoller {
 	
 	@RequestMapping("/lecture/deleteLecture.do")
 	public ModelAndView deleteLecture(@RequestParam int sno) {
-		ModelAndView mav = new ModelAndView();
-		
+		ModelAndView mav = new ModelAndView();		
 		int result = ls.deleteLecture(sno);
 		
 		mav.setViewName("/lecture/lectureList");

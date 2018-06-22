@@ -29,4 +29,10 @@ public interface LectureDAO {
 
 	int preinsertApply(Map<String, Integer> map);
 
+	int selectTotalLectureCount();
+
+	int selectTotalLectureCountBySearch(Map<String, Integer> map);
+
+	List<Map<String, String>> selectLectureListBySearch(int cPage, int numPerPage, Map<String, Integer> map);
+
 }

@@ -74,20 +74,23 @@
 	
 	<select id="selectLectureList" resultMap="map">		
 		SELECT SNO,
-			   (SELECT M.MNO AS MNNO FROM MEMBER M WHERE M.MNO = A.MNO) MNO,
 		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
 		       (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
 		       (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
 		       (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
 		       (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
-		       TIME,
-		       NVL(PRICE, 0) AS PRICE,
-		       STATUS,        
-		       LDATE,
-		       SDATE,
-		       EDATE,
-		       REGDATE
+		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
+		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		        TITLE,
+		        UPFILE,
+		        TIME,
+		        NVL(PRICE, 0) AS PRICE,
+		        STATUS,        
+		        LDATE,
+		        SDATE,
+		        EDATE,
+		        REGDATE
 		FROM (SELECT S.*, 
 		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
 		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
@@ -96,28 +99,103 @@
 		ORDER BY SNO DESC
 	</select>
 	
+	<select id="selectTotalLectureCount" resultType="_int">
+		SELECT COUNT(*) FROM STUDY WHERE TYPE = 'lecture'
+	</select>
+	
 	<select id="selectLectureOne" resultType="map">
 		SELECT SNO,
-			   (SELECT M.MNO AS MNNO FROM MEMBER M WHERE M.MNO = A.MNO) MNO,
 		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
 		       (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
 		       (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
 		       (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
 		       (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
-		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME,
+		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
-		       TIME,
-		       NVL(PRICE, 0) AS PRICE,
-		       STATUS,        
-		       LDATE,
-		       SDATE,
-		       EDATE,
-		       REGDATE
+		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		        TITLE,
+		        UPFILE,
+		        TIME,
+		        NVL(PRICE, 0) AS PRICE,
+		        STATUS,        
+		        LDATE,
+		        SDATE,
+		        EDATE,
+		        REGDATE
 		FROM (SELECT S.*, 
 		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
 		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
 		      FROM STUDY S 
 		WHERE TYPE = 'lecture' AND SNO = #{sno}) A
+		ORDER BY SNO DESC
+	</select>
+	
+	<select id="selectTotalLectureCountBySearch" resultType="_int">
+		SELECT COUNT(*)
+		FROM (SELECT S.*, 
+		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
+		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
+		      FROM STUDY S 
+			  WHERE TYPE = 'lecture') A
+		WHERE 1=1 
+		<if test="lno != 0">
+			AND A.LNO = #{lno}
+		</if>
+		<if test="kno != 0">
+			AND A.KNO = #{kno}
+		</if>
+		<if test="tno != 0">
+			AND A.TNO = #{tno}
+		</if>
+		<if test="dno != 0">
+			AND A.DNO = #{dno}
+		</if>
+		<if test="subno != 0">
+			AND A.SUBNO = #{subno}
+		</if>
+		ORDER BY SNO DESC
+	</select>
+	
+	<select id="selectLectureListBySearch" resultMap="map">
+		SELECT SNO,
+		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
+		       (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
+		       (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
+		       (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
+		       (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
+		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
+		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
+		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		        TITLE,
+		        UPFILE,
+		        TIME,
+		        NVL(PRICE, 0) AS PRICE,
+		        STATUS,        
+		        LDATE,
+		        SDATE,
+		        EDATE,
+		        REGDATE
+		FROM (SELECT S.*, 
+		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
+		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
+		      FROM STUDY S 
+			  WHERE TYPE = 'lecture') A
+		WHERE 1=1 
+		<if test="lno != 0">
+			AND A.LNO = #{lno}
+		</if>
+		<if test="kno != 0">
+			AND A.KNO = #{kno}
+		</if>
+		<if test="tno != 0">
+			AND A.TNO = #{tno}
+		</if>
+		<if test="dno != 0">
+			AND A.DNO = #{dno}
+		</if>
+		<if test="subno != 0">
+			AND A.SUBNO = #{subno}
+		</if>
 		ORDER BY SNO DESC
 	</select>
 	

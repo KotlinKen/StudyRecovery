@@ -51,5 +51,21 @@
 		</beans:property>
 	</beans:bean>
 	
+	<!-- 로그인 검사용. -->
+	<interceptors>
+		<interceptor>
+			<!-- 스터디 -->
+			<mapping path="/study/studyForm.do"/>
+			<mapping path="/study/studyUpdate.do"/>
+			
+			<!-- 강의 -->
+			<mapping path="/lecture/insertLecture.do"/>
+			<mapping path="/lecture/deleteLecture.do"/>
+			<mapping path="/lecture/applyLecture.do"/>			
+			
+			<beans:bean class="com.pure.study.common.interceptor.LoginCheckInterceptor" id="loginCheck"/>
+		</interceptor>
+	</interceptors>
+	
 		
 </beans:beans>
