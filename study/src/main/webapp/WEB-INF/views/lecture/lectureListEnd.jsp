@@ -34,7 +34,7 @@
 				data: {localNo : localNo},
 				dataType: "json",
 				success : function(data){
-					var html="<option>세부 지역을 선택하세요</option>";
+					var html="<option value=''>세부 지역을 선택하세요</option>";
 					
 					for(var index in data){
 						html += "<option value='"+data[index].TNO +"'>" + data[index].TOWNNAME + "</option></br>";
@@ -60,7 +60,7 @@
 				data: {kindNo : kindNo},
 				dataType: "json",
 				success : function(data){
-					var html="<option>세부 과목을 선택하세요</option>";
+					var html="<option value=''>세부 과목을 선택하세요</option>";
 					
 					for(var index in data){
 						html += "<option value='"+data[index].SUBNO +"'>" + data[index].SUBJECTNAME + "</option></br>";
@@ -77,6 +77,58 @@
 			
 			location.href="${pageContext.request.contextPath}/lecture/lectureList.do?cPage=" + cPage;
 		});
+		
+		// 페이징 처리
+		$(".moveSearchPageBtn").click(function(){
+			var lno = $("#local").val();
+			var tno = $("#town").val();
+			var kno = $("#kind").val();
+			var subno = $("#sub").val();
+			var dno = $("#diff").val();
+			
+			var cPage = $("#cPage").val();
+			alert(cPage);
+			
+			$.ajax({
+				url: "searchLecture.do",
+				data: {
+					lno : lno,
+					tno : tno,
+					kno : kno,
+					subno : subno,
+					dno : dno,
+					cPage : cPage
+				},
+				dataType: "html",
+				success: function( data ){
+					$("#lecture-container").html(data);
+				}
+			});
+		});
+		
+		// 검색
+		$("#searchLectureBtn").click(function(){
+			var lno = $("#local").val();
+			var tno = $("#town").val();
+			var kno = $("#kind").val();
+			var subno = $("#sub").val();
+			var dno = $("#diff").val();
+			
+			$.ajax({
+				url: "searchLecture.do",
+				data: {
+					lno : lno,
+					tno : tno,
+					kno : kno,
+					subno : subno,
+					dno : dno
+				},
+				dataType: "html",
+				success: function( data ){
+					$("#lecture-container").html(data);
+				}
+			});
+		});
 	});
 </script>
 <style>
@@ -91,6 +143,20 @@
 		left: 427px;		
 	}
 	#afterBtn{
+		position: absolute;
+		width: 80px;
+		height: 80px;
+		top: 735px;
+		right: 427px;
+	}
+	#beforeSearchBtn{
+		position: absolute;
+		width: 80px;
+		height: 80px;
+		top: 735px;
+		left: 427px;		
+	}
+	#afterSearchBtn{
 		position: absolute;
 		width: 80px;
 		height: 80px;
@@ -128,7 +194,7 @@
 			</c:if>
 		</select>
 		
-		<!-- ajax로 kind가져오기 -->
+		<!-- ajax로 subject가져오기 -->
 		<select name="subno" id="sub"> 
 		
 		</select>
@@ -140,17 +206,17 @@
 			<option value="">난이도를 선택하세요</option>
 			
 			<c:if test="${!empty diffList }">
-			<c:forEach var="diff" items="${diffList }" varStatus="vs">
-				<option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
-			</c:forEach>
+				<c:forEach var="diff" items="${diffList }" varStatus="vs">
+					<option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
+				</c:forEach>
 			</c:if>
 		</select>
 		
 		<input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" /> 
-		<input type="submit" value="필터 검색" />
+		<button type="button" id="searchLectureBtn">검색</button>
 	
-		<button type="button" id="sort-deadline">마감임박순</button>
-		<button type="button" id="sort-deadline">인기스터디순</button>		
+		<button type="button" id="sortDeadlineBtn">마감임박순</button>
+		<button type="button" id="sortPopularBtn">인기스터디순</button>		
 	
 		<hr />
 		
@@ -182,21 +248,24 @@
 						</span>
 						<br />
 						<span>
+							작성자 : ${lecture.MNAME } &nbsp;&nbsp;&nbsp;
 							등록일 : <fmt:parseDate value="${lecture.REGDATE }" type="date" var="regDate" pattern="yyyy-MM-dd" />
 							<fmt:formatDate value="${regDate }" pattern="yyyy/MM/dd"/>	
 						</span>
 						<input type="hidden" id="sno" value="${lecture.SNO }"/>
 					</div>
 				</c:forEach>	
+				
+				<input type="hidden" name="cPage" id="cPage" value="${cPage }"/>
+				
+				<c:if test="${cPage != 1 }">
+					<button type="button" class="movePageBtn" id="beforeBtn" name="beforeBtn" value="${cPage-1}">&lt;</button>
+				</c:if>
+				<c:if test="${cPage <= totalPage}">
+					<button type="button" class="movePageBtn" id="afterBtn" name="afterPage" value="${cPage+1}">&gt;</button>	
+				</c:if>
 			</c:if>	
 		</div>
 	</div>
-	<input type="hidden" name="cPage" id="cPage" value="${cPage }"/>
 	
-	<c:if test="${cPage != 1 }">
-		<button type="button" class="movePageBtn" id="beforeBtn" name="beforeBtn" value="${cPage-1}">&lt;</button>
-	</c:if>
-	<c:if test="${cPage <= totalPage}">
-		<button type="button" class="movePageBtn" id="afterBtn" name="afterPage" value="${cPage+1}">&gt;</button>	
-	</c:if>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

@@ -76,4 +76,15 @@ public class LectureDAOImpl implements LectureDAO {
 		return session.selectOne("lecture.selectTotalLectureCount");
 	}
 
+	@Override
+	public int selectTotalLectureCountBySearch(Map<String, Integer> map) {
+		return session.selectOne("lecture.selectTotalLectureCountBySearch", map);
+	}
+
+	@Override
+	public List<Map<String, String>> selectLectureListBySearch(int cPage, int numPerPage, Map<String, Integer> map) {
+		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
+		return session.selectList("lecture.selectLectureListBySearch", map, rowBounds);
+	}
+
 }

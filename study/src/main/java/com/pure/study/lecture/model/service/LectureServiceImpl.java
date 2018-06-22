@@ -74,4 +74,14 @@ public class LectureServiceImpl implements LectureService {
 		return ld.selectTotalLectureCount();
 	}
 
+	@Override
+	public int selectTotalLectureCountBySearch(Map<String, Integer> map) {
+		return ld.selectTotalLectureCountBySearch(map);
+	}
+
+	@Override
+	public List<Map<String, String>> selectLectureListBySearch(int cPage, int numPerPage, Map<String, Integer> map) {
+		return ld.selectLectureListBySearch(cPage, numPerPage, map);
+	}
+
 }
