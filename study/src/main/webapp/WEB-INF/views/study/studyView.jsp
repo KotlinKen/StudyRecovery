@@ -10,7 +10,9 @@
 .notLeader{
 	display:none;
 }
+
 div.sideInfo{
+
 }
 div#carouselExampleControls{
 	width:500px;
@@ -20,14 +22,6 @@ div.carousel-item img{
 	width:500px;
 	height:600px;
 } 
-img.profile{
-	width:180px;
-	height:250px;
-}
-img.wish{
-	width:100px;
-	height:50px;
-}
 </style>
 
 <script>
@@ -36,7 +30,7 @@ function studyApply(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//이미 신청을 했으면 return;하게 만들어야 함. 
 	//임시로 confirm. 계획은 부트스트랩 모달창에 주요 정보 나열 후 확인버튼누르면 아작스 실행.
-	if(confirm("신청하시겠습니까")%%${memberLoggedIn!=null}) {
+	if(confirm("신청하시겠습니까")) {
 		$.ajax({
 			url:"applyStudy.do",
 			data:{sno:sno,mno:${memberLoggedIn.getMno()}},
@@ -53,45 +47,21 @@ function studyApply(sno){
 		});
 	}
 }
+
 //찜하기 버튼 클릭 이벤트
 function studyWish(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//찜하기를 이미 선택했다면 다시 누르면 찜하기에서 삭제됨.
-	
-	if(${memberLoggedIn!=null}){//로그인을 한 상황
-		
-		if(${isWish==0}){//사용자는 전에 찜하지 않았음.
-			$.ajax({
-				url:"wishStudy.do",
-				data:{sno:sno,mno:${memberLoggedIn.getMno()}},
-				success:function(data){
-					console.log("찜했다");
-					$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/nowish.png");
-					if(confirm("찜한 목록으로 가시겠습니까?")){
-						location.href="${pageContext.request.contextPath}/member/memberWish.do?mno="+${memberLoggedIn.getMno()};
-					}
-				},error:function(){
-					
-				}
-			});
-		}else{
-			if(confirm("이미 찜했습니다. 취소하겠습니까?")){
-				$.ajax({
-					url:"deletewishStudy.do",
-					data:{sno:sno,mno:${memberLoggedIn.getMno()}},
-					success:function(data){
-						$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/wish.png");
-					},error:function(){
-						
-					}
-				});
-			}
+	$.ajax({
+		url:"wishStudy.do",
+		data:{sno:sno,mno:${memberLoggedIn.getMno()}},
+		success:function(data){
+			console.log("찜했다");
+			//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
+		},error:function(){
+			
 		}
-		
-	}else{
-		alert("로그인 후 이용가능합니다");
-	}
-	
+	});
 }
 $(function(){
 	
@@ -103,6 +73,7 @@ $(function(){
 	$("button.removeStudy").click(function(){
 		if(confirm("정말 삭제하시겠습니까?")){
 			location.href="deleteStudy.do?sno="+${study.SNO};
+
 		}
 	});
 		
@@ -110,6 +81,8 @@ $(function(){
 	
 	
 });
+
+
 </script>
 <div id="study-detail">
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
@@ -155,12 +128,12 @@ $(function(){
 <span>수업 기간 : ${study.SDATE }~${study.EDATE }</span>
 <span>협의비 : ${study.PRICE }</span>
 <hr />
-<label for="">리더 소개</label><br /><br />
+<label for="">리더 소개</label>
 <c:if test="${study.MPROFILE!=null }">
-<img src="${pageContext.request.contextPath}/resources/upload/member/${study.MPROFILE}" class="profile" alt="" />
+<img src="${pageContext.request.contextPath}/resources/upload/member/${study.MPROFILE}" alt="" />
 </c:if>
 <c:if test="${study.MPROFILE==null }">
-<img src="${pageContext.request.contextPath}/resources/upload/member/basicprofile.png"  class="profile" alt="" />
+<img src="${pageContext.request.contextPath}/resources/upload/member/basicprofile.png" alt="" />
 </c:if>
 
 <span>${study.COVER }</span>
@@ -180,17 +153,7 @@ $(function(){
 <span>${study.TITLE }</span><br />
 <span>${study.SDATE }~${study.EDATE }</span>
 <button type="button" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
-<button type="button" onclick="studyWish('${study.SNO}');">
-<c:if test="${isWish!=0 }">
-<img class="wish" src="${pageContext.request.contextPath }/resources/upload/study/nowish.png">
-</c:if>
-<c:if test="${isWish==0 }">
-<img class="wish" src="${pageContext.request.contextPath }/resources/upload/study/wish.png">
-</c:if>
-<span>찜하기</span>
-
-</button>
-
+<button type="button" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
 
 
 </div>
