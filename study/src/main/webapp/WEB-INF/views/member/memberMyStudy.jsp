@@ -114,7 +114,7 @@
 						<button type=button>자세히</button>
 					</td>
 					<td>
-						<button type=button>평가</button>
+						<button type=button id="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
 					</td>
 				</tr>
 			</c:forEach>
@@ -162,8 +162,56 @@
 	%>
 	<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader, myPage) %>
 	
+	<!-- 스터디 리뷰 시작 -->
+	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">스터디 리뷰</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+					<form action="${rootPath }/member/reviewEnroll.do" method="post">
+						<div class="modal-body">
+							<!-- 
+								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
+							 -->
+							<table>
+								<tr>
+									<th>스터디명</th>
+									<th>팀장이름</th>
+									<th>작성자</th>
+									<th>평가할 팀원</th>
+									<th>평가</th>
+									<th>내용</th>
+									<th>보기</th>
+								</tr>
+								<c:forEach var="" items="" varStatus="">
+								<tr>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+								</tr>
+								</c:forEach>
+							</table>
+						
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-outline-success">등록</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+						</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<!-- 스터디 리뷰 끝 -->
+
 	<script>
-		var exec = 0;
 		$(function(){
 			$("select#searchKwd").on("change",function(){
 				var html = "";
@@ -199,7 +247,6 @@
 					console.log('diff');
 				} 
 				if($(this).val()=='term'){
-					//html="<input type='date' name='kwd' id='dateKwd' />";
 					html="<select name='kwd' id='dateKwdYear'>";
 					html+="<option value='2016'>2016년</option>";
 					html+="<option value='2017'>2017년</option>";
@@ -269,8 +316,6 @@
 				$("#formSearch").html(html);
 				$("#formSearch").submit();
 			});
-		
-			
 		});
 	
 	</script>

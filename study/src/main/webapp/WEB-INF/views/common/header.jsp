@@ -177,51 +177,7 @@ $(function(){
 		</div>
 		<!-- 로그인 Modal 끝 -->
 
-		<%-- <c:if test="${memberLoggedIn ==null }">
-		    <!-- 회원가입버튼 -->
-		    <button type="button" class="btn btn-outline-success" data-toggle="modal"  data-target="#LoginModal" >로그인</button>
-		    &nbsp;
-		    <button type="button" class="btn btn-outline-success" onclick="location.href='${rootPath}/member/memberAgreement.do'">회원가입</button>
-		 		      </c:if>
-	      <c:if test="${memberLoggedIn != null }">
-	      	<a href="${rootPath }/member/memberView.do?userId=${memberLoggedIn.mid }">${memberLoggedIn.mname }</a> 님, 안녕하세요. 
-	      	<button class="btn btn-outline-success" type="button" onclick="location.href='${rootPath}/member/memberLogout.do'">로그아웃</button>
-	      </c:if>
-		    
-		    
-		    
-		 </div>
-	</nav>
-	<!-- Modal -->
-	<div class="modal fade" id="LoginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">1</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      
-	      <form action="${rootPath}/member/memberLogin.do" method="POST">
-							<div class="modal-body">
-								<input type="text" name="userId" id="userId" class="form-control" placeholder="아이디" required />
-								<br />
-								<input type="password" name="pwd" id="password" class="form-control" placeholder="비밀번호" required />
-								<a href="${rootPath}/member/memberFindPage.do?findType=아이디">아이디/</a>
-								<a href="${rootPath}/member/memberFindPage.do?findType=비밀번호">비밀번호 찾기</a>
-							</div>
 		
-	      <div class="modal-footer">
-	        <button type="submit" class="btn btn-outline-success" >로그인</button>
-	        <button type="button" class="btn btn-primary" data-dismiss="modal">취소</button>
-	      </div>
-		
-	      </form>
-	    </div>
-	  </div>
-	</div>	
-	</div> --%>
 		</header>
 
 		<div id="container" class="container">

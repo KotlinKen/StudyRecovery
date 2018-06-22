@@ -911,4 +911,35 @@ public class MemberController {
 	/*로그인 및 마이페이지(김회진) 끝**********************************************/
 	
 	
+	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST)
+	public ModelAndView reviewEnroll(@RequestParam("email") String email
+									, Model model
+									, @ModelAttribute("memberLoggedIn") Member m
+									) {
+		ModelAndView mav = new ModelAndView();
+		
+		
+		
+		
+		return mav;
+	}
+	
+	
+	
+	
+	
+	
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
