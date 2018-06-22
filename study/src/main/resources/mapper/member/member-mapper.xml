@@ -6,23 +6,26 @@
 										#{mid},
 										#{mname},
 										#{pwd},
-										#{phone},
-										#{addr1},
-										#{addr2},
-										#{addrDetail},
-										#{post},
+										${phone},
+										'.',
+										'.',
+										'.',
+										'.',
 										#{mprofile},
 										#{cover},
 										#{email},
 										#{birth},
 										#{gender},
 										#{favor, typeHandler=strArrTypeHandler},
-										default,
-										default,
-										default,
+										#{exp},
+										#{point},
+										#{nPoint},
 										default,
 										null
 										)
+		<selectKey keyProperty="mno" resultType="_int" order="AFTER">
+			SELECT SEQ_MEMBER.CURRVAL FROM DUAL	
+		</selectKey>
 	</insert>
 	<select id="selectKind" resultMap="kindMap">
 		select * from kind
@@ -784,4 +787,43 @@
 	<select id="informationagree" resultType="map" >
 		select * from informationagree
 	</select>
+	<select id="memberCheckEmail" resultType="_int">
+		select
+		sum(cnt) cnt
+		from
+		(select count(*) cnt from  member where email = #{emil}
+		union all
+		SELECT COUNT(*) cnt FROM MEMBER  WHERE EMAIL = #{emil} AND QDATE IS NULL)
+	</select>
+	<select id="memberGetPoint" parameterType="member" resultMap="memberMap">
+		select * from member where email = #{email}
+	</select>
+	<insert id="instructorEnrollEnd">
+		INSERT INTO INSTRUCTOR VALUES( SEQ_INSTRUCTOR.NEXTVAL,
+										#{mno},
+										#{portpolio},
+										#{selfintroduction},
+										#{kno},
+										#{sno},
+										'X',
+										sysdate
+										)
+	</insert>
+	<select id="instructorCheckEmail" resultType="_int">
+		SELECT COUNT(*) CNT FROM MEMBER WHERE MNO = #{mno} AND EMAIL = #{tomail}
+	</select>
+	<select id="instructorApproval" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
+	</select>
+	<select id="instructorCheckX" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'X'
+	</select>
+	<update id="updateInstructorEnrollEnd">
+		update instructor set portpolio = #{portpolio},
+							selfintroduction=#{selfintroduction},
+							kno = #{kno},
+							sno = #{sno},
+							Applicationdate = sysdate
+							where mno = #{mno}
+	</update>
 </mapper>

@@ -9,6 +9,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
 
 @Repository
@@ -156,7 +157,42 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.selectOne("member.selectLeaderListCnt",map);
 	}
 
+	@Override
+	public int memberCheckEmail(String emil) {
+		System.out.println(emil);
+		return sqlSession.selectOne("member.memberCheckEmail",emil);
+	}
 
+	@Override
+	public Member memberGetPoint(String email) {
+		
+		return sqlSession.selectOne("member.memberGetPoint", email);
+	}
+
+	@Override
+	public int instructorEnrollEnd(Instructor instructor) {
 	
+		return sqlSession.insert("member.instructorEnrollEnd",instructor);
+	}
 
+	@Override
+	public int instructorCheckEmail(Map<String, String> checkInstructor) {
+		return sqlSession.selectOne("member.instructorCheckEmail", checkInstructor);
+	}
+
+	@Override
+	public int instructorApproval(Map<String, String> checkInstructor) {
+		return sqlSession.selectOne("member.instructorApproval", checkInstructor);
+	}
+
+	@Override
+	public int instructorCheckX(int mno) {
+		return sqlSession.selectOne("member.instructorCheckX",mno);
+	}
+
+	@Override
+	public int updateInstructorEnrollEnd(Instructor instructor) {
+		return sqlSession.update("member.updateInstructorEnrollEnd", instructor);
+	}
+	
 }
