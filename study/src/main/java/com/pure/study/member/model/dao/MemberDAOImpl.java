@@ -174,5 +174,25 @@ public class MemberDAOImpl implements MemberDAO {
 	
 		return sqlSession.insert("member.instructorEnrollEnd",instructor);
 	}
+
+	@Override
+	public int instructorCheckEmail(Map<String, String> checkInstructor) {
+		return sqlSession.selectOne("member.instructorCheckEmail", checkInstructor);
+	}
+
+	@Override
+	public int instructorApproval(Map<String, String> checkInstructor) {
+		return sqlSession.selectOne("member.instructorApproval", checkInstructor);
+	}
+
+	@Override
+	public int instructorCheckX(int mno) {
+		return sqlSession.selectOne("member.instructorCheckX",mno);
+	}
+
+	@Override
+	public int updateInstructorEnrollEnd(Instructor instructor) {
+		return sqlSession.update("member.updateInstructorEnrollEnd", instructor);
+	}
 	
 }

@@ -48,7 +48,7 @@ div#userId-container span.error {
 	$(function () {
 		
 			/* 파일 업로드 */
-		$("input:file").change( function() {
+		$("#upFile").change( function() {
 			var ext = $("input:file").val().split(".")
 					.pop().toLowerCase();
 			if (ext.length > 0) {
@@ -130,9 +130,6 @@ div#userId-container span.error {
 			}
 			return true;
 		}
-	</script>
-
-	<script>
 		/* 이메일 인증 번호 전송 */
 		function fn_certification() {
 			var email = $("#email").val();
@@ -155,10 +152,13 @@ div#userId-container span.error {
 			}
 			var data = new FormData();
 			var em = email + "@" + emailaddr;
+			var mno = $("#mno").val();
+			console.log(mno);
 			data.append("em", em);
+			data.append("mno", mno);
 			alert("인증번호 전송");
 			$.ajax({
-				url : "certification.do",
+				url : "instructorCertification.do",
 				data : data,
 				contentType : false,
 				processData : false,
@@ -202,7 +202,7 @@ div#userId-container span.error {
 			}
 			var data = new FormData();
 			var em = email + "@" + emailaddr;
-			console.log("em : " + em);
+
 			data.append("em", em);
 			data.append("inputCode", inputCode)
 			$.ajax({

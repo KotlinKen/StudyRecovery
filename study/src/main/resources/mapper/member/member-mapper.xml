@@ -805,7 +805,25 @@
 										#{selfintroduction},
 										#{kno},
 										#{sno},
+										'X',
 										sysdate
 										)
 	</insert>
+	<select id="instructorCheckEmail" resultType="_int">
+		SELECT COUNT(*) CNT FROM MEMBER WHERE MNO = #{mno} AND EMAIL = #{tomail}
+	</select>
+	<select id="instructorApproval" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
+	</select>
+	<select id="instructorCheckX" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'X'
+	</select>
+	<update id="updateInstructorEnrollEnd">
+		update instructor set portpolio = #{portpolio},
+							selfintroduction=#{selfintroduction},
+							kno = #{kno},
+							sno = #{sno},
+							Applicationdate = sysdate
+							where mno = #{mno}
+	</update>
 </mapper>

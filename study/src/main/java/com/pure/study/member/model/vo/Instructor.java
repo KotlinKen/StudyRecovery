@@ -10,12 +10,13 @@ public class Instructor {
 	private int kno;
 	private int sno;
 	private Date applicationdate;
+	private String approval;
 	public Instructor() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public Instructor(int ino, int mno, String portpolio, String selfintroduction, int kno, int sno,
-			Date applicationdate) {
+			Date applicationdate, String approval) {
 		super();
 		this.ino = ino;
 		this.mno = mno;
@@ -24,6 +25,7 @@ public class Instructor {
 		this.kno = kno;
 		this.sno = sno;
 		this.applicationdate = applicationdate;
+		this.approval = approval;
 	}
 	public int getIno() {
 		return ino;
@@ -67,11 +69,17 @@ public class Instructor {
 	public void setApplicationdate(Date applicationdate) {
 		this.applicationdate = applicationdate;
 	}
+	public String getApproval() {
+		return approval;
+	}
+	public void setApproval(String approval) {
+		this.approval = approval;
+	}
 	@Override
 	public String toString() {
 		return "Instructor [ino=" + ino + ", mno=" + mno + ", portpolio=" + portpolio + ", selfintroduction="
-				+ selfintroduction + ", kno=" + kno + ", sno=" + sno + ", applicationdate=" + applicationdate + "]";
+				+ selfintroduction + ", kno=" + kno + ", sno=" + sno + ", applicationdate=" + applicationdate
+				+ ", approval=" + approval + "]";
 	}
-	
 	
 }

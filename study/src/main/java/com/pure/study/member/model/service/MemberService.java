@@ -71,5 +71,11 @@ public interface MemberService {
 
 	int instructorEnrollEnd(Instructor instructor);
 
+	int instructorCheckEmail(Map<String, String> checkInstructor);
+
+	int instructorCheckX(int mno);
+
+	int updateInstructorEnrollEnd(Instructor instructor);
+
 
 }

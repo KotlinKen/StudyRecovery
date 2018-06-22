@@ -136,7 +136,10 @@ public class MemberController {
 
 			mailSender.send(message);
 		} catch (Exception e) {
+			map.put("check", false);
+			return map;
 		}
+		map.put("check", true);
 		return map;
 	}
 
@@ -1110,15 +1113,19 @@ public class MemberController {
 		
 		return "member/instructorApply";
 	}
+	/* 회원이 강사 신청  */
 	@RequestMapping("/member/instructorApplyEnd.do")
 	public ModelAndView instructorApplyEnd(@RequestParam(value="psFile",required=false) MultipartFile[] psFiles
-			,@RequestParam(value="mno",required=false) int mno,@RequestParam(value="mid",required=false) int mid
+			,@RequestParam(value="mno",required=false) int mno,@RequestParam(value="mid",required=false) String mid
 			,@RequestParam(value="kno",required=false) int kno,@RequestParam(value="sno",required=false) int sno
-			,@RequestParam(value="cover",required=false) int cover,HttpServletRequest request) {
+			,@RequestParam(value="cover",required=false) String cover,@RequestParam(value="email",required=false) String[] email
+			,HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		/****** MultipartFile을 이용한 파일 업로드 처리로직 시작
 		파일이름변경 파일이름+ 아이디 + 날짜  */
 		List<String> list = new ArrayList<>();
+		String loc = "/";
+		String msg = "";
 		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/instructor");
 		String renamedFileName =""; 
 		for(MultipartFile f: psFiles) {
@@ -1140,6 +1147,9 @@ public class MemberController {
 				list.add(renamedFileName);
 			}
 		}
+		System.out.println(email);
+		String em = email[0]+"@"+email[1];
+		System.out.println(em);
 		System.out.println("list : "+list);
 		Instructor instructor = new Instructor();
 		instructor.setPortpolio(list.get(0));
@@ -1149,7 +1159,54 @@ public class MemberController {
 		instructor.setMno(mno);
 		System.out.println(instructor);
 		
+		int result = -1;
+		try {
+			result = memberService.instructorCheckX(mno);
+			if(result==0) {
+				result = memberService.instructorEnrollEnd(instructor);
+			}else {
+				result = memberService.updateInstructorEnrollEnd(instructor);
+			}
+			memberService.deleteCertification(em);
+		} catch (Exception e) {
+			msg = "강사신청이 실패했습니다. 관리자에게 문의 하세요";
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
 
+		// 2.처리결과에 따라 view단 분기처리
+		if (result > 0)
+			msg = "강사신청이 됬습니다. 결과를 기다려 주세요";
+		else
+			msg = "회원가입실패!";
+
+		mav.addObject("loc", loc);
+		mav.addObject("msg", msg);
+		mav.setViewName("common/msg");
 		return mav;
+	}
+	
+	/* mailSending 코드 전송 */
+	@RequestMapping(value = "/member/instructorCertification.do")
+	@ResponseBody
+	public Map<String, Object> instructorCertification( @RequestParam(value = "em") String em , @RequestParam(value="mno")String mno , HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<>();
+		
+		Map<String,String> checkInstructor = new HashMap<>();
+		checkInstructor.put("tomail", em);
+		checkInstructor.put("mno", mno);
+		int checkemail = memberService.instructorCheckEmail(checkInstructor);
+
+		int result = 0;
+		if (checkemail == 1) {
+			map = mailCertification(request, em);
+		} else {
+			map.put("check", false);
+			return map;
+		}
+		
+		return map;
 	}
 }

@@ -107,7 +107,7 @@ div#userId-container span.error {
 					alert("아이디가 너무 김니다.")
 			});
 			/* 파일 업로드 */
-			$("input:file").change(
+			$("#upFile").change(
 			function() {
 				var ext = $("input:file").val().split(".")
 						.pop().toLowerCase();

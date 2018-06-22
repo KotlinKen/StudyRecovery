@@ -172,5 +172,27 @@ public class MemberServiceImpl implements MemberService {
 	public int instructorEnrollEnd(Instructor instructor) {
 		return memberDAO.instructorEnrollEnd(instructor);
 	}
+
+	@Override
+	public int instructorCheckEmail(Map<String, String> checkInstructor) {
+		System.out.println("checkInstructor : "+checkInstructor);
+		int result =memberDAO.instructorCheckEmail(checkInstructor);
+		System.out.println(result);
+		if(result==1) {
+			result += memberDAO.instructorApproval(checkInstructor);			
+		}
+		System.out.println("result : "+result);
+		return result;
+	}
+
+	@Override
+	public int instructorCheckX(int mno) {
+		return memberDAO.instructorCheckX(mno);
+	}
+
+	@Override
+	public int updateInstructorEnrollEnd(Instructor instructor) {
+		return memberDAO.updateInstructorEnrollEnd(instructor);
+	}
 	
 }
