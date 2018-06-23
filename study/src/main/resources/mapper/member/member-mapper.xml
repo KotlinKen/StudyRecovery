@@ -785,10 +785,31 @@
 	<select id="informationagree" resultType="map" >
 		select * from informationagree
 	</select>
-	<select id="">
-		select *
-		from member m 
-		where 
+
+	<resultMap type="map" id="reviewEnrollViewMap"></resultMap>
+	<select id="reviewEnrollView" parameterType="string" resultMap="reviewEnrollViewMap">
+		select s.title as "title", --스터디 이름
+				(select mm.mname from member mm where mm.mno= (select mno from study ss where ss.sno=c.sno)) as "smname",--팀장이름
+				(select mm.mid from member mm where mm.mno= (select mno from study ss where ss.sno=c.sno)) as "smid", --팀장 아이디
+				m.mname as "mname", --평가할 팀원 이름
+				m.mid as "mid", -- 팀원 아이디
+				m.mno as "mno" -- 팀원 번호
+				
+		from crew c join member m on c.mno=m.mno
+            		join study s on c.sno=s.sno
+        where c.sno = #{sno}
+	</select>
+	
+	<select id="leaderReviewEnrollView" parameterType="string" resultMap="reviewEnrollViewMap">
+		select s.title as "title", --스터디 이름
+				(select mm.mname from member mm where mm.mno= (select mno from study ss where ss.sno=s.sno)) as "smname",--팀장이름
+				(select mm.mid from member mm where mm.mno= (select mno from study ss where ss.sno=s.sno)) as "smid", --팀장 아이디
+				m.mname as "mname", --평가할 팀원 이름
+				m.mid as "mid", -- 팀원 아이디
+				m.mno as "mno" -- 팀원 번호
+				
+		from study s join member m on s.mno=m.mno
+        where s.sno = #{sno}
 	</select>
 	
 </mapper>

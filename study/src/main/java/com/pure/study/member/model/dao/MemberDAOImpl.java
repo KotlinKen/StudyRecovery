@@ -156,6 +156,16 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.selectOne("member.selectLeaderListCnt",map);
 	}
 
+	@Override
+	public List<Map<String, String>> reviewEnrollView(String studyNo) {
+		return sqlSession.selectList("member.reviewEnrollView", studyNo);
+	}
+
+	@Override
+	public List<Map<String, String>> leaderReviewEnrollView(String studyNo) {
+		return sqlSession.selectList("member.leaderReviewEnrollView", studyNo);
+	}
+
 
 	
 

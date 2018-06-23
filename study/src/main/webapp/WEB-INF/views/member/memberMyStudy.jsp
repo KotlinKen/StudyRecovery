@@ -14,6 +14,8 @@
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
 	<br />
+	<input type="hidden" id="hiddenUserId" value="${memberLoggedIn.mid }" />
+	
 	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y" ${leader eq 'y' ? "style='color:red'" :'' }>팀장</a>|
 	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n" ${leader eq 'n' ? "style='color:red'" :'' }>팀원</a>
 	<br />
@@ -114,7 +116,7 @@
 						<button type=button>자세히</button>
 					</td>
 					<td>
-						<button type=button id="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
+						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
 					</td>
 				</tr>
 			</c:forEach>
@@ -135,6 +137,7 @@
 						<button type=button>자세히</button>
 					</td>
 					<td>
+						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
 						<button type=button>신청 현황</button>
 					</td>
 				</tr>
@@ -146,6 +149,7 @@
 	<!-- 페이지바 -->
 	<%
 		int totalContents = Integer.parseInt(String.valueOf(request.getAttribute("count")));
+		int totalLeaderContents = Integer.parseInt(String.valueOf(request.getAttribute("leaderCount")));
 		int numPerPage = Integer.parseInt(String.valueOf(request.getAttribute("numPerPage")));
 		String searchKwd = String.valueOf(request.getAttribute("searchKwd"));
 		String kwd = String.valueOf(request.getAttribute("kwd"));
@@ -160,11 +164,16 @@
 			
 		}
 	%>
-	<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader, myPage) %>
+	<c:if test="${leader=='y' }">
+		<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalLeaderContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader, myPage) %>
+	</c:if>
+	<c:if test="${leader=='n' }">
+		<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader, myPage) %>
+	</c:if>
 	
 	<!-- 스터디 리뷰 시작 -->
-	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
+	<div class="modal fade" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+		<div class="modal-dialog modal-lg" role="document" >
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="exampleModalLabel">스터디 리뷰</h5>
@@ -173,33 +182,11 @@
 					</button>
 					</div>
 					<form action="${rootPath }/member/reviewEnroll.do" method="post">
-						<div class="modal-body">
+						<div class="modal-body" id="form-reviewEnroll">
 							<!-- 
 								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
 							 -->
-							<table>
-								<tr>
-									<th>스터디명</th>
-									<th>팀장이름</th>
-									<th>작성자</th>
-									<th>평가할 팀원</th>
-									<th>평가</th>
-									<th>내용</th>
-									<th>보기</th>
-								</tr>
-								<c:forEach var="" items="" varStatus="">
-								<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								</c:forEach>
-							</table>
-						
+							 
 						</div>
 						<div class="modal-footer">
 							<button type="submit" class="btn btn-outline-success">등록</button>
@@ -210,7 +197,7 @@
 		</div>
 	</div>
 	<!-- 스터디 리뷰 끝 -->
-
+	
 	<script>
 		$(function(){
 			$("select#searchKwd").on("change",function(){
@@ -315,6 +302,86 @@
 				html+="<input type='hidden' name='myPage' value='${myPage}' />";
 				$("#formSearch").html(html);
 				$("#formSearch").submit();
+			});
+			
+			$("button[name=evaluation]").on("click",function(){
+				var studyNo = this.id;
+				var leader = '<%=leader%>';
+				console.log(studyNo);
+				if($(this).val()=="1"){
+					$.ajax({
+						url: "reviewEnrollView.do",
+						data: {studyNo: studyNo, leader: leader},
+						dataType: "json",
+						success: function(data){
+							console.log(data);
+							var html = "<table><tr><th>스터디명</th><th>팀장이름</th><th>작성자</th><th>평가할 팀원</th><th>평가</th><th>내용</th><th>보기</th></tr>";
+							var userId = $("input#hiddenUserId").val();
+							for(var i in data){
+								var index = data[i];
+								console.log(index.mid);
+								console.log(data);
+								if(userId!=index.mid){
+									html += "<tr>";
+									html += "<input type='hidden' name='tmno' value='"+index.mno+"'>";
+									html += "<td>"+index.title;
+									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>";
+									html += "<td>"+index.smid+"("+index.smname+")"+"</td>";
+									html += "<td>작성자";
+									html += "<input type='hidden' name='mno' value='"+userId+"'>"+"</td>";
+									html += "<td>"+index.mid+"("+index.mname+")"+"</td>";
+									html += "<td>";
+									html += "<button class='like' id='like,"+tmno+"' value='1000'>좋아요</button>";
+									html += "<button class='dislike' id='dislike,"+tmno+"' value='-1000'>싫어요</button>";
+									html += "<input type='hidden' name='point' id='point"+tmno+"' value='0'>";
+									html += "</td>";
+									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
+									html += "<td>보기</td>";
+									html += "</tr>";
+								} 
+								if(userId!=index.mid && <%="n"==leader%>){
+									html += "<tr>";
+									html += "<input type='hidden' name='tmno' value='"+index.mno+"'>";
+									html += "<td>"+index.title;
+									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>";
+									html += "<td>"+index.smid+"("+index.smname+")"+"</td>";
+									html += "<td>작성자";
+									html += "<input type='hidden' name='mno' value='"+userId+"'>"+"</td>";
+									html += "<td>"+index.mid+"("+index.mname+")"+"</td>";
+									html += "<td>";
+									html += "<button class='like' id='like,"+tmno+"' value='1000'>좋아요</button>";
+									html += "<button class='dislike' id='dislike,"+tmno+"' value='-1000'>싫어요</button>";
+									html += "<input type='hidden' name='point' id='point"+tmno+"' value='0'>";
+									html += "</td>";
+									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
+									html += "<td>보기</td>";
+									html += "</tr>";
+								}
+								
+							}
+							html +="</table>";
+							if(data.length<2){
+								$("div#form-reviewEnroll").html("평가할 팀원이 없습니다.");																
+							} else{
+								$("div#form-reviewEnroll").html(html);								
+							}
+							 
+						},
+						error: function(){
+							console.log("ajax실패");
+						}
+						
+					});
+					
+				}
+			});
+			
+			$("button.like").on("click",function(){
+				console.log($(this).val());
+			});
+			$("button.dislike").on("click",function(){
+				console.log($(this).val());
+				
 			});
 		});
 	

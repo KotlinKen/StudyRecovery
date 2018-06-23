@@ -156,6 +156,16 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.selectLeaderListCnt(map);
 	}
 
+	@Override
+	public List<Map<String, String>> reviewEnrollView(String studyNo) {
+		return memberDAO.reviewEnrollView(studyNo);
+	}
+
+	@Override
+	public List<Map<String, String>> leaderReviewEnrollView(String studyNo) {
+		return memberDAO.leaderReviewEnrollView(studyNo);
+	}
+
 	
 
 	

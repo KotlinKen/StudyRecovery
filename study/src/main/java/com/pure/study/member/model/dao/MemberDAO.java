@@ -64,4 +64,8 @@ public interface MemberDAO {
 
 	int selectLeaderListCnt(Map<String, String> map);
 
+	List<Map<String, String>> reviewEnrollView(String studyNo);
+
+	List<Map<String, String>> leaderReviewEnrollView(String studyNo);
+
 }

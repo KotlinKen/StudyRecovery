@@ -20,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -886,9 +887,6 @@ public class MemberController {
 		}
 		
 		
-		System.out.println("값이 잘 있나용?"+list);
-		System.out.println("값이 잘 있나용?"+count);
-		
 		mav.addObject("type", type);
 		mav.addObject("myPage", myPage);		
 		mav.addObject("applyDate", applyDate);
@@ -902,7 +900,6 @@ public class MemberController {
 		mav.addObject("numPerPage", numPerPage);
 		mav.addObject("memberLoggedIn", m);
 		
-		
 		return mav;
 	}
 	
@@ -911,20 +908,44 @@ public class MemberController {
 	/*로그인 및 마이페이지(김회진) 끝**********************************************/
 	
 	
+	@RequestMapping(value="/member/reviewEnrollView.do")
+	@ResponseBody
+	public List<Map<String,String>> reviewEnrollView(@RequestParam("studyNo") String studyNo
+													, @RequestParam(value="leader", defaultValue="y") String leader
+													)throws JsonProcessingException {
+		List<Map<String,String>> list = null;
+		List<Map<String,String>> lList = null;
+		list = memberService.reviewEnrollView(studyNo);		
+		
+		if("n".equals(leader)) {
+			lList = memberService.leaderReviewEnrollView(studyNo);			
+			for(Map<String,String> a : lList) {
+				list.add(a);
+			}
+		}
+		System.out.println(list);
+	
+		return list;
+	}
+	
 	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST)
-	public ModelAndView reviewEnroll(@RequestParam("email") String email
-									, Model model
-									, @ModelAttribute("memberLoggedIn") Member m
-									) {
+	public ModelAndView reviewEnroll(@RequestAttribute("tmno") String[] tmno
+			, @RequestAttribute("sno") String[] sno
+			, @RequestAttribute("mno") String[] mno
+			, @RequestAttribute("point") String[] point
+			, @RequestAttribute("content") String[] content
+			, @RequestParam(value="cPage", defaultValue="1") String cPage
+			, @ModelAttribute("memberLoggedIn") Member m
+			) {
 		ModelAndView mav = new ModelAndView();
 		
-		
-		
+		//평가 전체 등록하기
+		//int result = memberService.reviewEnrollView();
+		System.out.println("tmno="+tmno);
+		mav.setViewName("redirect:/member/searchMyPageKwd.do?cPage="+cPage);
 		
 		return mav;
 	}
-	
-	
 	
 	
 	
