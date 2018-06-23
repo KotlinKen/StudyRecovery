@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pure.study.member.model.dao.MemberDAO;
+import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
 
 @Service
@@ -156,12 +157,42 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.selectLeaderListCnt(map);
 	}
 
-	
 
-	
+	@Override
+	public int memberCheckEmail(String em) {
+		return memberDAO.memberCheckEmail(em);
+	}
 
-	
+	@Override
+	public Member memberGetPoint(String email) {
+		return memberDAO.memberGetPoint(email);
+	}
 
-	
+	@Override
+	public int instructorEnrollEnd(Instructor instructor) {
+		return memberDAO.instructorEnrollEnd(instructor);
+	}
+
+	@Override
+	public int instructorCheckEmail(Map<String, String> checkInstructor) {
+		System.out.println("checkInstructor : "+checkInstructor);
+		int result =memberDAO.instructorCheckEmail(checkInstructor);
+		System.out.println(result);
+		if(result==1) {
+			result += memberDAO.instructorApproval(checkInstructor);			
+		}
+		System.out.println("result : "+result);
+		return result;
+	}
+
+	@Override
+	public int instructorCheckX(int mno) {
+		return memberDAO.instructorCheckX(mno);
+	}
+
+	@Override
+	public int updateInstructorEnrollEnd(Instructor instructor) {
+		return memberDAO.updateInstructorEnrollEnd(instructor);
+	}
 	
 }

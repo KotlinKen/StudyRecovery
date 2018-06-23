@@ -29,20 +29,40 @@ public class RestController {
 	private LectureService lectureService;
 	Logger logger = LoggerFactory.getLogger(getClass());
 
-	@RequestMapping(value="/rest/study/{count}", method=RequestMethod.GET)
+	@RequestMapping(value="/rest/study/all/{count}", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView selectStudyCount(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
 
 		Adversting adversting = new Adversting();
 		Map<String, String> map = new HashMap<>();
 		
-		adversting.setContent("1234");;
+		adversting.setContent("1234");
 		
 		map.put("adversting", adversting.getContent());
 		
 		ModelAndView mav = new ModelAndView("jsonView");
-		List<Map<String,String>> list = studyService.selectStudyList(1, count);
+		List<Map<String, Object>> list = studyService.selectStudyList(1, count);
 		mav.addObject("list", list);
+		return mav;
+	}
+	
+	@RequestMapping(value="/rest/study/one/{sno}", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView selectStudyOne(@PathVariable int sno,  @RequestParam(value="filter", required=false) String filter) {
+		
+		ModelAndView mav = new ModelAndView("jsonView");
+		Map<String, Object> study= studyService.selectStudyOne(sno);
+		mav.addObject("study", study);
+		return mav;
+	}
+	
+	
+	@RequestMapping("/study/studyDetailView")
+	public ModelAndView selectStudyOneView(@RequestParam(value="sno") int sno){
+		ModelAndView mav = new ModelAndView();
+		Map<String,Object> study = studyService.selectStudyOne(sno);
+		mav.addObject("study", study);
+		mav.setViewName("study/studyDetailView");
 		return mav;
 	}
 	
@@ -57,6 +77,8 @@ public class RestController {
 		mav.addObject("list", list);
 		return mav;
 	}
+	
+	
 	
 	
 	

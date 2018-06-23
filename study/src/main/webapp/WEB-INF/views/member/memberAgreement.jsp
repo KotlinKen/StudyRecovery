@@ -19,7 +19,7 @@ p{width: 300px; height: 300px; overflow: scroll;}
 </style>
 </head>
 <body>
-<form action="${pageContext.request.contextPath}/member/memberEnroll.do" method="post" onsubmit="return validate();">
+<form name=frmSubmit>
 <input type="hidden" name="check" id="check" value="21" />
 <spen>서비스 이용약관 동의 (필수)<input type="checkbox" id="agree1" value="0" name="agree1" /></spen>
 <p>
@@ -35,11 +35,11 @@ p{width: 300px; height: 300px; overflow: scroll;}
 	</c:forEach>
 </p>
 
-
- <button type="button" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
- <button type="submit" onclick="fn_agreement();">다음</button>
- </form>
- <script>
+<button type="button" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
+<button type="submit" onclick="getPost(01);">다음</button>
+<button type="button" onclick="getPost(02);">강사 신청하기</button>
+</form>
+<script>
 	$("#agree1").click(function() {
 		var chk1=document.getElementById("agree1");
 		if(!chk1.checked){
@@ -70,12 +70,34 @@ p{width: 300px; height: 300px; overflow: scroll;}
             alert('동의해야 진행할 수  있습니다.');
             return false;
         }
-    
-        var che1 = $("#agree1").val(); 
-        var che2 = $("#agree2").val(); 
-      
-        return true;
-	}
- </script>
+  		return true;	
+  	}
+ 	
+ 	function getPost(mode){
+ 		var chk1=document.getElementById("agree1");
+        var chk2=document.getElementById("agree2");
+       
+        if(!chk1.checked){
+            alert('동의해야 진행할 수  있습니다.');
+            return false;
+        }
+        if(!chk2.checked) {
+            alert('동의해야 진행할 수  있습니다.');
+            return false;
+        }
+	 	var theForm = document.frmSubmit;
+	 	if(mode == "01"){
+	 	theForm.method = "post"; 
+	 	theForm.target = "_self";
+	 	theForm.action = "${pageContext.request.contextPath}/member/memberEnroll.do";
+	 	} else if(mode == "02"){
+	 	 	theForm.method = "post";
+	 	 	theForm.target = "_self";
+	 	 	theForm.action = "${pageContext.request.contextPath}/member/instructorEnroll.do"
+	 	}
+	 
+	 	theForm.submit();
+ 	}
+</script>
 </body>
 </html>

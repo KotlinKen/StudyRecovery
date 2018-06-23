@@ -25,7 +25,7 @@
 	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="content">광고 내용을 간략히 적어주세요.</label>
-			<textarea class="form-control" name="content" id="content" rows="3"></textarea>
+			<textarea class="form-control" name="content" id="summernote" rows="3" class=""></textarea>
 		</div>
 	</div>
 
@@ -165,7 +165,12 @@ $(".upfile_name").on("change", function(){
 	});
 	
 	
-	
+	$(document).ready(function() {
+	    $('#summernote').summernote({
+	      focus: true,
+	      height: 500// 페이지가 열릴때 포커스를 지정함
+	    });
+	  });
 
 </script>
 

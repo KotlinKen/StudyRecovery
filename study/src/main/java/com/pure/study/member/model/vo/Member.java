@@ -21,6 +21,7 @@ public class Member {
 	private String[] favor;
 	private int exp;
 	private int point;
+	private int nPoint;
 	private Date regdate;
 	private Date qdate;
 	private String cover;
@@ -31,7 +32,7 @@ public class Member {
 	}
 	public Member(int mno, String mid, String mname, String pwd, String phone, String post, String addr1, String addr2,
 			String addrDetail, String mprofile, String email, Date birth, String gender, String[] favor, int exp,
-			int point, Date regdate, Date qdate, String cover, String etc2) {
+			int point, int nPoint, Date regdate, Date qdate, String cover, String etc2) {
 		super();
 		this.mno = mno;
 		this.mid = mid;
@@ -49,6 +50,7 @@ public class Member {
 		this.favor = favor;
 		this.exp = exp;
 		this.point = point;
+		this.nPoint = nPoint;
 		this.regdate = regdate;
 		this.qdate = qdate;
 		this.cover = cover;
@@ -150,6 +152,12 @@ public class Member {
 	public void setPoint(int point) {
 		this.point = point;
 	}
+	public int getNPoint() {
+		return nPoint;
+	}
+	public void setNPoint(int nPoint) {
+		this.nPoint = nPoint;
+	}
 	public Date getRegdate() {
 		return regdate;
 	}
@@ -179,9 +187,8 @@ public class Member {
 		return "Member [mno=" + mno + ", mid=" + mid + ", mname=" + mname + ", pwd=" + pwd + ", phone=" + phone
 				+ ", post=" + post + ", addr1=" + addr1 + ", addr2=" + addr2 + ", addrDetail=" + addrDetail
 				+ ", mprofile=" + mprofile + ", email=" + email + ", birth=" + birth + ", gender=" + gender + ", favor="
-				+ Arrays.toString(favor) + ", exp=" + exp + ", point=" + point + ", regdate=" + regdate + ", qdate="
-				+ qdate + ", cover=" + cover + ", etc2=" + etc2 + "]";
+				+ Arrays.toString(favor) + ", exp=" + exp + ", point=" + point + ", nPoint=" + nPoint + ", regdate="
+				+ regdate + ", qdate=" + qdate + ", cover=" + cover + ", etc2=" + etc2 + "]";
 	}
-
-
+	
 }
