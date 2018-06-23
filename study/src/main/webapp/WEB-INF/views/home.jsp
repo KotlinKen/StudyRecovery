@@ -43,7 +43,12 @@
 
 <div id="container" class="container rm_study_list studies">
 	<div id="content">
-	<h4>스터디</h4>
+		<div class="clearfix">
+			<div class="float-left">
+				<h4>스터디</h4>
+			</div>
+			<button type="button" class="btn btn-secondary float-right">전체보기</button>
+		</div>
 		<ul class="list">
 		</ul>
 	</div>
@@ -72,26 +77,27 @@ $(function(){
 	$('.carousel').carousel();
 	
 	$.ajax({
-		url:"${rootPath}/rest/study/4",
+		url:"${rootPath}/rest/study/all/3",
 		dataType:"json",
 		success:function(data){
 			$("input#total").val(data.total);
 			$("input#numPerPage").val(data.numPerPage);
 			$("input#cPageNo").val(data.cPage);
 			var rmHtml = "";
+			var study = null;
         	for(index in data.list){
-        		
+        		study = data.list[index];
         		var upfile = (data.list[index].UPFILE);
         		if(upfile != undefined){
         			upfiles = upfile.split(",")[0];
-	        		rmHtml += "<li class='col-md-3'>";
+	        		rmHtml += "<li class='col-md-4'>";
 	        		rmHtml += "<div class='pixel'>";
-	       			rmHtml += "<a href=''>";
+	       			rmHtml += "<a href='${rootPath}/study/studyDetailView?sno="+study.SNO+"'>";
 	   				rmHtml += "<div class='photoSection'>";
 	   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfiles+")'></div>";
 	   				rmHtml += "</div>";
 					rmHtml += "<div class='inforSection'>";
-	  				rmHtml += 	"<h4>"+data.list[index].TITLE+"</h4>";
+	  				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0,10)+"</h4>";
 	   				rmHtml += "</div>";
 					rmHtml += "<div class='metaSection'>";
 	  				rmHtml += 	"<p></p>";
@@ -124,7 +130,7 @@ $(function(){
 	        		rmHtml += "<div class='pixel'>";
 	       			rmHtml += "<a href=''>";
 	   				rmHtml += "<div class='photoSection'>";
-	   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfiles+")'></div>";
+	   				rmHtml += 	"";
 	   				rmHtml += "</div>";
 					rmHtml += "<div class='inforSection'>";
 	  				rmHtml += 	"<h4>"+data.list[index].KNAME+"</h4>";

@@ -9,7 +9,9 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.member.model.vo.Review;
 
 @Repository
 public class MemberDAOImpl implements MemberDAO {
@@ -157,16 +159,55 @@ public class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
-	public List<Map<String, String>> reviewEnrollView(String studyNo) {
+	public List<Map<String, Object>> reviewEnrollView(String studyNo) {
 		return sqlSession.selectList("member.reviewEnrollView", studyNo);
 	}
 
 	@Override
-	public List<Map<String, String>> leaderReviewEnrollView(String studyNo) {
+	public List<Map<String, Object>> leaderReviewEnrollView(String studyNo) {
 		return sqlSession.selectList("member.leaderReviewEnrollView", studyNo);
 	}
 
+	public int memberCheckEmail(String emil) {
+		System.out.println(emil);
+		return sqlSession.selectOne("member.memberCheckEmail",emil);
+	}
 
+	@Override
+	public Member memberGetPoint(String email) {
+		
+		return sqlSession.selectOne("member.memberGetPoint", email);
+	}
+
+	@Override
+	public int instructorEnrollEnd(Instructor instructor) {
 	
+		return sqlSession.insert("member.instructorEnrollEnd",instructor);
+	}
 
+	@Override
+	public int instructorCheckEmail(Map<String, String> checkInstructor) {
+		return sqlSession.selectOne("member.instructorCheckEmail", checkInstructor);
+	}
+
+	@Override
+	public int instructorApproval(Map<String, String> checkInstructor) {
+		return sqlSession.selectOne("member.instructorApproval", checkInstructor);
+	}
+
+	@Override
+	public int instructorCheckX(int mno) {
+		return sqlSession.selectOne("member.instructorCheckX",mno);
+	}
+
+	@Override
+	public int updateInstructorEnrollEnd(Instructor instructor) {
+		return sqlSession.update("member.updateInstructorEnrollEnd", instructor);
+	}
+
+	@Override
+	public int reviewEnroll(Map<String,Object> map) {
+		return sqlSession.insert("member.reviewEnroll", map);
+	}
+	
 }

@@ -30,38 +30,70 @@ function studyApply(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//이미 신청을 했으면 return;하게 만들어야 함. 
 	//임시로 confirm. 계획은 부트스트랩 모달창에 주요 정보 나열 후 확인버튼누르면 아작스 실행.
-	if(confirm("신청하시겠습니까")) {
-		$.ajax({
-			url:"applyStudy.do",
-			data:{sno:sno,mno:${memberLoggedIn.getMno()}},
-			success:function(data){
-				if(data!=0){
-					alert("신청되었습니다.");
-				}else{
-					alert("이미 신청한 스터디입니다.");
+	var mno=${memberLoggedIn!=null? memberLoggedIn.getMno():"0"};
+	if(${memberLoggedIn!=null}){
+	
+		if(confirm("신청하시겠습니까")) {
+			$.ajax({
+				url:"applyStudy.do",
+				data:{sno:sno,mno:mno},
+				success:function(data){
+					if(data!=0){
+						alert("신청되었습니다.");
+					}else{
+						alert("이미 신청한 스터디입니다.");
+					}
+					//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
+				},error:function(){
+					
 				}
-				//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
-			},error:function(){
-				
-			}
-		});
+			});
+		}
+	}else{
+		//alert("로그인 후 이용하세요");
+		$("button#btn-login").trigger('click');
 	}
+	
 }
 
 //찜하기 버튼 클릭 이벤트
 function studyWish(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//찜하기를 이미 선택했다면 다시 누르면 찜하기에서 삭제됨.
-	$.ajax({
-		url:"wishStudy.do",
-		data:{sno:sno,mno:${memberLoggedIn.getMno()}},
-		success:function(data){
-			console.log("찜했다");
-			//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
-		},error:function(){
-			
+	var mno=${memberLoggedIn!=null? memberLoggedIn.getMno():"0"};
+	if(${memberLoggedIn!=null}){//로그인을 한 상황
+		
+		if(${isWish==0}){//사용자는 전에 찜하지 않았음.
+			$.ajax({
+				url:"wishStudy.do",
+				data:{sno:sno,mno:mno},
+				success:function(data){
+					console.log("찜했다");
+					$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/nowish.png");
+					if(confirm("찜한 목록으로 가시겠습니까?")){
+						location.href="${pageContext.request.contextPath}/member/memberWish.do?mno="+mno;
+					}
+				},error:function(){
+					
+				}
+			});
+		}else{
+			if(confirm("이미 찜했습니다. 취소하겠습니까?")){
+				$.ajax({
+					url:"deletewishStudy.do",
+					data:{sno:sno,mno:mno},
+					success:function(data){
+						$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/wish.png");
+					},error:function(){
+						
+					}
+				});
+			}
 		}
-	});
+	}else{//로그인창 띄움.
+		$("button#btn-login").trigger('click');
+	}
+	
 }
 $(function(){
 	

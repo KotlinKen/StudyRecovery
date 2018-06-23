@@ -2,8 +2,11 @@ package com.pure.study.member.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +23,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +34,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pure.study.member.model.service.MemberService;
+import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.member.model.vo.Review;
+import com.pure.study.study.model.service.StudyService;
 
 @SessionAttributes({ "memberLoggedIn" })
 @Controller
@@ -43,6 +48,9 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 
+	@Autowired
+	private StudyService studyService;
+	
 	@Autowired
 	private BCryptPasswordEncoder bcryptPasswordEncoder;
 
@@ -131,7 +139,10 @@ public class MemberController {
 
 			mailSender.send(message);
 		} catch (Exception e) {
+			map.put("check", false);
+			return map;
 		}
+		map.put("check", true);
 		return map;
 	}
 
@@ -817,7 +828,7 @@ public class MemberController {
 	/*개인 정보 수정 끝**********************************/
 	
 	/**************************내 스터디 & 신청 & 찜 목록 시작*/
-	@RequestMapping("/member/searchMyPageKwd.do")
+	@RequestMapping(value="/member/searchMyPageKwd.do", produces = "application/text; charset=utf8")
 	@ResponseBody
 	public ModelAndView searchPageWish (@RequestParam(value="cPage", required=false, defaultValue="1") int cPage
 									, @RequestParam(value="searchKwd", defaultValue="title") String searchKwd
@@ -835,7 +846,7 @@ public class MemberController {
 		Map<String,String> map = new HashMap<>();
 		map.put("mno", String.valueOf(m.getMno()));
 		map.put("applyDate", applyDate);
-		System.out.println("확인:"+kwd);
+		System.out.println("kwd:"+kwd);
 		if("term".equals(searchKwd) || "freq".equals(searchKwd)) { 
 			String[] termKwd = kwd.split(",");
 			map.put("kwd", termKwd[0]);
@@ -850,7 +861,6 @@ public class MemberController {
 		} else{
 			map.put("kwd", kwd);			
 		}
-		//mapper 수정이 필요함
 		map.put("searchKwd", searchKwd);
 		map.put("type", type);
 		map.put("myPage", myPage);
@@ -905,62 +915,378 @@ public class MemberController {
 	
 	/*내 스터디 & 신청 & 찜  목록 끝*******************************/
 	
-	/*로그인 및 마이페이지(김회진) 끝**********************************************/
-	
-	
-	@RequestMapping(value="/member/reviewEnrollView.do")
+
+	@RequestMapping(value="/member/reviewEnrollView.do", produces = "application/json; charset=utf8")
 	@ResponseBody
-	public List<Map<String,String>> reviewEnrollView(@RequestParam("studyNo") String studyNo
-													, @RequestParam(value="leader", defaultValue="y") String leader
-													)throws JsonProcessingException {
-		List<Map<String,String>> list = null;
-		List<Map<String,String>> lList = null;
+	public ModelAndView reviewEnrollView(@RequestParam("studyNo") String studyNo
+										, @RequestParam(value="leader", defaultValue="y") String leader
+										) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		List<Map<String,Object>> list = null;
+		List<Map<String,Object>> lList = null;
 		list = memberService.reviewEnrollView(studyNo);		
 		
 		if("n".equals(leader)) {
 			lList = memberService.leaderReviewEnrollView(studyNo);			
-			for(Map<String,String> a : lList) {
+			for(Map<String,Object> a : lList) {
 				list.add(a);
 			}
 		}
-		System.out.println(list);
-	
-		return list;
+		//System.out.println(list);
+		
+		mav.addObject("list", list);
+		
+		return mav;
 	}
 	
-	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST)
-	public ModelAndView reviewEnroll(@RequestAttribute("tmno") String[] tmno
-			, @RequestAttribute("sno") String[] sno
-			, @RequestAttribute("mno") String[] mno
-			, @RequestAttribute("point") String[] point
-			, @RequestAttribute("content") String[] content
-			, @RequestParam(value="cPage", defaultValue="1") String cPage
-			, @ModelAttribute("memberLoggedIn") Member m
+	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST, produces = "application/text; charset=utf8")
+	@ResponseBody
+	public ModelAndView reviewEnroll(@RequestParam("tmno") String[] tmno
+			, @RequestParam("sno") String[] sno
+			, @RequestParam("mno") String[] mno
+			, @RequestParam("point") String[] point
+			, @RequestParam("content") String[] content
+			, @RequestParam(value="searchKwd", defaultValue="title") String searchKwd
+			, @RequestParam(value="kwd", required=false, defaultValue="") String kwd
+			, @RequestParam(value="type", defaultValue="study") String type									
+			, @RequestParam(value="leader", defaultValue="y") String leader	
+			//, @RequestParam(value="cPage", defaultValue="1") String cPage
+			//, @ModelAttribute("memberLoggedIn") Member m
 			) {
 		ModelAndView mav = new ModelAndView();
-		
+		List<Review> list = new ArrayList<>(); 
 		//평가 전체 등록하기
 		//int result = memberService.reviewEnrollView();
-		System.out.println("tmno="+tmno);
-		mav.setViewName("redirect:/member/searchMyPageKwd.do?cPage="+cPage);
+		for(int i=0; i<tmno.length; i++) {
+			Review r = new Review();
+			System.out.println("tmno="+tmno[i]);
+			System.out.println("sno="+sno[i]);
+			System.out.println("mno="+mno[i]);
+			System.out.println("point="+point[i]);
+			System.out.println("content="+content[i]);			
+			System.out.println("~~~~~~~~");			
+			r.setTmno(tmno[i]);
+			r.setSno(sno[i]);
+			r.setMno(mno[i]);
+			r.setPoint(point[i]);
+			r.setContent(content[i]);
+			list.add(r);
+		}
+		Map <String,Object> map = new HashMap<>();
+		
+		map.put("list", list);
+		
+		try {
+			kwd =URLEncoder.encode(kwd, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		int result = memberService.reviewEnroll(map);
+		
+		mav.setViewName("redirect:/member/searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&leader="+leader);
+		//redirect시 한글이 깨져서 가기 때문에 인코딩을 반드시 해줘야한다.
 		
 		return mav;
 	}
 	
 	
 	
+	/*로그인 및 마이페이지(김회진) 끝**********************************************/
+/************************************* 추가? ***************************************/
+
+	/* 정보 입력페이지 이동 시작 */
+	@RequestMapping(value = "/member/instructorEnroll.do")
+	public ModelAndView instructorEnroll(@RequestParam(value="check", required=false, defaultValue="1")  int check,
+			@RequestParam(value="agree1", required=false, defaultValue="2")  int agree1,
+			@RequestParam(value="agree2", required=false, defaultValue="2")  int agree2)  {
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("회원등록홈페이지");
+		}
+		System.out.println(check);
+		ModelAndView mav = new ModelAndView();
+		int c = check+agree1+agree2;
+		System.out.println(c);
+		if(c != 23) {
+			String loc = "/member/memberAgreement.do";
+			String msg = "회원가입을 실패했습니다.";
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		List<Map<String, String>> list = memberService.selectCategory();
+		System.out.println(list);
+
+		mav.addObject("list", list);
+		return mav;
+	}
+	@RequestMapping("/member/selectSubject.do")
+	@ResponseBody
+	public List<Map<String,Object>> selectSubject(@RequestParam(value="kno", required=true) int kno){
+		
+		List<Map<String,Object>> list = studyService.selectSubject(kno);
+		return list;
+		
+	}
+	
+
+
+	@RequestMapping("/member/selectKind.do")
+	@ResponseBody
+	public List<Map<String,Object>> selectKind(){
+		
+		List<Map<String,Object>> list = studyService.selectKind();
+		
+		return list;
+		
+	}
+	
+	/* 강사회원가입 시작 */
+	@RequestMapping(value = "/member/instructorEnrollEnd.do", method = RequestMethod.POST)
+	public ModelAndView instructorEnrollEnd( Member member,@RequestParam(value="psFile",required=false) MultipartFile[] psFiles
+			,@RequestParam(value="kno",required=false) int kno,@RequestParam(value="sno",required=false) int sno,HttpServletRequest request) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("회원가입완료");
+		}
+		ModelAndView mav = new ModelAndView();
+		/* 이메일 가져오기 */
+		String email = member.getEmail();
+		String[] emailArr = email.split(",");
+		email = emailArr[0] + "@" + emailArr[1];
+		member.setEmail(email);
+		String loc = "/";
+		String msg = "";
+		/* 이메일  인증 여부 확인 */
+		Map<String, String> cer =null;
+		try {
+			cer = memberService.selectCheckJoinCode(email);
+		} catch (Exception e) {
+			msg = "회원가입을 실패했습니다. 관리자에게 문의 하세요";
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		System.out.println("email : " + email);
+		
+		if (cer == null) {
+			msg = "회원가입을 실패했습니다.이메일 확인을 해주세요";
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		/**
+		 *  탈퇴 회원 여부 확인 
+		 *  탈퇴 회원일 경우 EXP/POINt/NPOINT 가져오고 set해준다 */ 
+		
+		try {
+			int memberCheckEmail = memberService.memberCheckEmail(email);
+			if(memberCheckEmail == 2) {
+				msg = "회원가입을 실패했습니다. 탈퇴 확인을 해주세요";
+				mav.addObject("loc", loc);
+				mav.addObject("msg", msg);
+				mav.setViewName("common/msg");
+				return mav;
+			}else if(memberCheckEmail ==1) {
+				Member memberGetPoint = memberService.memberGetPoint(email);
+				member.setExp(memberGetPoint.getExp());
+				member.setPoint(memberGetPoint.getPoint());
+				member.setNPoint(memberGetPoint.getNPoint());
+				
+			}else {
+				member.setExp(0);
+				member.setPoint(0);
+				member.setNPoint(0);
+			}
+		} catch (Exception e) {
+			msg = "회원가입을 실패했습니다. 관리자에게 문의 하세요";
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		System.out.println("member : " + member);
+		logger.debug(email);
+		
+		String rawPassword = member.getPwd();
+		/******* password 암호화 시작 *******/
+		String encodedPassword = bcryptPasswordEncoder.encode(rawPassword);
+		member.setPwd(encodedPassword);
+		
+		/* favor null일 경우 처리 */
+		if (member.getFavor() == null) {
+			String[] favor = new String[1];
+			favor[0] = "no";
+			member.setFavor(favor);
+		}
+		
+		/****** MultipartFile을 이용한 파일 업로드 처리로직 시작
+		파일이름변경 파일이름+ 아이디 + 날짜  */
+		List<String> list = new ArrayList<>();
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/instructor");
+		String renamedFileName ="";
+		for(MultipartFile f: psFiles) {
+			if(!f.isEmpty()) {
+				//파일명 재생성
+				String originalFileName = f.getOriginalFilename();
+				String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+				int rndNum = (int)(Math.random()*1000);
+				renamedFileName = member.getMid()+"_"+sdf.format(new Date(System.currentTimeMillis()))+
+										"_"+rndNum+"."+ext;
+				try {
+					f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				list.add(renamedFileName);
+			}
+		}
+		System.out.println("list : "+list);
+		Instructor instructor = new Instructor();
+		instructor.setPortpolio(list.get(0));
+		instructor.setSelfintroduction(list.get(1));
+		instructor.setKno(kno);
+		instructor.setSno(sno);
+		System.out.println(instructor);
+		/* 회원 가입  */
+		int result = -1;
+		try {
+			result = memberService.memberEnrollEnd(member);
+			int mno = member.getMno();
+			System.out.println("mno : "+mno);
+			instructor.setMno(mno);
+			System.out.println(instructor);
+			result =memberService.instructorEnrollEnd(instructor);
+			memberService.deleteCertification(email);
+		} catch (Exception e) {
+			msg = "회원가입을 실패했습니다. 관리자에게 문의 하세요";
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+
+		// 2.처리결과에 따라 view단 분기처리
+		if (result > 0)
+			msg = "회원가입성공!";
+		else
+			msg = "회원가입실패!";
+
+		mav.addObject("loc", loc);
+		mav.addObject("msg", msg);
+		mav.setViewName("common/msg");
+		return mav;
+	}
 	
 	
+	@RequestMapping("/member/instructorApply.do")
+	public String instructorApply() {
+		
+		
+		return "member/instructorApply";
+	}
+	/* 회원이 강사 신청  */
+	@RequestMapping("/member/instructorApplyEnd.do")
+	public ModelAndView instructorApplyEnd(@RequestParam(value="psFile",required=false) MultipartFile[] psFiles
+			,@RequestParam(value="mno",required=false) int mno,@RequestParam(value="mid",required=false) String mid
+			,@RequestParam(value="kno",required=false) int kno,@RequestParam(value="sno",required=false) int sno
+			,@RequestParam(value="cover",required=false) String cover,@RequestParam(value="email",required=false) String[] email
+			,HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		/****** MultipartFile을 이용한 파일 업로드 처리로직 시작
+		파일이름변경 파일이름+ 아이디 + 날짜  */
+		List<String> list = new ArrayList<>();
+		String loc = "/";
+		String msg = "";
+		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/instructor");
+		String renamedFileName =""; 
+		for(MultipartFile f: psFiles) {
+			if(!f.isEmpty()) {
+				//파일명 재생성
+				String originalFileName = f.getOriginalFilename();
+				String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+				int rndNum = (int)(Math.random()*1000);
+				renamedFileName = mid+"_"+sdf.format(new Date(System.currentTimeMillis()))+
+										"_"+rndNum+"."+ext;
+				try {
+					f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				list.add(renamedFileName);
+			}
+		}
+		System.out.println(email);
+		String em = email[0]+"@"+email[1];
+		System.out.println(em);
+		System.out.println("list : "+list);
+		Instructor instructor = new Instructor();
+		instructor.setPortpolio(list.get(0));
+		instructor.setSelfintroduction(list.get(1));
+		instructor.setKno(kno);
+		instructor.setSno(sno);
+		instructor.setMno(mno);
+		System.out.println(instructor);
+		
+		int result = -1;
+		try {
+			result = memberService.instructorCheckX(mno);
+			if(result==0) {
+				result = memberService.instructorEnrollEnd(instructor);
+			}else {
+				result = memberService.updateInstructorEnrollEnd(instructor);
+			}
+			memberService.deleteCertification(em);
+		} catch (Exception e) {
+			msg = "강사신청이 실패했습니다. 관리자에게 문의 하세요";
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+
+		// 2.처리결과에 따라 view단 분기처리
+		if (result > 0)
+			msg = "강사신청이 됬습니다. 결과를 기다려 주세요";
+		else
+			msg = "회원가입실패!";
+
+		mav.addObject("loc", loc);
+		mav.addObject("msg", msg);
+		mav.setViewName("common/msg");
+		return mav;
+	}
+	
+	/* mailSending 코드 전송 */
+	@RequestMapping(value = "/member/instructorCertification.do")
+	@ResponseBody
+	public Map<String, Object> instructorCertification( @RequestParam(value = "em") String em , @RequestParam(value="mno")String mno , HttpServletRequest request) {
+		Map<String, Object> map = new HashMap<>();
+		
+		Map<String,String> checkInstructor = new HashMap<>();
+		checkInstructor.put("tomail", em);
+		checkInstructor.put("mno", mno);
+		int checkemail = memberService.instructorCheckEmail(checkInstructor);
+
+		int result = 0;
+		if (checkemail == 1) {
+			map = mailCertification(request, em);
+		} else {
+			map.put("check", false);
+			return map;
+		}
+		
+		return map;
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-

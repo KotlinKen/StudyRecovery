@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<% response.setContentType("text/html"); %>
 <style>
 	table, tr, th, td{
 		border: 2px solid black;
@@ -15,7 +16,7 @@
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
 	<br />
 	<input type="hidden" id="hiddenUserId" value="${memberLoggedIn.mid }" />
-	
+	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
 	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y" ${leader eq 'y' ? "style='color:red'" :'' }>팀장</a>|
 	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n" ${leader eq 'n' ? "style='color:red'" :'' }>팀원</a>
 	<br />
@@ -73,6 +74,7 @@
 		
 		<input type="hidden" name="type" value="${type }" />
 		<input type="hidden" name="myPage" value="${myPage}" />
+		<input type="hidden" name="leader" value="${leader}" />
 		<button type='submit' id='btn-search'>검색</button>
 	</form>
 	<c:if test="${leader eq 'n' }"> <!-- 나중에 처리해줘야함 -->
@@ -148,6 +150,8 @@
 	<br />
 	<!-- 페이지바 -->
 	<%
+		request.setCharacterEncoding("utf-8");
+	 	response.setContentType("text/html;charset=UTF-8");
 		int totalContents = Integer.parseInt(String.valueOf(request.getAttribute("count")));
 		int totalLeaderContents = Integer.parseInt(String.valueOf(request.getAttribute("leaderCount")));
 		int numPerPage = Integer.parseInt(String.valueOf(request.getAttribute("numPerPage")));
@@ -156,7 +160,6 @@
 		String type = String.valueOf(request.getAttribute("type"));
 		String leader = String.valueOf(request.getAttribute("leader"));
 		String myPage = String.valueOf(request.getAttribute("myPage"));
-		
 		int cPage = 1;
 		try{
 			cPage = Integer.parseInt(request.getParameter("cPage"));
@@ -181,12 +184,11 @@
 						<span aria-hidden="true">&times;</span>
 					</button>
 					</div>
-					<form action="${rootPath }/member/reviewEnroll.do" method="post">
+					<form action="${rootPath }/member/reviewEnroll.do" method="post" onsubmit="return giveReview();">
 						<div class="modal-body" id="form-reviewEnroll">
 							<!-- 
 								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
 							 -->
-							 
 						</div>
 						<div class="modal-footer">
 							<button type="submit" class="btn btn-outline-success">등록</button>
@@ -280,9 +282,10 @@
 					html+="<input type='hidden' name='kwd' value='none' />";
 					console.log('freq');
 				}
-				html+="<button type='submit' id='btn-search'>검색</button>";
 				html+="<input type='hidden' name='type' value='${type}' />";
+				html+="<input type='hidden' name='leader' value='${leader}' />";
 				html+="<input type='hidden' name='myPage' value='${myPage}' />";
+				html+="<button type='submit' id='btn-search'>검색</button>";
 				$("form#formSearch").html(html);
 				
 			});
@@ -292,6 +295,7 @@
 				html+="<input type='hidden' name='searchKwd' value='title' />";
 				html+="<input type='hidden' name='type' value='study' />";
 				html+="<input type='hidden' name='myPage' value='${myPage}' />";
+				html+="<input type='hidden' name='leader' value='${leader}' />";
 				$("#formSearch").html(html);
 				$("#formSearch").submit();
 			});
@@ -300,6 +304,7 @@
 				html+="<input type='hidden' name='searchKwd' value='title' />";
 				html+="<input type='hidden' name='type' value='lecture' />";
 				html+="<input type='hidden' name='myPage' value='${myPage}' />";
+				html+="<input type='hidden' name='leader' value='${leader}' />";
 				$("#formSearch").html(html);
 				$("#formSearch").submit();
 			});
@@ -307,64 +312,82 @@
 			$("button[name=evaluation]").on("click",function(){
 				var studyNo = this.id;
 				var leader = '<%=leader%>';
-				console.log(studyNo);
 				if($(this).val()=="1"){
 					$.ajax({
 						url: "reviewEnrollView.do",
 						data: {studyNo: studyNo, leader: leader},
 						dataType: "json",
+						contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
 						success: function(data){
-							console.log(data);
 							var html = "<table><tr><th>스터디명</th><th>팀장이름</th><th>작성자</th><th>평가할 팀원</th><th>평가</th><th>내용</th><th>보기</th></tr>";
 							var userId = $("input#hiddenUserId").val();
-							for(var i in data){
-								var index = data[i];
-								console.log(index.mid);
-								console.log(data);
-								if(userId!=index.mid){
+							var mno = $("input#hiddenMno").val();
+							for(var i in data.list){
+								var index = data.list[i];
+								if(userId!=index.tmid){
 									html += "<tr>";
-									html += "<input type='hidden' name='tmno' value='"+index.mno+"'>";
 									html += "<td>"+index.title;
-									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>";
-									html += "<td>"+index.smid+"("+index.smname+")"+"</td>";
+									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>"; //스터디 번호
+									html += "<td>"+index.smid+"("+index.smname+")"+"</td>"; //팀장 id, name
 									html += "<td>작성자";
-									html += "<input type='hidden' name='mno' value='"+userId+"'>"+"</td>";
-									html += "<td>"+index.mid+"("+index.mname+")"+"</td>";
+									html += "<input type='hidden' name='mno' value='"+mno+"'>"+"</td>";//작성자 id
+									html += "<td>"+index.tmid+"("+index.tmname+")"; //평가할 id, name
+									html += "<input type='hidden' name='tmno' value='"+index.tmno+"'>"+"</td>";
 									html += "<td>";
-									html += "<button class='like' id='like,"+tmno+"' value='1000'>좋아요</button>";
-									html += "<button class='dislike' id='dislike,"+tmno+"' value='-1000'>싫어요</button>";
-									html += "<input type='hidden' name='point' id='point"+tmno+"' value='0'>";
+									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>";
+									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
+									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
 									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
-									html += "<td>보기</td>";
+									html += "<td>보기 </td>";
 									html += "</tr>";
-								} 
-								if(userId!=index.mid && <%="n"==leader%>){
+								} else if(userId!=index.tmid && <%="n"==leader%>){
 									html += "<tr>";
-									html += "<input type='hidden' name='tmno' value='"+index.mno+"'>";
 									html += "<td>"+index.title;
-									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>";
-									html += "<td>"+index.smid+"("+index.smname+")"+"</td>";
+									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>"; //스터디 번호
+									html += "<td>"+index.smid+"("+index.smname+")"+"</td>"; //팀장 id, name
 									html += "<td>작성자";
-									html += "<input type='hidden' name='mno' value='"+userId+"'>"+"</td>";
-									html += "<td>"+index.mid+"("+index.mname+")"+"</td>";
+									html += "<input type='hidden' name='mno' value='"+mno+"'>"+"</td>";//작성자 id
+									html += "<td>"+index.tmid+"("+index.tmname+")"; //평가할 id, name
+									html += "<input type='hidden' name='tmno' value='"+index.tmno+"'>"+"</td>";
 									html += "<td>";
-									html += "<button class='like' id='like,"+tmno+"' value='1000'>좋아요</button>";
-									html += "<button class='dislike' id='dislike,"+tmno+"' value='-1000'>싫어요</button>";
-									html += "<input type='hidden' name='point' id='point"+tmno+"' value='0'>";
+									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>";
+									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
+									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
 									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
 									html += "<td>보기</td>";
 									html += "</tr>";
 								}
-								
 							}
 							html +="</table>";
+							
+							html += "<input type='hidden' name='searchKwd' value='<%=searchKwd%>' /> ";
+							html += "<input type='hidden' name='kwd' value='<%=kwd%>' /> ";
+							html += "<input type='hidden' name='type' value='<%=type%>' /> ";
+							html += "<input type='hidden' name='leader' value='<%=leader%>' /> ";
+							
 							if(data.length<2){
 								$("div#form-reviewEnroll").html("평가할 팀원이 없습니다.");																
-							} else{
-								$("div#form-reviewEnroll").html(html);								
 							}
+							
+							$("div#form-reviewEnroll").html(html);								
+							
+							$(".like").on("click",function(){
+								console.log($(this).val());
+								var tmno = this.id.split("q")[1].toString();
+								$("#dislikeq"+tmno).attr("style","color: black");
+								$(this).attr("style","color: red");
+								$("#pointq"+tmno).val($(this).val());
+							});
+							$(".dislike").on("click",function(){
+								console.log($(this).val());
+								var tmno = this.id.split("q")[1].toString();
+								$("#likeq"+tmno).attr("style","color: black");
+								$(this).attr("style","color: red");
+								$("#pointq"+tmno).val($(this).val());
+							});
+						
 							 
 						},
 						error: function(){
@@ -376,15 +399,23 @@
 				}
 			});
 			
-			$("button.like").on("click",function(){
-				console.log($(this).val());
-			});
-			$("button.dislike").on("click",function(){
-				console.log($(this).val());
-				
-			});
+			
 		});
-	
+	function giveReview(){
+		var point = document.getElementsByName("point");
+		var cnt = 0;
+		console.log(point);
+		for(var i=0; i<point.length; i++){
+			if(point[i].value=='1000' || point[i].value=='-1000'){
+				cnt++;
+			}
+		}
+		if(cnt==point.length){
+			return ture;
+		}
+		
+		return false;
+	}
 	</script>
 	
 	

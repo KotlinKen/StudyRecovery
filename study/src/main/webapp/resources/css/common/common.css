@@ -1,5 +1,5 @@
+@import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
 section#content{padding:30px; background:#fff;}
-
 
 /* 광고 */
 .banner{}
@@ -150,7 +150,7 @@ footer{ background:#333; margin-bottom:160px;  }
 
 
 
-.rm_study_list .list{clear:both; overflow:hidden; postion:relative;}
+.rm_study_list .list{clear:both; overflow:hidden; postion:relative; font-family: 'Noto Sans KR', sans-serif;}
 .rm_study_list .list li{float:left;   margin:20px 0px; padding:0px 10px;  }
 .rm_study_list .list li .pixel{background:#fff; border-radius:3px;  transition-duration: 0.5s;}
 .rm_study_list .list li .pixel:hover{ 
@@ -164,7 +164,11 @@ footer{ background:#333; margin-bottom:160px;  }
 
 
 .rm_study_list .list li .pixel .inforSection{display: block;}
-.rm_study_list .list li .pixel .inforSection h4{padding:0 18px; height:42px; line-height:140%; margin:24px 0 15px;; }
+.rm_study_list .list li .pixel .inforSection h4{padding:0 18px; height:42px; line-height:140%; margin:24px 0 15px; font-size:1.34em; }
 
 .rm_study_list .list li .pixel .metaSection{height:60px; border-top:1px solid #f3f3f3}
 .rm_study_list .list li .pixel .metaSection p{padding:0 18px; margin:14px 0 5px;}
+
+
+.rm_study_list #content{padding:10px; }
+.rm_study_list #content .list{padding-bottom:50px;}

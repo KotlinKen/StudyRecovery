@@ -48,17 +48,54 @@ div#userId-container span.error {
 	<script>
 		$(function() {
 			/* 패스워드 */
+			$("#password_").blur(function() {
+				var p1 = $("#password_");
+				var p2 = $(this).val();
+				if(p1.val().trim().length ==0){
+					 document.getElementById("pwd").innerHTML = "패스워드를 입력하세요";
+					p1.focus();
+				}else{
+					document.getElementById("pwd").innerHTML = "";
+				}
+			
+				if (p1.val().trim().length < 8) {
+					document.getElementById("pwd").innerHTML = "사용불가";
+					password.focus();
+				}
+				if (p1.val().indexOf(" ") >= 0) {
+					document.getElementById("pwd").innerHTML = "사용불가";
+					password.focus();
+				}
+				if (p1.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) >= 0) {
+					document.getElementById("pwd").innerHTML = "사용불가";
+					password.focus();
+				}
+			
+				if (p1.val().search(/[!@#$%^&*()?_+~]/g) == -1) {
+					document.getElementById("pwd").innerHTML = "사용불가";
+					password.focus();
+				} 
+			  
+				if (p1.val().search(/[0-9]/g) == -1) {
+					document.getElementById("pwd").innerHTML = "사용불가";
+					password.focus();
+				}
+			});
 			$("#password2").blur(function() {
 				var p1 = $("#password_").val();
 				var p2 = $(this).val();
+				if(p1.trim().length==0){
+					document.getElementById("pwd2").innerHTML = "패스워드를 입력하세요.";
+					$("#pwdDuplicateCheck").val(0);
+					$("#password_").focus();
+					return;
+				}
 				if (p1 != p2) {
-					$(".pwd.error").show();
-					$(".pwd.ok").hide();
+					document.getElementById("pwd2").innerHTML = "패스워드가 다릅니다.";
 					$("#pwdDuplicateCheck").val(0);
 					$("#password_").focus();
 				} else {
-					$(".pwd.ok").show();
-					$(".pwd.error").hide();
+					document.getElementById("pwd2").innerHTML = "패스워드가 동일합니다.";
 					$("#pwdDuplicateCheck").val(1);
 				}
 			});
@@ -69,53 +106,51 @@ div#userId-container span.error {
 					alert("아이디가 너무 김니다.")
 			});
 			/* 파일 업로드 */
-			$("input:file")
-					.change(
-							function() {
-								var ext = $("input:file").val().split(".")
-										.pop().toLowerCase();
-								if (ext.length > 0) {
-									if ($.inArray(ext, [ "gif", "png", "jpg",
-											"jpeg" ]) == -1) {
-										alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
-										return false;
-									}
-								}
-								console.log(ext);
-								var data = new FormData();
-								var upFile = document.getElementById("upFile").files[0];
-								data.append("upFile", upFile);
-								$
-										.ajax({
-											url : "memberImgUpload.do",
-											data : data,
-											contentType : false,
-											processData : false,
-											type : "POST",
-											dataType : "json",
-											success : function(date) {
-												var html = "";
-												html += "<img class ='call_img'   src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
-												$("#div-img-ik").before(html);
-												$("#mprofile").val(
-														date.renamedFileName)
-												$(".fa").on(
-														"click",
-														function() {
-															$(this).parent()
-																	.remove();
-														});
-											},
-											error : function(jqxhr, textStatus,
-													errorThrown) {
-												console.log(jqxhr);
-												console.log(textStatus);
-												console.log(errorThrown);
-											},
-											cache : false,
-											processData : false
-										});
-							});
+			$("input:file").change(
+			function() {
+				var ext = $("input:file").val().split(".")
+						.pop().toLowerCase();
+				if (ext.length > 0) {
+					if ($.inArray(ext, [ "gif", "png", "jpg",
+							"jpeg" ]) == -1) {
+						alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
+						return false;
+					}
+				}
+				console.log(ext);
+				var data = new FormData();
+				var upFile = document.getElementById("upFile").files[0];
+				data.append("upFile", upFile);
+				$.ajax({
+					url : "memberImgUpload.do",
+					data : data,
+					contentType : false,
+					processData : false,
+					type : "POST",
+					dataType : "json",
+					success : function(date) {
+						var html = "";
+						html += "<img class ='call_img'   src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
+						$("#div-img-ik").before(html);
+						$("#mprofile").val(
+								date.renamedFileName)
+						$(".fa").on(
+								"click",
+								function() {
+									$(this).parent()
+											.remove();
+								});
+					},
+					error : function(jqxhr, textStatus,
+							errorThrown) {
+						console.log(jqxhr);
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+					cache : false,
+					processData : false
+				});
+			});
 		});
 		function fn_checkID() {
 			var userId = $("#userId_").val().trim();
@@ -320,58 +355,7 @@ div#userId-container span.error {
 		}
 	</script>
 
-	<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 	<script>
-	    //본 예제에서는 도로명 주소 표기 방식에 대한 법령에 따라, 내려오는 데이터를 조합하여 올바른 주소를 구성하는 방법을 설명합니다.
-	    function sample4_execDaumPostcode() {
-	        new daum.Postcode({
-	            oncomplete: function(data) {
-	                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
-	
-	                // 도로명 주소의 노출 규칙에 따라 주소를 조합한다.
-	                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
-	                var fullRoadAddr = data.roadAddress; // 도로명 주소 변수
-	                var extraRoadAddr = ''; // 도로명 조합형 주소 변수
-	
-	                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
-	                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
-	                if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
-	                    extraRoadAddr += data.bname;
-	                }
-	                // 건물명이 있고, 공동주택일 경우 추가한다.
-	                if(data.buildingName !== '' && data.apartment === 'Y'){
-	                   extraRoadAddr += (extraRoadAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-	                }
-	                // 도로명, 지번 조합형 주소가 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-	                if(extraRoadAddr !== ''){
-	                    extraRoadAddr = ' (' + extraRoadAddr + ')';
-	                }
-	                // 도로명, 지번 주소의 유무에 따라 해당 조합형 주소를 추가한다.
-	                if(fullRoadAddr !== ''){
-	                    fullRoadAddr += extraRoadAddr;
-	                }
-	
-	                // 우편번호와 주소 정보를 해당 필드에 넣는다.
-	                document.getElementById('sample4_postcode').value = data.zonecode; //5자리 새우편번호 사용
-	                document.getElementById('sample4_roadAddress').value = fullRoadAddr;
-	                document.getElementById('sample4_jibunAddress').value = data.jibunAddress;
-	
-	                // 사용자가 '선택 안함'을 클릭한 경우, 예상 주소라는 표시를 해준다.
-	                if(data.autoRoadAddress) {
-	                    //예상되는 도로명 주소에 조합형 주소를 추가한다.
-	                    var expRoadAddr = data.autoRoadAddress + extraRoadAddr;
-	                    document.getElementById('guide').innerHTML = '(예상 도로명 주소 : ' + expRoadAddr + ')';
-	
-	                } else if(data.autoJibunAddress) {
-	                    var expJibunAddr = data.autoJibunAddress;
-	                    document.getElementById('guide').innerHTML = '(예상 지번 주소 : ' + expJibunAddr + ')';
-	
-	                } else {
-	                    document.getElementById('guide').innerHTML = '';
-	                }
-	            }
-	        }).open();
-	    }
 		/* 이메일 인증 번호 전송 */
 		function fn_certification() {
 			var email = $("#email").val();
@@ -384,9 +368,18 @@ div#userId-container span.error {
 				alert("이메일을 입력하세요.");
 				emailaddr.focus();
 			}
+			if (emailaddr.search(/[.]/g) == -1) {
+				alert("이메일 형식이 바르지 않습니다.");
+				emailaddr.focus();
+			}
+			if(emailaddr.search(/[@]/g) >0){
+				alert("이메일 형식이 바르지 않습니다.");
+				emailaddr.focus();
+			}
 			var data = new FormData();
 			var em = email + "@" + emailaddr;
 			data.append("em", em);
+			alert("인증번호 전송");
 			$.ajax({
 				url : "certification.do",
 				data : data,
@@ -395,10 +388,14 @@ div#userId-container span.error {
 				type : "POST",
 				dataType : "json",
 				success : function(date) {
-					alert("인증번호 전송");
+					if(date.check==true){
 					$("#checkcertification").val(1);
+					}else{
+					alert("인증번호 전송실패");
+					}
 				},
 				error : function(jqxhr, textStatus, errorThrown) {
+					alert("인증번호 전송실패");
 					console.log(jqxhr);
 					console.log(textStatus);
 					console.log(errorThrown);
@@ -459,50 +456,40 @@ div#userId-container span.error {
 		}
 	</script>
 
-
 	<div id="enroll-container">
 		<form
 			action="${pageContext.request.contextPath}/member/memberEnrollEnd.do"
 			method="post" name='mainForm' id='mainForm'
 			onsubmit="return validate();">
 			<div id="userId-container">
-				<input type="text" name="mid" id="userId_" placeholder="아이디"
-					required />
+				<input type="text" name="mid" id="userId_" placeholder="아이디" required autocomplete="off" />
 				<button type="button" onclick="fn_checkID();">아이디 확인</button>
-				<br /> <span class="guide ok">중복된 아이디가 없습니다.</span> <span
-					class="guide error">중복된 아이디가 있습니다.</span> <input type="hidden"
-					id="idDuplicateCheck" value="0" />
+				<br /> <span class="guide ok">중복된 아이디가 없습니다.</span> 
+				<span class="guide error">중복된 아이디가 있습니다.</span> 
+				<input type="hidden" id="idDuplicateCheck" value="0" />
 			</div>
 			<div>
-				<input type="password" name="pwd" id="password_" placeholder="비밀번호"
-					required /> <br /> <input type="password" id="password2"
-					placeholder="비밀번호 확인" required /> <br /> <span class="pwd ok">비밀번호가
-					동일합니다.</span> <span class="pwd error">비밀번호가 다릅니다.</span> <input
-					type="hidden" id="pwdDuplicateCheck" value="0" />
+				<input type="password" name="pwd" id="password_" placeholder="비밀번호" required autocomplete="off"  /> <br /> 
+				<span id="pwd"></span> 
+				<input type="password" id="password2" placeholder="비밀번호 확인"  required autocomplete="off"  /> <br /> 
+				<span id="pwd2"></span> 
+				<input type="hidden" id="pwdDuplicateCheck" value="0" />
 			</div>
 
-			<input type="text" name="mname" id="name" placeholder="이름" required />
-			<br /> <input type="text" name="phone" id="phone" maxlength="11" placeholder="전화번호" required /> <br /> 
-			<input type="text" name="email" id="email" placeholder="이메일" required /> @ 
-			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required />
+			<input type="text" name="mname" id="name" placeholder="이름" required  autocomplete="off"  /><br /> 
+			<input type="text" name="phone" id="phone" maxlength="11" placeholder="전화번호" required required autocomplete="off"  /> <br /> 
+			<input type="text" name="email" id="email" placeholder="이메일" required  autocomplete="off"  /> @ 
+			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required  autocomplete="off"  />
 			<input type="button" value="인증번호" onclick="fn_certification();" /> 
 			<input type="hidden" id="checkcertification" value="0" /> 
-			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required />
+			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
 			<input type="button" value="확인" onclick="checkJoinCode();" /> 
 			<input type="hidden" id="checkPoint" value="0" /> <br />
-			
 			<input type="date" name="birth" required/><br />
-
-			<input type="button" class="btn-primary box" onclick="sample4_execDaumPostcode()" value="우편번호 찾기">
-			<input type="text" name="post" id="sample4_postcode" placeholder="우편번호" required>
-			<input type="text" name="addr1" id="sample4_jibunAddress" placeholder="지번주소" required>
-			<input type="text" name="addr2" id="sample4_roadAddress" placeholder="도로명주소" required>
-			<input type="text" name="addrDetail" id="sample4_jibunAddress" placeholder="상세정보" required>
-			<span id="guide" style="color:#999"></span><br>
-	
 			<input type="radio" name="gender" value="M" id="male" checked /> 
 			<label for="male">male</label> 
 			<input type="radio" name="gender" value="F"id="fmale" /> <label for="fmale">fmale</label> <br /> 
+			<br /><hr /><br />
 			프로필사진 : <input type="file" name="upFile" id="upFile" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='no'>
 			<div id="div-img-ik"></div>

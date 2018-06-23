@@ -6,23 +6,26 @@
 										#{mid},
 										#{mname},
 										#{pwd},
-										#{phone},
-										#{addr1},
-										#{addr2},
-										#{addrDetail},
-										#{post},
+										${phone},
+										'.',
+										'.',
+										'.',
+										'.',
 										#{mprofile},
 										#{cover},
 										#{email},
 										#{birth},
 										#{gender},
 										#{favor, typeHandler=strArrTypeHandler},
-										default,
-										default,
-										default,
+										#{exp},
+										#{point},
+										#{nPoint},
 										default,
 										null
 										)
+		<selectKey keyProperty="mno" resultType="_int" order="AFTER">
+			SELECT SEQ_MEMBER.CURRVAL FROM DUAL	
+		</selectKey>
 	</insert>
 	<select id="selectKind" resultMap="kindMap">
 		select * from kind
@@ -785,15 +788,14 @@
 	<select id="informationagree" resultType="map" >
 		select * from informationagree
 	</select>
-
 	<resultMap type="map" id="reviewEnrollViewMap"></resultMap>
 	<select id="reviewEnrollView" parameterType="string" resultMap="reviewEnrollViewMap">
 		select s.title as "title", --스터디 이름
 				(select mm.mname from member mm where mm.mno= (select mno from study ss where ss.sno=c.sno)) as "smname",--팀장이름
 				(select mm.mid from member mm where mm.mno= (select mno from study ss where ss.sno=c.sno)) as "smid", --팀장 아이디
-				m.mname as "mname", --평가할 팀원 이름
-				m.mid as "mid", -- 팀원 아이디
-				m.mno as "mno" -- 팀원 번호
+				m.mname as "tmname", --평가할 팀원 이름
+				m.mid as "tmid", -- 팀원 아이디
+				m.mno as "tmno" -- 팀원 번호
 				
 		from crew c join member m on c.mno=m.mno
             		join study s on c.sno=s.sno
@@ -804,19 +806,62 @@
 		select s.title as "title", --스터디 이름
 				(select mm.mname from member mm where mm.mno= (select mno from study ss where ss.sno=s.sno)) as "smname",--팀장이름
 				(select mm.mid from member mm where mm.mno= (select mno from study ss where ss.sno=s.sno)) as "smid", --팀장 아이디
-				m.mname as "mname", --평가할 팀원 이름
-				m.mid as "mid", -- 팀원 아이디
-				m.mno as "mno" -- 팀원 번호
+				m.mname as "tmname", --평가할 팀원 이름
+				m.mid as "tmid", -- 팀원 아이디
+				m.mno as "tmno" -- 팀원 번호
 				
 		from study s join member m on s.mno=m.mno
         where s.sno = #{sno}
 	</select>
 	
+	<insert id="reviewEnroll" parameterType="java.util.Map">
+		insert all
+			<foreach item="item" collection="list" index="i">
+				into review values(seq_review.nextval+#{i},#{item.mno},#{item.sno},#{item.tmno},#{item.point},#{item.content}, sysdate)
+			</foreach>
+		select * from dual
+	</insert>
+	
+	
+
+
+	<select id="memberCheckEmail" resultType="_int">
+		select
+		sum(cnt) cnt
+		from
+		(select count(*) cnt from  member where email = #{emil}
+		union all
+		SELECT COUNT(*) cnt FROM MEMBER  WHERE EMAIL = #{emil} AND QDATE IS NULL)
+	</select>
+	<select id="memberGetPoint" parameterType="member" resultMap="memberMap">
+		select * from member where email = #{email}
+	</select>
+	<insert id="instructorEnrollEnd">
+		INSERT INTO INSTRUCTOR VALUES( SEQ_INSTRUCTOR.NEXTVAL,
+										#{mno},
+										#{portpolio},
+										#{selfintroduction},
+										#{kno},
+										#{sno},
+										'X',
+										sysdate
+										)
+	</insert>
+	<select id="instructorCheckEmail" resultType="_int">
+		SELECT COUNT(*) CNT FROM MEMBER WHERE MNO = #{mno} AND EMAIL = #{tomail}
+	</select>
+	<select id="instructorApproval" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
+	</select>
+	<select id="instructorCheckX" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'X'
+	</select>
+	<update id="updateInstructorEnrollEnd">
+		update instructor set portpolio = #{portpolio},
+							selfintroduction=#{selfintroduction},
+							kno = #{kno},
+							sno = #{sno},
+							Applicationdate = sysdate
+							where mno = #{mno}
+	</update>
 </mapper>
-
-
-
-
-
-
-

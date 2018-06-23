@@ -18,7 +18,7 @@ public class StudyServiceImpl implements StudyService {
 	private StudyDAO studyDAO;
 
 	@Override
-	public List<Map<String, String>> selectStudyList(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectStudyList(int cPage, int numPerPage) {
 		// TODO Auto-generated method stub
 		return studyDAO.selectStudyList(cPage,numPerPage);
 	}
@@ -148,6 +148,18 @@ public class StudyServiceImpl implements StudyService {
 	public int preinsertApply(Map<String, Integer> map) {
 		// TODO Auto-generated method stub
 		return studyDAO.preinsertApply(map);
+	}
+
+	@Override
+	public int isWishStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.isWishStudy(map);
+	}
+
+	@Override
+	public int deletewishStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.deletewishStudy(map);
 	}
 
 	

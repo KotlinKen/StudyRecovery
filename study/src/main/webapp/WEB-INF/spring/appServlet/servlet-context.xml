@@ -36,7 +36,7 @@
 		</beans:bean>
 	
 	<!-- jsonView contentType 설정하여 json, 인코딩처리. 경희 추가 -->	
-	<beans:bean id="jsonView" class="net.sf.json.spring.web.servlet.view.JsonView">
+	<beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
 		 <beans:property name="contentType" value="application/json;charset=UTF-8"/>
 	</beans:bean>
 	
@@ -50,6 +50,22 @@
 			</beans:list>
 		</beans:property>
 	</beans:bean>
+	
+	<!-- 로그인 검사용. -->
+	<interceptors>
+		<interceptor>
+			<!-- 스터디 -->
+			<mapping path="/study/studyForm.do"/>
+			<mapping path="/study/studyUpdate.do"/>
+			
+			<!-- 강의 -->
+			<mapping path="/lecture/insertLecture.do"/>
+			<mapping path="/lecture/deleteLecture.do"/>
+			<mapping path="/lecture/applyLecture.do"/>			
+			
+			<beans:bean class="com.pure.study.common.interceptor.LoginCheckInterceptor" id="loginCheck"/>
+		</interceptor>
+	</interceptors>
 	
 		
 </beans:beans>
