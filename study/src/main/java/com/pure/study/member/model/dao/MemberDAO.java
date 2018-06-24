@@ -79,4 +79,6 @@ public interface MemberDAO {
 
 	int updateInstructorEnrollEnd(Instructor instructor);
 
+	int instructorCheckO(int mno);
+
 }

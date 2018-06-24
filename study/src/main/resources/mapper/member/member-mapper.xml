@@ -826,4 +826,7 @@
 							Applicationdate = sysdate
 							where mno = #{mno}
 	</update>
+	<select id="instructorCheckO" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
+	</select>
 </mapper>

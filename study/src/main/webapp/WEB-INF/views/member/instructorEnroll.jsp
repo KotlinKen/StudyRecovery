@@ -23,23 +23,160 @@
 <style>
 div#userId-container span.guide {
 	display: none;
-	font-size: 12px;
+	font-size: 15px;
 	position: absolute;
-	top: 12px;
 	right: 10px;
 }
-span.pwd {
-	display: none;
-	font-size: 12px;
-	position: absolute;
-	top: 12px;
-	right: 10px;
+span.guide.ok {color: green;}
+span.guide.error{color: red;}
+span#pwd {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
+	color: red;
 }
-div#userId-container span.ok {
+span#pwdok {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
 	color: green;
 }
-div#userId-container span.error {
+span#pwd2 {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
 	color: red;
+}
+span#pwd2ok {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
+	color: green;
+}
+div{width: 600px; min-height: 25px;margin: auto; background: rgb(255, 255, 255);}
+div#indivik{margin: auto;}
+div#inindivik1{ background: rgb(230, 230, 230)}
+div#inindivik2{margin: auto; text-align: center; background: rgb(230, 230, 230)}
+div#inindivik3{width: 450px; margin: auto; text-align: center; }
+div#headerdivik{margin: auto; text-align: center;}
+div#id-password-div-ik{position: relative; top: 0px; left: 0%; width: 100%; height: 100%}
+div#choos-ik{border-radius: 5px;}
+div#name-phone-email-gender-div-ik{border-radius: 10px;}
+div.blank-ik{background: rgb(230, 230, 230); height: 5px;}
+#buttona{position: relative; left: 20px;}
+#buttonb{position: relative; left: 71%;}
+body {background: rgb(230, 230, 230)}
+#indivik{border-radius: 5px; border: solid 3px rgb(200, 200, 200); }
+#headaik{color: black;}
+input[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 2px solid rgb(200, 200, 200);
+}
+input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 2px solid rgb(200, 200, 200);
+}
+input[type=date] {
+    width: 50%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 2px solid rgb(200, 200, 200);
+}
+#email{ width: 30%;}#userId_{width: 60%}#emailaddr{width: 50%}#submit{width: 100%; position: relative; top: 10px;}
+.jender {
+    position: relative;
+    z-index: 10;
+    display: block;
+    float: left;
+    width: 49.8%;
+    height: 31px;
+    border-right: solid 1px #dcdcdc;
+}
+.jender input {
+    position: absolute;
+    z-index: 9;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 31px;
+}
+.jender label {
+    line-height: 32px;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 31px;
+    cursor: pointer;
+    text-align: center;
+    color: #8e8e8e;
+    background: #fff;
+}
+.jender input:checked+label {
+    z-index: 100;
+    margin: -1px;
+    color: #08a600;
+    border: solid 1px #08a600;
+}
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+.category {
+   position: relative;
+    z-index: 10;
+    display: inline-block;
+    float: left;
+    width: 20%;
+    height: 31px;
+    border-right: solid 1px #dcdcdc;
+}
+.category input {
+    position: fixed;
+    display:inline;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 0%;
+}
+.category label {
+    line-height: 32px;
+    position: relative;
+    z-index: 10;
+    top: 0;
+    left: 20px;
+    display: block;
+    width: 100%;
+    height: 31px;
+    cursor: pointer;
+    text-align: center;
+    color: #8e8e8e;
+    background: #fff;
+    text-align: center;
+}
+.category input:checked+label {
+    z-index: 100;	
+    color: #08a600;
+    border: solid 1px #08a600;
 }
 </style>
 </head>
@@ -494,7 +631,8 @@ div#userId-container span.error {
 			});
 		});
 	</script>
-
+<div id="inindivik1"></div> 
+<div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><br /><h2>STUDY GROUPT</h2><br /></a></div>
 	<div id="enroll-container">
 		<form action="instructorEnrollEnd.do"
 			method="post" name='mainForm' id='mainForm'

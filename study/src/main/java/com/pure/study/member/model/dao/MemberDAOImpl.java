@@ -194,5 +194,10 @@ public class MemberDAOImpl implements MemberDAO {
 	public int updateInstructorEnrollEnd(Instructor instructor) {
 		return sqlSession.update("member.updateInstructorEnrollEnd", instructor);
 	}
+
+	@Override
+	public int instructorCheckO(int mno) {
+		return sqlSession.selectOne("member.instructorCheckO",mno);
+	}
 	
 }

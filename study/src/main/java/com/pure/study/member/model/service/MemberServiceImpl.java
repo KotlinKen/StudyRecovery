@@ -194,5 +194,10 @@ public class MemberServiceImpl implements MemberService {
 	public int updateInstructorEnrollEnd(Instructor instructor) {
 		return memberDAO.updateInstructorEnrollEnd(instructor);
 	}
+
+	@Override
+	public int instructorCheckO(int mno) {
+		return memberDAO.instructorCheckO(mno);
+	}
 	
 }

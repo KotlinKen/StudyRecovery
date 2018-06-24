@@ -77,5 +77,7 @@ public interface MemberService {
 
 	int updateInstructorEnrollEnd(Instructor instructor);
 
+	int instructorCheckO(int mno);
+
 
 }

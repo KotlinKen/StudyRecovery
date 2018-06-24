@@ -1119,6 +1119,14 @@ public class MemberController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
+		int result = memberService.instructorCheckO(mno);
+		System.out.println("result : "+ result);
+		if(result ==1) {
+			mav.addObject("loc", "/member/memberView.do");
+			mav.addObject("msg", "이미 강사 이시군요.");
+			mav.setViewName("common/msg");
+			return mav;
+		}
 		mav.addObject("mno", mno);
 		mav.addObject("mid", mid);
 		return mav;
