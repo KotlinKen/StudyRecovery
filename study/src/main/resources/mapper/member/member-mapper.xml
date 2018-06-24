@@ -817,12 +817,30 @@
 	<insert id="reviewEnroll" parameterType="java.util.Map">
 		insert all
 			<foreach item="item" collection="list" index="i">
-				into review values(seq_review.nextval+#{i},#{item.mno},#{item.sno},#{item.tmno},#{item.point},#{item.content}, sysdate)
+				into review values(fn_seq_all(),#{item.mno},#{item.sno},#{item.tmno},#{item.point},#{item.content}, sysdate)
 			</foreach>
 		select * from dual
 	</insert>
 	
+	<select id="reviewFinish" resultType="_int" parameterType="hashmap">
+		select sno as "sno"
+		from review 
+		where mno = #{mno} and sno in
+		<foreach collection="sno" item="item"  open="(" close=")" separator=",">
+				#{item}
+		</foreach>
+	</select>
 	
+	<update id="updateMemberExp" parameterType="hashmap" >
+		update member set exp = exp+#{exp}
+				where mno=#{mno}
+	</update>
+	<select id="reviewList" parameterType="hashmap" resultMap="reviewListMap">
+		select point as "point", content as "content", mno as "mno"
+		from review
+		where sno=#{sno} and tmno=#{tmno}
+	</select>
+	<resultMap type="map" id="reviewListMap"></resultMap>
 
 
 	<select id="memberCheckEmail" resultType="_int">

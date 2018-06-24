@@ -883,6 +883,7 @@ public class MemberController {
 				leaderList = memberService.selectLeaderList(map, numPerPage, cPage);
 				leaderCount = memberService.selectLeaderListCnt(map);
 			}
+			
 			mav.setViewName("member/memberMyStudy");
 		}
 		if("apply".equals(myPage)) {
@@ -915,7 +916,7 @@ public class MemberController {
 	
 	/*내 스터디 & 신청 & 찜  목록 끝*******************************/
 	
-
+	//ajax로 평가 페이지를 보여준다.
 	@RequestMapping(value="/member/reviewEnrollView.do", produces = "application/json; charset=utf8")
 	@ResponseBody
 	public ModelAndView reviewEnrollView(@RequestParam("studyNo") String studyNo
@@ -940,6 +941,7 @@ public class MemberController {
 		return mav;
 	}
 	
+	//insert all을 통해 평가 내용을 등록한다.
 	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST, produces = "application/text; charset=utf8")
 	@ResponseBody
 	public ModelAndView reviewEnroll(@RequestParam("tmno") String[] tmno
@@ -951,8 +953,8 @@ public class MemberController {
 			, @RequestParam(value="kwd", required=false, defaultValue="") String kwd
 			, @RequestParam(value="type", defaultValue="study") String type									
 			, @RequestParam(value="leader", defaultValue="y") String leader	
-			//, @RequestParam(value="cPage", defaultValue="1") String cPage
-			//, @ModelAttribute("memberLoggedIn") Member m
+			, @RequestParam(value="cPage", defaultValue="1") String cPage
+			, @ModelAttribute("memberLoggedIn") Member m
 			) {
 		ModelAndView mav = new ModelAndView();
 		List<Review> list = new ArrayList<>(); 
@@ -986,11 +988,76 @@ public class MemberController {
 		
 		int result = memberService.reviewEnroll(map);
 		
-		mav.setViewName("redirect:/member/searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&leader="+leader);
+		if(result>0) {
+			//리뷰 달면 경험치 10점 주기
+			map.put("exp", 10);
+			map.put("mno", m.getMno());
+			int resultExp = memberService.updateMemberExp(map);
+			if(resultExp>0) {
+				System.out.println("리뷰 등록 : exp+10점");
+			}else {
+				System.out.println("리뷰 등록 실패");				
+			}
+		}
+		
+		
+		
+		mav.setViewName("redirect:/member/searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&leader="+leader+"&cPage="+cPage);
 		//redirect시 한글이 깨져서 가기 때문에 인코딩을 반드시 해줘야한다.
 		
 		return mav;
 	}
+	
+	//평가 완료 버튼 처리 & 평가 보기
+	@RequestMapping(value="/member/reviewFinish.do")
+	@ResponseBody
+	public ModelAndView reviewFinish(@RequestParam("studyNo") String studyNo
+									, @ModelAttribute("memberLoggedIn") Member m
+										) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		String[] sno = studyNo.split(",");
+		List<Map<String, Object>> reviewList = new ArrayList<>();
+		Map<String,Object> reviewListMap = new HashMap<>();
+		
+		//평가를 완료하고, 다른 사람이 평가를 줬을 경우 평가 리스트
+		for(int i=0; i<sno.length; i++) {
+			Map <String,Object> listMap = new HashMap<>();
+			listMap.put("sno", sno[i]);
+			listMap.put("tmno", m.getMno());
+			
+			List<Map<String,Object>> list = memberService.reviewList(listMap);
+			
+			reviewListMap.put(String.valueOf(sno[i]), list);//평가를 한 스터디의 평가 리스트 담기
+			System.out.println(reviewList);
+		}		
+		reviewList.add(reviewListMap);
+		
+		//평가 완료한 스터디 리스트
+		Map <String,Object> map = new HashMap<>();
+		map.put("sno", sno);
+		map.put("mno", m.getMno());
+		List<Integer> studyNoList = memberService.reviewFinish(map);
+		
+		mav.addObject("studyNoList", studyNoList);
+		mav.addObject("reviewList", reviewList);
+		return mav;
+	}
+	
+	//평가 목록 페이지
+	@RequestMapping(value="/member/searchMyPageEvaluation.do")
+	@ResponseBody
+	public ModelAndView searchMyPageEvaluation( @ModelAttribute("memberLoggedIn") Member m
+			) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		Map <String,Object> map = new HashMap<>();
+		
+		//평가 관리 페이지로 이동
+		
+		mav.setViewName("member/MyEvaluation");
+		
+		return mav;
+	}
+	
 	
 	
 	

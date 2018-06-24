@@ -209,5 +209,20 @@ public class MemberDAOImpl implements MemberDAO {
 	public int reviewEnroll(Map<String,Object> map) {
 		return sqlSession.insert("member.reviewEnroll", map);
 	}
+
+	@Override
+	public List<Integer> reviewFinish(Map<String, Object> map) {
+		return sqlSession.selectList("member.reviewFinish", map);
+	}
+
+	@Override
+	public int updateMemberExp(Map<String,Object> map) {
+		return sqlSession.update("member.updateMemberExp", map);
+	}
+
+	@Override
+	public List<Map<String, Object>> reviewList(Map<String, Object> listMap) {
+		return sqlSession.selectList("member.reviewList", listMap);
+	}
 	
 }

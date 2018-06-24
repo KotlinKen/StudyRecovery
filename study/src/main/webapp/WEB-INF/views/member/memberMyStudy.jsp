@@ -8,6 +8,9 @@
 	table, tr, th, td{
 		border: 2px solid black;
 	}
+	button[name=evaluationView]{
+		display: none;
+	}
 </style>
 	
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -115,10 +118,11 @@
 					<td>${ms.freq}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button>자세히</button>
+						<button type=button id="btn-detail" value="${a.sno }">자세히</button>
 					</td>
 					<td>
 						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
+						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewViewModal">평가 보기</button>
 					</td>
 				</tr>
 			</c:forEach>
@@ -136,10 +140,11 @@
 					<td>${ms.freq}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button>자세히</button>
+						<button type=button id="btn-detail" value="${a.sno }">자세히</button>
 					</td>
 					<td>
 						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
+						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewViewModal">평가 보기</button>
 						<button type=button>신청 현황</button>
 					</td>
 				</tr>
@@ -168,10 +173,10 @@
 		}
 	%>
 	<c:if test="${leader=='y' }">
-		<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalLeaderContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader, myPage) %>
+		<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalLeaderContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&leader="+leader, myPage) %>
 	</c:if>
 	<c:if test="${leader=='n' }">
-		<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"leader"+leader, myPage) %>
+		<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&leader="+leader, myPage) %>
 	</c:if>
 	
 	<!-- 스터디 리뷰 시작 -->
@@ -199,43 +204,67 @@
 		</div>
 	</div>
 	<!-- 스터디 리뷰 끝 -->
+	<!-- 스터디 리뷰 보기 시작 -->
+	<div class="modal fade" id="reviewViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+		<div class="modal-dialog modal-lg" role="document" >
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">스터디 내 평가</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+						<div class="modal-body" id="div-reviewView">
+							<!-- 
+								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
+							 -->
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-outline-success">등록</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+						</div>
+			</div>
+		</div>
+	</div>
+	<!-- 스터디 리뷰 보기 끝 -->
 	
 	<script>
 		$(function(){
+			/* 키워드로 검색 하기 */
 			$("select#searchKwd").on("change",function(){
 				var html = "";
 				$("form#formSearch").empty();
-				if($(this).val()=='title'){
+				if($(this).val()=='title'){ //스터디 명
 					html="<input type='text' name='kwd' id='titleKwd' placeholder='강의/스터디명' />";
 					html+="<input type='hidden' name='searchKwd' value='title' />";
 					
 					console.log('title');
 				} 
-				if($(this).val()=='captain'){
+				if($(this).val()=='captain'){ //팀장 명
 					html="<input type='text' name='kwd' id='captainKwd' placeholder='강사/팀장명' />";
 					html+="<input type='hidden' name='searchKwd' value='captain' />";
 					
 					console.log('captain');
 				} 
-				if($(this).val()=='subject'){
+				if($(this).val()=='subject'){ //과목명
 					html="<input type='text' name='kwd' id='subjectKwd' placeholder='과목명' />";
 					html+="<input type='hidden' name='searchKwd' value='subject' />";
 					
 					console.log('subject');
 				} 
-				if($(this).val()=='place'){
+				if($(this).val()=='place'){ //장소명
 					html="<input type='text' name='kwd' id='subjectKwd' placeholder='장소' />";
 					html+="<input type='hidden' name='searchKwd' value='place' />";
 					
 					console.log('place');
 				} 
-				if($(this).val()=='diff'){
+				if($(this).val()=='diff'){ //난이도
 					html="<input type='text' name='kwd' id='subjectKwd' placeholder='난이도' />";
 					html+="<input type='hidden' name='searchKwd' value='diff' />";
 					
 					console.log('diff');
 				} 
-				if($(this).val()=='term'){
+				if($(this).val()=='term'){ //기간
 					html="<select name='kwd' id='dateKwdYear'>";
 					html+="<option value='2016'>2016년</option>";
 					html+="<option value='2017'>2017년</option>";
@@ -263,7 +292,7 @@
 					html+="<input type='hidden' name='searchKwd' value='term' />";
 					console.log('term');
 				} 
-				if($(this).val()=='freq'){
+				if($(this).val()=='freq'){ //스터디 주기
 					html = "<input type='checkbox' name='kwd' id='freqKwd1' value='월' />";
 					html += "<label for='freqKwd1'>월</label>";
 					html += "<input type='checkbox' name='kwd' id='freqKwd2' value='화' />";
@@ -290,6 +319,7 @@
 				
 			});
 			
+			//스터디이지 강의인지 구분하기
 			$("[type=radio]#study").on("click",function(){
 				var html="<input type='hidden' name='kwd' id='titleKwd' placeholder='강의/스터디명' />";
 				html+="<input type='hidden' name='searchKwd' value='title' />";
@@ -309,10 +339,17 @@
 				$("#formSearch").submit();
 			});
 			
+			//스터디 자세히 보기
+			$("#btn-detail").click(function(){
+				console.log($(this).val());
+				location.href="${rootPath}/study/studyView.do?sno="+$(this).val();
+			});
+			
+			//평가 버튼 클릭시, 평가할 폼이 나옴.
 			$("button[name=evaluation]").on("click",function(){
 				var studyNo = this.id;
 				var leader = '<%=leader%>';
-				if($(this).val()=="1"){
+				if(this.value=="1"){
 					$.ajax({
 						url: "reviewEnrollView.do",
 						data: {studyNo: studyNo, leader: leader},
@@ -324,7 +361,8 @@
 							var mno = $("input#hiddenMno").val();
 							for(var i in data.list){
 								var index = data.list[i];
-								if(userId!=index.tmid){
+								console.log(data);
+								if(userId!=index.tmid){ //자기 자신을 평가 할 수 없음
 									html += "<tr>";
 									html += "<td>"+index.title;
 									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>"; //스터디 번호
@@ -341,7 +379,7 @@
 									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
 									html += "<td>보기 </td>";
 									html += "</tr>";
-								} else if(userId!=index.tmid && <%="n"==leader%>){
+								}  else if(userId!=index.tmid && <%="n"==leader%>){ //자기 자신이 아니면서 팀원인 경우
 									html += "<tr>";
 									html += "<td>"+index.title;
 									html += "<input type='hidden' name='sno' value='"+studyNo+"'>"+"</td>"; //스터디 번호
@@ -366,6 +404,7 @@
 							html += "<input type='hidden' name='kwd' value='<%=kwd%>' /> ";
 							html += "<input type='hidden' name='type' value='<%=type%>' /> ";
 							html += "<input type='hidden' name='leader' value='<%=leader%>' /> ";
+							html += "<input type='hidden' name='cPage' value='<%=cPage%>' /> ";
 							
 							if(data.length<2){
 								$("div#form-reviewEnroll").html("평가할 팀원이 없습니다.");																
@@ -399,7 +438,6 @@
 				}
 			});
 			
-			
 		});
 	function giveReview(){
 		var point = document.getElementsByName("point");
@@ -412,10 +450,97 @@
 		}
 		if(cnt==point.length){
 			return ture;
+		}else{
+			alert("모든 평가 버튼을 눌러주세요");
 		}
 		
 		return false;
 	}
+	var array = new Array("");
+	
+	$(document).ready(function() { 
+		var once = 0;
+		if(once==0){
+			var eval = document.getElementsByName("evaluation");
+			var arr="";
+			for(var i=0; i<eval.length; i++){
+				arr += eval[i].id;
+				if(i<eval.length-1){
+					arr += ",";
+					
+				}
+			}
+			console.log(arr);
+			$.ajax({
+				url: "reviewFinish.do",
+				data: {studyNo: arr},
+				dataType: "json",
+				success: function(data){
+					console.log(data);
+					var cnt=0;
+					
+					//로그인 한 회원은 평가를 했지만, 자신의 평가 값이 없을 경우, 평가 완료
+					for(var index in data.studyNoList){
+						$("#"+data.studyNoList[index]).attr("disabled","true");
+						$("#"+data.studyNoList[index]).html("평가 완료");
+						$("#"+data.studyNoList[index]).val("0");  //로그인 한 회원이 평가를 했는지 알려준다.
+					}
+					
+					//로그인 한 회원이 평가를 하고, 자신의 평가 값이 있을 경우, 평가 보기
+					for(var index in data.reviewList[0]){
+						for(var i in data.reviewList[0][index]){
+								//자신의 평가 값이 있고, 로그인 한 회원이 평가를 했다면 0, 안했다면 1
+								if(i.length>0 && $("#"+index).val()=='0'){ 
+									$("#"+index).remove();
+									$("#evalView"+index).attr("style","display: inline");
+								}
+							
+							var map = {};
+							map.point=data.reviewList[0][index][i].point.toString();
+							map.content = data.reviewList[0][index][i].content;
+							map.sno = index;
+							array[cnt] = map;
+							cnt++;
+						}
+					}
+				},
+				error: function(){
+					console.log("ajax 처리 실패");
+				}
+				
+			});
+			once=1;
+		}
+		
+	});
+	
+	$(function(){
+		$("[name=evaluationView]").on("click",function(){
+			for(var i=0; i<array.length; i++){
+				if(this.id=="evalView"+array[i].sno){
+					console.log(array[i]);
+					var html ="<table>";
+					html += "<tr>";
+					html += "<td>";
+					if(array[i].point == "1000"){
+						html += "좋아요";
+					}
+					if(array[i].point=="-1000"){
+						html += "싫어요";						
+					}
+					html += "</td>";
+					html += "<td>";
+					html += array[i].content;
+					html += "</td>";
+					html += "</tr>";									
+					html += "</table>";
+					$("#div-reviewView").html(html);
+				}
+			}
+		});
+	});
+	
+	
 	</script>
 	
 	

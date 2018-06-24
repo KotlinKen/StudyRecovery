@@ -85,4 +85,10 @@ public interface MemberService {
 
 	int reviewEnroll(Map<String, Object> map);
 
+	List<Integer> reviewFinish(Map<String, Object> map);
+
+	int updateMemberExp(Map<String, Object> map);
+
+	List<Map<String, Object>> reviewList(Map<String, Object> listMap);
+
 }

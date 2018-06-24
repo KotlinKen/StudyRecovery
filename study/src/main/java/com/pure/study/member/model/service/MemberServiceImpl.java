@@ -210,5 +210,20 @@ public class MemberServiceImpl implements MemberService {
 	public int reviewEnroll(Map<String,Object> map) {
 		return memberDAO.reviewEnroll(map);
 	}
+
+	@Override
+	public List<Integer> reviewFinish(Map<String, Object> map) {
+		return memberDAO.reviewFinish(map);
+	}
+
+	@Override
+	public int updateMemberExp(Map<String,Object> map) {
+		return memberDAO.updateMemberExp(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> reviewList(Map<String, Object> listMap) {
+		return memberDAO.reviewList(listMap);
+	}
 	
 }
