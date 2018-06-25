@@ -53,6 +53,11 @@ function validate(){
 }
 
 $(document).ready(function(){
+	$('#summernote').summernote({
+		focus: true,
+		height: 500// 페이지가 열릴때 포커스를 지정함
+	});
+	
 	$(".day").attr("disabled", true);
 	$("#sub").hide();
 	$("#town").hide();
@@ -272,8 +277,11 @@ $(function(){
 	</select>	
 	<!-- 지역 end -->	
 	
-	<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
-	<label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control" required></textarea><br />
+	<label for="title">스터디 제목 : </label>
+	<input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
+	<label for="content">스터디 내용 : </label>
+	<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required></textarea>
+	<br />
 
 	<!-- 카테고리 -->
 	<label for="kind">카테고리</label>

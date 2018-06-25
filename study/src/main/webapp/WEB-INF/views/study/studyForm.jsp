@@ -17,11 +17,11 @@ div.forCopy{
 <script>
 
 $(document).ready(function() {
-    $('#summernote').summernote({
-      focus: true,
-      height: 500// 페이지가 열릴때 포커스를 지정함
-    });
-  });
+	$('#summernote').summernote({
+		focus: true,
+		height: 500// 페이지가 열릴때 포커스를 지정함
+	});
+});
 
 </script>
 
