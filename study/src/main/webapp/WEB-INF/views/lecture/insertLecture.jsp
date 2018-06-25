@@ -54,6 +54,24 @@ function validate(){
 
 $(document).ready(function(){
 	$(".day").attr("disabled", true);
+	$("#sub").hide();
+	$("#town").hide();
+	
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = new String(date.getMonth()+1);
+	var day = new String(date.getDate());
+	
+	if(month.length == 1 )
+		month = "0" + month;
+	if( day.length == 1 )
+		day = "0" + day;
+	
+	var today = year + "-" + month + "-" + day;
+	
+	$("#ldate").attr("min", today);
+	$("#sdate").attr("min", today);
+	$("#edate").attr("min", today);
 });
 
 $(function(){	
@@ -139,23 +157,6 @@ $(function(){
 		var ldateVal = ldate.val();
 		var lArray = ldateVal.split("-");
 		var deadline = new Date(lArray[0], lArray[1], lArray[2]).getTime();
-		
-		var date = new Date();
-		var year = date.getFullYear();
-		var month = new String(date.getMonth()+1);
-		var day = new String(date.getDate());
-		
-		if(month.length == 1 )
-			month = "0" + month;
-		if( day.length == 1 )
-			day = "0" + day;
-		
-		var today = new Date(year, month, day);
-		
-		if( (deadline-today.getTime()) < 0 ){
-			alert("과거가 마감일이 될 수 없습니다.");
-			ldate.val("");
-		}
 		
 		var sdate = $("#sdate");		
 		var edate = $("#edate");
