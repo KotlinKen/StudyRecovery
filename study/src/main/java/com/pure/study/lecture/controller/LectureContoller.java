@@ -224,5 +224,5 @@ public class LectureContoller {
 		result = ls.applyLecture(map);
 		
 		return result;
-	}
+	}	
 }

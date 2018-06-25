@@ -309,9 +309,6 @@ $(function(){
 });
 
 </script>
-
-
-
 <div id="study-container">
 	<form action="studyFormEnd.do" name="studyFrm" method="post" onsubmit="return validate();" enctype="multipart/form-data">
 	
@@ -351,21 +348,26 @@ $(function(){
 			
 			</c:forEach>
 		</select>
+		
 		<select name="endtime" id="endtime" class="time">
 			<c:forEach var="j" begin="7" end="24">
-			<option value="${j }:00">${j }:00</option>
-			
+				<option value="${j }:00">${j }:00</option>			
 			</c:forEach>
-		</select><br />
-		<input type="hidden" name="time" id="time"/>
-		<label for="price">일회 사용회비 : </label><input type="text" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
+		</select>
 		<br />
+		
+		<input type="hidden" name="time" id="time"/>
+		<label for="price">일회 사용회비 : </label>
+		<input type="text" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
+		<br />
+		
 		<label for="recruit">모집 인원 : </label>
 		<select name="recruit" id="recruit">
 			<c:forEach var="i" begin="2" end="10">
-			<option value="${i }">${i }명</option>
+				<option value="${i }">${i }명</option>
 			</c:forEach>
-		</select><br />
+		</select>
+		<br />
 		
 		<label for="etc">기타 : </label><textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea><br /> 
 		
@@ -386,18 +388,20 @@ $(function(){
 		<input type="reset" value="취소하기" />
 		<input type="submit" value="등록하기" />
 	</form>
+	
 	<div class="input-group mb-3 forCopy" style="padding:0px">
 		  <div class="input-group-prepend" style="padding:0px">
 		    <span class="input-group-text">첨부파일</span>
 		  </div>
+		  
 		  <div class="custom-file">
 		    <input type="file" class="custom-file-input" id="upFile1" name="upFile">
 		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
 		  </div>
+		  
 		  <button type="button" class="addFile">+</button>
 		  <button type="button" class="removeFile">-</button>
 	</div>
-
 </div>
 </section>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

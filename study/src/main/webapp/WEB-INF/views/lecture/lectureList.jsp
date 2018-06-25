@@ -226,16 +226,22 @@
 					<div class="lectureDiv" style="border: 1px solid gray; text-align: center;">
 						<span>제목 : ${lecture.TITLE }</span>
 						<br />
+						
 						<span>지역 : ${lecture.LOCAL} ${lecture.TNAME}</span>
 						<br />
+						
 						<span>과목 : ${lecture.KNAME} - ${lecture.SUBNAME}</span>
 						<br />
+						
 						<span>난이도 : ${lecture.DNAME }</span>
 						<br />
+						
 						<span>비용 : ${lecture.PRICE}원</span>
 						<br />
+						
 						<span>${lecture.STATUS }</span>
 						<br />
+						
 						<span>
 							일정 :
 							<fmt:parseDate value="${lecture.SDATE}" type="date" var="sdate" pattern="yyyy-MM-dd" />
@@ -247,11 +253,13 @@
 							시간 : ${lecture.TIME }							
 						</span>
 						<br />
+						
 						<span>
 							작성자 : ${lecture.MNAME } &nbsp;&nbsp;&nbsp;
 							등록일 : <fmt:parseDate value="${lecture.REGDATE }" type="date" var="regDate" pattern="yyyy-MM-dd" />
 							<fmt:formatDate value="${regDate }" pattern="yyyy/MM/dd"/>	
 						</span>
+						
 						<input type="hidden" id="sno" value="${lecture.SNO }"/>
 					</div>
 				</c:forEach>	

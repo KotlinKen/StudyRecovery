@@ -49,7 +49,7 @@
 	     			        		mno : mno
 	     			        	},
 	     			        	success:function(data){
-	     			        		
+	     			        		location.href ="suceessPay.do?mno=" + mno;
 	     			        	}
 	     			        });
    			        		msg = '결제가 완료되었습니다.';	     	     			        
