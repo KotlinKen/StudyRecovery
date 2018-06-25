@@ -21,7 +21,14 @@ div#carouselExampleControls{
 div.carousel-item img{
 	width:500px;
 	height:600px;
-} 
+}
+div.member-photo img{
+	widht:60px;
+	height:70px;
+}
+div.review-detail a{
+	color:coral;
+}
 </style>
 
 <script>
@@ -160,7 +167,7 @@ $(function(){
 <span>수업 기간 : ${study.SDATE }~${study.EDATE }</span>
 <span>협의비 : ${study.PRICE }</span>
 <hr />
-<label for="">리더 소개</label>
+<label for="">리더 소개</label><br />
 <c:if test="${study.MPROFILE!=null }">
 <img src="${pageContext.request.contextPath}/resources/upload/member/${study.MPROFILE}" alt="" />
 </c:if>
@@ -173,8 +180,31 @@ $(function(){
 </div>
 
 
-<div id="review"><!-- 팀장에 대한 후기 -->
+<div id="review-container"><!-- 팀장에 대한 후기 -->
+<h5>리더에 대한 후기</h5>
+<c:if test="${reviewList!=null }">
+	<ul class="reviews">
+		<c:forEach var="r" items="${reviewList }">
+			<li class="review-one">
+				<div class="member-photo">
+					<img src="${pageContext.request.contextPath }/resources/upload/member/${r.MPROFILE!=null? r.MPROFILE:'basicprofile.png'}" alt="" />
+				</div>
+				<div class="review-detail">
+					<span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
+					<p>${r.CONTENT }</p>
+					<a href="studyView.do?sno=${r.SNO }">${r.TITLE }</a><br />
+					<span><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></span>
+				
+					
+				</div>
+			</li>
+		</c:forEach>
+	</ul>
 
+</c:if>
+<c:if test="${reviewList==null }">
+아직 평가가 없습니다.
+</c:if>
 
 </div>
 
