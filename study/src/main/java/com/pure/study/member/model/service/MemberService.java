@@ -79,5 +79,17 @@ public interface MemberService {
 
 	int instructorCheckO(int mno);
 
+	int updateScontent(Map<String, String> scont);
+
+	int updateIcontent(Map<String, String> icont);
+
+	int deleteScontent(String sno);
+
+	int insertScontent(String scontent);
+
+	int insertIcontent(String icontent);
+
+	int deleteIcontent(String ino);
+
 
 }

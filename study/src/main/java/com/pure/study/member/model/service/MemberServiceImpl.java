@@ -199,5 +199,35 @@ public class MemberServiceImpl implements MemberService {
 	public int instructorCheckO(int mno) {
 		return memberDAO.instructorCheckO(mno);
 	}
+
+	@Override
+	public int updateScontent(Map<String, String> scont) {
+		return memberDAO.updateScontent(scont);
+	}
+
+	@Override
+	public int updateIcontent(Map<String, String> icont) {
+		return memberDAO.updateIcontent(icont);
+	}
+
+	@Override
+	public int deleteScontent(String sno) {
+		return memberDAO.deleteScontent(sno);
+	}
+
+	@Override
+	public int insertScontent(String scontent) {
+		return memberDAO.insertScontent(scontent);
+	}
+
+	@Override
+	public int insertIcontent(String icontent) {
+		return memberDAO.insertIcontent(icontent);
+	}
+
+	@Override
+	public int deleteIcontent(String ino) {
+		return memberDAO.deleteIcontent(ino);
+	}
 	
 }

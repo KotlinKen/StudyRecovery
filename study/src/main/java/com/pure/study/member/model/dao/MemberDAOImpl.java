@@ -199,5 +199,37 @@ public class MemberDAOImpl implements MemberDAO {
 	public int instructorCheckO(int mno) {
 		return sqlSession.selectOne("member.instructorCheckO",mno);
 	}
+
+	@Override
+	public int updateScontent(Map<String, String> scont) {
+		System.out.println(scont);
+		return sqlSession.update("member.updateScontent", scont);
+	}
+
+	@Override
+	public int updateIcontent(Map<String, String> icont) {
+		System.out.println(icont);
+		return sqlSession.update("member.updateIcontent", icont);
+	}
+
+	@Override
+	public int deleteScontent(String sno) {
+		return sqlSession.delete("member.deleteScontent",sno);
+	}
+
+	@Override
+	public int insertScontent(String scontent) {
+		return sqlSession.insert("member.insertScontent", scontent);
+	}
+
+	@Override
+	public int insertIcontent(String icontent) {
+		return sqlSession.insert("member.insertIcontent", icontent);
+	}
+
+	@Override
+	public int deleteIcontent(String ino) {
+		return sqlSession.delete("member.deleteIcontent", ino);
+	}
 	
 }

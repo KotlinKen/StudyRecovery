@@ -1227,4 +1227,133 @@ public class MemberController {
 		
 		return map;
 	}
+	
+	/*약관동의서 관리*/
+	@RequestMapping(value = "/member/agreementAdmin.do")
+	public ModelAndView agreementAdmin () {
+		ModelAndView mav = new ModelAndView();
+		
+		List <Map<String , String>> service = memberService.serviceagree();
+		List <Map<String , String>> information = memberService.informationagree();
+		
+		mav.addObject("service", service);
+		mav.addObject("information", information);
+		return mav;
+	}
+	@RequestMapping(value = "/member/agreementAdminEnd.do")
+	public ModelAndView agreementAdminEnd ( @RequestParam(value = "em") String em ) {
+		ModelAndView mav = new ModelAndView();
+		
+	
+		return mav;
+	}
+	
+	@RequestMapping(value = "/member/serviceOneAdminEnd.do")
+	@ResponseBody
+	public Map<String, Object> agreementOneAdminEnd ( @RequestParam(value = "sno") String sno ,@RequestParam(value = "scontent") String scontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(sno);
+		System.out.println(scontent);
+		Map<String,String> scont = new HashMap<>();
+		scont.put("sno", sno);
+		scont.put("scontent", scontent);
+		int result = memberService.updateScontent(scont);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/informationOneAdminEnd.do")
+	@ResponseBody
+	public Map<String, Object> informationOneAdminEnd ( @RequestParam(value = "ino") String ino ,@RequestParam(value = "icontent") String icontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(ino);
+		System.out.println(icontent);
+		Map<String,String> icont = new HashMap<>();
+		icont.put("ino", ino);
+		icont.put("icontent", icontent);
+		int result = memberService.updateIcontent(icont);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/serviceOneDeleteEnd.do")
+	@ResponseBody
+	public Map<String, Object> serviceOneDeleteEnd ( @RequestParam(value = "sno") String sno ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(sno);
+		int result = memberService.deleteScontent(sno);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/informationOneDeleteEnd.do")
+	@ResponseBody
+	public Map<String, Object> informationOneDeleteEnd ( @RequestParam(value = "ino") String ino ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(ino);
+		int result = memberService.deleteIcontent(ino);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	
+	@RequestMapping(value = "/member/serviceInsertEnd.do")
+	@ResponseBody
+	public Map<String, Object> serviceInsertEnd ( @RequestParam(value = "scontent") String scontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(scontent);
+		int result = memberService.insertScontent(scontent);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	
+	@RequestMapping(value = "/member/informationInsertEnd.do")
+	@ResponseBody
+	public Map<String, Object> informationInsertEnd ( @RequestParam(value = "icontent") String icontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(icontent);
+		int result = memberService.insertIcontent(icontent);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	
+	
 }

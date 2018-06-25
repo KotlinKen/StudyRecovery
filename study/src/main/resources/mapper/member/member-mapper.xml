@@ -829,4 +829,22 @@
 	<select id="instructorCheckO" resultType="_int">
 		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
 	</select>
+	<update id="updateScontent">
+		UPDATE SERVICEAGREE SET SCONTENT = #{scontent} where SNO = #{sno} 
+	</update>
+	<update id="updateIcontent">
+		UPDATE INFORMATIONAGREE SET ICONTENT = #{icontent} where INO = #{ino} 
+	</update>
+	<delete id="deleteScontent">
+		DELETE FROM SERVICEAGREE WHERE sno = #{sno}
+	</delete>
+	<delete id="deleteIcontent">
+		DELETE FROM INFORMATIONAGREE WHERE ino = #{ino}
+	</delete>
+	<insert id="insertScontent">
+		insert into SERVICEAGREE values(seq_serviceagree.nextval,#{scontent})
+	</insert>
+	<insert id="insertIcontent">
+		insert into INFORMATIONAGREE values(seq_INFORMATIONAGREE.nextval,#{icontent})
+	</insert>
 </mapper>
