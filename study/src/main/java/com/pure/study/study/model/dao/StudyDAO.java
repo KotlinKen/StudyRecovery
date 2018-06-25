@@ -57,6 +57,8 @@ public interface StudyDAO {
 
 	int deletewishStudy(Map<String, Integer> map);
 
+	List<Map<String, Object>> selectReview(int sno);
+
 	
 
 }

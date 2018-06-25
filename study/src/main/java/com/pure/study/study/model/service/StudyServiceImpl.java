@@ -162,6 +162,12 @@ public class StudyServiceImpl implements StudyService {
 		return studyDAO.deletewishStudy(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectReview(int sno) {
+		// TODO Auto-generated method stub
+		return studyDAO.selectReview(sno);
+	}
+
 	
 
 

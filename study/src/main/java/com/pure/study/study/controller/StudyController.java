@@ -290,10 +290,15 @@ public class StudyController {
 			
 		}
 		
+		
+		//팀장에 리뷰 가져오기.
+		List<Map<String,Object>> reviewList= studyService.selectReview(sno);
+		
+		
 		mav.addObject("study", study);
 		mav.addObject("memberLoggedIn", m);
 		mav.addObject("isWish",isWish);	
-		
+		mav.addObject("reviewList",reviewList);
 		mav.setViewName("study/studyView");
 		return mav;
 	}
