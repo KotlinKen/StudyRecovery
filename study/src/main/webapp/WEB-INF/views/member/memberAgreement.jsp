@@ -29,6 +29,7 @@ input[type=checkbox], input[type=radio]{ width: 20px;height: 20px; border-radius
 body {background: rgb(230, 230, 230)}
 #indivik{border-radius: 5px; border: solid 1px rgb(210, 210, 210); }
 #headaik{color: black;}
+::-webkit-scrollbar {display:none;}
 </style>
 </head>
 <body>
