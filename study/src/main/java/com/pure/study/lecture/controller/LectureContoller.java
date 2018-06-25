@@ -50,29 +50,34 @@ public class LectureContoller {
 
 		return mav;
 	}
-
-	@RequestMapping("/lecture/selectTown.do")
-	@ResponseBody
-	public List<Map<String, Object>> selectTown(@RequestParam(value = "localNo") int localNo) {
-		List<Map<String, Object>> townList = ls.selectTownList(localNo);
-
-		return townList;
-	}
-
-	@RequestMapping("/lecture/selectSubject.do")
-	@ResponseBody
-	public List<Map<String, Object>> selectKind(@RequestParam(value = "kindNo") int kindNo) {
-		List<Map<String, Object>> subList = ls.selectSubList(kindNo);
-
-		return subList;
-	}
-
+	
 	@RequestMapping("/lecture/lectureFormEnd.do")
 	public ModelAndView insetLecture(Lecture lecture, 
+									 @RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage,
 			                         @RequestParam(value = "freqs") String[] freqs,
 			                         @RequestParam(value="upFile") MultipartFile[] upFiles,
 			                         HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		
 		int result = 0;
+		
+		// 페이징 처리용
+		int numPerPage = 5;
+		int total = ls.selectTotalLectureCount();
+		int totalPage = (int)Math.ceil(total/numPerPage);
+		
+		List<Map<String, String>> lectureList = ls.selectLectureList(cPage, numPerPage);
+		List<Map<String, String>> locList = ls.selectLocList();
+		List<Map<String, String>> kindList = ls.selectKindList();
+		List<Map<String, String>> diffList = ls.selectDiff();
+		
+		mav.addObject("lectureList", lectureList);
+		mav.addObject("locList", locList);
+		mav.addObject("kindList", kindList);
+		mav.addObject("diffList", diffList);
+		mav.addObject("cPage", cPage);
+		mav.addObject("totalPage", totalPage);
+		
 		// 빈도 배열을 join해서 setter로 setting해줌
 		String freq = String.join(",", freqs);
 		lecture.setFreqs(freq);
@@ -97,9 +102,12 @@ public class LectureContoller {
 				int rndNum = (int)(Math.random()*1000);
 				String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
 				
-				img += renamedFileName;
+				if( i != last )
+					img += renamedFileName + ", ";
 				
 				if( i == last ) {
+					img += renamedFileName;
+					
 					lecture.setUpfile(img);
 					result = ls.insertLecture(lecture);
 					
@@ -118,14 +126,28 @@ public class LectureContoller {
 				lecture.setUpfile(img);
 				result = ls.insertLecture(lecture);
 			}
-		}		
-
-		ModelAndView mav = new ModelAndView();
+		}	
 
 		mav.setViewName("lecture/lectureList");
 
 		return mav;
 	}
+
+	@RequestMapping("/lecture/selectTown.do")
+	@ResponseBody
+	public List<Map<String, Object>> selectTown(@RequestParam(value = "localNo") int localNo) {
+		List<Map<String, Object>> townList = ls.selectTownList(localNo);
+
+		return townList;
+	}
+
+	@RequestMapping("/lecture/selectSubject.do")
+	@ResponseBody
+	public List<Map<String, Object>> selectKind(@RequestParam(value = "kindNo") int kindNo) {
+		List<Map<String, Object>> subList = ls.selectSubList(kindNo);
+
+		return subList;
+	}	
 
 	@RequestMapping("/lecture/lectureList.do")
 	public ModelAndView lectureList(@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage) {
@@ -148,7 +170,7 @@ public class LectureContoller {
 		mav.addObject("cPage", cPage);
 		mav.addObject("totalPage", totalPage);
 		
-		mav.setViewName("lecture/lectureListEnd");
+		mav.setViewName("lecture/lectureList");
 
 		return mav;
 	}

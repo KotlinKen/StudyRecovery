@@ -9,13 +9,7 @@
 <title>Insert title here</title>
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
-<script>
-
-	// 삭제버튼
-	function deleteLecture(){
-		location.href="${pageContext.request.contextPath}/lecture/deleteLecture.do?sno=" + ${lecture.SNO};
-	}
-	
+<script>	
 	//참여신청 버튼 클릭 이벤트
 	function lectureApply(){
 		// 결제 도전!
@@ -98,14 +92,21 @@
 	   $("button.editLecture").click(function(){
 	      location.href="lectureUpdate.do?sno="+${lecture.SNO};	      
 	   });   
+	   
+	   $("#updateLectureBtn").click(function(){
+		   location.href = "lectureUpdate.do?sno=" + ${lecture.SNO};
+	   });
 	});
+	// 삭제버튼
+	function deleteLecture(){
+		location.href="${pageContext.request.contextPath}/lecture/deleteLecture.do?sno=" + ${lecture.SNO};
+	}
 </script>
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 
 <div id="study-detail">
-	<!-- 팀장일때만 나타날 것임. -->
 	<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-		<button type="button" class="editLecture">강의 수정</button>
+		<button type="button" id="updateLectureBtn">강의 수정</button>
 		<button type="button" onclick="deleteLecture();">강의 삭제</button>
 	</c:if>
 
