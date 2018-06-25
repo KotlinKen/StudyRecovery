@@ -87,10 +87,10 @@
 		        TIME,
 		        NVL(PRICE, 0) AS PRICE,
 		        STATUS,        
-		        LDATE,
-		        SDATE,
-		        EDATE,
-		        REGDATE
+		        TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
+		        TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
+		        TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
+		        TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
 		FROM (SELECT S.*, 
 		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
 		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
@@ -118,10 +118,10 @@
 		        TIME,
 		        NVL(PRICE, 0) AS PRICE,
 		        STATUS,        
-		        LDATE,
-		        SDATE,
-		        EDATE,
-		        REGDATE
+		        TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
+		        TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
+		        TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
+		        TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
 		FROM (SELECT S.*, 
 		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
 		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
@@ -133,11 +133,12 @@
 	<select id="selectTotalLectureCountBySearch" resultType="_int">
 		SELECT COUNT(*)
 		FROM (SELECT S.*, 
-		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
-		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
-		      FROM STUDY S 
-			  WHERE TYPE = 'lecture') A
-		WHERE 1=1 
+            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
+            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
+            (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = S.MNO) MNAME
+        FROM STUDY S 
+        WHERE TYPE = 'lecture') A
+        WHERE 1=1
 		<if test="lno != 0">
 			AND A.LNO = #{lno}
 		</if>
@@ -152,6 +153,9 @@
 		</if>
 		<if test="subno != 0">
 			AND A.SUBNO = #{subno}
+		</if>
+		<if test="leadername!=null and leadername !='' ">
+			AND A.MNAME = #{leadername}
 		</if>
 		ORDER BY SNO DESC
 	</select>
@@ -166,18 +170,19 @@
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
-		       TITLE,
-		       UPFILE,
-		       TIME,
-		       NVL(PRICE, 0) AS PRICE,
-		       STATUS,        
-		       LDATE,
-		       SDATE,
-		       EDATE,
-		       REGDATE
+		        TITLE,
+		        UPFILE,
+		        TIME,
+		        NVL(PRICE, 0) AS PRICE,
+		        STATUS,        
+		        TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
+		        TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
+		        TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
+		        TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
 		FROM (SELECT S.*, 
 		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
-		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
+		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
+		            (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = S.MNO) MNAME
 		      FROM STUDY S 
 			  WHERE TYPE = 'lecture') A
 		WHERE 1=1 
@@ -196,6 +201,9 @@
 		<if test="subno != 0">
 			AND A.SUBNO = #{subno}
 		</if>
+		<if test="leadername!=null and leadername !='' ">
+			AND A.MNAME = #{leadername}
+		</if>
 		ORDER BY SNO DESC
 	</select>
 	
@@ -206,4 +214,52 @@
 	<delete id="deleteLecture">
 		DELETE FROM STUDY WHERE SNO = #{sno} and STATUS = '모집 중'
 	</delete>
+	
+	<select id="selectByDeadline" resultMap="map">
+	 select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
+  		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
+ 		  m.profile,l.local local,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
+ 	 from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
+ 	 where   s.type='lecture' and s.ldate>=sysdate
+  	 order by s.ldate
+	
+	</select>
+	
+	<select id="lectureDeadlineCount" resultType="_int">
+	  select  count(*) cnt
+	  from 	  study s 
+	  where   s.type='lecture' and s.ldate>=sysdate
+	  order by s.ldate	
+	</select>
+	
+	<select id="selectByApply" resultMap="map">
+	  select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
+	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
+	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME dname,local, 
+	 		mid, mname, profile,cover
+	  from(
+	        select count(*) cnt, s.sno 
+	        from apply a right outer join study s on a.sno=s.sno 
+	        where s.type='lecture' 
+	        group by s.sno 
+	      ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
+	  order by cnt desc, s.REGDATE
+	</select>
+	
+	<select id="studyByApplyCount" resultType="_int">
+	 select count(*) cnt
+	 from(
+	        select count(*) cnt, s.sno 
+	        from apply a right outer join study s on a.sno=s.sno 
+	        where s.type='lecture' 
+	        group by s.sno 
+	        order by cnt desc
+	       )
+	
+	</select>
+	
+	
+	
+	
+	
 </mapper>

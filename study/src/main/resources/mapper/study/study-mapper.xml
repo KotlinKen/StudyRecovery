@@ -163,7 +163,7 @@
   <select id="selectByApply" resultMap="mapList">
 	  select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
 	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
-	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME,local lname, 
+	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME dname,local lname, 
 	 		mid, mname, mprofile,cover
 	  from(
 	        select count(*) cnt, s.sno 

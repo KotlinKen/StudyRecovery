@@ -17,7 +17,7 @@ public interface LectureService {
 
 	int insertLecture(Lecture lecture);
 
-	List<Map<String, String>> selectLectureList(int cPage, int numPerPage);
+	List<Map<String, Object>> selectLectureList(int cPage, int numPerPage);
 
 	List<Map<String, String>> selectDiff();
 
@@ -31,8 +31,16 @@ public interface LectureService {
 
 	int selectTotalLectureCount();
 
-	int selectTotalLectureCountBySearch(Map<String, Integer> map);
+	int selectTotalLectureCountBySearch(Map<String, Object> terms);
 
-	List<Map<String, String>> selectLectureListBySearch(int cPage, int numPerPage, Map<String, Integer> map);
+	List<Map<String, Object>> selectLectureListBySearch(Map<String, Object> terms);
+
+	List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage);
+
+	int lectureDeadlineCount();
+
+	List<Map<String, Object>> selectByApply(int cPage, int numPerPage);
+
+	int studyByApplyCount();
 
 }
