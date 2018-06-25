@@ -67,5 +67,12 @@
 		</interceptor>
 	</interceptors>
 	
+	<interceptors>
+		<interceptor>
+			<mapping path="/admin/**"/>
+			<!-- <exclude-mapping path="/admin/adminLogin"/> -->
+			<beans:bean class="com.pure.study.common.interceptor.AdminCheckInterceptor" id="adminCheck"/>
+		</interceptor>
+	</interceptors>
 		
 </beans:beans>

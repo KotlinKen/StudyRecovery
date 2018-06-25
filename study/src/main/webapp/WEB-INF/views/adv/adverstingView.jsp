@@ -2,14 +2,14 @@
 <jsp:include page ="/WEB-INF/views/common/header.jsp">
 	<jsp:param value="광고등록" name="pageTitle"/>
 </jsp:include>
-<form action="${rootPath}/adv/adverstingReWrite"  name="adverstingReWrite"  method="post" enctype="multipart/form-data">
+<form action="${rootPath}/adv/adverstingUpdate"  name="adverstingUpdate"  method="post" enctype="multipart/form-data">
 	<div class="form-row">
 		<div class="form-group col-md-2">
 			<label for="position">배너위치</label> <select id="position" name="position" class="form-control">
 				<option value="TOP">TOP</option>
 				<option value="BANNER" ${("베너" eq adversting.POSITION) ? "selected" : ""}>베너</option>
 				<option value="POPUP" ${("POPUP" eq adversting.POSITION) ? "selected" : ""}>팝업</option>
-				<option value="WINGRIGHT" ${("WINGRIGHT" eq adversting.POSITION) ? "selected" : ""}>윙 2</option>
+				<option value="WINGRIGHT" ${("WINGRIGHT" eq adversting.POSITION) ? "selected" : ""}>윙</option>
 				<option ${("윙 3" eq adversting.POSITION) ? "selected" : ""}>윙 3</option>
 			</select>
 		</div>
@@ -32,7 +32,8 @@
 	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="content">광고 내용을 간략히 적어주세요.</label>
-			<textarea class="form-control" name="content" id="content" rows="3">${adversting.CONTENT}</textarea>
+			<textarea class="form-control" name="content" id="summernote" rows="3" >${adversting.CONTENT}</textarea>
+			${adversting.CONTENT}
 		</div>
 	</div>
 
@@ -182,7 +183,19 @@ $(".upfile_name").on("change", function(){
 		
 	});
 
-
+	$(document).ready(function() {
+		$('#summernote').summernote({
+			  toolbar: [
+			    // [groupName, [list of button]]
+			    ['style', ['bold', 'italic', 'underline', 'clear']],
+			    ['font', ['strikethrough', 'superscript', 'subscript']],
+			    ['fontsize', ['fontsize']],
+			    ['color', ['color']],
+			    ['para', ['ul', 'ol', 'paragraph']],
+			    ['height', ['height']]
+			  ]
+			});
+	  });
 </script>
 
 

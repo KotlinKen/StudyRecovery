@@ -164,6 +164,7 @@
 		right: 427px;
 	}
 </style>
+<div class="container">
 	<button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의	작성</button>
 	<div id="lectureList-container">	
 		<!-- 지역 -->
@@ -267,5 +268,5 @@
 			</c:if>	
 		</div>
 	</div>
-	
+	</div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

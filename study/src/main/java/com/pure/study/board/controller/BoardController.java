@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,20 +38,19 @@ public class BoardController {
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@RequestMapping("/board/d")
-	public void test() {
-		logger.info("하하하호호호");
-	}
-	
-	
-	@RequestMapping("/board/boardList.do")
-	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage) {
+	@RequestMapping("/board/boardList")
+	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, @RequestParam (value="type", required=false) String type) {
 		ModelAndView mav = new ModelAndView();
 		//Rowbounds 처리를 위해서 offset, limit 값이 필요함.
 		int numPerPage = 10; 
 		
+		
+		Map<String, String> params = new HashMap<>();
+		
+		params.put("type", type);
+		
 		//1. 현재 페이지 컨텐츠 구하기
-		List<Map<String, String>> list = boardService.selectBoardList(cPage, numPerPage);
+		List<Map<String, String>> list = boardService.selectBoardList(cPage, numPerPage, params);
 		
 		logger.debug("보드 리스트 값을 알려주세요"+list);
 		
@@ -64,32 +64,22 @@ public class BoardController {
 		return mav;
 	};
 	
-	@RequestMapping("/board/boardForm.do")
+	@RequestMapping("/board/boardWrite")
 	public void boardForm() {
 		//ViewNameTranslator가 자동으로 view단 지정 - 내부적으로 동작하는 requestMapping이 return 타입의 String과 같을경우
 		
 	}
 	
-	@RequestMapping("/board/boardFormEnd.do")
+	@RequestMapping("/board/boardWriteEnd")
 	public ModelAndView insertBoard(Board board, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
-/*		logger.debug("게시판 페이지저장");
-		logger.debug("board="+board);
-*/
-		logger.debug("upFiles.length="+upFiles.length);
-		logger.debug("upFileName="+upFiles[0].getName());
-		logger.debug("upFile originalFileName="+upFiles[0].getOriginalFilename());
-		logger.debug("upFile originalFileName="+upFiles[1].getOriginalFilename());
-		logger.debug("size="+upFiles[0].getSize());
-		
+		List<String> images = new ArrayList<String>();
 		
 		try {
 			//1.파일업로드 처리
 			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
 					
 			List<Attachment> attachList = new ArrayList<>();
-			/************** MultipartFile을 이용한 파일 업로드 처리 로직 시작  ********************************************************/
-			
 			
 			for(MultipartFile f : upFiles) {
 				if(!f.isEmpty()) {
@@ -108,19 +98,14 @@ public class BoardController {
 						e.printStackTrace();
 					}
 					//VO객체 담기
-					
-					Attachment attach = new Attachment();
-					attach.setOriginalFileName(originalFileName);
-					attach.setRenamedFileName(renamedFileName);
-					attachList.add(attach);
+					images.add(renamedFileName);
 				}
 			}
-			logger.debug("attachList="+attachList);
-			//2.비지니스로직
+			String image  = String.join(",", images);
+			board.setUpfile(image);
+			
 			
 			int result = boardService.insertBoard(board, attachList);
-			int boardNo = board.getBoardNo();
-			logger.debug("boardNo@controller = " + boardNo);
 			
 			
 			//3. view단 분기
@@ -129,7 +114,8 @@ public class BoardController {
 			
 			if(result>0) {
 				msg = "게시물 등록 성공";
-				loc = "/board/boardView.do?boardNo="+board.getBoardNo();
+				//loc = "/board/boardView.do?boardNo="+board.getBno();
+				loc = "/";
 			}else {
 				msg = "게시물 등록 실패";
 			}
@@ -140,19 +126,15 @@ public class BoardController {
 		} catch(Exception e) {
 			throw new BoardException("게시물 등록 오류");
 		}
-		/************** MultipartFile을 이용한 파일 업로드 처리 로직 끝  ********************************************************/
 		return mav;
 	}
 	
 	
-	@RequestMapping("/board/boardView.do")
-	public ModelAndView selectOne(int boardNo) {
-		logger.debug("test"+ boardNo);
+	@RequestMapping("/board/boardView")
+	public ModelAndView selectOne(@RequestParam int bno) {
 		ModelAndView mav = new ModelAndView();
 		
-		List<Map<String, String>> board = boardService.selectOne(boardNo);
-		
-		logger.debug("board=======================================================" + board);
+		Map<String, String> board = boardService.selectOne(bno);
 		
 		mav.addObject("board", board);
 		return mav;

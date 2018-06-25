@@ -20,7 +20,6 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public List<Map<String, String>> selectBoardList(int cPage, int numPerPage) {
-		// TODO Auto-generated method stub
 		return boardDAO.selectBoardList(cPage, numPerPage);
 	}
 
@@ -36,18 +35,6 @@ public class BoardServiceImpl implements BoardService {
 		
 		try {
 			result = boardDAO.insertBoard(board);
-			
-			int boardNo = board.getBoardNo();
-	
-			logger.debug("boardNo@service="+boardNo);
-			if(attachList.size() > 0 ) {
-				for(Attachment a : attachList) {
-					a.setBoardNo(boardNo);
-					result = boardDAO.inserAttachment(a);
-				}
-			}else {
-				
-			}
 		}catch(Exception e ) {
 			e.printStackTrace();
 			throw e;
@@ -56,18 +43,12 @@ public class BoardServiceImpl implements BoardService {
 	}
 
 	@Override
-	public List<Map<String, String>> selectOne(int boardNo) {
+	public Map<String, String> selectOne(int boardNo) {
 		
-		List<Map<String, String>> one;
-		int count=0;
+		Map<String, String> one;
 		
 		try {
-			count = boardDAO.selectOneAttachCount(boardNo);
-			if(count > 0) {
-				one = boardDAO.selectOneAttach(boardNo);
-			}else {
-				one = boardDAO.selectOne(boardNo);
-			}
+			one = boardDAO.selectOne(boardNo);
 		}catch(Exception e ) {
 			e.printStackTrace();
 			throw e;
@@ -75,6 +56,11 @@ public class BoardServiceImpl implements BoardService {
 		
 		return one;
 		
+	}
+
+	@Override
+	public List<Map<String, String>> selectBoardList(int cPage, int numPerPage, Map<String, String> params) {
+		return boardDAO.selectBoardList(cPage, numPerPage, params);
 	}
 
 	

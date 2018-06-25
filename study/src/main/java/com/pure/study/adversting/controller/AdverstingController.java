@@ -41,79 +41,82 @@ public class AdverstingController {
 	
 	
 	
-	@RequestMapping(value="/adv/", method=RequestMethod.GET)
+	@RequestMapping("/admin/adverstingUpload")
 	@ResponseBody
-	public Adversting selectAdverstingRest(@RequestParam(value="filter", required=false) String filter) {
-		
-		Adversting adversting = new Adversting();
-		
-		adversting.setAdvImg("kkk22222");
-		
-		return adversting;
+	public ModelAndView adverstingUpload(@RequestParam(value="file", required=false) MultipartFile[] upFiles) {
+		logger.info("테스트"+upFiles);
+		ModelAndView mav = new ModelAndView();
+		return mav; 
 	}
 	
-	@RequestMapping(value="/adv/{advIdx}", method=RequestMethod.GET)
+	
+	//목록보기
+	@RequestMapping("/{location}/adverstingList")
 	@ResponseBody
-	public Adversting selectTestRest(@PathVariable int advIdx, @RequestParam(value="filter", required=false) String filter) {
+	public ModelAndView adverstingListPaging(@RequestParam(value="cPage", required=false, defaultValue="1") int cPage, 
+											 @RequestParam Map<String, String> queryMap,
+											 @PathVariable(value="location", required=false) String location, 
+											 HttpServletRequest request) {
 		
-		Adversting adversting = new Adversting();
-		
-		adversting.setAdvImg("kkk");
-		adversting.setAno(advIdx);
-		return adversting;
-	}
-	
-	@RequestMapping(value="/adv", method=RequestMethod.POST)
-	@ResponseBody
-	public boolean insertTestRest(@RequestParam Adversting adversting) {
-		return true;
-	}
-	
-	@RequestMapping(value="/advs/{advIdx}", method= {RequestMethod.PUT, RequestMethod.POST})
-	@ResponseBody
-	public boolean updateTestRest(@PathVariable int advIdx, @RequestParam Adversting adversting) {
-		
-		
-		return false;
-	}
-	
-	@RequestMapping(value="/advs/{advIdx}", method=RequestMethod.DELETE)
-	@ResponseBody
-	public boolean deleteTestRest(@PathVariable int advIdx) {
-		return true;
-	}
-	
-	
-	@RequestMapping("/adv/adverstingWrite")
-	public void adverstingWrite() {
-		logger.info("test");
-		
-	}
-	
-	@RequestMapping("/adv/adverstingWriteEnd")
-	public ModelAndView adverstingWriteEnd(Adversting adversting, @RequestParam(value="img", required=false) MultipartFile[] upFiles, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		
-		adversting.setAno(3);
+		if(location == null || !(location.equals("admin") || location.equals("adv")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+
+		int numPerPage = 10; 
+		List<Map<String, String>>  list = adverstingService.adverstingListPaging(cPage, numPerPage, queryMap);
+		logger.debug("adversting list"+list);
+		
+		int totalBoardNumber = adverstingService.adverstingTotalCount(queryMap);
+		
+		mav.addObject("count", totalBoardNumber);
+		mav.addObject("list", list);
+		mav.addObject("numPerPage", numPerPage);
+		return mav;
+	}
+	
+	
+	//등록하기
+	@RequestMapping(value="/{location}/adverstingWrite", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView adverstingWrite(@PathVariable(value="location", required=false) String location){
+		ModelAndView mav = new ModelAndView();
+		if(location == null || !(location.equals("admin") || location.equals("adv")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		return mav;
+	}
+	//등록하기
+	@RequestMapping(value="/{location}/adverstingWriteEnd", method=RequestMethod.POST)
+	@ResponseBody
+	public ModelAndView adverstingWriteEnd(Adversting adversting, 
+										   HttpServletRequest request,
+										   @PathVariable(value="location", required=false) String location, 
+ 	 		    						   @RequestParam(value="img", required=false) MultipartFile[] upFiles){ 
+																  
+		ModelAndView mav = new ModelAndView();
+		if(location == null || !(location.equals("admin") || location.equals("adv")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
 		
 		if(adversting.getStatus().equals("on")) {
 			adversting.setStatus("Y");
 		}else {
 			adversting.setStatus("N");
 		}
-		
-		
 		try {
-			//1.파일업로드 처리
 			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/adversting");
-					
-			/************** MultipartFile을 이용한 파일 업로드 처리 로직 시작  ********************************************************/
-			
-			//
 			int cnt = 0;
-			
-			
-
 				for(MultipartFile f : upFiles) {
 					cnt++;
 					logger.info("cnt"+saveDirectory);
@@ -134,29 +137,21 @@ public class AdverstingController {
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						//VO객체 담기
 						adversting.setAdvImg(renamedFileName);
 					}
 				}
 			
 			int result = adverstingService.insertAdversting(adversting);
-			
-			if(result == -1) {
-				mav.addObject("msg", "에러테스트");
-				mav.addObject("loc", "/adv/adverstingWrite");
-				mav.setViewName("common/msg");
-				return mav;
-			}
 			//3. view단 분기
 			String loc = "/";
 			String msg = "";
 			
 			if(result>0) {
-				msg = "게시물 등록 성공";
-				loc = "/adv/adverstingView?ano="+adversting.getAno();
+				msg = "게시물 등록 성공 했습니다.";
+				loc = "/"+location+"/adverstingView?ano="+adversting.getAno();
 			}else {
-				msg = "게시물 등록 실패";
-				loc = "/adv/adverstingWrite";
+				msg = "게시물 등록 실패 했습니다.";
+				loc = "/"+location+"/adverstingWrite";
 			}
 			
 			mav.addObject("msg", msg);
@@ -166,60 +161,20 @@ public class AdverstingController {
 			e.printStackTrace();
 /*			throw new BoardException("게시물 등록 오류");*/
 		}
-		
 		return mav; 
 	}
 	
-	@RequestMapping("/adv/selectAdversting")
-	public String  selectAdversting(Model model) {
-		
-		logger.debug("adversting list");
-		return "selectAdversting";
-		
-	}
-	
-	
-	
-	@RequestMapping("/adv/adverstingListPaging")
-	public ModelAndView adverstingListPaging(@RequestParam(value="cPage", required=false, defaultValue="1") int cPage, 
-											@RequestParam Map<String, String> queryMap
-											  ,HttpServletRequest request) {
-		
-		logger.debug("================="+request.getParameterMap().get("type"));
-		logger.debug("================="+request.getParameter("type"));
-		logger.debug("=================queryMap"+ queryMap.get("type"));
-		logger.debug("=================queryMap"+ queryMap.toString());
-		ModelAndView mav = new ModelAndView();
-		int numPerPage = 10; 
-		List<Map<String, String>>  list = adverstingService.adverstingListPaging(cPage, numPerPage, queryMap);
-		logger.debug("adversting list"+list);
-		
-		int totalBoardNumber = adverstingService.adverstingTotalCount(queryMap);
-		
-		mav.addObject("count", totalBoardNumber);
-		mav.addObject("list", list);
-		mav.addObject("numPerPage", numPerPage);
-		return mav;
-	}
-	
-	
-	@RequestMapping("/adv/adverstingView")
-	public ModelAndView adverstingView(String ano) {
-		
+	//수정하기
+	@RequestMapping("/{location}/adverstingUpdate")
+	public ModelAndView adverstingReWrite(Adversting adversting, @RequestParam(value="img", required=false) MultipartFile[] upFiles, HttpServletRequest request, @PathVariable String location) {
 		ModelAndView mav = new ModelAndView();
 		
-		Map<String, String> adversting = adverstingService.selectAdverstingOne(Integer.parseInt(ano));
-		
-		mav.addObject("adversting", adversting);
-		return mav; 
-	}
-	
-	
-	
-	
-	@RequestMapping("/adv/adverstingReWrite")
-	public ModelAndView adverstingReWrite(Adversting adversting, @RequestParam(value="img", required=false) MultipartFile[] upFiles, HttpServletRequest request) {
-		ModelAndView mav = new ModelAndView();
+		if(location == null || !(location.equals("admin") || location.equals("adv")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
 		
 		if(adversting.getStatus() != null) {
 			adversting.setStatus("Y");
@@ -228,16 +183,9 @@ public class AdverstingController {
 		}
 		
 		Map<String, String> map = adverstingService.selectAdverstingOne(adversting.getAno());
-		
-		logger.debug("test======================================================================================"+adversting);
-		logger.debug("test======================================================================================"+map);
-		
 		try {
 			if((!adversting.getAdvImg().equals(map.get("ADVIMG")) || adversting.getAdvImg() != null)) {
-			//1.파일업로드 처리
 				String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/adversting");
-					
-			/************** MultipartFile을 이용한 파일 업로드 처리 로직 시작  ********************************************************/
 				int cnt = 0; 
 				for(MultipartFile f : upFiles) {
 					cnt++;
@@ -266,19 +214,17 @@ public class AdverstingController {
 				map.get("ADVIMG");
 				adversting.setAdvImg(map.get("ADVIMG"));
 			}
-			
 			int result = adverstingService.updateAdversting(adversting);
-			
 			//3. view단 분기
 			String loc = "/";
 			String msg = "";
 			
 			if(result>0) {
 				msg = "게시물 수정 성공";
-				loc = "/adv/adverstingView?ano="+adversting.getAno();
+				loc = "/"+location+"/adverstingList";
 			}else {
 				msg = "게시물 수정 실패";
-				loc = "/adv/adverstingWrite";
+				loc = "/"+location+"/adverstingUpdate?ano="+adversting.getAno();
 			}
 			
 			mav.addObject("msg", msg);
@@ -289,7 +235,46 @@ public class AdverstingController {
 		}
 		
 		return mav; 
+	}	
+
+	
+	
+	@RequestMapping(value="/{location}/adverstingView", method=RequestMethod.GET)
+	public ModelAndView adverstingView(String ano, @PathVariable String location ) {
+		
+		ModelAndView mav = new ModelAndView();
+		
+		if(location == null || !(location.equals("admin") || location.equals("adv")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
+		
+		Map<String, String> adversting = adverstingService.selectAdverstingOne(Integer.parseInt(ano));
+		
+		mav.addObject("adversting", adversting);
+		return mav; 
 	}
+	
+	
+	
+	@RequestMapping("/admin/adminAdverstingView")
+	public ModelAndView adverstingViewForAdmin(String ano) {
+		
+		ModelAndView mav = new ModelAndView();
+		
+		Map<String, String> adversting = adverstingService.selectAdverstingOne(Integer.parseInt(ano));
+		mav.addObject("adversting", adversting);
+		return mav; 
+	}
+	
+	
+	
+	
+	
+
 	
 	@RequestMapping("/adv/adverstingDelete")
 	public ModelAndView adverstingDelete(int ano) {

@@ -1,5 +1,4 @@
-<jsp:include page ="/WEB-INF/views/common/mainheader.jsp"><jsp:param value="" name="pageTitle"/></jsp:include>
-
+<jsp:include page ="/WEB-INF/views/common/header.jsp"><jsp:param value="" name="pageTitle"/></jsp:include>
 <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -77,9 +76,10 @@ $(function(){
 	$('.carousel').carousel();
 	
 	$.ajax({
-		url:"${rootPath}/rest/study/all/3",
+		url:"${rootPath}/rest/study/all/4",
 		dataType:"json",
 		success:function(data){
+			console.log(data);
 			$("input#total").val(data.total);
 			$("input#numPerPage").val(data.numPerPage);
 			$("input#cPageNo").val(data.cPage);
@@ -89,6 +89,7 @@ $(function(){
         		study = data.list[index];
         		var upfile = (data.list[index].UPFILE);
         		if(upfile != undefined){
+        			var study = data.list[index]; 
         			upfiles = upfile.split(",")[0];
 	        		rmHtml += "<li class='col-md-4'>";
 	        		rmHtml += "<div class='pixel'>";
@@ -97,7 +98,9 @@ $(function(){
 	   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfiles+")'></div>";
 	   				rmHtml += "</div>";
 					rmHtml += "<div class='inforSection'>";
-	  				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0,10)+"</h4>";
+	  				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 20)+"</h4>";
+	  				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/study/20180625_215620103_62.gif' /></div>";
+	  				
 	   				rmHtml += "</div>";
 					rmHtml += "<div class='metaSection'>";
 	  				rmHtml += 	"<p></p>";
@@ -150,5 +153,21 @@ $(function(){
 	});
 })
 </script>
-
+<style>
+.studies .inforSection::before{
+position: absolute;
+    top: -82px;
+    left: 169px;
+    content: "";
+    display: block;
+    width: 200px;
+    height: 107px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 156px auto;
+    background-image: url(${rootPath}/resources/images/before.svg);
+    clip: rect(-13px, 199px, 60px, 0px);
+    z-index: 0;
+}
+</style>
 <jsp:include page ="/WEB-INF/views/common/footer.jsp" />

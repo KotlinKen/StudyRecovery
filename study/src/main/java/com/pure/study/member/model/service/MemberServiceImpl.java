@@ -194,5 +194,45 @@ public class MemberServiceImpl implements MemberService {
 	public int updateInstructorEnrollEnd(Instructor instructor) {
 		return memberDAO.updateInstructorEnrollEnd(instructor);
 	}
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@Override
+	public List<Map<String, Object>> selectInstructorMember(int cPage, int count) {
+		return memberDAO.selectInstructorMember(cPage, count);
+	}
+
+	@Override
+	public int selectCntInstructorMember() {
+		return memberDAO.selectCntInstructorMember();
+	}
+
+	@Override
+	public List<Map<String, Object>> selectAllMemberList(int cPage, int count) {
+		return memberDAO.selectAllMemberList(cPage, count);
+	}
+
+	@Override
+	public int selectCntAllMemberList() {
+		return memberDAO.selectCntAllMemberList();
+	}
 	
 }

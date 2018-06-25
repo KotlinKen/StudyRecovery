@@ -18,14 +18,15 @@
 	</div>
 	<div class="form-row">
 		<div class="form-group col-md-6">
-			<label for="inputEmail4">제목</label> <input type="text" class="form-control" id="title" name="title" placeholder="광고 제목을 입력해주세요" autocomplete="off">
+			<label for="inputEmail4">제목</label> <input type="text" class="form-control" id="title" name="title" id="title" placeholder="광고 제목을 입력해주세요" autocomplete="off">
 		</div>
 	</div>
 
 	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="content">광고 내용을 간략히 적어주세요.</label>
-			<textarea class="form-control" name="content" id="summernote" rows="3" class=""></textarea>
+			<textarea class="form-control summernote" name="content" id="summernote" rows="3" class=""></textarea>
+			<div id="txtcounter"></div>
 		</div>
 	</div>
 
@@ -85,6 +86,9 @@
 	</div>
   <button type="submit" class="btn btn-primary">등록</button>
 </form>
+
+<input type="file" id="test2" />
+
 
 <script>
 $(function(){
@@ -166,12 +170,58 @@ $(".upfile_name").on("change", function(){
 	
 	
 	$(document).ready(function() {
+		
+
+		
 	    $('#summernote').summernote({
+	      height: 300,
+	      minHeight: null,
+	      maxHeight: null,
 	      focus: true,
-	      height: 500// 페이지가 열릴때 포커스를 지정함
+	      callbacks: {
+	        onImageUpload: function(files, editor, welEditable) {
+	          for (var i = files.length - 1; i >= 0; i--) {
+	            sendFile(files[i], this);
+	          }
+	        }
+	      }
 	    });
 	  });
 
+
+	
+	
+	
+	function sendFile(file, object){
+		
+		var form_data = new FormData();
+		form_data.append('file', file);
+		$.ajax({
+			data : form_data,
+			type : "POST",
+			url : "${rootPath}/adv/adverstingUpload",
+			cache : false,
+			contentType : false,
+			processData : false, 
+			success : function(url){
+				console.log(url);
+				$(object).summernote('editor.insertImage', url);
+			}
+			
+		});
+	}
+
+	$(document).ready(function() {
+	      $('#title').keyup(function(e){
+	    	  console.log("test");
+	          var content = $(this).val();
+	          $(this).height(((content.split('\n').length + 1) * 1.5) + 'em');
+	          $('#txtcounter').html(content.length + '/300');
+	      });
+	      $('#title').keyup();
+	});
+	
+	
 </script>
 
 

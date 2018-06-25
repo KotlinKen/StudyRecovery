@@ -3,77 +3,121 @@ package com.pure.study.board.model.vo;
 import java.sql.Date;
 
 public class Board {
-	private int boardNo;
-	private String boardTitle;
-	private String boardWriter;
-	private String boardContent;
-	private Date boardDate;
-	private int boardCount;
-	private int fileCount;
+	private int bno;
+	private int mno;
+	private String title;
+	private String content;
+	private String upfile;
+	private String type;
+	private String status;
+	private String reply;
+	private int fork;
+	private Date regdate;
+
 	public Board() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-	public Board(int boardNo, String boardTitle, String boardWriter, String boardContent, Date boardDate,
-			int boardCount, int fileCount) {
+
+	public Board(int bno, int mno, String title, String content, String upfile, String type, String status,
+			String reply, int fork, Date regdate) {
 		super();
-		this.boardNo = boardNo;
-		this.boardTitle = boardTitle;
-		this.boardWriter = boardWriter;
-		this.boardContent = boardContent;
-		this.boardDate = boardDate;
-		this.boardCount = boardCount;
+		this.bno = bno;
+		this.mno = mno;
+		this.title = title;
+		this.content = content;
+		this.upfile = upfile;
+		this.type = type;
+		this.status = status;
+		this.reply = reply;
+		this.fork = fork;
+		this.regdate = regdate;
 	}
-	
-	
-	public int getFileCount() {
-		return fileCount;
+
+	public int getBno() {
+		return bno;
 	}
-	public void setFileCount(int fileCount) {
-		this.fileCount = fileCount;
+
+	public void setBno(int bno) {
+		this.bno = bno;
 	}
-	public int getBoardNo() {
-		return boardNo;
+
+	public int getMno() {
+		return mno;
 	}
-	public void setBoardNo(int boardNo) {
-		this.boardNo = boardNo;
+
+	public void setMno(int mno) {
+		this.mno = mno;
 	}
-	public String getBoardTitle() {
-		return boardTitle;
+
+	public String getTitle() {
+		return title;
 	}
-	public void setBoardTitle(String boardTitle) {
-		this.boardTitle = boardTitle;
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
-	public String getBoardWriter() {
-		return boardWriter;
+
+	public String getContent() {
+		return content;
 	}
-	public void setBoardWriter(String boardWriter) {
-		this.boardWriter = boardWriter;
+
+	public void setContent(String content) {
+		this.content = content;
 	}
-	public String getBoardContent() {
-		return boardContent;
+
+	public String getUpfile() {
+		return upfile;
 	}
-	public void setBoardContent(String boardContent) {
-		this.boardContent = boardContent;
+
+	public void setUpfile(String upfile) {
+		this.upfile = upfile;
 	}
-	public Date getBoardDate() {
-		return boardDate;
+
+	public String getType() {
+		return type;
 	}
-	public void setBoardDate(Date boardDate) {
-		this.boardDate = boardDate;
+
+	public void setType(String type) {
+		this.type = type;
 	}
-	public int getBoardCount() {
-		return boardCount;
+
+	public String getStatus() {
+		return status;
 	}
-	public void setBoardCount(int boardCount) {
-		this.boardCount = boardCount;
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
+
+	public String getReply() {
+		return reply;
+	}
+
+	public void setReply(String reply) {
+		this.reply = reply;
+	}
+
+	public int getFork() {
+		return fork;
+	}
+
+	public void setFork(int fork) {
+		this.fork = fork;
+	}
+
+	public Date getRegdate() {
+		return regdate;
+	}
+
+	public void setRegdate(Date regdate) {
+		this.regdate = regdate;
+	}
+
 	@Override
 	public String toString() {
-		return "Board [boardNo=" + boardNo + ", boardTitle=" + boardTitle + ", boardWriter=" + boardWriter
-				+ ", boardContent=" + boardContent + ", boardDate=" + boardDate + ", boardCount=" + boardCount
-				+ ", fileCount=" + fileCount + "]";
+		return "Board [bno=" + bno + ", mno=" + mno + ", title=" + title + ", content=" + content + ", upfile=" + upfile
+				+ ", type=" + type + ", status=" + status + ", reply=" + reply + ", fork=" + fork + ", regdate="
+				+ regdate + "]";
 	}
-	
-	
+
 }

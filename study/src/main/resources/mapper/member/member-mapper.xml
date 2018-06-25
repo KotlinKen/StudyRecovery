@@ -826,4 +826,130 @@
 							Applicationdate = sysdate
 							where mno = #{mno}
 	</update>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<!-- 김률민 추가 2018-06-23 10:19 -->
+	<select id="selectCntAllMemberList" resultType="_int">
+		SELECT COUNT(*) FROM MEMBER
+	</select>
+	<select id="selectAllMemberList" resultMap="instructorForMap">
+		SELECT M.*, TO_CHAR(M.REGDATE, 'YYYY-MM-DD') REGDATES FROM MEMBER M ORDER BY REGDATE DESC 
+	</select>
+	<select id="selectCntInstructorMember" resultType="_int">
+		SELECT COUNT(*) FROM MEMBER M, INSTRUCTOR I WHERE M.MNO = I.MNO
+	</select>
+	<select id="selectInstructorMember" resultMap="instructorForMap">
+		SELECT M.*, I.*, TO_CHAR(M.REGDATE, 'YYYY-MM-DD') REGDATES FROM MEMBER M, INSTRUCTOR I WHERE M.MNO = I.MNO
+	</select>
+	<resultMap type="map" id="instructorForMap">
+		<result column="FAVOR" property="FAVOR" typeHandler="strArrTypeHandler"/>
+	</resultMap>
+	
+	<!-- 김률민 추가 끝 2018-06-23 10:19 -->
+	
 </mapper>

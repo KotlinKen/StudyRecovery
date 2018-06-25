@@ -299,33 +299,35 @@ public class MemberController {
 	/**********************************************로그인 및 마이페이지(김회진) 시작*/
 	/*******************************로그인&로그아웃 시작*/
 	@RequestMapping(value="/member/memberLogin.do", method = RequestMethod.POST)
-	public ModelAndView memberLogin(HttpServletRequest request, @RequestParam(value="userId") String userId, @RequestParam(value="pwd") String pwd) {
+	public ModelAndView memberLogin(HttpServletRequest request, @RequestParam(value="userId") String userId, @RequestParam(value="pwd") String pwd, @RequestParam(value="admin", required=false) String admin) {
 		ModelAndView mav = new ModelAndView();
 
-		System.out.println(userId);
 		
 		Member m = memberService.selectOneMember(userId);
 
 		String msg = "";
 		String loc = "/";
-
+		
 		if (m == null || m.getQdate() != null) {
 			msg = "존재하지 않는 아이디입니다.";
 		} else {
 			if (bcryptPasswordEncoder.matches(pwd, m.getPwd())) {
 				//msg = "로그인성공!";
 				mav.addObject("memberLoggedIn", m);
-				mav.setViewName("redirect:/");
+				if(admin==null) {
+					mav.setViewName("redirect:/");
+				}else {
+					mav.setViewName("redirect:/admin/adminMain"); 
+				}
+				
 				return mav;
 			} else {
 				msg = "비밀번호가 틀렸습니다.";
 			}
 
 		}
-
 		mav.addObject("msg", msg);
 		mav.addObject("loc", loc);
-
 		mav.setViewName("common/msg");
 
 		return mav;
