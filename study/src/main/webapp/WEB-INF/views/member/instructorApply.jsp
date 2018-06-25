@@ -516,29 +516,26 @@ textarea {
 					.on(
 							"change",
 							function() {
-								$
-										.ajax({
-											url : "selectSubject.do",
-											dataType : "json",
-											data : {
-												kno : $(
-														"select#kind option:selected")
-														.val()
-											},
-											success : function(data) {
-												var html = "";
-												for ( var index in data) {
-													html += "<option value='"+data[index].SUBNO+"'>"
-															+ data[index].SUBJECTNAME
-															+ "</option><br/>";
-												}
-												$("select#subject").html(html);
+								$.ajax({url : "selectSubject.do",
+									dataType : "json",
+									data : {
+										kno : $(
+												"select#kind option:selected")
+												.val()
+									},
+									success : function(data) {
+										var html = "";
+										for ( var index in data) {
+											html += "<option value='"+data[index].SUBNO+"'>"
+													+ data[index].SUBJECTNAME
+													+ "</option><br/>";
+										}
+										$("select#subject").html(html);
+									},
+									error : function() {
 
-											},
-											error : function() {
-
-											}
-										});
+									}
+								});
 							});
 		});
 	</script>
@@ -554,38 +551,30 @@ textarea {
 			id='mainForm' onsubmit="return validate();"
 			enctype="multipart/form-data">
 
-			<input type="hidden" name="mno" id="mno" value="${mno} " /> <input
-				type="hidden" name="mid" id="mid" value="${mid} " /> 프로필사진(필수) : <input
-				type="file" name="upFile" id="upFile"
-				class="btn btn-outline-secondary" /> <input type='hidden'
-				name='mprofile' id="mprofile" value='no'>
-			<div id="div-img-ik"></div>
-			<br /> 포트폴리오(필수) : <input type="file" name="psFile" required
-				class="btn btn-outline-secondary" /> <br /> 자기소개서(필수) : <input
-				type="file" name="psFile" required class="btn btn-outline-secondary" />
+			<input type="hidden" name="mno" id="mno" value="${mno} " /> 
+			<input type="hidden" name="mid" id="mid" value="${mid} " /> 
+			
+			<br /> 
+			포트폴리오(필수) : <input type="file" name="psFile" required class="btn btn-outline-secondary" /> 
+			<br /> <br />
+			자기소개서(필수) : <input type="file" name="psFile" required class="btn btn-outline-secondary" />
+			<br />
 			<div class="form-check-inline form-check">
-				<select name="kno" id="kind" class="custom-select my-1 mr-sm-2"
-					required>
+				<select name="kno" id="kind" class="custom-select my-1 mr-sm-2" required>
 					<!-- ajax로 kind가져오기 -->
-				</select>&nbsp;&nbsp;&nbsp; <select name="sno" id="subject"
-					class="custom-select my-1 mr-sm-2" required>
+				</select>&nbsp;&nbsp;&nbsp; <select name="sno" id="subject" class="custom-select my-1 mr-sm-2" required>
 					<!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
 				</select>
+				<br /><br /><br />
 			</div>
-
-
-			<br /> 자기소개 <br />
-			<textarea rows="10" cols="50" name="cover"></textarea>
-
-			<input type="text" name="email" id="email" placeholder="이메일" required
-				autocomplete="off" /> @ <input type="text" name="email"
-				id="emailaddr" placeholder="직접입력" required autocomplete="off" /> <input
-				type="button" value="인증번호" onclick="fn_certification();" /> <input
-				type="hidden" id="checkcertification" value="0" /> <input
-				type="text" id="inputCode" placeholder="인증번호를 입력하세요" required
-				autocomplete="off" /> <input type="button" value="확인"
-				onclick="checkJoinCode();" /> <br /> <input type="submit"
-				id="submit" value="가입하기" class="btn btn-outline-secondary" />
+			<div class="blank-ik"></div>
+			<input type="text" name="email" id="email" placeholder="이메일" required autocomplete="off" /> @ 
+			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required autocomplete="off" /> 
+			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-outline-secondary" /> 
+			<input type="hidden" id="checkcertification" value="0" /> 
+			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off" /> 
+			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-outline-secondary" /> <br /> 
+			<input type="submit" id="submit" value="가입하기" class="btn btn-outline-secondary" />
 		</form>
 		<br /> <br />
 

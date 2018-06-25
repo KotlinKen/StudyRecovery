@@ -669,6 +669,7 @@ textarea {
 				</div>
 				<br />
 			</div>
+			<div class="blank-ik"></div>
 			<input type="text" name="mname" id="name" placeholder="이름" required  autocomplete="off"  /><br /> 
 			<input type="text" name="phone" id="phone" maxlength="11" placeholder="전화번호" required required autocomplete="off"  /> <br /> 
 			<input type="text" name="email" id="email" placeholder="이메일" required  autocomplete="off"  /> @ 
@@ -684,13 +685,15 @@ textarea {
 			</span>
 			<span class="jender">
 			<input type="radio" name="gender" value="F"id="fmale" /> <label for="fmale">여</label> <br /> 
-			</span><br /><hr /><br />
-			프로필사진(필수) : <input type="file" name="upFile" id="upFile" class="btn btn-outline-secondary"/> 
+			</span><br /><br />
+			<div class="blank-ik"></div>
+			<br /><br />
+			프로필사진(필수) : <input type="file" name="upFile" id="upFile" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='no'>
 			<div id="div-img-ik"></div>
 			<br />
-			포트폴리오(필수) : <input type="file" name="psFile" required class="btn btn-outline-secondary"/> <br />
-			자기소개서(필수) : <input type="file" name="psFile" required class="btn btn-outline-secondary"/> 
+			포트폴리오(필수) : <input type="file" name="psFile" required /> <br /><br />
+			자기소개서(필수) : <input type="file" name="psFile" required /> <br />
 			<div class="form-check-inline form-check">
 				<select name="kno" id="kind" class="custom-select my-1 mr-sm-2" required> <!-- ajax로 kind가져오기 -->
 				</select>&nbsp;&nbsp;&nbsp;

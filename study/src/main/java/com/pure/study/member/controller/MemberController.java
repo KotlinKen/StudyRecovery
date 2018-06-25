@@ -267,10 +267,10 @@ public class MemberController {
 		else
 			msg = "회원가입성공!";
 
-		model.addAttribute("loc", loc);
-		model.addAttribute("msg", msg);
+		/*model.addAttribute("loc", "/member/memberSuccess.do");
+		model.addAttribute("msg", msg);*/
 
-		return "common/msg";
+		return "member/memberSuccess";
 	}
 	
 	/*ID 중복 검사 시작 */
@@ -1136,8 +1136,7 @@ public class MemberController {
 	public ModelAndView instructorApplyEnd(@RequestParam(value="psFile",required=false) MultipartFile[] psFiles
 			,@RequestParam(value="mno",required=false) int mno,@RequestParam(value="mid",required=false) String mid
 			,@RequestParam(value="kno",required=false) int kno,@RequestParam(value="sno",required=false) int sno
-			,@RequestParam(value="cover",required=false) String cover,@RequestParam(value="email",required=false) String[] email
-			,HttpServletRequest request) {
+			,@RequestParam(value="email",required=false) String[] email,HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		/****** MultipartFile을 이용한 파일 업로드 처리로직 시작
 		파일이름변경 파일이름+ 아이디 + 날짜  */
@@ -1354,6 +1353,50 @@ public class MemberController {
 		
 		return map;
 	}
+	@RequestMapping(value = "/member/memberSuccess.do")
+	public Map<String, Object> memberSuccess () {
+		Map<String, Object> map = new HashMap<>();
+		
+		
+		
+		return map;
+	}
 	
-	
+	@RequestMapping(value="/member/memberLoginInstruct.do", method = RequestMethod.POST)
+	public ModelAndView memberLoginInstruct(HttpServletRequest request, @RequestParam(value="userId",required=false , defaultValue="-1" ) String userId, @RequestParam(value="pwd",required=false , defaultValue="-1") String pwd) {
+		ModelAndView mav = new ModelAndView();
+		
+		System.out.println(userId);
+		Member m = null;
+		String msg = "";
+		String loc = "/";
+		try {
+			m = memberService.selectOneMember(userId);
+		} catch (Exception e) {
+			msg = "로그인에 오류가 발생 했습니다. 관리자에게 문의 하세요";
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+			mav.setViewName("common/msg");
+		}
+		if (m == null || m.getQdate() != null) {
+			msg = "존재하지 않는 아이디입니다.";
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+			mav.setViewName("common/msg");
+		} else {
+			if (bcryptPasswordEncoder.matches(pwd, m.getPwd())) {
+				mav.addObject("mno", m.getMno());
+				mav.addObject("mid", m.getMid());
+				mav.setViewName("member/instructorApply");
+			} else {
+				msg = "비밀번호가 틀렸습니다.";
+				mav.addObject("msg", msg);
+				mav.addObject("loc", loc);
+				mav.setViewName("common/msg");
+			}
+		}
+
+		return mav;
+	}
+
 }
