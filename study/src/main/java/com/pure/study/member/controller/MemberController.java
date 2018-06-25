@@ -668,9 +668,7 @@ public class MemberController {
 	//개인 정보 수정 - 전체 수정
 	@RequestMapping(value="/member/updateUser.do", method= RequestMethod.POST)
 	public String updateUser(@RequestParam("mno") int mno, @RequestParam("mid") String mid
-							, @RequestParam("mname") String mname, @RequestParam("phone") String phone
-							, @RequestParam("post") String post,@RequestParam("addr1") String addr1
-							,@RequestParam("addr2") String addr2,@RequestParam("addrDetail") String addrDetail
+							, @RequestParam("mname") String mname, @RequestParam("phone") String phone							
 							,@RequestParam("email")String email
 							, @RequestParam("birth") Date birth, @RequestParam("gender") String gender
 							, @RequestParam("favor") String[] favor, @RequestParam("cover") String cover
@@ -678,6 +676,7 @@ public class MemberController {
 							, HttpServletRequest request, Model model, @RequestParam("pre_mprofile") String pre_mprofile
 							, @ModelAttribute("memberLoggedIn") Member m
 							) {
+		System.out.println("왜 404");
 		Member member = new Member();
 		
 		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
@@ -700,7 +699,7 @@ public class MemberController {
 						e.printStackTrace();
 					}
 					//vo객체 담기
-					member.setMprofile(originalFileName);
+					member.setMprofile(saveDirectory+"/"+renamedFileName);
 					
 				}
 			}
@@ -708,14 +707,11 @@ public class MemberController {
 			member.setMprofile(pre_mprofile);
 		}
 		
+		System.out.println(member.getMprofile());
 		
 		member.setMno(mno);
 		member.setMname(mname);
 		member.setPhone(phone);
-		member.setPost(post);
-		member.setAddr1(addr1);
-		member.setAddr2(addr2);
-		member.setAddrDetail(addrDetail);
 		member.setEmail(email);
 		member.setBirth(birth);
 		member.setGender(gender);
@@ -723,15 +719,19 @@ public class MemberController {
 		member.setFavor(favor);
 		member.setCover(cover);
 		
-		int result = memberService.updateMember(member);
+		int result=0;
+		
+		if(m.getMid().equals(mid)) {
+			result = memberService.updateMember(member);			
+		}else {
+			model.addAttribute("msg", "회원 아이디는 변경할 수 없습니다.");				
+			model.addAttribute("loc", "/member/memberView.do");			
+		}
+		
 		
 		if(result>0) {
 			model.addAttribute("memberLoggedIn", member);
-			
-			if(mid==m.getMid()) {
-				model.addAttribute("msg", "회원 정보가 변경되었습니다.");
-			}
-			model.addAttribute("msg", "회원 아이디는 변경할 수 없습니다.");				
+			model.addAttribute("msg", "회원 정보가 변경되었습니다.");
 			model.addAttribute("loc", "/member/memberView.do");
 			
 		}else {
@@ -1043,16 +1043,37 @@ public class MemberController {
 		return mav;
 	}
 	
+	//신청 현황 
+	@RequestMapping(value="/member/applyListView.do")
+	@ResponseBody
+	public ModelAndView applyListView( @RequestParam("studyNo") String studyNo
+									, @ModelAttribute("memberLoggedIn") Member m
+									) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		Map <String,String> map = new HashMap<>();
+		map.put("studyNo", studyNo);
+		int numPerPage = memberService.selectApplyListCnt(map);
+		int cPage = 1;
+		
+		List<Map<String,String>> list = memberService.selectApplyList(map, numPerPage, cPage);
+		System.out.println(list);
+		mav.addObject("applyList", list);
+		
+		return mav;
+	}
+	
 	//평가 목록 페이지
 	@RequestMapping(value="/member/searchMyPageEvaluation.do")
 	@ResponseBody
-	public ModelAndView searchMyPageEvaluation( @ModelAttribute("memberLoggedIn") Member m
-			) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		Map <String,Object> map = new HashMap<>();
+	public ModelAndView searchMyPageEvaluation( @RequestParam(value="eval", defaultValue="exp") String eval 
+												, @ModelAttribute("memberLoggedIn") Member m
+												) {
+		ModelAndView mav = new ModelAndView();
+		//Map <String,Object> map = new HashMap<>();
 		
 		//평가 관리 페이지로 이동
 		
+		mav.addObject("eval", eval);
 		mav.setViewName("member/MyEvaluation");
 		
 		return mav;

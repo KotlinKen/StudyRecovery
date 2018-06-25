@@ -118,11 +118,20 @@
 					<td>${ms.freq}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button id="btn-detail" value="${a.sno }">자세히</button>
+						<button type=button id="btn-detail" value="${ms.sno }">자세히</button>
 					</td>
 					<td>
+					<c:set var="now" value="<%=new java.util.Date()%>" />
+					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set> 
+					<c:if test="${fn:contains(ms.status,'종료') }">
 						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
-						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewViewModal">평가 보기</button>
+						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal">평가 보기</button>
+					</c:if>
+					
+					<c:if test="${fn:contains(ms.status,'진행') }">
+						<button type=button class="btn btn-outline-success disabled">스터디 진행 중</button>
+					</c:if>
+					
 					</td>
 				</tr>
 			</c:forEach>
@@ -140,12 +149,21 @@
 					<td>${ms.freq}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button id="btn-detail" value="${a.sno }">자세히</button>
+						<button type=button id="btn-detail" value="${ms.sno }">자세히</button>
 					</td>
 					<td>
+					<c:if test="${fn:contains(ms.status,'종료') }">
 						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
-						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewViewModal">평가 보기</button>
-						<button type=button>신청 현황</button>
+						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal">평가 보기</button>
+					</c:if>
+					
+					<c:if test="${fn:contains(ms.status,'진행') }">
+						<button type=button class="btn btn-outline-success disabled" >${ms.status }</button>
+					</c:if>
+					
+					<c:if test="${fn:contains(ms.status,'모집 중') or fn:contains(ms.status,'마감 임박') or fn:contains(ms.status,'모집 마감') }">
+						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal" >신청 현황</button>
+					</c:if>
 					</td>
 				</tr>
 			</c:forEach>
@@ -205,11 +223,11 @@
 	</div>
 	<!-- 스터디 리뷰 끝 -->
 	<!-- 스터디 리뷰 보기 시작 -->
-	<div class="modal fade" id="reviewViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+	<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
 		<div class="modal-dialog modal-lg" role="document" >
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">스터디 내 평가</h5>
+					<h5 class="modal-title" id="modalLabel">스터디 내 평가</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -227,6 +245,29 @@
 		</div>
 	</div>
 	<!-- 스터디 리뷰 보기 끝 -->
+	<!-- 스터디 신청 현황 보기 시작 -->
+	<!-- <div class="modal fade" id="applyViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+		<div class="modal-dialog modal-lg" role="document" >
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="applyModalLabel">스터디 신청 현황</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					</div>
+						<div class="modal-body" id="div-applyView">
+							
+								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
+							
+						</div>
+						<div class="modal-footer">
+							<button type="submit" class="btn btn-outline-success">등록</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+						</div>
+			</div>
+		</div>
+	</div> -->
+	<!-- 스터디 신청 현황 보기 끝 -->
 	
 	<script>
 		$(function(){
@@ -492,6 +533,7 @@
 								//자신의 평가 값이 있고, 로그인 한 회원이 평가를 했다면 0, 안했다면 1
 								if(i.length>0 && $("#"+index).val()=='0'){ 
 									$("#"+index).remove();
+									$(".btn.btn-outline-success.disabled").remove();
 									$("#evalView"+index).attr("style","display: inline");
 								}
 							
@@ -515,6 +557,7 @@
 	});
 	
 	$(function(){
+		//평가 보기 버튼 클릭시, 해당 스터디의 스터디의 평가 리스트를 볼 수 있다.
 		$("[name=evaluationView]").on("click",function(){
 			for(var i=0; i<array.length; i++){
 				if(this.id=="evalView"+array[i].sno){
@@ -535,9 +578,67 @@
 					html += "</tr>";									
 					html += "</table>";
 					$("#div-reviewView").html(html);
+					$("h5#modalLabel").html("스터디 내 평가");
 				}
 			}
 		});
+		
+		$("button[name=applyListView]").on("click",function(){
+			console.log(this.id);
+			var studyNo = this.id.split("t")[1];
+			//console.log(studyNo);
+			$.ajax({
+				url: "applyListView.do",
+				data: {studyNo: studyNo},
+				dataType: "json",
+				success: function(data){
+					console.log(data);
+					var html ="<table>";
+					html += "<tr>";
+					html += "<td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td>";
+					html += "</tr>";
+					for(var i in data.applyList){
+						console.log(data.applyList[i]);
+						html += "<tr>";
+						html += "<td>";
+						html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+						html += "</td>";
+						html += "<td>";
+						html += data.applyList[i].grade;
+						html += "</td>";
+						html += "<td>";
+						if(data.applyList[i].gender == 'M'){
+							html += "남자";
+						}else{
+							html += "여자";
+						}
+						html += "</td>";
+						html += "<td>";
+						html += data.applyList[i].mname+"("+data.applyList[i].mid+")";
+						html += "</td>";
+						html += "<td>";
+						html += data.applyList[i].cover;
+						html += "</td>";
+						html += "</tr>";
+						
+						$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+")");
+					}
+					html += "</table>";
+					
+					if(data.applyList.length==0){
+						$("#div-reviewView").html("신청한 회원이 없습니다.");
+					}else{
+						$("#div-reviewView").html(html);
+					}
+					
+				},
+				error: function(){
+					console.log("ajax 처리 실패");
+				}
+			});
+						
+		});
+		
 	});
 	
 	

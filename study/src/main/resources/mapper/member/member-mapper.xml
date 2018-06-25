@@ -56,18 +56,6 @@
 						<if test="phone != null">
 							phone=#{phone},
 						</if>
-						<if test="addr1 != null">
-							addr1=#{addr1}, 
-						</if>
-						<if test="addr2 != null">
-							addr2=#{addr2}, 
-						</if>
-						<if test="addrDetail != null">
-							addrDetail=#{addrDetail}, 
-						</if>
-						<if test="post != null">
-							post=#{post}, 
-						</if>
 						<if test="mprofile != null">
 							mprofile=#{mprofile}, 
 						</if>
@@ -103,10 +91,6 @@
 			m.mid as "mid", -- 신청한 회원 아이디
 			m.mname as "mname", -- 신청한 회원 이름
 			m.phone as "phone", -- 신청한 회원 연락처
-			m.addr1 as "addr1", -- 신청한 회원 지번주소
-			m.addr2 as "addr2", -- 신청한 회원 도로명주소
-			m.addrdetail as "addrdetail", -- 신청한 회원 상세주소
-			m.post as "post", -- 신청한 회원 우편번호
 			m.mprofile as "mprofile", -- 신청한 회원 프로필
 			m.cover as "cover", -- 신청한 회원 자기소개서
 			m.email as "email", -- 신청한 회원 이메일
@@ -135,10 +119,17 @@
 			to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
 			to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 			to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
-			to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+			to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
+			(select g.status from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=a.mno) and g.point <![CDATA[ > ]]> (select point from member where mno=a.mno)-5000) as "grade"
 		from apply a join study s on s.sno=a.sno
 			            join member m on m.mno=a.mno
-		where a.mno=#{mno}
+		where 1=1
+		<if test="mno != null">
+		and a.mno=#{mno}
+		</if>
+		<if test="studyNo != null">
+		and a.sno=#{studyNo}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -204,7 +195,13 @@
 		select distinct count(*) 
 		from apply a join study s on s.sno=a.sno
 				    join member m on m.mno=a.mno
-		where a.mno=#{mno} 
+		where 1=1
+		<if test="mno != null">
+		and a.mno=#{mno}
+		</if>
+		<if test="studyNo != null">
+		and a.sno=#{studyNo}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -275,11 +272,6 @@
 				m.mid as "mid", -- 해당 스터디 팀원 아이디
 				m.mname as "mname", -- 팀원 이름
 				m.phone as "phone", -- 팀원 연락처
-				m.addr1 as "addr1", -- 팀원 지번주소
-				m.addr2 as "addr2", -- 팀원 도로명주소
-				m.addrdetail as "addrdetail", -- 팀원 상세주소
-				m.post as "post", -- 팀원 우편번호
-				m.mprofile as "mprofile", -- 팀원 프로필
 				m.cover as "cover", -- 팀원 자기소개서
 				m.email as "email", -- 팀원 이메일
 				m.birth as "birth", -- 팀원 생년월일
@@ -309,6 +301,7 @@
 				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
 		from study s join member m on m.mno=s.mno
 		where s.mno=#{mno}
+		--and s.status in ('진행 중', '강의 종료','스터디 종료')
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -369,6 +362,7 @@
 		select distinct count(*) 
 		from study s join member m on m.mno=s.mno
 		where s.mno=#{mno}
+		--and s.status in ('진행 중', '강의 종료','스터디 종료')
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -434,10 +428,6 @@
 				m.mid as "mid", -- 해당 스터디 팀원 아이디
 				m.mname as "mname", -- 팀원 이름
 				m.phone as "phone", -- 팀원 연락처
-				m.addr1 as "addr1", -- 팀원 지번주소
-				m.addr2 as "addr2", -- 팀원 도로명주소
-				m.addrdetail as "addrdetail", -- 팀원 상세주소
-				m.post as "post", -- 팀원 우편번호
 				m.mprofile as "mprofile", -- 팀원 프로필
 				m.cover as "cover", -- 팀원 자기소개서
 				m.email as "email", -- 팀원 이메일
@@ -470,6 +460,7 @@
 		from crew c join study s on s.sno=c.sno
 				    join member m on m.mno=c.mno
 		where c.mno=#{mno}
+		and s.status in ('진행 중', '강의 종료','스터디 종료')
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -531,6 +522,7 @@
 		from crew c join study s on s.sno=c.sno
 					join member m on m.mno=c.mno
 		where c.mno=#{mno}
+		and s.status in ('진행 중', '강의 종료','스터디 종료')
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -596,10 +588,6 @@
 				m.mid as "mid", -- 해당 스터디 찜한 회원 아이디
 				m.mname as "mname", -- 찜한 회원 이름
 				m.phone as "phone", -- 찜한 회원 연락처
-				m.addr1 as "addr1", -- 찜한 회원 지번주소
-				m.addr2 as "addr2", -- 찜한 회원 도로명주소
-				m.addrdetail as "addrdetail", -- 찜한 회원 상세주소
-				m.post as "post", -- 찜한 회원 우편번호
 				m.mprofile as "mprofile", -- 찜한 회원 프로필
 				m.cover as "cover", -- 찜한 회원 자기소개서
 				m.email as "email", -- 찜한 회원 이메일
