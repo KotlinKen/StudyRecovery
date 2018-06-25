@@ -5,20 +5,26 @@
 <title>${param.pageTitle }</title>
 <!-- 부트스트랩관련 라이브러리 -->
 <script src="${rootPath}/resources/js/jquery-3.3.1.js"></script>
-<script src="${rootPath}/resources/js/common.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+
 <script src="${rootPath}/resources/js/jquery-ui.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<script src="${rootPath}/resources/js/common.js"></script>
 <link rel="shortcut icon" href="">
 <link rel="icon" type="image/x-icon" class="js-site-favicon" href="https://assets-cdn.github.com/favicon.ico">
 <link rel="stylesheet" href="${rootPath}/resources/css/bootstrap/bootstrap.css" />
 <link rel="stylesheet" href="${rootPath}/resources/css/common/init.css" />
 <link rel="stylesheet" href="${rootPath}/resources/css/common/common.css" />
 <link href="https://fonts.googleapis.com/css?family=Tajawal" rel="stylesheet">
-<script src="${rootPath}/resources/js/bootstrap.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.js"></script>
+
+
+
 
 <!-- 사용자작성 css -->
 <link rel="stylesheet" href="${rootPath}/resources/css/style.css" />
 <script>
-
 function imgError(img){ 
 	img.src="${rootPath}/resources/upload/adversting/20180617_161710579_2.jpg";
 }
@@ -36,7 +42,6 @@ console.log("${cookie.popupValue.value}");
 				$(".mainTop").append("<a href='"+data.adv.URL+"' ><img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG + "' onerror='imgError(this)'/></a>");
 				$(".topBanner").css({"display": "block", "background-color" : data.adv.BACKCOLOR});
 			}else{
-
 			}
 		}
 	});
@@ -45,7 +50,6 @@ console.log("${cookie.popupValue.value}");
 	
 $(function(){
 var popCookie = "${cookie.popupValue.value}";
-
 if(popCookie != "Y"){
 var type = "POPUP";
 	$.ajax({
@@ -95,7 +99,6 @@ $(function(){
 			}
 		});
 	});	
-
 </script>
 
 </head>
