@@ -3,11 +3,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+<jsp:include page="/WEB-INF/views/common/header.jsp" />
 <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
 <script>	
 	//참여신청 버튼 클릭 이벤트
@@ -91,12 +88,17 @@
 	}
 	
 	$(function(){   
-	   $("button.editLecture").click(function(){
-	      location.href="lectureUpdate.do?sno="+${lecture.SNO};	      
-	   });   
-	   
-	   $("#updateLectureBtn").click(function(){
-		   location.href = "lectureUpdate.do?sno=" + ${lecture.SNO};
+		$("#updateLecture").click(function(){
+			var sno = ${lecture.SNO};
+			
+			$.ajax({			 
+				url : "updateLecture.do",
+				data : {sno : sno},
+				dataType : "html",
+				success: function( data ){
+				 	$(".modal-body").html(data);
+				}
+			});    
 	   });
 	});
 	// 삭제버튼
@@ -104,12 +106,12 @@
 		location.href="${pageContext.request.contextPath}/lecture/deleteLecture.do?sno=" + ${lecture.SNO};
 	}
 </script>
-<jsp:include page="/WEB-INF/views/common/header.jsp" />
 
-<div id="study-detail">
+<div id="lecture-detail">
 	<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-		<button type="button" id="updateLectureBtn">강의 수정</button>
+		<button type="button" id="updateLecture" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">수정	</button>
 		<button type="button" onclick="deleteLecture();">강의 삭제</button>
+		<br />
 	</c:if>
 
 	<span>LEVEL : ${lecture.DNAME }</span> <span>${lecture.LNAME }-${lecture.TNAME }</span>
@@ -117,25 +119,52 @@
 
 	<div id="detail">
 		<span>지역 : ${lecture.LNAME } ${lecture.TNAME }</span> 
-		<span>인원 : ${lecture.RECRUIT }명</span>
-		
+		<span>인원 : ${lecture.RECRUIT }명</span>		
 		<br /> 
 		
-		<span>${lecture.FREQ }</span> <span>${lecture.TIME }</span>
-		
+		<span>${lecture.FREQ }</span> <span>${lecture.TIME }</span>		
 		<br />
 		
 		<span>신청기간 : ${lecture.LDATE }까지</span> 
 		<span>수업 기간 : ${lecture.SDATE }~${lecture.EDATE }</span> 
-		<span>협의비 : 	${lecture.PRICE }</span>
-
+		<span>협의비 : ${lecture.PRICE }</span>
+		
 		<hr />
 
 		<label for="">리더 소개</label> <span>${lecture.COVER }</span>
 	</div>
 
 	<!-- 팀장에 대한 후기 -->
-	<div id="review"></div>
+	<div id="review">
+	
+	</div>
+	
+	<!-- 수정 모달 -->
+	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<!-- 모달 헤더 -->
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">강의 수정</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<form action="${pageContext.request.contextPath }/lecture/updateLectureEnd.do" method="post">
+					<!-- 모달 바뤼 -->
+					<div class="modal-body" >
+					
+					</div>
+					
+					<!-- 모달 풋터 -->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		        		<button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				</form>			
+			</div>			
+		</div>
+	</div>	
 </div>
 
 <!-- 오른쪽 fix창 -->
@@ -143,8 +172,9 @@
 	<span>${lecture.SUBNAME } : ${lecture.KNAME }</span> 
 	<span>${lecture.TITLE }</span><br />
 	<span>${lecture.SDATE }~${study.EDATE }</span>
+	<br />
 
-	<c:if test="${memberLoggedIn.getMno() ne lecture.MNO  }">
+	<c:if test="${memberLoggedIn.getMno() ne null && memberLoggedIn.getMno() ne lecture.MNO  }">
 		<button type="button" onclick="lectureApply();">참여 신청하기</button>
 		<button type="button" onclick="lectureWish();">찜하기</button>
 	</c:if>

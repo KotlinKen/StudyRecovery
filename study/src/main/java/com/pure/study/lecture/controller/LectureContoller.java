@@ -210,11 +210,11 @@ public class LectureContoller {
 	@RequestMapping("/lecture/selectLectureList.do")
 	public ModelAndView selectLectureList() {
 		ModelAndView mav = new ModelAndView("jsonView");
-		
+
 		int cPage = 1;
-		
+
 		List<Map<String, Object>> list = ls.selectLectureList(cPage, numPerPage);
-		
+
 		int total = ls.selectTotalLectureCount();
 
 		mav.addObject("list", list);
@@ -244,7 +244,6 @@ public class LectureContoller {
 			@RequestParam(value = "kno") int kno, @RequestParam(value = "dno") int dno,
 			@RequestParam(value = "leadername") String leadername,
 			@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage) {
-
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		if (leadername.trim().length() < 1)
@@ -309,9 +308,9 @@ public class LectureContoller {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		int cPage = 1;
-		
+
 		List<Map<String, Object>> list = ls.selectByDeadline(cPage, numPerPage);
-		
+
 		int total = ls.lectureDeadlineCount();
 
 		mav.addObject("list", list);
@@ -326,7 +325,7 @@ public class LectureContoller {
 	public ModelAndView lectureDeadlinAdd(@RequestParam(value = "cPage", defaultValue = "1") int cPage) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		List<Map<String, Object>> lectureList = ls.selectByDeadline(cPage, numPerPage);
-		
+
 		mav.addObject("list", lectureList);
 		mav.addObject("cPage", cPage + 1);
 
@@ -337,13 +336,13 @@ public class LectureContoller {
 	@RequestMapping("/lecture/selectByApply.do")
 	public ModelAndView selectByApply() {
 		ModelAndView mav = new ModelAndView("jsonView");
-		
+
 		int cPage = 1;
-		
+
 		List<Map<String, Object>> list = ls.selectByApply(cPage, numPerPage);
-		
+
 		int total = ls.studyByApplyCount();
-		
+
 		mav.addObject("list", list);
 		mav.addObject("cPage", cPage + 1);
 		mav.addObject("total", total);
@@ -362,7 +361,7 @@ public class LectureContoller {
 		return mav;
 	}
 
-	@RequestMapping(value="/lecture/lectureWish.do", produces = "application/text; charset=utf8")
+	@RequestMapping(value = "/lecture/lectureWish.do", produces = "application/text; charset=utf8")
 	@ResponseBody
 	public String lectureWish(@RequestParam int sno, @RequestParam int mno) {
 		ModelAndView mav = new ModelAndView();
@@ -385,5 +384,32 @@ public class LectureContoller {
 		}
 
 		return msg;
+	}
+
+	@RequestMapping("/lecture/updateLecture.do")
+	public ModelAndView updateLecture(@RequestParam int sno) {
+		ModelAndView mav = new ModelAndView();
+
+		// 강의
+		Map<String, String> lecture = ls.selectLectureOne(sno);
+
+		// 지역리스트
+		List<Map<String, String>> locList = ls.selectLocList();
+
+		// 큰 분류 리스트
+		List<Map<String, String>> kindList = ls.selectKindList();
+
+		// 난이도
+		List<Map<String, String>> diffList = ls.selectDiff();
+
+		mav.addObject("lecture", lecture);
+		mav.addObject("locList", locList);
+
+		mav.addObject("kindList", kindList);
+		mav.addObject("diffList", diffList);
+
+		mav.setViewName("lecture/updateLecture");
+
+		return mav;
 	}
 }
