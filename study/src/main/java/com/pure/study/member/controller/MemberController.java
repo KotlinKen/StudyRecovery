@@ -676,7 +676,7 @@ public class MemberController {
 							, HttpServletRequest request, Model model, @RequestParam("pre_mprofile") String pre_mprofile
 							, @ModelAttribute("memberLoggedIn") Member m
 							) {
-		System.out.println("왜 404");
+		System.out.println("왜 400");
 		Member member = new Member();
 		
 		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
