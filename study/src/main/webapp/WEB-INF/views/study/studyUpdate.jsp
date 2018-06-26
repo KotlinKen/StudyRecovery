@@ -4,7 +4,9 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ page import="java.util.Map" %>
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js" ></script>
+ <jsp:include page="/WEB-INF/views/common/header.jsp">
+ 	<jsp:param value="" name="pageTitle"/>
+</jsp:include>	 
 <style>
 div.forCopy{
 	display:none;
@@ -12,6 +14,48 @@ div.forCopy{
 
 </style>
 <script>
+//에디터 속성값 주고 열기
+$(document).ready(function() {
+    $('#summernote').summernote({
+      focus: true,
+      height: 500, // 페이지가 열릴때 포커스를 지정함
+      callbacks:{
+    	  onImageUpload:function(files){
+	   	  	  console.log("onImageUpload");
+	   		  uploadImage(files[0],this);
+      	}
+      },
+      lang:'ko-KR'
+    });
+    
+ });
+ 
+//사진 업로드 함수
+function uploadImage(file,el){
+    console.log("파일 업로드 함수 호출");
+	  var data=new FormData();
+	  data.append('file',file);
+	  $.ajax({
+		  data:data,
+		  type:"POST",
+		  processData:false,
+		  contentType:false,
+		  dataType:'json',
+		  url:"uploadImage.do",
+		  cache:false,
+		  enctype:'multipart/form-data',
+		  success:function(data){ 
+			  
+		  	  console.log("dddd : "+data.url);
+		  	  var file=$("<img>").attr("src",
+		  			  "${pageContext.request.contextPath }/resources/upload/study/"+data.url);
+			  $(el).summernote('insertNode',file[0]);
+		  },error:function(data){
+			  console.log("error:"+data);
+		  }
+	 });
+	  
+  }
 $(function(){
 	//local 지역 리스트를 가져와 select 만듦. 
 	 $.ajax({
@@ -174,12 +218,15 @@ $(function(){
 		//첨부파일 선택하면 파일 이름이 input창에 나타나게한다.
 		//첨부파일이름 표시
 		$("form[name=studyFrm]").on("change","[name=upFile]",function(){
+			
 			var fileName= $(this).prop("files")[0].name;
 			
 			$(this).next(".custom-file-label").html(fileName);
 			$(this).next("input[name=isNew]").val("true");
 			
 		});
+		
+
 		
 		 $("input[class=changeDate]").on("change", function(){
 		      $("input[class=day]").prop("checked", false);
@@ -228,7 +275,6 @@ function validate(){
 	   $("input[name=isNew]").each(function(index){
 		   
 		   if($(this).val()=="false"){
-			   console.log("돌아가냐");
 			   if(index!=0) oldFiles+=",";
 			   oldFiles+=$(this).next("label").text();
 			   
@@ -251,7 +297,8 @@ function validate(){
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" class="form-control" value="${study.TITLE }" required /><br />
-		<label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control">${study.CONTENT }</textarea><br />
+		<%-- <label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control">${study.CONTENT }</textarea><br /> --%>
+		<textarea id="summernote" name="content" id="content" cols="30" rows="10" >${study.CONTENT }</textarea>
 		<label for="depart">카테고리</label>
 		<select id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
@@ -314,13 +361,11 @@ function validate(){
 				    <span class="input-group-text">첨부파일</span>
 				  </div>
 				  <div class="custom-file">
-				    <input type="file" class="custom-file-input" id="upFile1" name="upFile">
+				    <input type="file" class="custom-file-input" name="upFile">
 				     <!-- 새로 첨부한 파일인지의 여부 -->
 				    <input type="hidden" name="isNew" value="false" />
-				    <label class="custom-file-label" for="upFile1">${img }</label>
+				    <label class="custom-file-label">${img }</label>
 				  </div>
-				  <!-- <button type="button" class="addFile">+</button> -->
-				  
 				 
 				  <button type="button" class="removeFile">-</button>
 			</div>
@@ -337,10 +382,10 @@ function validate(){
 			    <span class="input-group-text">첨부파일</span>
 			  </div>
 			  <div class="custom-file">
-			    <input type="file" class="custom-file-input" id="upFile1" name="upFile">
+			    <input type="file" class="custom-file-input" name="upFile">
+			    <label class="custom-file-label">파일을 선택하세요</label>
 			     <!-- 새로 첨부한 파일인지의 여부 -->
 			 	 <input type="hidden" name="isNew" value="true" />
-			    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
 			  </div>
 			  
 			  <button type="button" class="removeFile">-</button>

@@ -88,6 +88,46 @@ public class StudyController {
 	public void boardForm() {
 		
 	}
+	
+	
+	//에디터에 사진 첨부시 사진 서버에 업로드함.
+	@ResponseBody
+	@RequestMapping("/study/uploadImage.do")
+	public Map<String,String> sendImage(@RequestParam("file") MultipartFile f,HttpServletRequest request) {
+		
+		String renamedFileName="";
+		String saveDirectory="";
+		Map<String,String> map=new HashMap<>();
+		
+		try { 
+			//1. 파일 업로드 처리 
+			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/study");		
+			if(!f.isEmpty()) {
+				//파일명 재생성
+				String originalFileName = f.getOriginalFilename();
+				String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+				int rndNum = (int)(Math.random()*1000); //0~9999
+				renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+				
+				try {
+					f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제 저장하는 코드. 
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		
+		}catch(Exception e) {
+			throw new RuntimeException("이미지 등록 오류");
+		}
+		map.put("url", renamedFileName);
+		return map;
+	}
+	
+	
 	@RequestMapping("/study/studyFormEnd.do") 
 	public ModelAndView insertStudy(Study study, @RequestParam(value="freq") String[] freq, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles,
 			HttpServletRequest request, @ModelAttribute("memberLoggedIn") Member m) {
@@ -309,10 +349,15 @@ public class StudyController {
 		map.put("mno", mno);
 		
 		int result =0;
+		//신청인원 100명 제한 검사
+		
+		
 		//먼저 이미 신청했는지 검사한다.
 		int cnt = studyService.preinsertApply(map);
 		if(cnt == 0 )
 	         result = studyService.insertApplyStudy(map);
+		
+		
 		return result;
 	}
 	

@@ -26,7 +26,8 @@ $(function(){
         		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
         		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
         		html+="<span class='studyinfo'>"+ data.list[index].MPROFILE +"</span><br/>";
-        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+        		if(data.list[index].UPFILE==undefined) html+="<span class='studyinfo'>"+ "사진없음" +"</span><br/>";
+        		else html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
         		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
         		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
         		html+="</div>";
@@ -282,9 +283,7 @@ $(function(){
 
 </script>
 <div id="studylist-container">
-	
-	<button type="button" onclick="location.href='${pageContext.request.contextPath}/study/studyForm.do'">스터디 작성</button>
-		<!-- <form action="searchStudy.do" name="filterFrm" id="filterFrm" method="post"> -->
+		
 		<div id="study-search">
 			<label for="local">지역:</label>
 			<select name="lno" id="local">

@@ -125,9 +125,11 @@ $(function(){
 </script>
 <div id="study-detail">
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
-	
-<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
-<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
+<c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()==study.MNO}">
+	<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
+	<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
+</c:if>	
+
 
 <!-- 사진 뷰 -->
 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
