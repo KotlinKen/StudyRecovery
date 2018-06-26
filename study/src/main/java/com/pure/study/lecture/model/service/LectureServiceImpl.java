@@ -109,4 +109,14 @@ public class LectureServiceImpl implements LectureService {
 		return ld.studyByApplyCount();
 	}
 
+	@Override
+	public int lectureWish(Map<String, Integer> map) {
+		return ld.lectureWish(map);
+	}
+
+	@Override
+	public int addWishLecture(Map<String, Integer> map) {
+		return ld.addWishLecture(map);
+	}
+
 }

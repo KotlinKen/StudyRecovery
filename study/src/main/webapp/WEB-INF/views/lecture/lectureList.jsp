@@ -246,8 +246,7 @@
 		    } else if(listCase=="deadline") {
 				urlPath="lectureDeadlinAdd.do";	    	
 		    } else {
-		    	urlPath="lectureApplyAdd.do";
-		    	
+		    	urlPath="lectureApplyAdd.do";		    	
 		    }
 			
 			var isPage=Math.floor(total/numPerPage)+1;
@@ -274,13 +273,14 @@
 			        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
 			        		html+="</div>";
 			        	}
+			        	
 			        	$("input#cPageNo").val(data.cPage);
 			        	$("div#lecture-container").append(html); 
 			        },error:function(){
 			        	
-			        }
-			      });//ajax 끝
-			  }//if문 끝			
+			    	}
+			 	});//ajax 끝
+			 }//if문 끝			
 		}    
    });
 </script>

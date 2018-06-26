@@ -18,7 +18,8 @@
 		var msg = "";
 		
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};		
+		var mno = ${memberLoggedIn.getMno()};	
+		var price = ${lecture.PRICE};
 		
 	   //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	   //이미 신청을 했으면 return;하게 만들어야 함. 
@@ -38,7 +39,7 @@
 	     			    pay_method : 'card',
 	     			    merchant_uid : 'merchant_' + new Date().getTime(),
 	     			    name : '스터디 강의 신청',
-	     			    amount : ${lecture.PRICE},
+	     			    amount : price,
 	     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
 	     			}, function(rsp) {
 	     			    if ( rsp.success ) {	     			    	
@@ -72,18 +73,19 @@
 	//찜하기 버튼 클릭 이벤트
 	function lectureWish(){
 		var sno = ${lecture.SNO};
+		var mno = ${memberLoggedIn.getMno()};
 		
 	   //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	   //찜하기를 이미 선택했다면 다시 누르면 찜하기에서 삭제됨.
 	   $.ajax({
-	      url:"wishLecture.do",
+	      url:"lectureWish.do",
 	      data:{
 	    	  sno : sno,
-	    	  mno : 2
+	    	  mno : mno
 	      },
+	      dataType : "text",
 	      success:function(data){
-	         console.log("찜했다");
-	         //신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
+	    	  alert(data);
 	      }
 	   });
 	}

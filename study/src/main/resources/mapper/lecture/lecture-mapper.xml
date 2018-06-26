@@ -256,10 +256,13 @@
 	        order by cnt desc
 	       )
 	
+	</select>	
+	
+	<select id="lectureWish" resultType="_int">
+		SELECT COUNT(*) AS CNT FROM WISH WHERE SNO = #{sno} AND MNO = #{mno}
 	</select>
 	
-	
-	
-	
-	
+	<insert id="addWishLecture">
+		INSERT INTO WISH VALUES(SEQ_WISH.NEXTVAL, #{mno}, #{sno}, SYSDATE)
+	</insert>
 </mapper>
