@@ -666,81 +666,88 @@ public class MemberController {
 	}
 	
 	//개인 정보 수정 - 전체 수정
-	@RequestMapping(value="/member/updateUser.do", method= RequestMethod.POST)
-	public String updateUser(@RequestParam("mno") int mno, @RequestParam("mid") String mid
-							, @RequestParam("mname") String mname, @RequestParam("phone") String phone							
-							,@RequestParam("email")String email
-							, @RequestParam("birth") Date birth, @RequestParam("gender") String gender
-							, @RequestParam("favor") String[] favor, @RequestParam("cover") String cover
-							, @RequestParam(value="mprofile", required=false) MultipartFile[] mprofile
-							, HttpServletRequest request, Model model, @RequestParam("pre_mprofile") String pre_mprofile
-							, @ModelAttribute("memberLoggedIn") Member m
-							) {
-		System.out.println("왜 400");
-		Member member = new Member();
-		
-		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
-		if(mprofile != null) {
-			/*********** MultipartFile을 이용한 파일 업로드 처리 로직 시작 **********/
-			for(MultipartFile f: mprofile) {
-				if(!f.isEmpty()) {
-					//파일명 재생성
-					String originalFileName = f.getOriginalFilename();
-					String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
-					int rndNum = (int)(Math.random()*1000);
-					String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
-					
-					try {
-						f.transferTo(new File(saveDirectory+"/"+renamedFileName));
-					} catch (IllegalStateException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					//vo객체 담기
-					member.setMprofile(saveDirectory+"/"+renamedFileName);
-					
-				}
-			}
-		}else {
-			member.setMprofile(pre_mprofile);
-		}
-		
-		System.out.println(member.getMprofile());
-		
-		member.setMno(mno);
-		member.setMname(mname);
-		member.setPhone(phone);
-		member.setEmail(email);
-		member.setBirth(birth);
-		member.setGender(gender);
-		member.setGender(gender);
-		member.setFavor(favor);
-		member.setCover(cover);
-		
-		int result=0;
-		
-		if(m.getMid().equals(mid)) {
-			result = memberService.updateMember(member);			
-		}else {
-			model.addAttribute("msg", "회원 아이디는 변경할 수 없습니다.");				
-			model.addAttribute("loc", "/member/memberView.do");			
-		}
-		
-		
-		if(result>0) {
-			model.addAttribute("memberLoggedIn", member);
-			model.addAttribute("msg", "회원 정보가 변경되었습니다.");
-			model.addAttribute("loc", "/member/memberView.do");
-			
-		}else {
-			model.addAttribute("msg", "회원 정보가 변경되지 않았습니다.");
-			model.addAttribute("loc", "/member/memberView.do");
-		}
-		
-		return "common/msg";
-	}
+	   @RequestMapping(value="/member/updateUser.do", method= RequestMethod.POST)
+	   public String updateUser(@RequestParam("mno") int mno, @RequestParam("mid") String mid
+	                     , @RequestParam("mname") String mname, @RequestParam("phone") String phone
+	                     , @RequestParam("post") String post,@RequestParam("addr1") String addr1
+	                     ,@RequestParam("addr2") String addr2,@RequestParam("addrDetail") String addrDetail
+	                     ,@RequestParam("email")String email
+	                     , @RequestParam("birth") Date birth, @RequestParam("gender") String gender
+	                     , @RequestParam("favor") String[] favor, @RequestParam("cover") String cover
+	                     , @RequestParam(value="mprofile", required=false) MultipartFile[] mprofile
+	                     , HttpServletRequest request, Model model, @RequestParam("pre_mprofile") String pre_mprofile
+	                     , @ModelAttribute("memberLoggedIn") Member m
+	                     ) {
+	      Member member = new Member();
+	      
+	      String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
+	      System.out.println("저장장소"+ saveDirectory);
+	      System.out.println("왜 400이지?");
+	      if(mprofile.length >0) {
+	    	  System.out.println("1111");
+	         /*********** MultipartFile을 이용한 파일 업로드 처리 로직 시작 **********/
+	         for(MultipartFile f: mprofile) {
+	        	 System.out.println("2222");
+	            if(!f.isEmpty()) {
+	            	System.out.println("3333");
+	            	System.out.println(f);
+	               //파일명 재생성
+	               String originalFileName = f.getOriginalFilename();
+	               String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+	               SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+	               int rndNum = (int)(Math.random()*1000);
+	               String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+	               
+	               try {
+	            	   System.out.println("4444");
+	                  f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+	               } catch (IllegalStateException e) {
+	                  e.printStackTrace();
+	               } catch (IOException e) {
+	                  e.printStackTrace();
+	               }
+	               //vo객체 담기
+	               member.setMprofile(renamedFileName);
+	               System.out.println(renamedFileName);
+	               
+	            }
+	         }
+	      }else {
+	         member.setMprofile(pre_mprofile);
+	         System.out.println(pre_mprofile);
+	      }
+	      
+	      member.setMno(mno);
+	      member.setMname(mname);
+	      member.setPhone(phone);
+	      member.setPost(post);
+	      member.setAddr1(addr1);
+	      member.setAddr2(addr2);
+	      member.setAddrDetail(addrDetail);
+	      member.setEmail(email);
+	      member.setBirth(birth);
+	      member.setGender(gender);
+	      member.setGender(gender);
+	      member.setFavor(favor);
+	      member.setCover(cover);
+	      
+	      int result = memberService.updateMember(member);
+	      
+	      if(result>0) {
+	         model.addAttribute("memberLoggedIn", member);
+	         
+	         if(mid==m.getMid()) {
+	            model.addAttribute("msg", "회원 정보가 변경되었습니다.");
+	         }
+	       
+	         
+	      }else {
+	         model.addAttribute("msg", "회원 정보가 변경되지 않았습니다.");
+	         model.addAttribute("loc", "/member/memberView.do");
+	      }
+	      
+	      return "common/msg";
+	   }
 	
 	//개인 정보 수정 - 탈퇴하기
 	@RequestMapping(value="/member/memberDrop.do")
