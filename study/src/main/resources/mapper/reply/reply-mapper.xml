@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="reply">
+
+	<insert id="replyInsert">
+		INSERT INTO BOARD (RNO, MNO, BNO, PARENTNO, TITLE, CONTENT, STATUS, REGDATE)
+		VALUES (SEQ_REPLY.NEXTVAL, #{MNO}, #{BNO}, #{PARENTNO}, #{TITLE}, #{CONTNET}, DEFAULT, DEFAULT)
+
+<!-- 		<selectKey keyProperty="bno" resultType="_int" order="AFTER">
+			SELECT SEQ_BOARD.CURRVAL FROM DUAL
+		</selectKey> -->
+	</insert>
+	
+	
+	<select id="replyCount" resultType="_int">
+		SELECT COUNT(*) TOTALCOUNT FROM REPLY
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="bno != null and bno != '' ">
+			AND BNO = #{bno}		
+			</if>
+			AND STATUS ='Y'
+		</trim>
+	</select>
+	
+	
+	<select id="replyList" resultMap="replyMap">
+		SELECT R.*, B.* FROM REPLY R, BOARD B
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="type != null and type != '' ">
+			AND type = #{type}		
+			</if>
+			
+			<if test="bno != null and bno != '' ">
+			AND R.BNO = #{bno}		
+			</if>
+			AND R.STATUS ='Y' AND R.BNO = B.BNO
+		</trim>
+		ORDER BY R.RNO DESC
+	</select>
+	
+	
+	<select id="replyOne" resultMap="replyMap">
+		SELECT * FROM BOARD WHERE BNO = #{bno}
+	</select>
+	
+	<resultMap type="map" id="replyMap">
+	</resultMap>
+	
+	
+</mapper>
