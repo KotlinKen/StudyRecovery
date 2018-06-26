@@ -5,7 +5,7 @@ section#content{padding:30px; background:#fff;}
 .banner{}
 .topBanner{background:#333; min-height:70px; color:#fff; display:none; }
 .topBanner .mainTop{height:80px; background-clip: content-box; background-position: center;}
-.navbar-brand{padding:0.5rem 0.2rem 0.2rem 0.2rem;}
+.rm-custom-brand{padding:0.5rem 0.2rem 0.2rem 0.2rem;}
 .adverstingPopup{position:absolute; width:350px; display:none; z-index:1001; right:300px; top:200px; }
 .adverstingPopup img{width:100%}
 footer{ background:#fff; margin-bottom:50px;  }

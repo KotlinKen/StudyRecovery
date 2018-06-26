@@ -50,4 +50,4 @@
 
 .bg-dark{background:#fff !important;}
 .text-muted{color:#fff !important;}
-.table-sm th, .table-sm td{padding:1.3rem;}
+.table-sm th, .table-sm td{padding:0.6rem; vertical-align:middle; text-align:center;}

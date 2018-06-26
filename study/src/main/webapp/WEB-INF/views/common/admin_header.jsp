@@ -4,7 +4,6 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-
 <script src="${rootPath}/resources/js/jquery-3.3.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
 <script src="${rootPath}/resources/js/jquery-ui.min.js"></script>
@@ -51,7 +50,7 @@
 						</a></li>
 						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminInstructor"> <span data-feather="users"></span> 강사
 						</a></li>
-						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminBoard"> <span data-feather="layers"></span> 게시판
+						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/boardList"> <span data-feather="layers"></span> 게시판
 						</a></li>
 						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adverstingList"> <span data-feather="layers"></span> 광고관리
 						</a></li>

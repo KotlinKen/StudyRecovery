@@ -20,8 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,19 +41,24 @@ public class BoardController {
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 	
-	@RequestMapping("/board/boardList")
-	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, @RequestParam (value="type", required=false) String type) {
+	@RequestMapping(value="/{location}/boardList", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
+										@RequestParam (value="map", required=false) Map<String, String> queryMap,
+										@PathVariable(value="location", required=false) String location){
 		ModelAndView mav = new ModelAndView();
-		//Rowbounds 처리를 위해서 offset, limit 값이 필요함.
+		
+		if(location == null || !(location.equals("admin") || location.equals("board"))){
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
 		int numPerPage = 10; 
 		
-		
-		Map<String, String> params = new HashMap<>();
-		
-		params.put("type", type);
-		
 		//1. 현재 페이지 컨텐츠 구하기
-		List<Map<String, String>> list = boardService.selectBoardList(cPage, numPerPage, params);
+		List<Map<String, String>> list = boardService.selectBoardList(cPage, numPerPage, queryMap);
 		
 		logger.debug("보드 리스트 값을 알려주세요"+list);
 		
@@ -64,16 +72,31 @@ public class BoardController {
 		return mav;
 	};
 	
-	@RequestMapping("/board/boardWrite")
-	public void boardForm() {
-		//ViewNameTranslator가 자동으로 view단 지정 - 내부적으로 동작하는 requestMapping이 return 타입의 String과 같을경우
-		
+	@RequestMapping("/{location}/boardWrite")
+	public ModelAndView boardForm(@PathVariable(value="location", required=false) String location) {
+		ModelAndView mav = new ModelAndView();
+		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		return mav;
 	}
 	
-	@RequestMapping("/board/boardWriteEnd")
-	public ModelAndView insertBoard(Board board, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles, HttpServletRequest request) {
+	@RequestMapping("/{location}/boardWriteEnd")
+	public ModelAndView insertBoard(Board board, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles, HttpServletRequest request, @PathVariable(value="location", required=false) String location) {
 		ModelAndView mav = new ModelAndView();
 		List<String> images = new ArrayList<String>();
+		
+		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
+		
 		
 		try {
 			//1.파일업로드 처리
@@ -128,17 +151,42 @@ public class BoardController {
 		}
 		return mav;
 	}
+
 	
 	
-	@RequestMapping("/board/boardView")
-	public ModelAndView selectOne(@RequestParam int bno) {
+	@RequestMapping(value="/{location}/boardView", method=RequestMethod.GET)
+	public ModelAndView selectOne(@RequestParam int bno, @PathVariable(value="location", required=false) String location) {
 		ModelAndView mav = new ModelAndView();
 		
-		Map<String, String> board = boardService.selectOne(bno);
+		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
 		
+		
+		Map<String, String> board = boardService.selectOne(bno);
 		mav.addObject("board", board);
 		return mav;
 	}
+	@RequestMapping(value="/{location}/boardModify", method=RequestMethod.GET)
+	public ModelAndView boardModify(@RequestParam int bno, @PathVariable(value="location", required=false) String location) {
+		ModelAndView mav = new ModelAndView();
+		
+		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
+		
+		Map<String, String> board = boardService.selectOne(bno);
+		mav.addObject("board", board);
+		return mav;
+	}
+	
 	
 	
 	@RequestMapping("/board/boardDownload.do")
