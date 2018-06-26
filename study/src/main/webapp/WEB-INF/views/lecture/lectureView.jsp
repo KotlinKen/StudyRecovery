@@ -109,7 +109,7 @@
 
 <div id="lecture-detail">
 	<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-		<button type="button" id="updateLecture" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">수정	</button>
+		<!-- <button type="button" id="updateLecture" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">수정	</button> -->
 		<button type="button" onclick="deleteLecture();">강의 삭제</button>
 		<br />
 	</c:if>
