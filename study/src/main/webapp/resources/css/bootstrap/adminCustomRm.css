@@ -47,6 +47,16 @@
 	border-radius: 38px;
 	background-size: cover;
 }
+.comment_profile {
+	display:inline-block;
+	width: 70px;
+	height: 70px;
+	background-position: center;
+	background-clip: content-box;
+	border-radius: 35px;
+	background-size: cover;
+}
+
 
 .bg-dark{background:#fff !important;}
 .text-muted{color:#fff !important;}

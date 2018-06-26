@@ -23,6 +23,11 @@ public class ReplyServiceImpl implements ReplyService {
 	public List<Map<String, String>> replyList(int cPage, int numPerPage, Map<String, String> queryMap) {
 		return replyDao.replyList(cPage, numPerPage, queryMap);
 	}
+
+	@Override
+	public int replyWrite(Map<String, String> queryMap) {
+		return replyDao.replyWrite(queryMap);
+	}
 	
 
 }

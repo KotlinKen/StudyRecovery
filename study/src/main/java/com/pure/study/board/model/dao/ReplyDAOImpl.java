@@ -22,4 +22,9 @@ public class ReplyDAOImpl implements ReplyDAO{
 	public List<Map<String, String>> replyList(int cPage, int numPerPage, Map<String, String> queryMap) {
 		return sqlSession.selectList("reply.replyList", queryMap, new RowBounds((cPage-1)*numPerPage, numPerPage));
 	}
+
+	@Override
+	public int replyWrite(Map<String, String> queryMap) {
+		return sqlSession.insert("reply.replyWrite", queryMap);
+	}
 }

@@ -9,165 +9,155 @@ ${memberLoggedIn }
 
 
 
-<form action="${rootPath}/board/boardWriteEnd"  method="post" enctype="multipart/form-data">
-	<input type="hidden" name="type" value="일반"/>
-	<div class="form-row">
-		<div class="form-group col-md-6">
-			<label for="inputEmail4">제목</label> <input type="text" class="form-control" id="title" name="title" id="title" value="${board.TITLE}" placeholder="광고 제목을 입력해주세요" autocomplete="off">
-		</div>
+<input type="hidden" name="type" value="일반"/>
+<div class="form-row">
+	<div class="form-group col-md-6">
+		 <div> 제목 :  ${board.TITLE }</div>
 	</div>
-
-	<div class="form-row">
-		<div class="form-group col-md-6">
-			<label for="content">광고 내용을 간략히 적어주세요.</label>
-			<textarea class="form-control summernote" name="content" id="summernote" rows="2" class="">${board.CONTENT}</textarea>
-		</div>
-	</div>
-
-	<div class="input_fields_wrap">
-		<button class="add_field_button">Add More Fields</button>
-		<label for="img${g.count}">메인이미지</label> <input type="hidden" />
-		<c:forEach var="image" items="${images}" varStatus="g">
-		<div class="form-row">
-			<div class="form-group col-md-6">
-				
-				<div class="upfile_name">
-					<input type="file" class="form-control" id="img${g.count}" name="upFile">
-					<div class="upfile_cover">	${image }</div>
-					<button type="button" class="upfile_button">파일업로드</button>
-				</div>
-			</div>
-			<div class="form-group col-md-2"> <a href="#" class="remove_field">Remove</a>  </div>
-		</div>
-		</c:forEach> 
-	</div>
-
-	<div class="form-row">
-	   <div class="form-group col-md-6">
-	      <label for="url">링크를 작성해주세요.</label> 
-	      <input type="text" class="form-control" id="url" name="url" placeholder="링크를 작성해주세요." autocomplete="off">
-	    </div>
-	</div>
-  <button type="submit" class="btn btn-primary">등록</button>
-</form>
 </div>
-<script>
-$(function(){
-	var startDate = new Date();
-	var endDate = new Date();
-	endDate.setMonth(endDate.getMonth()+1);
-	// 시작날짜 오늘 부터로 초기값 설정
-	$("[name=startAd]").val( startDate.toISOString().substring(0, 10));
-	// 종료 시간 기본 한달로 초기값 설정
-	$("[name=endAd]").val(endDate.toISOString().substring(0, 10));
-});
+
+<div class="form-row">
+	<div class="form-group col-md-6">
+		내용:
+		<textarea class="form-control" name="content" rows="2" readonly>${board.CONTENT}</textarea>
+
+	</div>
+</div>
 
 
-//이미지 섬네일보기 
-$("[name=img]").change(function(){
-	var img = $(".thumnail");
-	$file  = $(this)[0].files[0];
-	if($file != null){
-		var reader = new FileReader();
-		reader.readAsDataURL($file);
-		
-		//확장자 확인후 진행 여부
-		var chk = $(this).val().split(".").pop().toLowerCase();
-		if($.inArray(chk, ['gif','png','jpg','jpeg']) == -1){
-			alert("이미지만 등록할 수 있습니다.");
-			$(this).val("");
-			return; 
-		}
-		
-		reader.onload = function(){
-			img.html("<img src='"+reader.result+"' width='100%' />");
-		}
-	}
-});
+	<form action="${rootPath }/board/replyWrite" method="post" class="form-inline">
+		<input type="hidden" name="bno" value="${board.BNO}" /> <input type="hidden" name="mno" value="${memberLoggedIn.mno}" />
+		<div class="form-group md-4">
+			<span class="comment_profile" style="background-image:url('${rootPath }/resources/upload/member/${memberLoggedIn.mprofile }')"></span>
+		</div>
+		<div class="form-group md-8">
+			<label for="comment">코멘트</label>
+			<textarea class="form-control" id="comment" rows="3" name="content"></textarea>
+		</div>
+		<button type="submit">전송</button>
+	</form>
 
 
-//첨부파일 클릭
-$(".input_fields_wrap").on("click", ".upfile_button", function(){
-	console.log(this);
-	$(this).siblings("[name=upFile]").click();
-	
-});
-
-$(".input_fields_wrap").on("change",".upfile_name",  function(){
-	
-	var _URL = window.URL || window.webkitURl;
-	
-	if($(this).find("input")[0].files[0] != null){
-		console.log($(this).find("input")[0].files[0].name);
-
-		
-		var file = $(this).find("input")[0].files[0];
-		var img = new Image();
-		img.src=_URL.createObjectURL(file);
-		img.onload = function(){
-			console.log(this.width + " ----" + this.height);	
+<div class="studyList">
+	<div class="table-responsive">
+		<table class="table table-striped table-sm">
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>제목</th>
+					<th>내용</th>
+					<th>이미지</th>
+					<th>링크</th>
+				</tr>
+			</thead>
+			<tbody>
 			
-			$(".imgSize").text("* 추가한 이미지 사이즈 " + this.width+"px * "+this.height+"px");
-		}		
-		
-		var name = $(this).find("input")[0].files[0].name.substring(1, 45);
-		$(this).find(".upfile_cover").text(name.length >= 43 ? name+"..." : name);
-		
-	}
+			</tbody>
+		</table>
+	</div>
+	<nav aria-label="Page navigation example">
+	  <ul class="pagination">
+	    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+	  </ul>
+	</nav>
+</div>
+<button type="button" class="btn btn-primary" onclick="javascript:location.href='${rootPath}'/board/boardList">목록</button>
+  
+
+
+<script>
+
+
+$(function(){
+loadData(${board.BNO }, 1, 1, 5);
 });
 
-
-//체크박스 컨트
-	
-	$("#status").click(function(){
-		$status = $("#status");
-		console.log($status.attr("checked"));
-		if($status.attr("checked") == "checked"){
-			$status.removeAttr("checked");
-		}else{
-			$status.attr("checked", "");
+function loadData(bno, type, cPage, pageBarSize){
+	$.ajax({
+		url:"${rootPath}/board/replyList?bno="+bno+"&cPage="+cPage,
+		dataType:"json",
+		success:function(data){
+			console.log(data);
+			var numPerPage = data.numPerPage;
+			var cPage = data.cPage;
+			var total = data.total;
+			var totalPage = Math.ceil(parseFloat(total)/numPerPage);
+			var pageNo = (Math.floor((cPage - 1)/parseFloat(pageBarSize))) * pageBarSize +1;
+			var pageEnd = pageNo + pageBarSize - 1;
+			var pageNation ="";
+			
+			$pagination = $(".pagination");
+			
+			if(pageNo == 1 ){
+				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">이전</a></li>';
+			}else{
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadData(${board.BNO}, 1, '+(pageNo-1)+','+5+')">다음</a></li>';
+			}
+  			while(!(pageNo > pageEnd || pageNo > totalPage)){
+				console.log("test");
+				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadData(${board.BNO}, 1 ,'+pageNo+','+5+')">'+pageNo+'</a></li>';
+				pageNo++;
+			} 
+			
+			
+			//다음 버튼
+			if(pageNo > totalPage){
+				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">다음</a></li>';
+			}else{
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadData(${board.BNO}, 1,'+pageNo+','+5+')">다음</a></li>';
+			}
+			//페이지 버튼 생성
+			$pagination.html(pageNation);
+			var rmHtml = "";
+			var reply = null;
+			$pagination.html(pageNation);
+			
+			console.log(data);
+			var rmHtml = "";
+			var reply = null;
+	    	for(index in data.list){
+	    		reply = data.list[index];
+	    		var upfile = (data.list[index].UPFILE);
+	    			rmHtml += "<tr onclick=fn_replyView(this,"+reply.RNO+")>"
+		    			rmHtml += "<td>" +reply.CONTENT +"</td>";
+		    			rmHtml += "<td>" +reply.CONTENT +"</td>";
+		    			rmHtml += "<td>" +reply.MID+"</td>";
+		    			if('${memberLoggedIn.mno}'== reply.MNO){ 
+		    				rmHtml += "<td><button>수정</button><button>삭제</button></td>";
+		    			}
+		    			if('${memberLoggedIn.mno}'== '${board.MNO}' && '${memberLoggedIn.mno}' != reply.MNO && '${board.FORK}' != "1"){ 
+		    				rmHtml += "<td><button onclick='fn_fork("+reply.MNO+", "+${board.BNO+")'>채택</button></td>";
+		    			}
+		    			rmHtml += "<td>" +reply.MPROFILE+"</td>";
+		    			rmHtml += "<td>" +reply.REGDATE+"</td>";
+	    			rmHtml += "</tr>";
+	    			//대댓글용
+/* 	    			rmHtml += "<tr>";
+		    			rmHtml += "<td> ";
+		    			rmHtml += "</td>";
+		    			rmHtml += "<td colspan='3'>";
+	    				rmHtml += "<form action='${rootPath}/admin/replyWrite' method='post'>";
+		    			rmHtml += "<input type='hidden' name='parentno' value='"+reply.RNO+"'/>";
+		    			rmHtml += "<input type='hidden' name='bno' value='"+reply.BNO+"'/>";
+		    			rmHtml += "<input type='hidden' name='mno' value='${memberLoggedIn.mno}'/>";
+		    			rmHtml += "<input type='hidden' name='lev' value='"+(reply.LEV+1)+"'/>";
+		    			rmHtml += "<input type='text' name='title'/>";
+		    			rmHtml += "<textarea name='content'></textarea>";
+		    			rmHtml += "<button type='submit'>전송</button>";
+		    			rmHtml += "</form>";
+		    			rmHtml += "</td>";
+		    			rmHtml += "<td>";
+		    			rmHtml += "</td>";
+	    			rmHtml += "</tr>"; */
+	    	}
+			$(".table-responsive tbody").html(rmHtml);
+			
+			
+		},error:function(){
+			
 		}
-		
 	});
-	
-	
-	$(document).ready(function() {
-	    $('#summernote').summernote({
-	      focus: true,
-	      height: 500// 페이지가 열릴때 포커스를 지정함
-	    });
-	  });
-
-	$(document).ready(function() {
-	      $('#title').keyup(function(e){
-	    	  console.log("test");
-	          var content = $(this).val();
-	          $(this).height(((content.split('\n').length + 1) * 1.5) + 'em');
-	          $('#txtcounter').html(content.length + '/300');
-	      });
-	      $('#title').keyup();
-	});
-	
-	
-	$(document).ready(function() {
-	    var max_fields      = 10; //maximum input boxes allowed
-	    var wrapper         = $(".input_fields_wrap"); //Fields wrapper
-	    var add_button      = $(".add_field_button"); //Add button ID
-	    
-	    var x = 1; //initlal text box count
-	    $(add_button).click(function(e){ //on add input button click
-	        e.preventDefault();
-	        if(x < max_fields){ //max input box allowed
-	            x++; //text box increment
-	            $(wrapper).append('<div class="form-row"><div class="form-group col-md-6"><div class="upfile_name"><input type="file" class="form-control"  name="upFile"/> <div class="upfile_cover"></div>    <button type="button" class="upfile_button">파일업로드</button> </div></div><div class="form-group col-md-2"> <a href="#" class="remove_field">Remove</a>  </div></div>'); //add input box
-	        }
-	    });
-	    
-	    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-	        e.preventDefault(); $(this).parent().prev().remove();   $(this).parent("div").remove();x--;
-	    })
-	});
-	
+}
 	
 	
 </script>

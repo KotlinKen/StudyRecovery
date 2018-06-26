@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="reply">
 
-	<insert id="replyInsert">
-		INSERT INTO BOARD (RNO, MNO, BNO, PARENTNO, TITLE, CONTENT, STATUS, REGDATE)
-		VALUES (SEQ_REPLY.NEXTVAL, #{MNO}, #{BNO}, #{PARENTNO}, #{TITLE}, #{CONTNET}, DEFAULT, DEFAULT)
+	<insert id="replyWrite">
+		INSERT INTO REPLY (RNO, MNO, BNO, PARENTNO, CONTENT, LEV, STATUS, REGDATE)
+		VALUES (SEQ_REPLY.NEXTVAL, #{mno}, #{bno}, #{parentno}, #{content}, #{lev}, DEFAULT, DEFAULT)
 
 <!-- 		<selectKey keyProperty="bno" resultType="_int" order="AFTER">
 			SELECT SEQ_BOARD.CURRVAL FROM DUAL
@@ -21,10 +21,10 @@
 			AND STATUS ='Y'
 		</trim>
 	</select>
-	
-	
 	<select id="replyList" resultMap="replyMap">
-		SELECT R.*, B.* FROM REPLY R, BOARD B
+		SELECT R.*, M.*, B.*, TO_CHAR(R.REGDATE, 'YYYY-MM-DD') REGS
+		FROM REPLY R INNER JOIN BOARD  B ON R.BNO = B.BNO
+			         INNER JOIN MEMBER M ON R.MNO = M.MNO
 		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
 			<if test="type != null and type != '' ">
 			AND type = #{type}		
@@ -33,9 +33,9 @@
 			<if test="bno != null and bno != '' ">
 			AND R.BNO = #{bno}		
 			</if>
-			AND R.STATUS ='Y' AND R.BNO = B.BNO
+			AND R.STATUS ='Y'
 		</trim>
-		ORDER BY R.RNO DESC
+		START WITH R.LEV = 1 CONNECT BY PRIOR R.RNO = R.PARENTNO ORDER SIBLINGS BY R.REGDATE DESC
 	</select>
 	
 	
