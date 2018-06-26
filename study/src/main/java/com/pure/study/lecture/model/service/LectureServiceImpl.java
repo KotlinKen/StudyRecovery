@@ -45,7 +45,7 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public List<Map<String, String>> selectLectureList(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectLectureList(int cPage, int numPerPage) {
 		return ld.selectLectureList(cPage, numPerPage);
 	}
 
@@ -75,13 +75,38 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public int selectTotalLectureCountBySearch(Map<String, Integer> map) {
+	public int selectTotalLectureCountBySearch(Map<String, Object> map) {
 		return ld.selectTotalLectureCountBySearch(map);
 	}
 
 	@Override
-	public List<Map<String, String>> selectLectureListBySearch(int cPage, int numPerPage, Map<String, Integer> map) {
-		return ld.selectLectureListBySearch(cPage, numPerPage, map);
+	public List<Map<String, Object>> selectLectureListBySearch(Map<String, Object> terms) {
+		// TODO Auto-generated method stub
+		return ld.selectLectureListBySearch(terms);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage) {
+		// TODO Auto-generated method stub
+		return ld.selectByDeadline(cPage,numPerPage);
+	}
+
+	@Override
+	public int lectureDeadlineCount() {
+		// TODO Auto-generated method stub
+		return ld.lectureDeadlineCount();
+	}
+
+	@Override
+	public List<Map<String, Object>> selectByApply(int cPage, int numPerPage) {
+		// TODO Auto-generated method stub
+		return ld.selectByApply(cPage,numPerPage);
+	}
+
+	@Override
+	public int studyByApplyCount() {
+		// TODO Auto-generated method stub
+		return ld.studyByApplyCount();
 	}
 
 }

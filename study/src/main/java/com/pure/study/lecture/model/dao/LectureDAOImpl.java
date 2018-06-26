@@ -46,7 +46,7 @@ public class LectureDAOImpl implements LectureDAO {
 	}
 
 	@Override
-	public List<Map<String, String>> selectLectureList(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectLectureList(int cPage, int numPerPage) {
 		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
 		return session.selectList("lecture.selectLectureList", null, rowBounds);
 	}
@@ -77,14 +77,39 @@ public class LectureDAOImpl implements LectureDAO {
 	}
 
 	@Override
-	public int selectTotalLectureCountBySearch(Map<String, Integer> map) {
+	public int selectTotalLectureCountBySearch(Map<String, Object> map) {
 		return session.selectOne("lecture.selectTotalLectureCountBySearch", map);
 	}
 
 	@Override
-	public List<Map<String, String>> selectLectureListBySearch(int cPage, int numPerPage, Map<String, Integer> map) {
-		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
-		return session.selectList("lecture.selectLectureListBySearch", map, rowBounds);
+	public List<Map<String, Object>> selectLectureListBySearch(Map<String, Object> terms) {
+		RowBounds rowBounds = new RowBounds(((int)terms.get("cPage")-1)*(int)terms.get("numPerPage"), (int)terms.get("numPerPage"));
+		return session.selectList("lecture.selectLectureListBySearch", terms, rowBounds);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage) {
+		// TODO Auto-generated method stub
+		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage,numPerPage);
+		return session.selectList("lecture.selectByDeadline",null,rowBounds);
+	}
+
+	@Override
+	public int lectureDeadlineCount() {
+		// TODO Auto-generated method stub
+		return session.selectOne("lecture.lectureDeadlineCount");
+	}
+
+	@Override
+	public List<Map<String, Object>> selectByApply(int cPage, int numPerPage) {
+		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage,numPerPage);
+		return session.selectList("lecture.selectByApply",null,rowBounds);
+	}
+
+	@Override
+	public int studyByApplyCount() {
+		// TODO Auto-generated method stub
+		return session.selectOne("lecture.studyByApplyCount");
 	}
 
 }

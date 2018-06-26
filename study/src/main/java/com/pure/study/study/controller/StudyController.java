@@ -66,17 +66,12 @@ public class StudyController {
 		return mav;
 	}
 	
-	
+	//아무 조건 없을 때 페이징처리하여 스터디 리스트를 가져옴.
 	@RequestMapping("/study/selectStudyList.do")
 	public ModelAndView selectStudyList(){
 		int cPage=1;
-		Map<String,Object> resultmap = new HashMap<>();
 		List<Map<String,Object>> list = studyService.selectStudyList(cPage,numPerPage);
 		int total = studyService.studyTotalCount();
-		/*resultmap.put("list", list);
-		resultmap.put("total",total);
-		resultmap.put("numPerPage", numPerPage);
-		resultmap.put("cPage", cPage+1);*/
 		
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("selectStudyList.do numPerPage="+numPerPage);
@@ -290,10 +285,15 @@ public class StudyController {
 			
 		}
 		
+		
+		//팀장에 리뷰 가져오기.
+		List<Map<String,Object>> reviewList= studyService.selectReview(sno);
+		
+		
 		mav.addObject("study", study);
 		mav.addObject("memberLoggedIn", m);
 		mav.addObject("isWish",isWish);	
-		
+		mav.addObject("reviewList",reviewList);
 		mav.setViewName("study/studyView");
 		return mav;
 	}
