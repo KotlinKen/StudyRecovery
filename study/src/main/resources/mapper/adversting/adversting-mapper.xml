@@ -3,7 +3,7 @@
 <mapper namespace="adversting">
 
 	<insert id="insertAdversting">
-		INSERT INTO ADVERSTING VALUES(SEQ_ADVERSTING.NEXTVAL, #{title, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, #{advImg, jdbcType=VARCHAR}, #{url, jdbcType=VARCHAR}, #{position, jdbcType=VARCHAR}, #{status, jdbcType=VARCHAR}, #{backColor, jdbcType=VARCHAR},  #{startAd}, #{endAd}, DEFAULT)
+		INSERT INTO ADVERSTING VALUES(SEQ_ADVERSTING.NEXTVAL, #{title, jdbcType=VARCHAR}, #{content, jdbcType=CLOB}, #{advImg, jdbcType=VARCHAR}, #{url, jdbcType=VARCHAR}, #{position, jdbcType=VARCHAR}, #{status, jdbcType=VARCHAR}, #{backColor, jdbcType=VARCHAR},  #{startAd}, #{endAd}, DEFAULT)
 		<!-- 전달한 board vo객체의 boardNo 프로퍼티에 결과값을 담는다. -->
 		<selectKey keyProperty="ano" resultType="_int" order="AFTER">
 			SELECT SEQ_ADVERSTING.CURRVAL FROM DUAL
@@ -11,7 +11,7 @@
 	</insert>
 	
 	<update id="updateAdversting">
-		UPDATE ADVERSTING SET TITLE=#{title}, CONTENT=#{content}, ADVIMG=#{advImg, jdbcType=VARCHAR}, URL = #{url, jdbcType=VARCHAR}, POSITION = #{position, jdbcType=VARCHAR}, STATUS = #{status, jdbcType=VARCHAR},  BACKCOLOR = #{backColor, jdbcType=VARCHAR}, STARTAD = #{startAd}, ENDAD = #{endAd} WHERE ANO = #{ano}
+		UPDATE ADVERSTING SET TITLE=#{title}, CONTENT=#{content, jdbcType=CLOB}, ADVIMG=#{advImg, jdbcType=VARCHAR}, URL = #{url, jdbcType=VARCHAR}, POSITION = #{position, jdbcType=VARCHAR}, STATUS = #{status, jdbcType=VARCHAR},  BACKCOLOR = #{backColor, jdbcType=VARCHAR}, STARTAD = #{startAd}, ENDAD = #{endAd} WHERE ANO = #{ano}
 	</update>
 	
 	<select id="adverstingTotalCount" resultType="_int">
@@ -59,7 +59,7 @@
 		SELECT A.*, B.* FROM BOARD B, ATTACHMENT A WHERE B.BOARDNO = A.BOARDNO AND A.BOARDNO =  #{boardNo}
 	</select>
 	
-	<select id="selectAdverstingOne" resultMap="boardMap">
+	<select id="selectAdverstingOne" resultMap="adverstingMap">
 		SELECT A.*, TO_CHAR(A.STARTAD,'YYYY-MM-DD') STARTDATE, TO_CHAR(A.ENDAD,'YYYY-MM-DD') ENDDATE FROM ADVERSTING A WHERE ANO = #{ano}
 	</select>
 	
@@ -76,6 +76,7 @@
 	</resultMap>
 	
 	<resultMap type="map" id="adverstingMap">
+		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String" />
 	</resultMap>
 	
 	

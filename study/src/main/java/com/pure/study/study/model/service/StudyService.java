@@ -57,7 +57,29 @@ public interface StudyService {
 
 	int deletewishStudy(Map<String, Integer> map);
 
+<<<<<<< HEAD
 	List<Map<String, Object>> selectReview(int sno);
 
+=======
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+>>>>>>> branch 'master' of https://github.com/KotlinKen/StudyRepository.git
 
 }

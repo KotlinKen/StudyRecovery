@@ -72,7 +72,12 @@ public class StudyController {
 		int cPage=1;
 		List<Map<String,Object>> list = studyService.selectStudyList(cPage,numPerPage);
 		int total = studyService.studyTotalCount();
-		
+
+		/*resultmap.put("list", list);
+		resultmap.put("total",total);
+		resultmap.put("numPerPage", numPerPage);
+		resultmap.put("cPage", cPage+1);*/
+
 		ModelAndView mav = new ModelAndView("jsonView");
 		System.out.println("selectStudyList.do numPerPage="+numPerPage);
 		System.out.println("selectStudyList.do cPage="+cPage);
@@ -91,7 +96,6 @@ public class StudyController {
 	@RequestMapping("/study/studyFormEnd.do") 
 	public ModelAndView insertStudy(Study study, @RequestParam(value="freq") String[] freq, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles,
 			HttpServletRequest request, @ModelAttribute("memberLoggedIn") Member m) {
-		
 		ModelAndView mav= new ModelAndView();
 		String dayname="";
 		int i=0;

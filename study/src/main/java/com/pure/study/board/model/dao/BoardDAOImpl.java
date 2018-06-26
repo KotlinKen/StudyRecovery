@@ -40,8 +40,8 @@ public class BoardDAOImpl implements BoardDAO {
 	}
 
 	@Override
-	public List<Map<String, String>> selectOne(int boardNo) {
-		return sqlSession.selectList("board.selectOne", boardNo);
+	public Map<String, String> selectOne(int bno) {
+		return sqlSession.selectOne("board.selectOne", bno);
 	}
 
 	@Override
@@ -52,6 +52,11 @@ public class BoardDAOImpl implements BoardDAO {
 	@Override
 	public List<Map<String, String>> selectOneAttach(int boardNo) {
 		return sqlSession.selectList("board.selectOneAttach", boardNo); 
+	}
+
+	@Override
+	public List<Map<String, String>> selectBoardList(int cPage, int numPerPage, Map<String, String> params) {
+		return sqlSession.selectList("board.boardList", params, new RowBounds((cPage-1)*numPerPage, numPerPage));
 	}
 
 

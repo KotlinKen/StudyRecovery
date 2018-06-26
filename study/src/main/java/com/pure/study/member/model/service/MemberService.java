@@ -77,5 +77,34 @@ public interface MemberService {
 
 	int updateInstructorEnrollEnd(Instructor instructor);
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	List<Map<String, Object>> selectInstructorMember(int cPage, int count);
+
+	int selectCntInstructorMember();
+
+	List<Map<String, Object>> selectAllMemberList(int cPage, int count);
+
+	int selectCntAllMemberList();
+
 
 }
