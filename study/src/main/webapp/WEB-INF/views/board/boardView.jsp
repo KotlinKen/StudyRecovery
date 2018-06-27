@@ -126,7 +126,7 @@ function loadData(bno, type, cPage, pageBarSize){
 		    				rmHtml += "<td><button>수정</button><button>삭제</button></td>";
 		    			}
 		    			if('${memberLoggedIn.mno}'== '${board.MNO}' && '${memberLoggedIn.mno}' != reply.MNO && '${board.FORK}' != "1"){ 
-		    				rmHtml += "<td><button onclick='fn_fork("+reply.MNO+", "+${board.BNO+")'>채택</button></td>";
+		    				rmHtml += "<td><button onclick='fn_fork("+reply.MNO+", "+${board.BNO}+")'>채택</button></td>";
 		    			}
 		    			rmHtml += "<td>" +reply.MPROFILE+"</td>";
 		    			rmHtml += "<td>" +reply.REGDATE+"</td>";
@@ -158,7 +158,12 @@ function loadData(bno, type, cPage, pageBarSize){
 		}
 	});
 }
-	
+
+
+
+function fn_fork(mno, bno){
+	location.href='${rootPath}/board/boardReplyFork?mno='+mno+'&bno='+bno;
+}
 	
 </script>
 

@@ -86,6 +86,9 @@
 						<if test="cover != null">
 							cover=#{cover}
 						</if>
+						<if test="npoint != null">
+							npoint=#{npoint}
+						</if>
 			where mno=#{mno}
 	</update>
 	<update id="dropMember">

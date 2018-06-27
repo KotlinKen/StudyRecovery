@@ -36,10 +36,6 @@
 		</trim>
 		ORDER BY BNO DESC
 	</select>
-	
-	
-	
-	
 	<select id="selectOneAttach" resultMap="boardMap">
 		SELECT A.*, B.* FROM BOARD B, ATTACHMENT A WHERE B.BOARDNO = A.BOARDNO AND A.BOARDNO =  #{boardNo}
 	</select>
@@ -47,6 +43,13 @@
 	<select id="selectOne" resultMap="boardMap">
 		SELECT * FROM BOARD WHERE BNO = #{bno}
 	</select>
+		<update id="updatePwd">
+		update member set pwd=#{pwd} where mid=#{mid}
+	</update>
+	
+	<update id="boardUpdate">
+		UPDATE BOARD SET FORK = 1 WHERE BNO = #{BNO}
+	</update>
 	
 	<resultMap type="map" id="boardMap">
 		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String" />

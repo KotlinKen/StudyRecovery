@@ -59,5 +59,10 @@ public class BoardDAOImpl implements BoardDAO {
 		return sqlSession.selectList("board.boardList", params, new RowBounds((cPage-1)*numPerPage, numPerPage));
 	}
 
+	@Override
+	public int updateBoard(Map<String, String> queryMap) {
+		return sqlSession.update("board.boardUpdate", queryMap);
+	}
+
 
 }

@@ -63,6 +63,11 @@ public class BoardServiceImpl implements BoardService {
 		return boardDAO.selectBoardList(cPage, numPerPage, params);
 	}
 
+	@Override
+	public int updateBoard(Map<String, String> queryMap) {
+		return boardDAO.updateBoard(queryMap);
+	}
+
 	
 	
 }

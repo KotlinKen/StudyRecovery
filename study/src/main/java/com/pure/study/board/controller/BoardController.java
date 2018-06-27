@@ -32,12 +32,19 @@ import com.pure.study.board.model.excption.BoardException;
 import com.pure.study.board.model.service.BoardService;
 import com.pure.study.board.model.vo.Attachment;
 import com.pure.study.board.model.vo.Board;
+import com.pure.study.member.model.dao.MemberDAO;
+import com.pure.study.member.model.service.MemberService;
+import com.pure.study.member.model.vo.Member;
 
 @Controller
 public class BoardController {
 
 	@Autowired
 	BoardService boardService;
+	
+	@Autowired
+	MemberService memberService;
+	
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 	
@@ -72,6 +79,7 @@ public class BoardController {
 		return mav;
 	};
 	
+
 	@RequestMapping("/{location}/boardWrite")
 	public ModelAndView boardForm(@PathVariable(value="location", required=false) String location) {
 		ModelAndView mav = new ModelAndView();
@@ -238,10 +246,33 @@ public class BoardController {
 	            e.printStackTrace();
 	         }
 	      }
-	      
-	      
-	      
-	      
-	      
 	   }
+	
+	
+	@RequestMapping("/{location}/boardReplyFork")
+	public ModelAndView boardReplyFork(@PathVariable(value="location", required=false) String location,
+									   @RequestParam (value="map", required=false) Map<String, String> queryMap) {
+										
+		ModelAndView mav = new ModelAndView();
+		
+		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
+		Member member = new Member();
+		
+		//멤버 아이디로 선택후 현재 포인트를 가져온후 더해서 다시 넣는다 
+		member.setMno(Integer.parseInt(queryMap.get("mno")));
+		
+		int result = boardService.updateBoard(queryMap);
+		if(result > 0 ) {
+			int mresult =memberService.updateMember(member);
+		}
+		
+		
+		return mav;
+	}	
 }

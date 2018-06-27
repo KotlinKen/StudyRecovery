@@ -24,5 +24,7 @@ public interface BoardDAO {
 
 	List<Map<String, String>> selectBoardList(int cPage, int numPerPage, Map<String, String> params);
 
+	int updateBoard(Map<String, String> queryMap);
+
 
 }
