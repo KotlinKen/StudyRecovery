@@ -35,7 +35,7 @@
  </select>
   <insert id="insertStudy">
   	insert into study values(SEQ_STUDY.NEXTVAL,#{mno},#{subno},#{tno},#{dno},#{title},#{freq},
-  	#{price},null,#{recruit},'모집중',#{time},'study',#{ldate},#{sdate},#{edate},sysdate,#{etc},#{content})
+  	#{content},#{price},null,#{recruit},'모집 중',#{time},'study',#{ldate},#{sdate},#{edate},sysdate,#{etc})
   	<!-- 전달한 study vo 객체의 sno 프로퍼티에 결과값을 담는다. -->		
    	<selectKey keyProperty="sno"  resultType="_int" order="AFTER"> <!-- order 앞의 쿼리 후에 해라. -->
    		SELECT SEQ_STUDY.CURRVAL FROM DUAL
@@ -75,7 +75,7 @@
 	and s.dno=#{dno}
 	</if>
 	<if test="leadername!=null and leadername !='' ">
-	and  m.mname like #{leadername} 
+	and  m.mname like '%'||#{leadername}||'%'
 	</if>
     order by s.regdate desc
   
@@ -128,7 +128,7 @@
 	and s.dno=#{dno}
 	</if>
 	<if test="leadername!=null and leadername !='' ">
-	and  m.mname like #{leadername} 
+	and  m.mname like '%'||#{leadername}||'%'  
 	</if>
   </select>
   
@@ -149,7 +149,7 @@
   		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
  		  m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
   from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
-  where   s.type='study' and s.ldate>=sysdate
+  where   s.type='study' and s.status in ('모집 중','마감 임박')
   order by s.ldate
   </select>
   
