@@ -60,12 +60,11 @@
    			        		msg = '결제가 완료되었습니다.';	     	     			        
 	     			    } else {
 	     			    	var pno = rsp.imp_uid.replace("imp_", "");
-	     			    	alert(pno);
 	     			    	
-	     			    	/* location.href = "failedPay.do?mno=" + mno + 
+	     			    	location.href = "failedPay.do?mno=" + mno + 
 														 "&sno=" + sno + 
 														 "&pno=" + pno + 
-														 "&price=" + price; */
+														 "&price=" + price;
 	     			    	
 	     			        msg = '결제에 실패하였습니다.';
 	     			        msg += '에러내용 : ' + rsp.error_msg;

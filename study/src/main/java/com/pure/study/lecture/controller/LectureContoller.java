@@ -423,6 +423,7 @@ public class LectureContoller {
 		map.put("sno", sno);
 		map.put("mno", mno);
 		map.put("price", price);
+		map.put("status", 1);
 		
 		int result = ls.insertPay(map);
 		
@@ -444,6 +445,7 @@ public class LectureContoller {
 		map.put("sno", sno);
 		map.put("mno", mno);
 		map.put("price", price);
+		map.put("status", 0);
 		
 		int result = ls.insertPay(map);
 		
