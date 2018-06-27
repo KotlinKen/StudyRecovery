@@ -123,8 +123,8 @@ public class LectureDAOImpl implements LectureDAO {
 	}
 
 	@Override
-	public int successPay(Map<String, Object> map) {
-		return session.insert("lecture.successPay", map);
+	public int insertPay(Map<String, Object> map) {
+		return session.insert("lecture.insertPay", map);
 	}
 
 }

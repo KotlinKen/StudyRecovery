@@ -54,8 +54,13 @@
 		INSERT INTO APPLY VALUES( SEQ_APPLY.NEXTVAL, #{mno}, #{sno}, DEFAULT)
 	</insert>
 	
-	<insert id="successPay">
-		INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', null, #{price}, SYSDATE)
+	<insert id="insertPay">
+		<if test="status==1">
+			INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제완료', #{price}, SYSDATE)
+		</if>
+		<if test="status==0">
+			INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제실패', #{price}, SYSDATE)
+		</if>
 	</insert>
 
 	<select id="selectLocList" resultMap="map">
