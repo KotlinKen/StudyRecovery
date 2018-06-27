@@ -55,7 +55,7 @@
 	</insert>
 	
 	<insert id="successPay">
-		INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', null, #{price}, SYSDATE)
+		INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제완료', #{price}, SYSDATE)
 	</insert>
 
 	<select id="selectLocList" resultMap="map">

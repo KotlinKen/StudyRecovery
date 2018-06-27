@@ -424,9 +424,33 @@ public class LectureContoller {
 		map.put("mno", mno);
 		map.put("price", price);
 		
-		int result = ls.successPay(map);
+		int result = ls.insertPay(map);
 		
-		mav.setViewName("/lecture/lectureview.do?sno=" + sno);
+		String loc = "/lecture/lectureView.do?sno=" + sno;
+		
+		mav.addObject("loc", loc);
+		mav.setViewName("/common/msg");
+		
+		return mav;
+	}
+	
+	@RequestMapping("/lecture/failedPay.do")
+	public ModelAndView failedPay(@RequestParam int mno, @RequestParam int sno, @RequestParam(required=true) long pno, @RequestParam int price) {
+		ModelAndView mav = new ModelAndView();
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("pno", pno);
+		map.put("sno", sno);
+		map.put("mno", mno);
+		map.put("price", price);
+		
+		int result = ls.insertPay(map);
+		
+		String loc = "/lecture/lectureView.do?sno=" + sno;
+		
+		mav.addObject("loc", loc);
+		mav.setViewName("/common/msg");
 		
 		return mav;
 	}

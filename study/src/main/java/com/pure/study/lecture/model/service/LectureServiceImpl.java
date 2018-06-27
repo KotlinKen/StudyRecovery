@@ -120,8 +120,8 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public int successPay(Map<String, Object> map) {
-		return ld.successPay(map);
+	public int insertPay(Map<String, Object> map) {
+		return ld.insertPay(map);
 	}
 
 }

@@ -47,6 +47,6 @@ public interface LectureDAO {
 
 	int addWishLecture(Map<String, Integer> map);
 
-	int successPay(Map<String, Object> map);
+	int insertPay(Map<String, Object> map);
 
 }
