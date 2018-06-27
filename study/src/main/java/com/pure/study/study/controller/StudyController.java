@@ -349,15 +349,18 @@ public class StudyController {
 		map.put("mno", mno);
 		
 		int result =0;
+		//신청제한에 걸리면 -1, 이미 신청햇으면 0 이제 신청하는 거면 else
+		
 		//신청인원 100명 제한 검사
-		
-		
-		//먼저 이미 신청했는지 검사한다.
-		int cnt = studyService.preinsertApply(map);
-		if(cnt == 0 )
-	         result = studyService.insertApplyStudy(map);
-		
-		
+		int cntMax = studyService.selectApplyCount(sno);
+		if(cntMax<100) {
+			//먼저 이미 신청했는지 검사한다.
+			int cnt = studyService.preinsertApply(map);
+			if(cnt == 0 )
+		         result = studyService.insertApplyStudy(map);
+		}else {
+			result=-1;
+		}
 		return result;
 	}
 	

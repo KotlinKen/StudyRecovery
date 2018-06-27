@@ -45,10 +45,13 @@ function studyApply(sno){
 				url:"applyStudy.do",
 				data:{sno:sno,mno:mno},
 				success:function(data){
-					if(data!=0){
-						alert("신청되었습니다.");
-					}else{
+					if(data==-1){
+						alert("신청인원 최대 인원 100명을 넘었습니다.");
+					}
+					else if(data==0){
 						alert("이미 신청한 스터디입니다.");
+					}else{
+						alert("신청되었습니다.");
 					}
 					//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
 				},error:function(){

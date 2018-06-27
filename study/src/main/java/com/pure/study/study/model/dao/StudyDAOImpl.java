@@ -175,5 +175,11 @@ public class StudyDAOImpl implements StudyDAO {
 		return sqlSession.selectList("study.selectReview", sno);
 	}
 
+	@Override
+	public int selectApplyCount(int sno) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("study.selectApplyCount", sno);
+	}
+
 
 }

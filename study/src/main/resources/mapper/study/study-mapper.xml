@@ -203,6 +203,9 @@
   	select r.*, m.mprofile,m.mname,s.title from review r join member m on r.mno=m.mno join study s on r.sno=s.sno where tmno=(select mno from study where sno=#{sno})
   </select>
   
+  <select id="selectApplyCount" resultType="_int">
+  	select count(*) cnt from apply where sno=#{sno}
+  </select>
   
   
 </mapper>
