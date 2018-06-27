@@ -32,6 +32,7 @@ $(function(){
         		html+="</div>";
         	}
 			$("div#study-list").html(html); 
+			$("input#cPageNo").val(data.cPage);
 		},error:function(){
 			
 		}
@@ -331,7 +332,7 @@ $(function(){
 	<input type="hidden" id="cPageNo" value="1" />
 	<input type="hidden" id="total" value="0" />
 	<input type="hidden" id="numPerPage" />
-	<input type="hidden" name="case" value="none" /> <!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부. 임시방편. -->
+	<input type="hidden" name="case" value="none" /> <!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부.-->
 	
 	
 	

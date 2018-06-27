@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.member.model.vo.Review;
 
 public interface MemberDAO {
 	
@@ -122,5 +123,23 @@ public interface MemberDAO {
 	Map<String, String> getNPoint(Map<String, String> expMap);
 	
 	int changNPOINTMINUS(Map<String, String> expMap);
+
+	List<Map<String, Object>> reviewEnrollView(String studyNo);
+
+	List<Map<String, Object>> leaderReviewEnrollView(String studyNo);
+
+	int reviewEnroll(Map<String, Object> map);
+
+	List<Integer> reviewFinish(Map<String, Object> map);
+
+	int updateMemberExp(Map<String, Object> map);
+
+	List<Map<String, Object>> reviewList(Map<String, Object> listMap);
+
+	String selectStudyName(String studyNo);
+
+	int insertCrew(Map<String, String> map);
+
+	int deleteApply(Map<String, String> map);
 
 }

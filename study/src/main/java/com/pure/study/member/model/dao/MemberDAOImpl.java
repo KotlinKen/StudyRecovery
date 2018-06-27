@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.member.model.vo.Review;
 
 @Repository
 public class MemberDAOImpl implements MemberDAO {
@@ -158,6 +159,15 @@ public class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
+	public List<Map<String, Object>> reviewEnrollView(String studyNo) {
+		return sqlSession.selectList("member.reviewEnrollView", studyNo);
+	}
+
+	@Override
+	public List<Map<String, Object>> leaderReviewEnrollView(String studyNo) {
+		return sqlSession.selectList("member.leaderReviewEnrollView", studyNo);
+	}
+
 	public int memberCheckEmail(String emil) {
 		System.out.println(emil);
 		return sqlSession.selectOne("member.memberCheckEmail",emil);
@@ -193,6 +203,41 @@ public class MemberDAOImpl implements MemberDAO {
 	@Override
 	public int updateInstructorEnrollEnd(Instructor instructor) {
 		return sqlSession.update("member.updateInstructorEnrollEnd", instructor);
+	}
+
+	@Override
+	public int reviewEnroll(Map<String,Object> map) {
+		return sqlSession.insert("member.reviewEnroll", map);
+	}
+
+	@Override
+	public List<Integer> reviewFinish(Map<String, Object> map) {
+		return sqlSession.selectList("member.reviewFinish", map);
+	}
+
+	@Override
+	public int updateMemberExp(Map<String,Object> map) {
+		return sqlSession.update("member.updateMemberExp", map);
+	}
+
+	@Override
+	public List<Map<String, Object>> reviewList(Map<String, Object> listMap) {
+		return sqlSession.selectList("member.reviewList", listMap);
+	}
+
+	@Override
+	public String selectStudyName(String studyNo) {
+		return sqlSession.selectOne("member.selectStudyName", studyNo);
+	}
+
+	@Override
+	public int insertCrew(Map<String, String> map) {
+		return sqlSession.insert("member.insertCrew", map);
+	}
+
+	@Override
+	public int deleteApply(Map<String, String> map) {
+		return sqlSession.insert("member.deleteApply", map);
 	}
 	
 	

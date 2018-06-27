@@ -169,5 +169,11 @@ public class StudyDAOImpl implements StudyDAO {
 		return sqlSession.delete("study.deletewishStudy", map);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectReview(int sno) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("study.selectReview", sno);
+	}
+
 
 }

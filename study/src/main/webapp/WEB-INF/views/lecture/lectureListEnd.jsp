@@ -71,64 +71,218 @@
 			});
 		});
 		
-		// 페이징 처리
-		$(".movePageBtn").click(function(){
-			var cPage = $(this).val();
-			
-			location.href="${pageContext.request.contextPath}/lecture/lectureList.do?cPage=" + cPage;
+		/* 처음에 조건없이 리스트를 가져오는 ajax */
+		$.ajax({
+			url:"selectLectureList.do",
+			dataType:"json",
+			success:function(data){
+				$("input#total").val(data.total);
+				$("input#numPerPage").val(data.numPerPage);
+				$("input#cPageNo").val(data.cPage);
+				var html="";
+	        	for(index in data.list){
+	        	    html+="<div class='lectureOne'>";
+	        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
+	        		html+="<span class='studyinfo'>"+data.list[index].LOCAL+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
+	        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
+	        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
+	        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
+	        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
+	        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+	        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
+	        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
+	        		html+="</div>";
+	        	}
+				$("div#lecture-container").html(html); 
+				$("input#cPageNo").val(data.cPage);
+			},error:function(){
+				
+			}
 		});
-		
-		// 페이징 처리
-		$(".moveSearchPageBtn").click(function(){
-			var lno = $("#local").val();
-			var tno = $("#town").val();
-			var kno = $("#kind").val();
-			var subno = $("#sub").val();
-			var dno = $("#diff").val();
-			
-			var cPage = $("#cPage").val();
-			alert(cPage);
-			
-			$.ajax({
-				url: "searchLecture.do",
-				data: {
-					lno : lno,
-					tno : tno,
-					kno : kno,
-					subno : subno,
-					dno : dno,
-					cPage : cPage
-				},
-				dataType: "html",
-				success: function( data ){
-					$("#lecture-container").html(data);
-				}
-			});
-		});
+		/* 처음에 조건없이 리스트를 가져오는 ajax */
+				
 		
 		// 검색
 		$("#searchLectureBtn").click(function(){
-			var lno = $("#local").val();
-			var tno = $("#town").val();
-			var kno = $("#kind").val();
-			var subno = $("#sub").val();
-			var dno = $("#diff").val();
+			
+			$("input[name=case]").val("search"); //검색인 경우 case 설정
+			
+			var filter={lno:$("#local").val(),tno:$("#town").val(),
+					subno:$("#sub").val(),kno:$("#kind").val(),
+					dno:$("#diff").val(),leadername:$("input#leadername").val()};
+			
 			
 			$.ajax({
 				url: "searchLecture.do",
-				data: {
-					lno : lno,
-					tno : tno,
-					kno : kno,
-					subno : subno,
-					dno : dno
-				},
-				dataType: "html",
+				data: filter,
+				dataType: "json",
 				success: function( data ){
-					$("#lecture-container").html(data);
+					var html="";
+		        	for(index in data.list){
+		        	    html+="<div class='lectureOne'>";
+		        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].LOCAL+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
+		        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
+		        		html+="</div>";
+		        	}
+					$("div#lecture-container").html(html); 
+					$("input#total").val(data.total);
+					$("input#cPageNo").val(data.cPage);
+
 				}
 			});
 		});
+		
+		//마감임박순 버튼 클릭 이벤트 첫 페이징 가져옴.
+		$("button#sortDeadlineBtn").click(function(){
+			$("input#case").val("deadline");
+			
+			$.ajax({
+				url:"selectByDeadline.do",
+				dataType:"json",
+				success:function(data){
+					
+					var html="";
+					for(var index in data.list){
+						html+="<div class='lectureOne'>";
+		        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].LOCAL+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
+		        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
+		        		html+="</div>";
+					
+					}
+					$("div#lecture-container").html(html); 
+					$("input#cPageNo").val(data.cPage);
+					$("input#total").val(data.total);
+				}
+			});
+		});
+		
+		
+		////인기(신청자)순 버튼 클릭 이벤트 첫 페이징 가져옴.
+		$("button#sortPopularBtn").click(function(){
+			$("input#case").val("pop");
+			
+			$.ajax({
+				url:"selectByApply.do",
+				dataType:"json",
+				success:function(data){
+					
+					var html="";
+					for(var index in data.list){
+						html+="<div class='lectureOne'>";
+		        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].LOCAL+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
+		        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
+		        		html+="</div>";
+						
+					}
+					$("div#lecture-container").html(html); 
+					$("input#cPageNo").val(data.cPage);
+					$("input#total").val(data.total);
+				}
+			});
+		});
+		
+		
+		//무한 스크롤.
+		//내려갈 때 계속 해당하는 스터디 리스트가 나옴
+		var scrollTime=500;
+		var timer = null;
+		
+		$(window).on('scroll',function(){
+			var maxHeight = $(document).height();
+		    var currentScroll = $(window).scrollTop() + $(window).height();
+			if(maxHeight <= currentScroll+100){
+				clearTimeout(timer);
+				timer = setTimeout(listAddbyPaging,scrollTime);
+			}
+			
+		});
+		
+		function listAddbyPaging(){
+			
+		    var urlPath="";
+			var cPage=Number($("input#cPageNo").val());
+			var total =Number($("input#total").val());
+			var numPerPage= Number($("input#numPerPage").val());
+			var listCase=$("input[name=case]").val();
+			var dataForList={cPage:cPage};//페이징 처리에 보낼 data 값.
+			
+			
+			//아무 조건없이 페이징 하느냐, 있이 하느냐, 마감임박순으로 하느냐, 인기스터디 순으로 하느냐에 따라 url분기. 보낼 data값 설정.
+		    if(listCase=="none"){
+		    	urlPath="lectureListAdd.do";
+		    	
+		    }else if(listCase=="search"){
+		    	urlPath="lectureSearchAdd.do";
+		    	dataForList={lno:$("#local").val(),tno:$("#town").val(),
+						subno:$("#sub").val(),kno:$("#kind").val(),
+						dno:$("#diff").val(),leadername:$("input#leadername").val(),cPage:cPage};
+		    	
+		    }else if(listCase=="deadline"){
+				urlPath="lectureDeadlinAdd.do";	    	
+		    }else{
+		    	urlPath="lectureApplyAdd.do";
+		    	
+		    }
+			console.log("cPage="+cPage);
+			var isPage=Math.floor(total/numPerPage)+1;
+			console.log("isPage="+isPage);
+			
+			 //최대 가져올 수 있는 cPage 검사. 
+			 if (cPage<=isPage) {
+			      $.ajax({
+			        url:urlPath,
+			        dataType:"json",
+			        data:dataForList,
+			        success:function(data){
+			        	console.log(data);
+			        	var html="";
+			        	
+			        	for(index in data.list){
+			        		html+="<div class='lectureOne'>";
+			        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+data.list[index].LOCAL+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
+			        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
+			        		html+="</div>";
+			        	}
+			        	$("input#cPageNo").val(data.cPage);
+			        	$("div#lecture-container").append(html); 
+			        },error:function(){
+			        	
+			        }
+			      });//ajax 끝
+			  }//if문 끝
+			
+		}
+		
+		
+		
 	});
 </script>
 <style>
@@ -194,7 +348,7 @@
 			</c:forEach>
 			</c:if>
 		</select>
-		
+
 		<!-- ajax로 subject가져오기 -->
 		<select name="subno" id="sub"> 
 		
@@ -217,56 +371,19 @@
 		<button type="button" id="searchLectureBtn">검색</button>
 	
 		<button type="button" id="sortDeadlineBtn">마감임박순</button>
-		<button type="button" id="sortPopularBtn">인기스터디순</button>		
-	
+		<button type="button" id="sortPopularBtn">인기스터디순</button>	
+		
+		<!-- 페이징시 필요한 값 저장 -->	
+		<input type="hidden" id="cPageNo" value="1" />
+		<input type="hidden" id="total" value="0" />
+		<input type="hidden" id="numPerPage" />
+		<input type="hidden" name="case" value="none" /> <!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부.-->
 		<hr />
 		
 		<div id="lecture-container">
-			<c:if test="${!empty lectureList }">
-				<c:forEach var="lecture" items="${lectureList }">
-					<div class="lectureDiv" style="border: 1px solid gray; text-align: center;">
-						<span>제목 : ${lecture.TITLE }</span>
-						<br />
-						<span>지역 : ${lecture.LOCAL} ${lecture.TNAME}</span>
-						<br />
-						<span>과목 : ${lecture.KNAME} - ${lecture.SUBNAME}</span>
-						<br />
-						<span>난이도 : ${lecture.DNAME }</span>
-						<br />
-						<span>비용 : ${lecture.PRICE}원</span>
-						<br />
-						<span>${lecture.STATUS }</span>
-						<br />
-						<span>
-							일정 :
-							<fmt:parseDate value="${lecture.SDATE}" type="date" var="sdate" pattern="yyyy-MM-dd" />
-							<fmt:formatDate value="${sdate }" pattern="yyyy/MM/dd"/> 
-							~ 
-							<fmt:parseDate value="${lecture.EDATE}" type="date" var="edate" pattern="yyyy-MM-dd" />
-							<fmt:formatDate value="${edate }" pattern="yyyy/MM/dd"/>
-							&nbsp;&nbsp;&nbsp;
-							시간 : ${lecture.TIME }							
-						</span>
-						<br />
-						<span>
-							작성자 : ${lecture.MNAME } &nbsp;&nbsp;&nbsp;
-							등록일 : <fmt:parseDate value="${lecture.REGDATE }" type="date" var="regDate" pattern="yyyy-MM-dd" />
-							<fmt:formatDate value="${regDate }" pattern="yyyy/MM/dd"/>	
-						</span>
-						<input type="hidden" id="sno" value="${lecture.SNO }"/>
-					</div>
-				</c:forEach>	
-				
-				<input type="hidden" name="cPage" id="cPage" value="${cPage }"/>
-				
-				<c:if test="${cPage != 1 }">
-					<button type="button" class="movePageBtn" id="beforeBtn" name="beforeBtn" value="${cPage-1}">&lt;</button>
-				</c:if>
-				<c:if test="${cPage <= totalPage}">
-					<button type="button" class="movePageBtn" id="afterBtn" name="afterPage" value="${cPage+1}">&gt;</button>	
-				</c:if>
-			</c:if>	
+			
 		</div>
 	</div>
-	</div>
+</div>
+	
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

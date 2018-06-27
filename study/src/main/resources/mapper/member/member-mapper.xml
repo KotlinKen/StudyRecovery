@@ -56,18 +56,6 @@
 						<if test="phone != null">
 							phone=#{phone},
 						</if>
-						<if test="addr1 != null">
-							addr1=#{addr1}, 
-						</if>
-						<if test="addr2 != null">
-							addr2=#{addr2}, 
-						</if>
-						<if test="addrDetail != null">
-							addrDetail=#{addrDetail}, 
-						</if>
-						<if test="post != null">
-							post=#{post}, 
-						</if>
 						<if test="mprofile != null">
 							mprofile=#{mprofile}, 
 						</if>
@@ -97,8 +85,8 @@
 	<update id="updateEmail">
 		update member set email=#{email} where mid=#{mid}
 	</update>
-	<select id="selectApplyList" parameterType="_int" resultMap="applyList">
-		select distinct
+	<select id="selectApplyList" parameterType="map" resultMap="applyList">
+		select
 			a.ano as "ano", -- 신청 번호
 			a.mno as "mno", -- 신청한 회원 번호
 			a.sno as "sno", -- 신청한 스터디 번호
@@ -106,10 +94,6 @@
 			m.mid as "mid", -- 신청한 회원 아이디
 			m.mname as "mname", -- 신청한 회원 이름
 			m.phone as "phone", -- 신청한 회원 연락처
-			m.addr1 as "addr1", -- 신청한 회원 지번주소
-			m.addr2 as "addr2", -- 신청한 회원 도로명주소
-			m.addrdetail as "addrdetail", -- 신청한 회원 상세주소
-			m.post as "post", -- 신청한 회원 우편번호
 			m.mprofile as "mprofile", -- 신청한 회원 프로필
 			m.cover as "cover", -- 신청한 회원 자기소개서
 			m.email as "email", -- 신청한 회원 이메일
@@ -138,10 +122,17 @@
 			to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
 			to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 			to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
-			to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+			to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
+			(select g.status from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=a.mno) and g.point <![CDATA[ > ]]> (select point from member where mno=a.mno)-5000) as "grade"
 		from apply a join study s on s.sno=a.sno
 			            join member m on m.mno=a.mno
-		where a.mno=#{mno}
+		where 1=1
+		<if test="mno != null">
+		and a.mno=#{mno}
+		</if>
+		<if test="studyNo != null">
+		and a.sno=#{studyNo}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -203,11 +194,17 @@
 		and s.ldate <![CDATA[ < ]]> sysdate
 		</if>    
 	</select>
-	<select id="selectApplyListCnt" parameterType="_int" resultType="_int">
-		select distinct count(*) 
+	<select id="selectApplyListCnt" parameterType="map" resultType="_int">
+		select count(*) 
 		from apply a join study s on s.sno=a.sno
 				    join member m on m.mno=a.mno
-		where a.mno=#{mno} 
+		where 1=1
+		<if test="mno != null">
+		and a.mno=#{mno}
+		</if>
+		<if test="studyNo != null">
+		and a.sno=#{studyNo}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -269,20 +266,17 @@
 		and s.ldate <![CDATA[ < ]]> sysdate
 		</if>    
 	</select>
-	<resultMap type="map" id="applyList"></resultMap>
+	<resultMap type="map" id="applyList">
+		<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
 	
 	<select id="selectLeaderList" parameterType="map" resultMap="LeaderList">
-		select distinct
+		select 
 				m.mno as "mno", -- 스터디 팀원의 회원 번호
 				s.sno as "sno", -- 스터디 번호
 				m.mid as "mid", -- 해당 스터디 팀원 아이디
 				m.mname as "mname", -- 팀원 이름
 				m.phone as "phone", -- 팀원 연락처
-				m.addr1 as "addr1", -- 팀원 지번주소
-				m.addr2 as "addr2", -- 팀원 도로명주소
-				m.addrdetail as "addrdetail", -- 팀원 상세주소
-				m.post as "post", -- 팀원 우편번호
-				m.mprofile as "mprofile", -- 팀원 프로필
 				m.cover as "cover", -- 팀원 자기소개서
 				m.email as "email", -- 팀원 이메일
 				m.birth as "birth", -- 팀원 생년월일
@@ -311,7 +305,13 @@
 				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
 				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
 		from study s join member m on m.mno=s.mno
-		where s.mno=#{mno}
+		where 1=1
+		<if test="studyNo != null">
+		and c.sno=#{studyNo}
+		</if>
+		<if test="mno != null">
+		and s.mno=#{mno}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -369,9 +369,15 @@
 	</select>
 	
 	<select id="selectLeaderListCnt" parameterType="map" resultType="_int">
-		select distinct count(*) 
+		select count(*) 
 		from study s join member m on m.mno=s.mno
-		where s.mno=#{mno}
+		where 1=1
+		<if test="studyNo != null">
+		and c.sno=#{studyNo}
+		</if>
+		<if test="mno != null">
+		and s.mno=#{mno}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -427,20 +433,18 @@
 		or 1=0 )
 		</if>
 	</select>
-	<resultMap type="map" id="LeaderList"></resultMap>
+	<resultMap type="map" id="LeaderList">
+		<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
 	
  	<select id="selectMyStudyList" parameterType="map" resultMap="mystudyList">
-		select distinct
+		select 
 				c.cno as "cno", -- 스터디 팀원 목록 번호
 				m.mno as "mno", -- 스터디 팀원의 회원 번호
 				s.sno as "sno", -- 스터디 번호
 				m.mid as "mid", -- 해당 스터디 팀원 아이디
 				m.mname as "mname", -- 팀원 이름
 				m.phone as "phone", -- 팀원 연락처
-				m.addr1 as "addr1", -- 팀원 지번주소
-				m.addr2 as "addr2", -- 팀원 도로명주소
-				m.addrdetail as "addrdetail", -- 팀원 상세주소
-				m.post as "post", -- 팀원 우편번호
 				m.mprofile as "mprofile", -- 팀원 프로필
 				m.cover as "cover", -- 팀원 자기소개서
 				m.email as "email", -- 팀원 이메일
@@ -469,9 +473,19 @@
 				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
 				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+				
 		from crew c join study s on s.sno=c.sno
 				    join member m on m.mno=c.mno
-		where c.mno=#{mno}
+		where 1=1
+		<if test="forCrewList == null">
+		and s.status in ('진행 중', '강의 종료','스터디 종료')		
+		</if>
+		<if test="studyNo != null">
+		and c.sno=#{studyNo}
+		</if>
+		<if test="mno != null">
+		and c.mno=#{mno}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -529,10 +543,19 @@
 	</select>
 	
 	<select id="selectMyStudyListCnt" parameterType="map" resultType="_int">
-		select distinct count(*) 
+		select count(*) 
 		from crew c join study s on s.sno=c.sno
 					join member m on m.mno=c.mno
-		where c.mno=#{mno}
+		where 1=1
+		<if test="forCrewList == null">
+		and s.status in ('진행 중', '강의 종료','스터디 종료')		
+		</if>
+		<if test="studyNo != null">
+		and c.sno=#{studyNo}
+		</if>
+		<if test="mno != null">
+		and c.mno=#{mno}
+		</if>
 		<if test="type== 'study'">
 		and s.type='study'
 		</if>
@@ -588,9 +611,11 @@
 		or 1=0 )
 		</if>
 	</select>
-	<resultMap type="map" id="mystudyList"></resultMap>
+	<resultMap type="map" id="mystudyList">
+		<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
 	<select id="selectWishList" parameterType="_int" resultMap="wishList">
-		select distinct
+		select
 				w.wno as "wno", --찜번호
 				m.mno as "mno", --찜한 회원 번호
 				s.sno as "sno", --찜한 스터디 번호
@@ -598,10 +623,6 @@
 				m.mid as "mid", -- 해당 스터디 찜한 회원 아이디
 				m.mname as "mname", -- 찜한 회원 이름
 				m.phone as "phone", -- 찜한 회원 연락처
-				m.addr1 as "addr1", -- 찜한 회원 지번주소
-				m.addr2 as "addr2", -- 찜한 회원 도로명주소
-				m.addrdetail as "addrdetail", -- 찜한 회원 상세주소
-				m.post as "post", -- 찜한 회원 우편번호
 				m.mprofile as "mprofile", -- 찜한 회원 프로필
 				m.cover as "cover", -- 찜한 회원 자기소개서
 				m.email as "email", -- 찜한 회원 이메일
@@ -696,7 +717,7 @@
 		</if>
 	</select>
 	<select id="selectWishListCnt" parameterType="_int" resultType="_int">
-		select distinct count(*) 
+		select count(*) 
 		from wish w join member m on w.mno=m.mno
 				    join study s on w.sno=s.sno
 		where w.mno=#{mno}
@@ -761,7 +782,9 @@
 		and s.ldate <![CDATA[ < ]]> sysdate
 		</if>
 	</select>
-	<resultMap type="map" id="wishList"></resultMap>
+	<resultMap type="map" id="wishList">
+		<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
  
  	<insert id="insertMailCertification">
  		INSERT INTO CERTIFICATION VALUES(#{tomail}, #{ranstr})
@@ -790,6 +813,72 @@
 	<select id="informationagree" resultType="map" >
 		select * from informationagree
 	</select>
+	<resultMap type="map" id="reviewEnrollViewMap"></resultMap>
+	<select id="reviewEnrollView" parameterType="string" resultMap="reviewEnrollViewMap">
+		select s.title as "title", --스터디 이름
+				(select mm.mname from member mm where mm.mno= (select mno from study ss where ss.sno=c.sno)) as "smname",--팀장이름
+				(select mm.mid from member mm where mm.mno= (select mno from study ss where ss.sno=c.sno)) as "smid", --팀장 아이디
+				m.mname as "tmname", --평가할 팀원 이름
+				m.mid as "tmid", -- 팀원 아이디
+				m.mno as "tmno" -- 팀원 번호
+				
+		from crew c join member m on c.mno=m.mno
+            		join study s on c.sno=s.sno
+        where c.sno = #{sno}
+	</select>
+	
+	<select id="leaderReviewEnrollView" parameterType="string" resultMap="reviewEnrollViewMap">
+		select s.title as "title", --스터디 이름
+				(select mm.mname from member mm where mm.mno= (select mno from study ss where ss.sno=s.sno)) as "smname",--팀장이름
+				(select mm.mid from member mm where mm.mno= (select mno from study ss where ss.sno=s.sno)) as "smid", --팀장 아이디
+				m.mname as "tmname", --평가할 팀원 이름
+				m.mid as "tmid", -- 팀원 아이디
+				m.mno as "tmno" -- 팀원 번호
+				
+		from study s join member m on s.mno=m.mno
+        where s.sno = #{sno}
+	</select>
+	
+	<insert id="reviewEnroll" parameterType="java.util.Map">
+		insert all
+			<foreach item="item" collection="list" index="i">
+				into review values(fn_seq_all(),#{item.mno},#{item.sno},#{item.tmno},#{item.point},#{item.content}, sysdate)
+			</foreach>
+		select * from dual
+	</insert>
+	
+	<select id="reviewFinish" resultType="_int" parameterType="hashmap">
+		select sno as "sno"
+		from review 
+		where mno = #{mno} and sno in
+		<foreach collection="sno" item="item"  open="(" close=")" separator=",">
+				#{item}
+		</foreach>
+	</select>
+	
+	<update id="updateMemberExp" parameterType="hashmap" >
+		update member set exp = exp+#{exp}
+				where mno=#{mno}
+	</update>
+	<select id="reviewList" parameterType="hashmap" resultMap="reviewListMap">
+		select point as "point", content as "content", mno as "mno"
+		from review
+		where sno=#{sno} and tmno=#{tmno}
+	</select>
+	<resultMap type="map" id="reviewListMap"></resultMap>
+
+	<select id="selectStudyName" parameterType="string" resultType="string">
+		select title from study where sno=#{studyNo}
+	</select>
+	
+	<insert id="insertCrew">
+		insert into crew values(seq_crew.nextval, #{mno}, #{studyNo})
+	</insert>
+	
+	<delete id="deleteApply">
+		delete from apply where mno=#{mno} and sno=#{studyNo}
+	</delete>
+
 	<select id="memberCheckEmail" resultType="_int">
 		select
 		sum(cnt) cnt
@@ -829,112 +918,7 @@
 							Applicationdate = sysdate
 							where mno = #{mno}
 	</update>
-<<<<<<< HEAD
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	
 	<!-- 김률민 추가 2018-06-23 10:19 -->
@@ -955,8 +939,7 @@
 	</resultMap>
 	
 	<!-- 김률민 추가 끝 2018-06-23 10:19 -->
-	
-=======
+
 	<select id="instructorCheckO" resultType="_int">
 		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
 	</select>
@@ -1035,5 +1018,4 @@
 				NPOINT = (SELECT NPOINT FROM MEMBER WHERE MNO = ${mno})-1000
 				where mno =${mno}
 	</update>
->>>>>>> branch 'JangIkSoon' of https://github.com/KotlinKen/StudyRecovery.git
 </mapper>

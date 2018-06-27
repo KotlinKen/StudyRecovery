@@ -112,8 +112,8 @@ public class RestController {
 		
 		
 		ModelAndView mav = new ModelAndView("jsonView");
-		List<Map<String,String>> list = lectureService.selectLectureList(1, count);
-		mav.addObject("list", list);
+		//List<Map<String,String>> list = lectureService.selectLectureList(1, count);
+		//mav.addObject("list", list);
 		return mav;
 	}
 	

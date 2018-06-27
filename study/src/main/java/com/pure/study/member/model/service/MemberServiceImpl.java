@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.pure.study.member.model.dao.MemberDAO;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.member.model.vo.Review;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -157,7 +158,17 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.selectLeaderListCnt(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> reviewEnrollView(String studyNo) {
+		return memberDAO.reviewEnrollView(studyNo);
+	}
 
+	@Override
+	public List<Map<String, Object>> leaderReviewEnrollView(String studyNo) {
+		return memberDAO.leaderReviewEnrollView(studyNo);
+	}
+
+	
 	@Override
 	public int memberCheckEmail(String em) {
 		return memberDAO.memberCheckEmail(em);
@@ -304,6 +315,41 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int changNPOINTMINUS(Map<String, String> expMap) {
 		return memberDAO.changPOINTMINUS(expMap);
+	}
+	
+	@Override
+	public int reviewEnroll(Map<String,Object> map) {
+		return memberDAO.reviewEnroll(map);
+	}
+
+	@Override
+	public List<Integer> reviewFinish(Map<String, Object> map) {
+		return memberDAO.reviewFinish(map);
+	}
+
+	@Override
+	public int updateMemberExp(Map<String,Object> map) {
+		return memberDAO.updateMemberExp(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> reviewList(Map<String, Object> listMap) {
+		return memberDAO.reviewList(listMap);
+	}
+
+	@Override
+	public String selectStudyName(String studyNo) {
+		return memberDAO.selectStudyName(studyNo);
+	}
+
+	@Override
+	public int insertCrew(Map<String, String> map) {
+		return memberDAO.insertCrew(map);
+	}
+
+	@Override
+	public int deleteApply(Map<String, String> map) {
+		return memberDAO.deleteApply(map);
 	}
 	
 }

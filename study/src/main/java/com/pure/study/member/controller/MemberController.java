@@ -2,6 +2,8 @@ package com.pure.study.member.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.member.model.vo.Review;
 import com.pure.study.study.model.service.StudyService;
 
 @SessionAttributes({ "memberLoggedIn" })
@@ -667,81 +670,74 @@ public class MemberController {
 	}
 	
 	//개인 정보 수정 - 전체 수정
-	@RequestMapping(value="/member/updateUser.do", method= RequestMethod.POST)
-	public String updateUser(@RequestParam("mno") int mno, @RequestParam("mid") String mid
-							, @RequestParam("mname") String mname, @RequestParam("phone") String phone
-							, @RequestParam("post") String post,@RequestParam("addr1") String addr1
-							,@RequestParam("addr2") String addr2,@RequestParam("addrDetail") String addrDetail
-							,@RequestParam("email")String email
-							, @RequestParam("birth") Date birth, @RequestParam("gender") String gender
-							, @RequestParam("favor") String[] favor, @RequestParam("cover") String cover
-							, @RequestParam(value="mprofile", required=false) MultipartFile[] mprofile
-							, HttpServletRequest request, Model model, @RequestParam("pre_mprofile") String pre_mprofile
-							, @ModelAttribute("memberLoggedIn") Member m
-							) {
-		Member member = new Member();
-		
-		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
-		if(mprofile != null) {
-			/*********** MultipartFile을 이용한 파일 업로드 처리 로직 시작 **********/
-			for(MultipartFile f: mprofile) {
-				if(!f.isEmpty()) {
-					//파일명 재생성
-					String originalFileName = f.getOriginalFilename();
-					String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
-					int rndNum = (int)(Math.random()*1000);
-					String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
-					
-					try {
-						f.transferTo(new File(saveDirectory+"/"+renamedFileName));
-					} catch (IllegalStateException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					//vo객체 담기
-					member.setMprofile(originalFileName);
-					
-				}
-			}
-		}else {
-			member.setMprofile(pre_mprofile);
-		}
-		
-		
-		member.setMno(mno);
-		member.setMname(mname);
-		member.setPhone(phone);
-		member.setPost(post);
-		member.setAddr1(addr1);
-		member.setAddr2(addr2);
-		member.setAddrDetail(addrDetail);
-		member.setEmail(email);
-		member.setBirth(birth);
-		member.setGender(gender);
-		member.setGender(gender);
-		member.setFavor(favor);
-		member.setCover(cover);
-		
-		int result = memberService.updateMember(member);
-		
-		if(result>0) {
-			model.addAttribute("memberLoggedIn", member);
-			
-			if(mid==m.getMid()) {
-				model.addAttribute("msg", "회원 정보가 변경되었습니다.");
-			}
-			model.addAttribute("msg", "회원 아이디는 변경할 수 없습니다.");				
-			model.addAttribute("loc", "/member/memberView.do");
-			
-		}else {
-			model.addAttribute("msg", "회원 정보가 변경되지 않았습니다.");
-			model.addAttribute("loc", "/member/memberView.do");
-		}
-		
-		return "common/msg";
-	}
+	   @RequestMapping(value="/member/updateUser.do", method= {RequestMethod.GET, RequestMethod.POST})
+	   public String updateUser(@RequestParam(value="mno") int mno, @RequestParam(value="mid") String mid
+	                     , @RequestParam(value="mname") String mname, @RequestParam(value="phone") String phone
+	                     , @RequestParam(value="email")String email
+	                     , @RequestParam(value="birth") Date birth, @RequestParam(value="gender") String gender
+	                     , @RequestParam(value="favor") String[] favor, @RequestParam(value="cover") String cover
+	                     , @RequestParam(value="mprofile", required=false) MultipartFile[] mprofile
+	                     , HttpServletRequest request, @RequestParam(value="pre_mprofile") String pre_mprofile
+	                     , @ModelAttribute("memberLoggedIn") Member m
+	                     ) {
+	      Member member = new Member();
+	      
+	      String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
+	      if(mprofile != null ) {
+	         /*********** MultipartFile을 이용한 파일 업로드 처리 로직 시작 **********/
+	         for(MultipartFile f: mprofile) {
+	            if(!f.isEmpty()) {
+	               //파일명 재생성
+	               String originalFileName = f.getOriginalFilename();
+	               String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+	               SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+	               int rndNum = (int)(Math.random()*1000);
+	               String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+	               
+	               try {
+	                  f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+	               } catch (IllegalStateException e) {
+	                  e.printStackTrace();
+	               } catch (IOException e) {
+	                  e.printStackTrace();
+	               }
+	               //vo객체 담기
+	               member.setMprofile(renamedFileName);
+	               
+	            }
+	         }
+	      }else {
+	         member.setMprofile(pre_mprofile);
+	      }
+	      
+	      member.setMno(mno);
+	      member.setMname(mname);
+	      member.setPhone(phone);
+	      member.setEmail(email);
+	      member.setBirth(birth);
+	      member.setGender(gender);
+	      member.setGender(gender);
+	      member.setFavor(favor);
+	      member.setCover(cover);
+	      
+	      int result = memberService.updateMember(member);
+	      
+	     /* if(result>0) {
+	         model.addAttribute("memberLoggedIn", member);
+	         
+	         if(mid==m.getMid()) {
+	            model.addAttribute("msg", "회원 정보가 변경되었습니다.");
+	         }
+	        
+	         
+	      }else {
+	         model.addAttribute("msg", "회원 정보가 변경되지 않았습니다.");
+	         model.addAttribute("loc", "/member/memberView.do");
+	      }
+	      */
+	      return "common/msg";
+	   }
+
 	
 	//개인 정보 수정 - 탈퇴하기
 	@RequestMapping(value="/member/memberDrop.do")
@@ -829,7 +825,7 @@ public class MemberController {
 	/*개인 정보 수정 끝**********************************/
 	
 	/**************************내 스터디 & 신청 & 찜 목록 시작*/
-	@RequestMapping("/member/searchMyPageKwd.do")
+	@RequestMapping(value="/member/searchMyPageKwd.do", produces = "application/text; charset=utf8")
 	@ResponseBody
 	public ModelAndView searchPageWish (@RequestParam(value="cPage", required=false, defaultValue="1") int cPage
 									, @RequestParam(value="searchKwd", defaultValue="title") String searchKwd
@@ -847,7 +843,7 @@ public class MemberController {
 		Map<String,String> map = new HashMap<>();
 		map.put("mno", String.valueOf(m.getMno()));
 		map.put("applyDate", applyDate);
-		System.out.println("확인:"+kwd);
+		System.out.println("kwd:"+kwd);
 		if("term".equals(searchKwd) || "freq".equals(searchKwd)) { 
 			String[] termKwd = kwd.split(",");
 			map.put("kwd", termKwd[0]);
@@ -862,7 +858,6 @@ public class MemberController {
 		} else{
 			map.put("kwd", kwd);			
 		}
-		//mapper 수정이 필요함
 		map.put("searchKwd", searchKwd);
 		map.put("type", type);
 		map.put("myPage", myPage);
@@ -885,6 +880,7 @@ public class MemberController {
 				leaderList = memberService.selectLeaderList(map, numPerPage, cPage);
 				leaderCount = memberService.selectLeaderListCnt(map);
 			}
+			
 			mav.setViewName("member/memberMyStudy");
 		}
 		if("apply".equals(myPage)) {
@@ -899,9 +895,6 @@ public class MemberController {
 		}
 		
 		
-		System.out.println("값이 잘 있나용?"+list);
-		System.out.println("값이 잘 있나용?"+count);
-		
 		mav.addObject("type", type);
 		mav.addObject("myPage", myPage);		
 		mav.addObject("applyDate", applyDate);
@@ -915,14 +908,221 @@ public class MemberController {
 		mav.addObject("numPerPage", numPerPage);
 		mav.addObject("memberLoggedIn", m);
 		
-		
 		return mav;
 	}
 	
 	/*내 스터디 & 신청 & 찜  목록 끝*******************************/
 	
-	/*로그인 및 마이페이지(김회진) 끝**********************************************/
+	//ajax로 평가 페이지를 보여준다.
+	@RequestMapping(value="/member/reviewEnrollView.do", produces = "application/json; charset=utf8")
+	@ResponseBody
+	public ModelAndView reviewEnrollView(@RequestParam("studyNo") String studyNo
+										, @RequestParam(value="leader", defaultValue="y") String leader
+										) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		List<Map<String,Object>> list = null;
+		List<Map<String,Object>> lList = null;
+		list = memberService.reviewEnrollView(studyNo);		
+		
+		if("n".equals(leader)) {
+			lList = memberService.leaderReviewEnrollView(studyNo);			
+			for(Map<String,Object> a : lList) {
+				list.add(a);
+			}
+		}
+		//System.out.println(list);
+		
+		mav.addObject("list", list);
+		
+		return mav;
+	}
 	
+	//insert all을 통해 평가 내용을 등록한다.
+	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST, produces = "application/text; charset=utf8")
+	@ResponseBody
+	public ModelAndView reviewEnroll(@RequestParam("tmno") String[] tmno
+			, @RequestParam("sno") String[] sno
+			, @RequestParam("mno") String[] mno
+			, @RequestParam("point") String[] point
+			, @RequestParam("content") String[] content
+			, @RequestParam(value="searchKwd", defaultValue="title") String searchKwd
+			, @RequestParam(value="kwd", required=false, defaultValue="") String kwd
+			, @RequestParam(value="type", defaultValue="study") String type									
+			, @RequestParam(value="leader", defaultValue="y") String leader	
+			, @RequestParam(value="cPage", defaultValue="1") String cPage
+			, @ModelAttribute("memberLoggedIn") Member m
+			) {
+		ModelAndView mav = new ModelAndView();
+		List<Review> list = new ArrayList<>(); 
+		//평가 전체 등록하기
+		//int result = memberService.reviewEnrollView();
+		for(int i=0; i<tmno.length; i++) {
+			Review r = new Review();
+			System.out.println("tmno="+tmno[i]);
+			System.out.println("sno="+sno[i]);
+			System.out.println("mno="+mno[i]);
+			System.out.println("point="+point[i]);
+			System.out.println("content="+content[i]);			
+			System.out.println("~~~~~~~~");			
+			r.setTmno(tmno[i]);
+			r.setSno(sno[i]);
+			r.setMno(mno[i]);
+			r.setPoint(point[i]);
+			r.setContent(content[i]);
+			list.add(r);
+		}
+		Map <String,Object> map = new HashMap<>();
+		
+		map.put("list", list);
+		
+		try {
+			kwd =URLEncoder.encode(kwd, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		int result = memberService.reviewEnroll(map);
+		
+		if(result>0) {
+			//리뷰 달면 경험치 10점 주기
+			map.put("exp", 10);
+			map.put("mno", m.getMno());
+			int resultExp = memberService.updateMemberExp(map);
+			if(resultExp>0) {
+				System.out.println("리뷰 등록 : exp+10점");
+			}else {
+				System.out.println("리뷰 등록 실패");				
+			}
+		}
+		
+		
+		
+		mav.setViewName("redirect:/member/searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&leader="+leader+"&cPage="+cPage);
+		//redirect시 한글이 깨져서 가기 때문에 인코딩을 반드시 해줘야한다.
+		
+		return mav;
+	}
+	
+	//평가 완료 버튼 처리 & 평가 보기
+	@RequestMapping(value="/member/reviewFinish.do")
+	@ResponseBody
+	public ModelAndView reviewFinish(@RequestParam("studyNo") String studyNo
+									, @ModelAttribute("memberLoggedIn") Member m
+										) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		String[] sno = studyNo.split(",");
+		List<Map<String, Object>> reviewList = new ArrayList<>();
+		Map<String,Object> reviewListMap = new HashMap<>();
+		
+		//평가를 완료하고, 다른 사람이 평가를 줬을 경우 평가 리스트
+		for(int i=0; i<sno.length; i++) {
+			Map <String,Object> listMap = new HashMap<>();
+			listMap.put("sno", sno[i]);
+			listMap.put("tmno", m.getMno());
+			
+			List<Map<String,Object>> list = memberService.reviewList(listMap);
+			
+			reviewListMap.put(String.valueOf(sno[i]), list);//평가를 한 스터디의 평가 리스트 담기
+			System.out.println(reviewList);
+		}		
+		reviewList.add(reviewListMap);
+		
+		//평가 완료한 스터디 리스트
+		Map <String,Object> map = new HashMap<>();
+		map.put("sno", sno);
+		map.put("mno", m.getMno());
+		List<Integer> studyNoList = memberService.reviewFinish(map);
+		
+		mav.addObject("studyNoList", studyNoList);
+		mav.addObject("reviewList", reviewList);
+		return mav;
+	}
+	
+	//신청 현황 
+	@RequestMapping(value="/member/applyListView.do")
+	@ResponseBody
+	public ModelAndView applyListView( @RequestParam("studyNo") String studyNo
+										, @ModelAttribute("memberLoggedIn") Member m
+									) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		Map <String,String> map = new HashMap<>();
+		map.put("studyNo", studyNo);
+		map.put("forCrewList", "forCrewList");
+		int numPerPage = memberService.selectApplyListCnt(map);
+		int crewNumPerPage = memberService.selectMyStudyListCnt(map);
+		int cPage = 1;
+		
+		List<Map<String,String>> list = memberService.selectApplyList(map, numPerPage, cPage);
+		List<Map<String,String>> crewList = memberService.selectMyStudyList(map, crewNumPerPage, cPage);
+		System.out.println(list);
+		System.out.println(crewList);
+		String studyName = memberService.selectStudyName(studyNo);
+		System.out.println(studyName);
+		
+		mav.addObject("applyList", list);
+		mav.addObject("crewList", crewList);
+		mav.addObject("studyName", studyName);
+		mav.addObject("studyNo", studyNo);
+		
+		return mav;
+	}
+	//신청 현황 신청 버튼
+	@RequestMapping(value="/member/applyButton.do")
+	@ResponseBody
+	public ModelAndView applyButton( @RequestParam("sno") String sno, @RequestParam("mno")String mno) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		Map<String, String> map = new HashMap<>();
+		map.put("studyNo", sno);
+		map.put("forCrewList", "forCrewList");
+		map.put("mno", mno);
+		
+		int result = memberService.insertCrew(map);
+		int resultDel = memberService.deleteApply(map);
+		if(result<0 && resultDel<0) {
+			mav.addObject("msg","다시 시도해주세요");
+			mav.setViewName("common/msg");
+		}
+		
+		map.remove("mno");
+		
+		int crewNumPerPage = memberService.selectMyStudyListCnt(map);
+		int cPage = 1;
+		
+		List<Map<String,String>> crewList = memberService.selectMyStudyList(map, crewNumPerPage, cPage);
+		System.out.println(crewList);
+		
+		mav.addObject("crewList", crewList);
+		mav.addObject("studyNo", sno);
+		
+		return mav;
+	}
+	
+	
+	//평가 목록 페이지
+	@RequestMapping(value="/member/searchMyPageEvaluation.do")
+	@ResponseBody
+	public ModelAndView searchMyPageEvaluation( @RequestParam(value="eval", defaultValue="exp") String eval 
+												, @ModelAttribute("memberLoggedIn") Member m
+												) {
+		ModelAndView mav = new ModelAndView();
+		//Map <String,Object> map = new HashMap<>();
+		
+		//평가 관리 페이지로 이동
+		
+		mav.addObject("eval", eval);
+		mav.setViewName("member/MyEvaluation");
+		
+		return mav;
+	}
+	
+	
+	
+	
+	/*로그인 및 마이페이지(김회진) 끝**********************************************/
+/************************************* 추가? ***************************************/
+
 	/* 정보 입력페이지 이동 시작 */
 	@RequestMapping(value = "/member/instructorEnroll.do")
 	public ModelAndView instructorEnroll(@RequestParam(value="check", required=false, defaultValue="1")  int check,
@@ -959,6 +1159,8 @@ public class MemberController {
 		
 	}
 	
+
+
 	@RequestMapping("/member/selectKind.do")
 	@ResponseBody
 	public List<Map<String,Object>> selectKind(){
