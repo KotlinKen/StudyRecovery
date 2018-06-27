@@ -38,6 +38,9 @@
 	<select id="selectOneMember" parameterType="string" resultMap="memberMap">
 		select * from member where mid=#{userId}
 	</select>
+	<select id="selectOneMemberMno" parameterType="string" resultMap="memberMap">
+		select * from member where mno=#{mno}
+	</select>
 	<select id="selectOneMemberId" parameterType="member" resultMap="memberMap">
 		select * from member where mname=#{mname} and email=#{email} 
 					<if test="mno != 0">
@@ -73,9 +76,6 @@
 						</if>
 						<if test="cover != null">
 							cover=#{cover}
-						</if>
-						<if test="npoint != null">
-							npoint=#{npoint}
 						</if>
 			where mno=#{mno}
 	</update>
