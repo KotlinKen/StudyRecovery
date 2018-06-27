@@ -229,5 +229,60 @@ public class MemberServiceImpl implements MemberService {
 	public int deleteIcontent(String ino) {
 		return memberDAO.deleteIcontent(ino);
 	}
+
+	@Override
+	public List<Map<String, Object>> selectMemberList() {
+		return memberDAO.selectMemberList();
+	}
+
+	@Override
+	public int changOneEXP(Map<String, String> expMap) {
+		return memberDAO.changOneEXP(expMap);
+	}
+
+	@Override
+	public int changEXPPLUS(Map<String, String> expMap) {
+		return memberDAO.changEXPPLUS(expMap);
+	}
+
+	@Override
+	public Map<String, String> getExp(Map<String, String> expMap) {
+		return memberDAO.getExp(expMap);
+	}
+
+	@Override
+	public int changEXPMINUS(Map<String, String> expMap) {
+		return memberDAO.changEXPMINUS(expMap);
+	}
+
+	@Override
+	public int changPOINTPLUS(Map<String, String> expMap) {
+		return memberDAO.changPOINTPLUS(expMap);
+	}
+
+	@Override
+	public Map<String, String> getPoint(Map<String, String> expMap) {
+		return memberDAO.getPoint(expMap);
+	}
+
+	@Override
+	public int changPOINTMINUS(Map<String, String> expMap) {
+		return memberDAO.changPOINTMINUS(expMap);
+	}
+	
+	@Override
+	public int changNPOINTPLUS(Map<String, String> expMap) {
+		return memberDAO.changPOINTPLUS(expMap);
+	}
+
+	@Override
+	public Map<String, String> getNPoint(Map<String, String> expMap) {
+		return memberDAO.getPoint(expMap);
+	}
+
+	@Override
+	public int changNPOINTMINUS(Map<String, String> expMap) {
+		return memberDAO.changPOINTMINUS(expMap);
+	}
 	
 }

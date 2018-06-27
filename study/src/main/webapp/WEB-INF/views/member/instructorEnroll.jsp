@@ -242,7 +242,7 @@ textarea {
 					$("#pwdDuplicateCheck").val(0);
 					$("#password_").focus();
 				} else {
-					document.getElementById("pwd2").innerHTML = "패스워드가 동일합니다.";
+					document.getElementById("pwd2ok").innerHTML = "패스워드가 동일합니다.";
 					$("#pwdDuplicateCheck").val(1);
 				}
 			});

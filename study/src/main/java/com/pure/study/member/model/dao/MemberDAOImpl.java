@@ -231,5 +231,62 @@ public class MemberDAOImpl implements MemberDAO {
 	public int deleteIcontent(String ino) {
 		return sqlSession.delete("member.deleteIcontent", ino);
 	}
+
+	@Override
+	public List<Map<String, Object>> selectMemberList() {
+		return sqlSession.selectList("member.selectMemberList");
+	}
+
+	@Override
+	public int changOneEXP(Map<String, String> expMap) {
+		return sqlSession.update("member.changOneEXP", expMap);
+	}
+
+	@Override
+	public int changEXPPLUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changEXPPLUS", expMap);
+	}
+
+	@Override
+	public Map<String, String> getExp(Map<String, String> expMap) {
+		return sqlSession.selectOne("member.getExp", expMap);
+	}
+
+	@Override
+	public int changEXPMINUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changEXPMINUS", expMap);
+	}
+
+	@Override
+	public int changPOINTPLUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTPLUS", expMap);
+	}
+
+	@Override
+	public Map<String, String> getPoint(Map<String, String> expMap) {
+		return sqlSession.selectOne("member.getPoint", expMap);
+	}
+
+	@Override
+	public int changPOINTMINUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTMINUS", expMap);
+	}
+	
+	@Override
+	public int changNPOINTPLUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTPLUS", expMap);
+	}
+	
+	@Override
+	public Map<String, String> getNPoint(Map<String, String> expMap) {
+		return sqlSession.selectOne("member.getPoint", expMap);
+	}
+	
+	@Override
+	public int changNPOINTMINUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTMINUS", expMap);
+	}
+
+	
 	
 }

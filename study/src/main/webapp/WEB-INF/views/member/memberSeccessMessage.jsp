@@ -28,8 +28,14 @@ h1{display: inline-block;}
 <br /><br />
 	<h2>진심으로 축하 드립니다.</h2>
 	<br /><br />
+	
+	<c:if test="${'ok' eq check} ">
+		<h1 id="ccc">?????????</h1>
+	</c:if>
+	
 <div id="seccessdiv">
-	현직 강사님이신가요? 강사님이시라면 <a href="#" onclick="fn_instruct();">강사신청</a>  <br />
+	${ check}  
+	<br />
 	<div id="instructor">
 		<form action="${pageContext.request.contextPath }/member/memberLoginInstruct.do" method="post">
 		<div class="modal-body">
@@ -46,6 +52,13 @@ h1{display: inline-block;}
 	<a  href="${rootPath }/study/studyList.do">스터디 둘러보기</a> &nbsp;/&nbsp;
 	<a  href="${rootPath }/lecture/lectureList.do">강의 둘러보기</a><br /><br />
 	<a id="headaik" href="${pageContext.request.contextPath}">홈으로</a>
+	
+	
+	<script>
+	alert("${check}");
+	console.log("${check}")
+	
+	</script>
 </div>
 <script>
 function fn_instruct() {

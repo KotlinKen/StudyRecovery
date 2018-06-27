@@ -93,4 +93,26 @@ public interface MemberDAO {
 
 	int deleteIcontent(String ino);
 
+	List<Map<String, Object>> selectMemberList();
+
+	int changOneEXP(Map<String, String> expMap);
+
+	int changEXPPLUS(Map<String, String> expMap);
+
+	Map<String, String> getExp(Map<String, String> expMap);
+
+	int changEXPMINUS(Map<String, String> expMap);
+
+	int changPOINTPLUS(Map<String, String> expMap);
+
+	Map<String, String> getPoint(Map<String, String> expMap);
+
+	int changPOINTMINUS(Map<String, String> expMap);
+	
+	int changNPOINTPLUS(Map<String, String> expMap);
+	
+	Map<String, String> getNPoint(Map<String, String> expMap);
+	
+	int changNPOINTMINUS(Map<String, String> expMap);
+
 }

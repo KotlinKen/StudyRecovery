@@ -264,11 +264,13 @@ public class MemberController {
 
 		if (result > 0)
 			msg = "회원가입성공!";
-		else
-			msg = "회원가입성공!";
-
-		/*model.addAttribute("loc", "/member/memberSuccess.do");
-		model.addAttribute("msg", msg);*/
+		else {
+			msg = "회원가입실패!";
+			model.addAttribute("loc", loc);
+			model.addAttribute("msg", msg);
+			return "common/msg";			
+		}
+		model.addAttribute("check", "현직 강사님이신가요? 강사님이시라면 <a href=\"#\" onclick=\"fn_instruct();\">강사신청</a>");
 
 		return "member/memberSuccess";
 	}
@@ -1097,13 +1099,18 @@ public class MemberController {
 		// 2.처리결과에 따라 view단 분기처리
 		if (result > 0)
 			msg = "회원가입성공!";
-		else
-			msg = "회원가입실패!";
-
-		mav.addObject("loc", loc);
-		mav.addObject("msg", msg);
-		mav.setViewName("common/msg");
+		else {
+			msg = "회원가입실패!";			
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		/*model.addAttribute("loc", "/member/memberSuccess.do");*/
+		mav.addObject("ckeck", true);
+		mav.setViewName("member/memberSuccess");
 		return mav;
+		
 	}
 	
 	
@@ -1354,12 +1361,11 @@ public class MemberController {
 		return map;
 	}
 	@RequestMapping(value = "/member/memberSuccess.do")
-	public Map<String, Object> memberSuccess () {
-		Map<String, Object> map = new HashMap<>();
-		
-		
-		
-		return map;
+	public String memberSuccess (Model model) {
+		ModelAndView mav = new ModelAndView();
+		//mav.addObject("check", "현직 강사님이신가요? 강사님이시라면 <a href=\"#\" onclick=\"fn_instruct();\">강사신청</a>");
+		//model.addAttribute("check", "현직 강사님이신가요? 강사님이시라면 <a href=\"#\" onclick=\"fn_instruct();\">강사신청</a>");
+		return "common/msg";
 	}
 	
 	@RequestMapping(value="/member/memberLoginInstruct.do", method = RequestMethod.POST)
@@ -1398,5 +1404,230 @@ public class MemberController {
 
 		return mav;
 	}
-
+	
+	/* 멤버 강사 $ 포인트 관리 */
+	@RequestMapping(value = "/member/memberList.do")
+	public ModelAndView memberList() {
+		ModelAndView mav = new ModelAndView();
+		
+		List<Map<String,Object>> list = memberService.selectMemberList();
+		mav.addObject("list",list);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/member/changOneEXP.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changOneEXP ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "exp") String exp ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(mno);
+		System.out.println(exp);
+		Map<String,String> expMap = new HashMap<>();
+		expMap.put("mno", mno);
+		expMap.put("exp", exp);
+		int result = memberService.changOneEXP(expMap);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/changOnePOINT.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changOnePOINT ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "point") String point ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(mno);
+		System.out.println(point);
+		Map<String,String> expMap = new HashMap<>();
+		expMap.put("mno", mno);
+		expMap.put("point", point);
+		int result = memberService.changOneEXP(expMap);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/changOneNPOINT.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changOneNPOINT ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "npoint") String npoint ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(mno);
+		System.out.println(npoint);
+		Map<String,String> expMap = new HashMap<>();
+		expMap.put("mno", mno);
+		expMap.put("npoint", npoint);
+		int result = memberService.changOneEXP(expMap);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	/* 경험치 추가 */
+	@RequestMapping(value = "/member/changEXPPLUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changEXPPLUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changEXPPLUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getExp(expMap );
+			
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	/* 경험치 빼기 */
+	@RequestMapping(value = "/member/changEXPMINUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changEXPTMINUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changEXPMINUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getExp(expMap );
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	/* 성실도 추가 */
+	@RequestMapping(value = "/member/changPOINTPLUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changPOINTPLUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changPOINTPLUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getPoint(expMap );
+			
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	
+	/* 성실도 빼기 */
+	@RequestMapping(value = "/member/changPOINTMINUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changPOINTMINUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changPOINTMINUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getPoint(expMap );
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	/* 지식 추가 */
+	@RequestMapping(value = "/member/changNPOINTPLUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changNPOINTPLUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changNPOINTPLUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getNPoint(expMap );
+			
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	
+	/* 지식 빼기 */
+	@RequestMapping(value = "/member/changNPOINTMINUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changNPOINTMINUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changNPOINTMINUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getNPoint(expMap );
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
 }
