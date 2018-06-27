@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="lecture">
-	<resultMap type="map" id="map"></resultMap>
+	<resultMap type="map" id="map">
+		<result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
+	</resultMap>
 	
 	<insert id="insertLecture">
 		<if test="upfile.equals('')">		
@@ -12,7 +14,6 @@
 									 #{dno}, 
 									 #{title}, 
 									 #{freqs}, 
-									 #{content}, 
 									 #{price}, 
 									 NULL, 
 									 #{recruit}, 
@@ -23,7 +24,8 @@
 									 #{sdate}, 
 									 #{edate}, 
 									 sysdate,
-									 #{etc})
+									 #{etc},
+									 #{content})
 		</if>
 		<if test="!upfile.equals('')">
 			INSERT INTO STUDY VALUES(SEQ_STUDY.NEXTVAL,
@@ -33,7 +35,6 @@
 										 #{dno}, 
 										 #{title}, 
 										 #{freqs}, 
-										 #{content}, 
 										 #{price}, 
 										 #{upfile}, 
 										 #{recruit}, 
@@ -44,12 +45,17 @@
 										 #{sdate}, 
 										 #{edate}, 
 										 sysdate,
-										 #{etc})
+										 #{etc}, 
+										 #{content})
 		</if>
 	</insert>
 	
 	<insert id="applyLecture">
 		INSERT INTO APPLY VALUES( SEQ_APPLY.NEXTVAL, #{mno}, #{sno}, DEFAULT)
+	</insert>
+	
+	<insert id="successPay">
+		INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', null, #{price}, SYSDATE)
 	</insert>
 
 	<select id="selectLocList" resultMap="map">
@@ -105,14 +111,21 @@
 	
 	<select id="selectLectureOne" resultType="map">
 		SELECT SNO,
+			   A.MNO AS MNO,
 		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
+		       LNO,
 		       (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
+		       TNO,
 		       (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
+		       KNO,
 		       (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
+		       SUBNO,
 		       (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
+		       DNO,
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		       RECRUIT,
 		        TITLE,
 		        UPFILE,
 		        TIME,
@@ -170,6 +183,7 @@
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		       RECRUIT,
 		        TITLE,
 		        UPFILE,
 		        TIME,
@@ -256,10 +270,13 @@
 	        order by cnt desc
 	       )
 	
+	</select>	
+	
+	<select id="lectureWish" resultType="_int">
+		SELECT COUNT(*) AS CNT FROM WISH WHERE SNO = #{sno} AND MNO = #{mno}
 	</select>
 	
-	
-	
-	
-	
+	<insert id="addWishLecture">
+		INSERT INTO WISH VALUES(SEQ_WISH.NEXTVAL, #{mno}, #{sno}, SYSDATE)
+	</insert>
 </mapper>

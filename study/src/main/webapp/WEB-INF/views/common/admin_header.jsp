@@ -56,6 +56,8 @@
 						</a></li>
 						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminStatistics"> <span data-feather="layers"></span> 통계
 						</a></li>
+						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminPayment"> <span data-feather="layers"></span> 결제
+						</a></li>
 					</ul>
 
 					<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">

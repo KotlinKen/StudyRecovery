@@ -43,4 +43,10 @@ public interface LectureService {
 
 	int studyByApplyCount();
 
+	int lectureWish(Map<String, Integer> map);
+
+	int addWishLecture(Map<String, Integer> map);
+
+	int successPay(Map<String, Object> map);
+
 }
