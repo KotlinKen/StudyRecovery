@@ -17,13 +17,6 @@ div.forCopy{
 <script>
 //에디터 속성값 주고 열기
 $(document).ready(function() {
-<<<<<<< HEAD
-	$('#summernote').summernote({
-		focus: true,
-		height: 500// 페이지가 열릴때 포커스를 지정함
-	});
-});
-=======
     $('#summernote').summernote({
       focus: true,
       height: 500, // 페이지가 열릴때 포커스를 지정함
@@ -66,7 +59,6 @@ $(document).ready(function() {
    }
   
   
->>>>>>> branch 'HeoKyeong' of https://github.com/KotlinKen/StudyRecovery.git
 
 </script>
 
