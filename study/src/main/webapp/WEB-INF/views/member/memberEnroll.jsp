@@ -311,9 +311,7 @@ textarea {
 						html += "<img class ='call_img' src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
 						$("#div-img-ik").html(html);
 						$("#mprofile").val(date.renamedFileName)
-						$(".fa").on("click",function() {
-								$(this).parent().remove();
-						});
+					
 					},
 					error : function(jqxhr, textStatus,
 							errorThrown) {
@@ -372,7 +370,7 @@ textarea {
 					return;
 				}
 				document.getElementById("nameerr").innerHTML = "";
-				document.getElementById("nameok").innerHTML = "사용가능";
+				document.getElementById("nameok").innerHTML = "ok";
 			});
 			$("#name").click(function() {
 				document.getElementById("nameerr").innerHTML = "";
@@ -646,25 +644,7 @@ textarea {
 				emailaddr.focus();
 				return false;
 			}
-			/* 생년월일  */
-			var year = $("#year");
-			var month = $("#month");
-			var day = $("#day");
-			if (year.val().trim().length != 4) {
-				alert("생년월일을 다시 입력하세요.");
-				year.focus();
-				return false;
-			}
-			if (month.val().trim().length == 0) {
-				alert("생년월일을 다시 입력하세요.");
-				year.focus();
-				return false;
-			}
-			if (day.val().trim().length == 0) {
-				alert("생년월일을 다시 입력하세요.");
-				year.focus();
-				return false;
-			}
+			
 			return true;
 		}
 		
@@ -788,7 +768,7 @@ textarea {
 			<div id="id-password-div-ik">
 				<br />
 				<div id="userId-container">
-					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)" required autocomplete="off" />
+					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)"  maxlength="15" required autocomplete="off" />
 					<button type="button" onclick="fn_checkID();" class="btn btn-outline-secondary">아이디 확인</button>
 					<br />
 					<div id="check-id">
@@ -798,10 +778,10 @@ textarea {
 					<input type="hidden" id="idDuplicateCheck" value="0" />
 				</div>
 				<div>
-					<input type="password" name="pwd" id="password_" placeholder="비밀번호(필수)" required autocomplete="off"  /> <br /> 
+					<input type="password" name="pwd" id="password_"  maxlength="15" placeholder="비밀번호(필수)" required autocomplete="off"  /> <br /> 
 					<span id="pwd"></span>  
 					<span id="pwdok"></span>  
-					<input type="password" id="password2" placeholder="비밀번호 확인(필수)"  required autocomplete="off"  /> <br /> 
+					<input type="password" id="password2" placeholder="비밀번호 확인(필수)"  maxlength="15"  required autocomplete="off"  /> <br /> 
 					<span id="pwd2"></span> 
 					<span id="pwd2ok"></span> 
 					<input type="hidden" id="pwdDuplicateCheck" value="0" />
@@ -811,13 +791,13 @@ textarea {
 			</div>
 			
 			<div id="name-phone-email-gender-div-ik">
-			<input type="text" name="mname" id="name" placeholder="이름(필수)" required  autocomplete="off"  />
+			<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="15" required  autocomplete="off"  />
 			<span id="nameerr" class="name"></span> 
 			<span id="nameok" class="name"></span> <br /> 
-			<input type="text" name="phone" id="phone" maxlength="11" placeholder="전화번호(필수)" required required autocomplete="off"  /> <br /> 
+			<input type="text" name="phone" id="phone" maxlength="11"  placeholder="전화번호(필수)" required required autocomplete="off"  /> <br /> 
 			<span id="phoneerr" class="phone"></span> 
-			<input type="text" name="email" id="email" placeholder="이메일(필수)" required  autocomplete="off"  /> @ 
-			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required  autocomplete="off"  />
+			<input type="text" name="email" id="email" placeholder="이메일(필수)"  maxlength="15" required  autocomplete="off"  /> @ 
+			<input type="text" name="email" id="emailaddr" placeholder="직접입력"  maxlength="20" required  autocomplete="off"  />
 			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-outline-secondary"/> 
 			<input type="hidden" id="checkcertification" value="0" /> 
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>

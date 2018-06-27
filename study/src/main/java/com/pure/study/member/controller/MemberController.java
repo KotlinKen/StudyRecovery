@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
@@ -50,6 +51,9 @@ public class MemberController {
 
 	@Autowired
 	private StudyService studyService;
+	
+	@Autowired
+	private LectureService ls;
 	
 	@Autowired
 	private BCryptPasswordEncoder bcryptPasswordEncoder;
@@ -97,8 +101,8 @@ public class MemberController {
 			return mav;
 		}
 		List<Map<String, String>> list = memberService.selectCategory();
+	
 		System.out.println(list);
-
 		mav.addObject("list", list);
 		return mav;
 	}
@@ -1153,17 +1157,18 @@ public class MemberController {
 		}
 		List<Map<String, String>> list = memberService.selectCategory();
 		System.out.println(list);
-
+		// 큰 분류 리스트
+		List<Map<String, String>> kindList = ls.selectKindList();
+		mav.addObject("kindList", kindList);
+			
 		mav.addObject("list", list);
 		return mav;
 	}
 	@RequestMapping("/member/selectSubject.do")
 	@ResponseBody
-	public List<Map<String,Object>> selectSubject(@RequestParam(value="kno", required=true) int kno){
-		
-		List<Map<String,Object>> list = studyService.selectSubject(kno);
-		return list;
-		
+	public List<Map<String,Object>> selectSubject(@RequestParam(value="kindNo", required=true) int kindNo){
+		List<Map<String, Object>> subList = ls.selectSubList(kindNo);
+		return subList;
 	}
 	
 
@@ -1345,6 +1350,7 @@ public class MemberController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
+		
 		mav.addObject("mno", mno);
 		mav.addObject("mid", mid);
 		return mav;
