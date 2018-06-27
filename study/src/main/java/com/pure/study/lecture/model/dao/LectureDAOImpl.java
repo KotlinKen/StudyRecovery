@@ -112,4 +112,19 @@ public class LectureDAOImpl implements LectureDAO {
 		return session.selectOne("lecture.studyByApplyCount");
 	}
 
+	@Override
+	public int lectureWish(Map<String, Integer> map) {
+		return session.selectOne("lecture.lectureWish", map);
+	}
+
+	@Override
+	public int addWishLecture(Map<String, Integer> map) {
+		return session.insert("lecture.addWishLecture", map);
+	}
+
+	@Override
+	public int successPay(Map<String, Object> map) {
+		return session.insert("lecture.successPay", map);
+	}
+
 }

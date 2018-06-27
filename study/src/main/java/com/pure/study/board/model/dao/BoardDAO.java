@@ -16,11 +16,15 @@ public interface BoardDAO {
 
 	int inserAttachment(Attachment a);
 
-	List<Map<String, String>> selectOne(int boardNo);
+	Map<String, String> selectOne(int boardNo);
 
 	int selectOneAttachCount(int boardNo);
 
 	List<Map<String, String>> selectOneAttach(int boardNo);
+
+	List<Map<String, String>> selectBoardList(int cPage, int numPerPage, Map<String, String> params);
+
+	int updateBoard(Map<String, String> queryMap);
 
 
 }

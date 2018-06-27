@@ -65,14 +65,13 @@
 			<td class="first_col">${list.ANO}</td>
 			<td class="advType">${list.POSITION}</td>
 			<td>${list.TITLE}</td>
-			<td>${list.CONTENT}</td>
+			<td><c:out value='${fn:substring(list.CONTENT.replaceAll("\\\<.*?\\\>",""),0, 10)}' /> </td>
 			<td class="advDate">${fn:substring(list.STARTAD, 0, 10)}</td>
 			<td class="advDate">${fn:substring(list.ENDAD, 0, 10)}</td>
 		</tr>
 
 	</c:forEach>
 	${fn:length(list) == 0 ? "<tr><td colspan='6'>등록된 광고가 없습니다.</td></tr>" : "" }
-	
 </tbody>
 </table>
 

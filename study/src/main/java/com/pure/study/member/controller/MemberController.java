@@ -267,13 +267,15 @@ public class MemberController {
 
 		if (result > 0)
 			msg = "회원가입성공!";
-		else
-			msg = "회원가입성공!";
+		else {
+			msg = "회원가입실패!";
+			model.addAttribute("loc", loc);
+			model.addAttribute("msg", msg);
+			return "common/msg";			
+		}
+		model.addAttribute("check", "현직 강사님이신가요? 강사님이시라면 <a href=\"#\" onclick=\"fn_instruct();\">강사신청</a>");
 
-		model.addAttribute("loc", loc);
-		model.addAttribute("msg", msg);
-
-		return "common/msg";
+		return "member/memberSuccess";
 	}
 	
 	/*ID 중복 검사 시작 */
@@ -302,33 +304,35 @@ public class MemberController {
 	/**********************************************로그인 및 마이페이지(김회진) 시작*/
 	/*******************************로그인&로그아웃 시작*/
 	@RequestMapping(value="/member/memberLogin.do", method = RequestMethod.POST)
-	public ModelAndView memberLogin(HttpServletRequest request, @RequestParam(value="userId") String userId, @RequestParam(value="pwd") String pwd) {
+	public ModelAndView memberLogin(HttpServletRequest request, @RequestParam(value="userId") String userId, @RequestParam(value="pwd") String pwd, @RequestParam(value="admin", required=false) String admin) {
 		ModelAndView mav = new ModelAndView();
 
-		System.out.println(userId);
 		
 		Member m = memberService.selectOneMember(userId);
 
 		String msg = "";
 		String loc = "/";
-
+		
 		if (m == null || m.getQdate() != null) {
 			msg = "존재하지 않는 아이디입니다.";
 		} else {
 			if (bcryptPasswordEncoder.matches(pwd, m.getPwd())) {
 				//msg = "로그인성공!";
 				mav.addObject("memberLoggedIn", m);
-				mav.setViewName("redirect:/");
+				if(admin==null) {
+					mav.setViewName("redirect:/");
+				}else {
+					mav.setViewName("redirect:/admin/adminMain"); 
+				}
+				
 				return mav;
 			} else {
 				msg = "비밀번호가 틀렸습니다.";
 			}
 
 		}
-
 		mav.addObject("msg", msg);
 		mav.addObject("loc", loc);
-
 		mav.setViewName("common/msg");
 
 		return mav;
@@ -1299,29 +1303,51 @@ public class MemberController {
 		// 2.처리결과에 따라 view단 분기처리
 		if (result > 0)
 			msg = "회원가입성공!";
-		else
-			msg = "회원가입실패!";
-
-		mav.addObject("loc", loc);
-		mav.addObject("msg", msg);
-		mav.setViewName("common/msg");
+		else {
+			msg = "회원가입실패!";			
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		/*model.addAttribute("loc", "/member/memberSuccess.do");*/
+		mav.addObject("ckeck", true);
+		mav.setViewName("member/memberSuccess");
 		return mav;
+		
 	}
 	
 	
 	@RequestMapping("/member/instructorApply.do")
-	public String instructorApply() {
-		
-		
-		return "member/instructorApply";
+	public ModelAndView instructorApply(@RequestParam(value="mno",required=false , defaultValue="-1") int mno,
+								  @RequestParam(value="mid",required=false, defaultValue="-1") String mid ) {
+		ModelAndView mav = new ModelAndView();
+		System.out.println("mid : "+ mid);
+		System.out.println("mno : "+ mno);
+		if(mno ==-1 ||mid == "-1") {
+			mav.addObject("loc", "/");
+			mav.addObject("msg", "잘못된 경로 입니다. 관리자에게 문의하세요");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		int result = memberService.instructorCheckO(mno);
+		System.out.println("result : "+ result);
+		if(result ==1) {
+			mav.addObject("loc", "/member/memberView.do");
+			mav.addObject("msg", "이미 강사 이시군요.");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		mav.addObject("mno", mno);
+		mav.addObject("mid", mid);
+		return mav;
 	}
 	/* 회원이 강사 신청  */
 	@RequestMapping("/member/instructorApplyEnd.do")
 	public ModelAndView instructorApplyEnd(@RequestParam(value="psFile",required=false) MultipartFile[] psFiles
 			,@RequestParam(value="mno",required=false) int mno,@RequestParam(value="mid",required=false) String mid
 			,@RequestParam(value="kno",required=false) int kno,@RequestParam(value="sno",required=false) int sno
-			,@RequestParam(value="cover",required=false) String cover,@RequestParam(value="email",required=false) String[] email
-			,HttpServletRequest request) {
+			,@RequestParam(value="email",required=false) String[] email,HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		/****** MultipartFile을 이용한 파일 업로드 처리로직 시작
 		파일이름변경 파일이름+ 아이디 + 날짜  */
@@ -1409,6 +1435,403 @@ public class MemberController {
 			return map;
 		}
 		
+		return map;
+	}
+	
+	/*약관동의서 관리*/
+	@RequestMapping(value = "/member/agreementAdmin.do")
+	public ModelAndView agreementAdmin () {
+		ModelAndView mav = new ModelAndView();
+		
+		List <Map<String , String>> service = memberService.serviceagree();
+		List <Map<String , String>> information = memberService.informationagree();
+		
+		mav.addObject("service", service);
+		mav.addObject("information", information);
+		return mav;
+	}
+	@RequestMapping(value = "/member/agreementAdminEnd.do")
+	public ModelAndView agreementAdminEnd ( @RequestParam(value = "em") String em ) {
+		ModelAndView mav = new ModelAndView();
+		
+	
+		return mav;
+	}
+	
+	@RequestMapping(value = "/member/serviceOneAdminEnd.do")
+	@ResponseBody
+	public Map<String, Object> agreementOneAdminEnd ( @RequestParam(value = "sno") String sno ,@RequestParam(value = "scontent") String scontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(sno);
+		System.out.println(scontent);
+		Map<String,String> scont = new HashMap<>();
+		scont.put("sno", sno);
+		scont.put("scontent", scontent);
+		int result = memberService.updateScontent(scont);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/informationOneAdminEnd.do")
+	@ResponseBody
+	public Map<String, Object> informationOneAdminEnd ( @RequestParam(value = "ino") String ino ,@RequestParam(value = "icontent") String icontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(ino);
+		System.out.println(icontent);
+		Map<String,String> icont = new HashMap<>();
+		icont.put("ino", ino);
+		icont.put("icontent", icontent);
+		int result = memberService.updateIcontent(icont);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/serviceOneDeleteEnd.do")
+	@ResponseBody
+	public Map<String, Object> serviceOneDeleteEnd ( @RequestParam(value = "sno") String sno ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(sno);
+		int result = memberService.deleteScontent(sno);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/informationOneDeleteEnd.do")
+	@ResponseBody
+	public Map<String, Object> informationOneDeleteEnd ( @RequestParam(value = "ino") String ino ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(ino);
+		int result = memberService.deleteIcontent(ino);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	
+	@RequestMapping(value = "/member/serviceInsertEnd.do")
+	@ResponseBody
+	public Map<String, Object> serviceInsertEnd ( @RequestParam(value = "scontent") String scontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(scontent);
+		int result = memberService.insertScontent(scontent);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	
+	@RequestMapping(value = "/member/informationInsertEnd.do")
+	@ResponseBody
+	public Map<String, Object> informationInsertEnd ( @RequestParam(value = "icontent") String icontent ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(icontent);
+		int result = memberService.insertIcontent(icontent);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/memberSuccess.do")
+	public String memberSuccess (Model model) {
+		ModelAndView mav = new ModelAndView();
+		//mav.addObject("check", "현직 강사님이신가요? 강사님이시라면 <a href=\"#\" onclick=\"fn_instruct();\">강사신청</a>");
+		//model.addAttribute("check", "현직 강사님이신가요? 강사님이시라면 <a href=\"#\" onclick=\"fn_instruct();\">강사신청</a>");
+		return "common/msg";
+	}
+	
+	@RequestMapping(value="/member/memberLoginInstruct.do", method = RequestMethod.POST)
+	public ModelAndView memberLoginInstruct(HttpServletRequest request, @RequestParam(value="userId",required=false , defaultValue="-1" ) String userId, @RequestParam(value="pwd",required=false , defaultValue="-1") String pwd) {
+		ModelAndView mav = new ModelAndView();
+		
+		System.out.println(userId);
+		Member m = null;
+		String msg = "";
+		String loc = "/";
+		try {
+			m = memberService.selectOneMember(userId);
+		} catch (Exception e) {
+			msg = "로그인에 오류가 발생 했습니다. 관리자에게 문의 하세요";
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+			mav.setViewName("common/msg");
+		}
+		if (m == null || m.getQdate() != null) {
+			msg = "존재하지 않는 아이디입니다.";
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+			mav.setViewName("common/msg");
+		} else {
+			if (bcryptPasswordEncoder.matches(pwd, m.getPwd())) {
+				mav.addObject("mno", m.getMno());
+				mav.addObject("mid", m.getMid());
+				mav.setViewName("member/instructorApply");
+			} else {
+				msg = "비밀번호가 틀렸습니다.";
+				mav.addObject("msg", msg);
+				mav.addObject("loc", loc);
+				mav.setViewName("common/msg");
+			}
+		}
+
+		return mav;
+	}
+	
+	/* 멤버 강사 $ 포인트 관리 */
+	@RequestMapping(value = "/member/memberList.do")
+	public ModelAndView memberList() {
+		ModelAndView mav = new ModelAndView();
+		
+		List<Map<String,Object>> list = memberService.selectMemberList();
+		mav.addObject("list",list);
+		return mav;
+	}
+	
+	@RequestMapping(value = "/member/changOneEXP.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changOneEXP ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "exp") String exp ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(mno);
+		System.out.println(exp);
+		Map<String,String> expMap = new HashMap<>();
+		expMap.put("mno", mno);
+		expMap.put("exp", exp);
+		int result = memberService.changOneEXP(expMap);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/changOnePOINT.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changOnePOINT ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "point") String point ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(mno);
+		System.out.println(point);
+		Map<String,String> expMap = new HashMap<>();
+		expMap.put("mno", mno);
+		expMap.put("point", point);
+		int result = memberService.changOneEXP(expMap);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	@RequestMapping(value = "/member/changOneNPOINT.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changOneNPOINT ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "npoint") String npoint ) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println(mno);
+		System.out.println(npoint);
+		Map<String,String> expMap = new HashMap<>();
+		expMap.put("mno", mno);
+		expMap.put("npoint", npoint);
+		int result = memberService.changOneEXP(expMap);
+		
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		
+		return map;
+	}
+	/* 경험치 추가 */
+	@RequestMapping(value = "/member/changEXPPLUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changEXPPLUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changEXPPLUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getExp(expMap );
+			
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	/* 경험치 빼기 */
+	@RequestMapping(value = "/member/changEXPMINUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changEXPTMINUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changEXPMINUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getExp(expMap );
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	/* 성실도 추가 */
+	@RequestMapping(value = "/member/changPOINTPLUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changPOINTPLUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changPOINTPLUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getPoint(expMap );
+			
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	
+	/* 성실도 빼기 */
+	@RequestMapping(value = "/member/changPOINTMINUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changPOINTMINUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changPOINTMINUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getPoint(expMap );
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	/* 지식 추가 */
+	@RequestMapping(value = "/member/changNPOINTPLUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changNPOINTPLUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changNPOINTPLUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getNPoint(expMap );
+			
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
+		return map;
+	}
+	
+	/* 지식 빼기 */
+	@RequestMapping(value = "/member/changNPOINTMINUS.do" , method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> changNPOINTMINUS ( @RequestParam(value = "mno") String [] mno  ) {
+		Map<String, Object> map = new HashMap<>();
+		List<Map<String,String>> list = new ArrayList<>();
+		int result = 0;
+		for(int i = 0 ; i < mno.length;i++) {
+			Map<String,String> expMap = new HashMap<>();
+			expMap.put("mno", mno[i]);
+			result = memberService.changNPOINTMINUS(expMap );
+			
+			Map<String,String> getExp = new HashMap<>();
+			getExp = memberService.getNPoint(expMap );
+			list.add(getExp);
+		}
+		System.out.println(map);
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		map.put("list", list);
 		return map;
 	}
 }

@@ -672,10 +672,14 @@
 				removehtml += "</table>";
 				
 				
-				if(data.applyList.length==0 && data.crewList.length==0){
+				if(data.applyList.length==0){
 					$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+")");
 					$("#div-reviewView").html("신청한 회원이 없습니다.");
-					
+					if(data.crewList.length!=0){
+						$("#div-crew").html(removehtml);
+					}else{
+						$("#div-crew").html("팀원이 없습니다.");
+					}
 				} else{
 					$("#div-reviewView").html(html);
 					$("#div-crew").html(removehtml);
@@ -750,7 +754,7 @@
 						html += data.crewList[i].cover;
 						html += "</td>";
 						html += "<td>";
-						html += "<button type=button class='cancel' name='' id='??"+data.crewList[i].mno+"'>팀원 취소</button>";
+						html += "<button type=button class='cancel' name='' id='cancel"+data.crewList[i].mno+"'>팀원 취소</button>";
 						html += "</td>";
 						html += "</tr>";	
 					}

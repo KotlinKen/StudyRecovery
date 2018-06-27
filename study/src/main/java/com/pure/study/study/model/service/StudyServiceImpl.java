@@ -168,6 +168,11 @@ public class StudyServiceImpl implements StudyService {
 		return studyDAO.selectReview(sno);
 	}
 
+	@Override
+	public int selectApplyCount(int sno) {
+		return studyDAO.selectApplyCount(sno);
+	}
+
 	
 
 

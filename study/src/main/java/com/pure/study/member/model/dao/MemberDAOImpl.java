@@ -240,4 +240,117 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.insert("member.deleteApply", map);
 	}
 	
+	
+	
+	@Override
+	public List<Map<String, Object>> selectInstructorMember(int cPage, int count) {
+		return sqlSession.selectList("member.selectInstructorMember", null, new RowBounds(count*(cPage-1),count));
+	}
+
+	@Override
+	public int selectCntInstructorMember() {
+		return sqlSession.selectOne("member.selectCntInstructorMember");
+	}
+
+	@Override
+	public List<Map<String, Object>> selectAllMemberList(int cPage, int count) {
+		return sqlSession.selectList("member.selectAllMemberList", null, new RowBounds(count*(cPage-1),count));
+	}
+
+	@Override
+	public int selectCntAllMemberList() {
+		return sqlSession.selectOne("member.selectCntAllMemberList");
+	}
+	@Override
+	public int instructorCheckO(int mno) {
+		return sqlSession.selectOne("member.instructorCheckO",mno);
+	}
+
+	@Override
+	public int updateScontent(Map<String, String> scont) {
+		System.out.println(scont);
+		return sqlSession.update("member.updateScontent", scont);
+	}
+
+	@Override
+	public int updateIcontent(Map<String, String> icont) {
+		System.out.println(icont);
+		return sqlSession.update("member.updateIcontent", icont);
+	}
+
+	@Override
+	public int deleteScontent(String sno) {
+		return sqlSession.delete("member.deleteScontent",sno);
+	}
+
+	@Override
+	public int insertScontent(String scontent) {
+		return sqlSession.insert("member.insertScontent", scontent);
+	}
+
+	@Override
+	public int insertIcontent(String icontent) {
+		return sqlSession.insert("member.insertIcontent", icontent);
+	}
+
+	@Override
+	public int deleteIcontent(String ino) {
+		return sqlSession.delete("member.deleteIcontent", ino);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectMemberList() {
+		return sqlSession.selectList("member.selectMemberList");
+	}
+
+	@Override
+	public int changOneEXP(Map<String, String> expMap) {
+		return sqlSession.update("member.changOneEXP", expMap);
+	}
+
+	@Override
+	public int changEXPPLUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changEXPPLUS", expMap);
+	}
+
+	@Override
+	public Map<String, String> getExp(Map<String, String> expMap) {
+		return sqlSession.selectOne("member.getExp", expMap);
+	}
+
+	@Override
+	public int changEXPMINUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changEXPMINUS", expMap);
+	}
+
+	@Override
+	public int changPOINTPLUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTPLUS", expMap);
+	}
+
+	@Override
+	public Map<String, String> getPoint(Map<String, String> expMap) {
+		return sqlSession.selectOne("member.getPoint", expMap);
+	}
+
+	@Override
+	public int changPOINTMINUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTMINUS", expMap);
+	}
+	
+	@Override
+	public int changNPOINTPLUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTPLUS", expMap);
+	}
+	
+	@Override
+	public Map<String, String> getNPoint(Map<String, String> expMap) {
+		return sqlSession.selectOne("member.getPoint", expMap);
+	}
+	
+	@Override
+	public int changNPOINTMINUS(Map<String, String> expMap) {
+		return sqlSession.update("member.changPOINTMINUS", expMap);
+	}
+	
 }

@@ -74,6 +74,9 @@
 						<if test="cover != null">
 							cover=#{cover}
 						</if>
+						<if test="npoint != null">
+							npoint=#{npoint}
+						</if>
 			where mno=#{mno}
 	</update>
 	<update id="dropMember">
@@ -915,7 +918,104 @@
 							Applicationdate = sysdate
 							where mno = #{mno}
 	</update>
+
+	
+	
+	<!-- 김률민 추가 2018-06-23 10:19 -->
+	<select id="selectCntAllMemberList" resultType="_int">
+		SELECT COUNT(*) FROM MEMBER
+	</select>
+	<select id="selectAllMemberList" resultMap="instructorForMap">
+		SELECT M.*, TO_CHAR(M.REGDATE, 'YYYY-MM-DD') REGDATES FROM MEMBER M ORDER BY REGDATE DESC 
+	</select>
+	<select id="selectCntInstructorMember" resultType="_int">
+		SELECT COUNT(*) FROM MEMBER M, INSTRUCTOR I WHERE M.MNO = I.MNO
+	</select>
+	<select id="selectInstructorMember" resultMap="instructorForMap">
+		SELECT M.*, I.*, TO_CHAR(M.REGDATE, 'YYYY-MM-DD') REGDATES FROM MEMBER M, INSTRUCTOR I WHERE M.MNO = I.MNO
+	</select>
+	<resultMap type="map" id="instructorForMap">
+		<result column="FAVOR" property="FAVOR" typeHandler="strArrTypeHandler"/>
+	</resultMap>
+	
+	<!-- 김률민 추가 끝 2018-06-23 10:19 -->
+
+	<select id="instructorCheckO" resultType="_int">
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
+	</select>
+	<update id="updateScontent">
+		UPDATE SERVICEAGREE SET SCONTENT = #{scontent} where SNO = #{sno} 
+	</update>
+	<update id="updateIcontent">
+		UPDATE INFORMATIONAGREE SET ICONTENT = #{icontent} where INO = #{ino} 
+	</update>
+	<delete id="deleteScontent">
+		DELETE FROM SERVICEAGREE WHERE sno = #{sno}
+	</delete>
+	<delete id="deleteIcontent">
+		DELETE FROM INFORMATIONAGREE WHERE ino = #{ino}
+	</delete>
+	<insert id="insertScontent">
+		insert into SERVICEAGREE values(seq_serviceagree.nextval,#{scontent})
+	</insert>
+	<insert id="insertIcontent">
+		insert into INFORMATIONAGREE values(seq_INFORMATIONAGREE.nextval,#{icontent})
+	</insert>
+	<select id="selectMemberList" resultType="map">
+		select * from
+		member m left join instructor i 
+		on m.mno = i.mno where m.qdate is null order by m.mno
+	</select>
+	<update id="changOneEXP">
+		UPDATE MEMBER SET 
+				<if test="exp != null">
+						EXP = #{exp} 
+				</if>
+				<if test="point != null">
+						point = #{point} 
+				</if>
+				<if test="npoint != null">
+						npoint = #{npoint} 
+				</if>
+		WHERE MNO = ${mno}
+	</update>
+	<update id="changEXPPLUS">
+		UPDATE MEMBER SET 
+				EXP = (SELECT EXP FROM MEMBER WHERE MNO = ${mno})+10
+				where mno =${mno}
+	</update>
+	<select id="getExp" resultType="map">
+		SELECT EXP FROM MEMBER WHERE MNO = ${mno}
+	</select>
+	<update id="changEXPMINUS">
+		UPDATE MEMBER SET 
+				EXP = (SELECT EXP FROM MEMBER WHERE MNO = ${mno})-10
+				where mno =${mno}
+	</update>
+	<update id="changPOINTPLUS">
+		UPDATE MEMBER SET 
+				POINT = (SELECT POINT FROM MEMBER WHERE MNO = ${mno})+1000
+				where mno =${mno}
+	</update>
+	<select id="getPoint" resultType="map">
+		SELECT POINT FROM MEMBER WHERE MNO = ${mno}
+	</select>
+	<update id="changPOINTMINUS">
+		UPDATE MEMBER SET 
+				POINT = (SELECT POINT FROM MEMBER WHERE MNO = ${mno})-1000
+				where mno =${mno}
+	</update>
+	<update id="changNPOINTPLUS">
+		UPDATE MEMBER SET 
+				NPOINT = (SELECT NPOINT FROM MEMBER WHERE MNO = ${mno})+1000
+				where mno =${mno}
+	</update>
+	<select id="getNPoint" resultType="map">
+		SELECT NPOINT FROM MEMBER WHERE MNO = ${mno}
+	</select>
+	<update id="changNPOINTMINUS">
+		UPDATE MEMBER SET 
+				NPOINT = (SELECT NPOINT FROM MEMBER WHERE MNO = ${mno})-1000
+				where mno =${mno}
+	</update>
 </mapper>
-
-
-

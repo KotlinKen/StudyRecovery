@@ -45,10 +45,13 @@ function studyApply(sno){
 				url:"applyStudy.do",
 				data:{sno:sno,mno:mno},
 				success:function(data){
-					if(data!=0){
-						alert("신청되었습니다.");
-					}else{
+					if(data==-1){
+						alert("신청인원 최대 인원 100명을 넘었습니다.");
+					}
+					else if(data==0){
 						alert("이미 신청한 스터디입니다.");
+					}else{
+						alert("신청되었습니다.");
 					}
 					//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
 				},error:function(){
@@ -125,9 +128,11 @@ $(function(){
 </script>
 <div id="study-detail">
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
-	
-<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
-<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
+<c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()==study.MNO}">
+	<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
+	<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
+</c:if>	
+
 
 <!-- 사진 뷰 -->
 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">

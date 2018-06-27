@@ -203,17 +203,17 @@ position: relative;
 					<div class="localSection">${study.LNAME } ${study.TNAME }</div>
 					<div class="titleSection"><h2>${study.TITLE }</h2></div>
 					<div class="studyInfoSection row">
-						<div class="float-left col-md-4">스터디 소개</div>
-						<div class="float-right col-md-8">${study.CONTENT }</div>
+						<div class="col-md-4">스터디 소개</div>
+						<div class="col-md-8">${study.CONTENT }</div>
+			
 					</div>
 					<div>3</div>
 					<div>4</div>
-				
-				
 				</div>
-				
-				
-				
+
+
+			<%-- <textarea cols=300 rows=500 readonly>${study.CONTENT }</textarea> --%>
+
 				
 				<div>3</div>
 				<div>4</div>

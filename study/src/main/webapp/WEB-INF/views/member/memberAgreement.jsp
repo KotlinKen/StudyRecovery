@@ -15,30 +15,51 @@
 <!-- 사용자작성 css -->
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/style.css" />
 <style>
-p{width: 300px; height: 300px; overflow: scroll;}
+p{width: 450px; height: 150px; overflow-y: scroll; margin: auto; text-align: left;}
+div{width: 500px; min-height: 60px;margin: auto; background: rgb(255, 255, 255);}
+div#indivik{margin: auto;}
+div#inindivik1{ background: rgb(230, 230, 230)}
+div#inindivik2{margin: auto; text-align: center; background: rgb(230, 230, 230)}
+div#inindivik3{width: 450px; margin: auto; text-align: center; }
+div#headerdivik{margin: auto; text-align: center;}
+span{position: relative; left: 20px;}
+#buttona{position: relative; left: 20px;}
+#buttonb{position: relative; left: 71%;}
+input[type=checkbox], input[type=radio]{ width: 20px;height: 20px; border-radius :10px;}
+body {background: rgb(230, 230, 230)}
+#indivik{border-radius: 5px; border: solid 1px rgb(210, 210, 210); }
+#headaik{color: black;}
+::-webkit-scrollbar {display:none;}
 </style>
 </head>
 <body>
 <form name=frmSubmit>
-<input type="hidden" name="check" id="check" value="21" />
-<spen>서비스 이용약관 동의 (필수)<input type="checkbox" id="agree1" value="0" name="agree1" /></spen>
-<p>
-	<c:forEach var ="v" items="${service }">
-		${v.SCONTENT } <br />
-	</c:forEach>
-</p>
 
-<spen>개인정보 수집 및 이용 동의 (필수)<input type="checkbox" id="agree2" value="0" name="agree2" /></spen>
-<p>
-	<c:forEach var ="v" items="${information }">
-		${v.ICONTENT } <br />
-	</c:forEach>
-</p>
-
-<button type="button" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
-<button type="submit" onclick="getPost(01);">다음</button>
-<button type="button" onclick="getPost(02);">강사 신청하기</button>
+<div id="inindivik1"></div>
+<div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><h2>STUDY GROUPT</h2></a></div>
+<div id="indivik">
+		<div id="inindivik3"><input type="hidden" name="check" id="check" value="21" /></div>
+		<span><b>서비스 이용약관 동의 (필수) </b><input type="checkbox" class="agree" id="agree1" value="0" name="agree1" /></span>		
+		<p class="jumbotron jumbotron-fluid">
+			<c:forEach var ="v" items="${service }">
+				${v.SCONTENT } <br /><br />
+			</c:forEach>
+		</p>
+		<hr />
+		<span><b>개인정보 수집 및 이용 동의 (필수) </b><input type="checkbox" class="agree" id="agree2" value="0" name="agree2"  /></span>
+		<p class="jumbotron jumbotron-fluid">
+			<c:forEach var ="v" items="${information }">
+				${v.ICONTENT } <br /><br />
+			</c:forEach>
+		</p>
+		<button type="button" id="buttona" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
+		<button type="submit" id="buttonb" class="btn btn-outline-success" onclick="getPost(01);">다음</button> 
+		<br /><br />
+		<span>강사를 희망 하신다면 여기 <a href="#" onclick="getPost(02);" >강사 신청하기</a>를 누르세요</span>
+	<br /><br />
+</div>
 </form>
+<br /><br />
 <script>
 	$("#agree1").click(function() {
 		var chk1=document.getElementById("agree1");

@@ -15,18 +15,56 @@ div.forCopy{
 </style>
 		
 <script>
-
+//에디터 속성값 주고 열기
 $(document).ready(function() {
     $('#summernote').summernote({
       focus: true,
-      height: 500// 페이지가 열릴때 포커스를 지정함
+      height: 500, // 페이지가 열릴때 포커스를 지정함
+      callbacks:{
+    	  onImageUpload:function(files){
+	   	  	  console.log("onImageUpload");
+	   		  uploadImage(files[0],this);
+      	}
+      },
+      lang:'ko-KR'
     });
+    
   });
+ 
+ //사진 업로드 함수
+ function uploadImage(file,el){
+     console.log("파일 업로드 함수 호출");
+ 	  var data=new FormData();
+ 	  data.append('file',file);
+ 	  $.ajax({
+ 		  data:data,
+ 		  type:"POST",
+ 		  processData:false,
+ 		  contentType:false,
+ 		  dataType:'json',
+ 		  url:"uploadImage.do",
+ 		  cache:false,
+ 		  enctype:'multipart/form-data',
+ 		  success:function(data){ 
+ 			  
+ 		  	  console.log("dddd : "+data.url);
+ 		  	  var file=$("<img>").attr("src",
+ 		  			  "${pageContext.request.contextPath }/resources/upload/study/"+data.url);
+ 			  $(el).summernote('insertNode',file[0]);
+ 		  },error:function(data){
+ 			  console.log("error:"+data);
+ 		  }
+ 	 });
+ 	  
+   }
+  
+  
 
 </script>
 
 <script>
 function validate(){
+	
 	// 유효성 검사 - 지역,도시
 	var local = $("#local").val();
 	var town = $("#town").val();
@@ -64,6 +102,10 @@ function validate(){
 	var endTime = $("#endtime option:checked").val();	
 	
 	$("#time").val(startTime + "~" + endTime);	
+	
+	
+	
+	
 	return true;
 }
 
@@ -309,20 +351,15 @@ $(function(){
 });
 
 </script>
-
-
-
 <div id="study-container">
 	<form action="studyFormEnd.do" name="studyFrm" method="post" onsubmit="return validate();" enctype="multipart/form-data">
-	
+		
 		<label for="local">지역 : </label>
 		<select name="lno" id="local">
 		</select>
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
-		<!-- <label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control"></textarea><br /> -->
-		<!-- <label for="content">스터디 내용 : </label><textarea name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" class="form-control"></textarea><br /> -->
 		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
@@ -351,21 +388,26 @@ $(function(){
 			
 			</c:forEach>
 		</select>
+		
 		<select name="endtime" id="endtime" class="time">
 			<c:forEach var="j" begin="7" end="24">
-			<option value="${j }:00">${j }:00</option>
-			
+				<option value="${j }:00">${j }:00</option>			
 			</c:forEach>
-		</select><br />
-		<input type="hidden" name="time" id="time"/>
-		<label for="price">일회 사용회비 : </label><input type="text" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
+		</select>
 		<br />
+		
+		<input type="hidden" name="time" id="time"/>
+		<label for="price">일회 사용회비 : </label>
+		<input type="text" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
+		<br />
+		
 		<label for="recruit">모집 인원 : </label>
 		<select name="recruit" id="recruit">
 			<c:forEach var="i" begin="2" end="10">
-			<option value="${i }">${i }명</option>
+				<option value="${i }">${i }명</option>
 			</c:forEach>
-		</select><br />
+		</select>
+		<br />
 		
 		<label for="etc">기타 : </label><textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea><br /> 
 		
@@ -375,29 +417,34 @@ $(function(){
 			    <span class="input-group-text">첨부파일</span>
 			  </div>
 			  <div class="custom-file">
-			    <input type="file" class="custom-file-input" id="upFile1" name="upFile">
-			    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
+			    <input type="file" class="custom-file-input" name="upFile">
+			    <label class="custom-file-label">파일을 선택하세요</label>
 			  </div>
 			  <button type="button" class="addFile">+</button>
 			  <button type="button" class="removeFile">-</button>
 		</div>
-
 		
+	
 		<input type="reset" value="취소하기" />
 		<input type="submit" value="등록하기" />
+		
+			<!-- 테스트용 -->
+		<div id="output"></div>
 	</form>
+	
 	<div class="input-group mb-3 forCopy" style="padding:0px">
 		  <div class="input-group-prepend" style="padding:0px">
 		    <span class="input-group-text">첨부파일</span>
 		  </div>
+		  
 		  <div class="custom-file">
-		    <input type="file" class="custom-file-input" id="upFile1" name="upFile">
-		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
+		    <input type="file" class="custom-file-input" name="upFile">
+		    <label class="custom-file-label" >파일을 선택하세요</label>
 		  </div>
+		  
 		  <button type="button" class="addFile">+</button>
 		  <button type="button" class="removeFile">-</button>
 	</div>
-
 </div>
 </section>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

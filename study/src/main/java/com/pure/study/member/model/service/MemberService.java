@@ -77,6 +77,51 @@ public interface MemberService {
 	int instructorCheckX(int mno);
 
 	int updateInstructorEnrollEnd(Instructor instructor);
+	
+	
+	List<Map<String, Object>> selectInstructorMember(int cPage, int count);
+
+	int selectCntInstructorMember();
+
+	List<Map<String, Object>> selectAllMemberList(int cPage, int count);
+
+	int selectCntAllMemberList();
+
+	int instructorCheckO(int mno);
+
+	int updateScontent(Map<String, String> scont);
+
+	int updateIcontent(Map<String, String> icont);
+
+	int deleteScontent(String sno);
+
+	int insertScontent(String scontent);
+
+	int insertIcontent(String icontent);
+
+	int deleteIcontent(String ino);
+
+	List<Map<String, Object>> selectMemberList();
+
+	int changOneEXP(Map<String, String> expMap);
+
+	int changEXPPLUS(Map<String, String> expMap);
+
+	Map<String, String> getExp(Map<String, String> expMap);
+
+	int changEXPMINUS(Map<String, String> expMap);
+
+	int changPOINTPLUS(Map<String, String> expMap);
+
+	Map<String, String> getPoint(Map<String, String> expMap);
+
+	int changPOINTMINUS(Map<String, String> expMap);
+	
+	int changNPOINTPLUS(Map<String, String> expMap);
+	
+	Map<String, String> getNPoint(Map<String, String> expMap);
+	
+	int changNPOINTMINUS(Map<String, String> expMap);
 
 
 	List<Map<String, Object>> reviewEnrollView(String studyNo);

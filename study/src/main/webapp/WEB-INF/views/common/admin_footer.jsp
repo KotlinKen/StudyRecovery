@@ -1,17 +1,16 @@
-<jsp:include page ="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="" name="pageTitle"/></jsp:include>
+        </main>
+      </div>
+    </div>
+	      <!-- Icons -->
+	  <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+	  <script>
+	    feather.replace()
+	  </script>
+</body>
+</html>
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-<jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />

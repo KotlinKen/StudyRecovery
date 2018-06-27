@@ -7,12 +7,13 @@
 <script src="${pageContext.request.contextPath }/resources/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script>
-   $(document).ready(function(){
-      $(".lectureDiv").click(function(){
-         var sno = $(this).children("#sno").val();
-         location.href="${pageContext.request.contextPath}/lecture/lectureView.do?sno=" + sno;
-      });
-   });   
+	$(document).ready(function(){
+	    $("div#lecture-container").on("click","div.lectureOne",function(){
+	       var sno = $(this).children("input").val();
+	       
+	       location.href="${pageContext.request.contextPath}/lecture/lectureView.do?sno=" + sno;
+	    });
+	 });   
    
    $(document).ready(function(){
       /* $("#town").hide(); */
@@ -107,10 +108,14 @@
 			
 			$("input[name=case]").val("search"); //검색인 경우 case 설정
 			
-			var filter={lno:$("#local").val(),tno:$("#town").val(),
-					subno:$("#sub").val(),kno:$("#kind").val(),
-					dno:$("#diff").val(),leadername:$("input#leadername").val()};
-			
+			var filter={
+						lno:$("#local").val(),
+						tno:$("#town").val(),
+						subno:$("#sub").val(),
+						kno:$("#kind").val(),
+						dno:$("#diff").val(),
+						leadername:$("input#leadername").val()
+			};			
 			
 			$.ajax({
 				url: "searchLecture.do",
@@ -168,8 +173,7 @@
 					$("input#total").val(data.total);
 				}
 			});
-		});
-		
+		});		
 		
 		////인기(신청자)순 버튼 클릭 이벤트 첫 페이징 가져옴.
 		$("button#sortPopularBtn").click(function(){
@@ -200,8 +204,7 @@
 					$("input#total").val(data.total);
 				}
 			});
-		});
-		
+		});		
 		
 		//무한 스크롤.
 		//내려갈 때 계속 해당하는 스터디 리스트가 나옴
@@ -214,39 +217,39 @@
 			if(maxHeight <= currentScroll+100){
 				clearTimeout(timer);
 				timer = setTimeout(listAddbyPaging,scrollTime);
-			}
-			
+			}			
 		});
 		
-		function listAddbyPaging(){
-			
+		function listAddbyPaging(){			
 		    var urlPath="";
 			var cPage=Number($("input#cPageNo").val());
 			var total =Number($("input#total").val());
 			var numPerPage= Number($("input#numPerPage").val());
 			var listCase=$("input[name=case]").val();
-			var dataForList={cPage:cPage};//페이징 처리에 보낼 data 값.
-			
+			var dataForList={cPage:cPage};//페이징 처리에 보낼 data 값.			
 			
 			//아무 조건없이 페이징 하느냐, 있이 하느냐, 마감임박순으로 하느냐, 인기스터디 순으로 하느냐에 따라 url분기. 보낼 data값 설정.
 		    if(listCase=="none"){
-		    	urlPath="lectureListAdd.do";
-		    	
-		    }else if(listCase=="search"){
+		    	urlPath="lectureListAdd.do";		    	
+		    } else if(listCase=="search") {
 		    	urlPath="lectureSearchAdd.do";
-		    	dataForList={lno:$("#local").val(),tno:$("#town").val(),
-						subno:$("#sub").val(),kno:$("#kind").val(),
-						dno:$("#diff").val(),leadername:$("input#leadername").val(),cPage:cPage};
-		    	
-		    }else if(listCase=="deadline"){
+		    	dataForList={
+		    				lno:$("#local").val(),
+		    				tno:$("#town").val(),
+		    				subno:$("#sub").val(),
+		    				kno:$("#kind").val(),
+		    				dno:$("#diff").val(),
+		    				leadername:$("input#leadername").val(),
+		    				cPage:cPage
+		    				
+		    	};		    	
+		    } else if(listCase=="deadline") {
 				urlPath="lectureDeadlinAdd.do";	    	
-		    }else{
-		    	urlPath="lectureApplyAdd.do";
-		    	
+		    } else {
+		    	urlPath="lectureApplyAdd.do";		    	
 		    }
-			console.log("cPage="+cPage);
+			
 			var isPage=Math.floor(total/numPerPage)+1;
-			console.log("isPage="+isPage);
 			
 			 //최대 가져올 수 있는 cPage 검사. 
 			 if (cPage<=isPage) {
@@ -255,7 +258,6 @@
 			        dataType:"json",
 			        data:dataForList,
 			        success:function(data){
-			        	console.log(data);
 			        	var html="";
 			        	
 			        	for(index in data.list){
@@ -271,54 +273,17 @@
 			        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
 			        		html+="</div>";
 			        	}
+			        	
 			        	$("input#cPageNo").val(data.cPage);
 			        	$("div#lecture-container").append(html); 
 			        },error:function(){
 			        	
-			        }
-			      });//ajax 끝
-			  }//if문 끝
-			
-		}
-		
-		
-      
-    
+			    	}
+			 	});//ajax 끝
+			 }//if문 끝			
+		}    
    });
 </script>
-<style>
-   #lectureList-container{
-      height: 1100px;
-   }
-   #beforeBtn{
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      top: 735px;
-      left: 427px;      
-   }
-   #afterBtn{
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      top: 735px;
-      right: 427px;
-   }
-   #beforeSearchBtn{
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      top: 735px;
-      left: 427px;      
-   }
-   #afterSearchBtn{
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      top: 735px;
-      right: 427px;
-   }
-</style>
    <button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의   작성</button>
    <div id="lectureList-container">   
       <!-- 지역 -->
@@ -378,12 +343,11 @@
       <div id="lecture-container">
          
       </div>
+      
        <!-- 페이징시 필요한 값 저장 -->	
 	 <input type="hidden" id="cPageNo" value="1" />
 	 <input type="hidden" id="total" value="0" />
 	 <input type="hidden" id="numPerPage" />
 	 <input type="hidden" name="case" value="none" /> <!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부.-->
    </div>
-  </section>
-   
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
