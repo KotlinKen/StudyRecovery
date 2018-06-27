@@ -23,24 +23,164 @@
 <style>
 div#userId-container span.guide {
 	display: none;
-	font-size: 12px;
+	font-size: 15px;
 	position: absolute;
-	top: 12px;
 	right: 10px;
 }
-span.pwd {
-	display: none;
-	font-size: 12px;
-	position: absolute;
-	top: 12px;
-	right: 10px;
-}
-div#userId-container span.ok {
-	color: green;
-}
-div#userId-container span.error {
+span.guide.ok {color: green;}
+span.guide.error{color: red;}
+span#pwd {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
 	color: red;
 }
+span#pwdok {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
+	color: green;
+}
+span#pwd2 {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
+	color: red;
+}
+span#pwd2ok {
+	font-size: 15px;
+	position: relative;
+	left: 70%;
+	top : -50px;
+	color: green;
+}
+div{width: 600px; min-height: 25px;margin: auto; background: rgb(255, 255, 255);}
+div#indivik{margin: auto;}
+div#inindivik1{ background: rgb(230, 230, 230)}
+div#inindivik2{margin: auto; text-align: center; background: rgb(230, 230, 230)}
+div#inindivik3{width: 450px; margin: auto; text-align: center; }
+div#headerdivik{margin: auto; text-align: center;}
+div#id-password-div-ik{position: relative; top: 0px; left: 0%; width: 100%; height: 100%}
+div#choos-ik{border-radius: 5px;}
+div#name-phone-email-gender-div-ik{border-radius: 10px;}
+div.blank-ik{background: rgb(230, 230, 230); height: 5px;}
+#buttona{position: relative; left: 20px;}
+#buttonb{position: relative; left: 71%;}
+body {background: rgb(230, 230, 230)}
+#indivik{border-radius: 5px; border: solid 3px rgb(200, 200, 200); }
+#headaik{color: black;}
+input[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #cccccc;
+}
+input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #cccccc;
+}
+input[type=date] {
+    width: 50%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid #cccccc;
+}
+#email{ width: 30%;}#userId_{width: 60%}#emailaddr{width: 50%}#submit{width: 100%; position: relative; top: 10px;}#inputCode{width: 40%;}
+.jender {
+    position: relative;
+    z-index: 10;
+    display: block;
+    float: left;
+    width: 49.8%;
+    height: 31px;
+    border-right: solid 1px #dcdcdc;
+}
+.jender input {
+    position: absolute;
+    z-index: 9;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 31px;
+}
+.jender label {
+    line-height: 32px;
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 31px;
+    cursor: pointer;
+    text-align: center;
+    color: #8e8e8e;
+    background: #fff;
+}
+.jender input:checked+label {
+    z-index: 100;
+    margin: -1px;
+    color: black;
+    border: solid 1px #cccccc;
+    box-shadow:2px 2px #b3b3b3;
+}
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+.category {
+   position: relative;
+    z-index: 10;
+    display: inline-block;
+    float: left;
+    width: 20%;
+    height: 31px;
+    border-right: solid 1px #dcdcdc;
+}
+.category input {
+    position: fixed;
+    display:inline;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 0%;
+}
+.category label {
+    line-height: 32px;
+    position: relative;
+    z-index: 10;
+    top: 0;
+    left: 20px;
+    display: block;
+    width: 100%;
+    height: 31px;
+    cursor: pointer;
+    text-align: center;
+    color: #8e8e8e;
+    background: #fff;
+    text-align: center;
+}
+.category input:checked+label {
+    z-index: 100;	
+    color: #08a600;
+    border: solid 1px #08a600;
+}
+#div-img-ik{width: 280px;height: 320px; border: solid 1px #8e8e8e; margin-left: 5px;}
+.call_img{width: 100%;height: 100%; position: relative;}
 </style>
 </head>
 <body>
@@ -53,32 +193,38 @@ div#userId-container span.error {
 				if(p1.val().trim().length ==0){
 					 document.getElementById("pwd").innerHTML = "패스워드를 입력하세요";
 					p1.focus();
-				}else{
-					document.getElementById("pwd").innerHTML = "";
+					return;
 				}
-			
+					
 				if (p1.val().trim().length < 8) {
 					document.getElementById("pwd").innerHTML = "사용불가";
 					password.focus();
+					return;
 				}
 				if (p1.val().indexOf(" ") >= 0) {
 					document.getElementById("pwd").innerHTML = "사용불가";
 					password.focus();
+					return;
 				}
 				if (p1.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) >= 0) {
 					document.getElementById("pwd").innerHTML = "사용불가";
 					password.focus();
+					return;
 				}
 			
 				if (p1.val().search(/[!@#$%^&*()?_+~]/g) == -1) {
 					document.getElementById("pwd").innerHTML = "사용불가";
 					password.focus();
+					return;
 				} 
 			  
 				if (p1.val().search(/[0-9]/g) == -1) {
 					document.getElementById("pwd").innerHTML = "사용불가";
 					password.focus();
+					return;
 				}
+				document.getElementById("pwd").innerHTML = "";
+				document.getElementById("pwdok").innerHTML = "사용가능";
 			});
 			$("#password2").blur(function() {
 				var p1 = $("#password_").val();
@@ -96,7 +242,7 @@ div#userId-container span.error {
 					$("#pwdDuplicateCheck").val(0);
 					$("#password_").focus();
 				} else {
-					document.getElementById("pwd2").innerHTML = "패스워드가 동일합니다.";
+					document.getElementById("pwd2ok").innerHTML = "패스워드가 동일합니다.";
 					$("#pwdDuplicateCheck").val(1);
 				}
 			});
@@ -132,7 +278,7 @@ div#userId-container span.error {
 					success : function(date) {
 						var html = "";
 						html += "<img class ='call_img'   src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
-						$("#div-img-ik").before(html);
+						$("#div-img-ik").html(html);
 						$("#mprofile").val(
 								date.renamedFileName)
 						$(".fa").on(
@@ -463,7 +609,7 @@ div#userId-container span.error {
 				url:"selectKind.do",
 				dataType:"json",
 				success:function(data){
-					var html="<option>선택하세요</option>";
+					var html="<option>무엇을 가르켜 주시겠어요(필수)?</option>";
 					for(var index in data){
 						html +="<option value='"+data[index].KNO+"'>"+data[index].KINDNAME+"</option><br/>";
 					}
@@ -494,61 +640,76 @@ div#userId-container span.error {
 			});
 		});
 	</script>
-
+<div id="inindivik1"></div> 
+<div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><br /><h1>STUDY GROUPT</h1><br /></a></div>
 	<div id="enroll-container">
 		<form action="instructorEnrollEnd.do"
 			method="post" name='mainForm' id='mainForm'
 			onsubmit="return validate();" enctype="multipart/form-data">
-			<div id="userId-container">
-				<input type="text" name="mid" id="userId_" placeholder="아이디" required autocomplete="off" />
-				<button type="button" onclick="fn_checkID();">아이디 확인</button>
-				<br /> <span class="guide ok">중복된 아이디가 없습니다.</span> 
-				<span class="guide error">중복된 아이디가 있습니다.</span> 
-				<input type="hidden" id="idDuplicateCheck" value="0" />
+			<div id="id-password-div-ik">	
+				<br />
+				<div id="userId-container">
+					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)" required autocomplete="off" />
+					<button type="button" onclick="fn_checkID();" class="btn btn-outline-secondary">아이디 확인</button>
+					<br />
+					<div id="check-id">
+					<span class="guide ok">중복된 아이디가 없습니다.</span> 
+					<span class="guide error">중복된 아이디가 있습니다.</span> 
+					</div>
+					<input type="hidden" id="idDuplicateCheck" value="0" />
+				</div>
+				<div>
+					<input type="password" name="pwd" id="password_" placeholder="비밀번호(필수)" required autocomplete="off"  /> <br /> 
+					<span id="pwd"></span>  
+					<span id="pwdok"></span>  
+					<input type="password" id="password2" placeholder="비밀번호 확인(필수)"  required autocomplete="off"  /> <br /> 
+					<span id="pwd2"></span> 
+					<span id="pwd2ok"></span> 
+					<input type="hidden" id="pwdDuplicateCheck" value="0" />
+				</div>
+				<br />
 			</div>
-			<div>
-				<input type="password" name="pwd" id="password_" placeholder="비밀번호" required autocomplete="off"  /> <br /> 
-				<span id="pwd"></span> 
-				<input type="password" id="password2" placeholder="비밀번호 확인"  required autocomplete="off"  /> <br /> 
-				<span id="pwd2"></span> 
-				<input type="hidden" id="pwdDuplicateCheck" value="0" />
-			</div>
-
+			<div class="blank-ik"></div>
 			<input type="text" name="mname" id="name" placeholder="이름" required  autocomplete="off"  /><br /> 
 			<input type="text" name="phone" id="phone" maxlength="11" placeholder="전화번호" required required autocomplete="off"  /> <br /> 
 			<input type="text" name="email" id="email" placeholder="이메일" required  autocomplete="off"  /> @ 
 			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required  autocomplete="off"  />
-			<input type="button" value="인증번호" onclick="fn_certification();" /> 
+			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-outline-secondary"/> 
 			<input type="hidden" id="checkcertification" value="0" /> 
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
-			<input type="button" value="확인" onclick="checkJoinCode();" /> 
+			<input type="button" value="확인" onclick="checkJoinCode();"  class="btn btn-outline-secondary"/> 
 			<input type="hidden" id="checkPoint" value="0" /> <br />
 			<input type="date" name="birth" required/><br />
-			<input type="radio" name="gender" value="M" id="male" checked /> 
-			<label for="male">male</label> 
-			<input type="radio" name="gender" value="F"id="fmale" /> <label for="fmale">fmale</label> <br /> 
-			<br /><hr /><br />
-			프로필사진 : <input type="file" name="upFile" id="upFile" /> 
+			<span class="jender">
+			<input type="radio" name="gender" value="M" id="male" checked /> <label for="male">남</label> 
+			</span>
+			<span class="jender">
+			<input type="radio" name="gender" value="F"id="fmale" /> <label for="fmale">여</label> <br /> 
+			</span><br /><br />
+			<div class="blank-ik"></div>
+			<br /><br />
+			프로필사진(필수) : <input type="file" name="upFile" id="upFile" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='no'>
 			<div id="div-img-ik"></div>
 			<br />
-			포트폴리오 : <input type="file" name="psFile" required/> <br />
-			자기소개서 : <input type="file" name="psFile" required/> 
+			포트폴리오(필수) : <input type="file" name="psFile" required /> <br /><br />
+			자기소개서(필수) : <input type="file" name="psFile" required /> <br />
 			<div class="form-check-inline form-check">
-				관심분야 : &nbsp;
-				<select name="kno" id="kind" required> <!-- ajax로 kind가져오기 -->
+				<select name="kno" id="kind" class="custom-select my-1 mr-sm-2" required> <!-- ajax로 kind가져오기 -->
 				</select>&nbsp;&nbsp;&nbsp;
-				<select name="sno" id="subject" required> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
+				<select name="sno" id="subject" class="custom-select my-1 mr-sm-2" required> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
 				</select>
 			</div>
 
-			<br /> 자기소개 <br />
-			<textarea rows="10" cols="50" name="cover"></textarea>
+			<br />  <br />
+			<textarea rows="10" cols="50" name="cover"placeholder="강사님 당신을 소개 하세요 모두가 알 수 있도록...(필수)" ></textarea>
 
 			<br />
-			<button type="button" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
-			<input type="submit" value="가입" />
+			<%-- <button type="button" onclick="location.href='${pageContext.request.contextPath}'">취소</button> --%>
+			<input type="submit" id="submit" value="가입하기" class="btn btn-outline-secondary"/>
 		</form>
+		<br />
+		<br />
 
 	</div>
 </body>
