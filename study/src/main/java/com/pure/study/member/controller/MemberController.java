@@ -119,15 +119,22 @@ public class MemberController {
 		}
 		System.out.println(tomail);
 		
+		int result = memberService.memberCheckEmail(tomail);
+		if(result >0) {
+			map.put("check", false);
+			return map;
+		}
+		
+		
+		
 		String encoded = bcryptPasswordEncoder.encode(ranstr);
 		content += ranstr;
 
 		int checkemail = memberService.checkEmail(tomail);
-		int result = 0;
 		if (checkemail == 0) {
-			result = memberService.insertMailCertification(tomail, encoded);
+			memberService.insertMailCertification(tomail, encoded);
 		} else {
-			result = memberService.uploadMailCertification(tomail, encoded);
+			memberService.uploadMailCertification(tomail, encoded);
 		}
 		try {
 			MimeMessage message = mailSender.createMimeMessage();

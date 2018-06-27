@@ -898,7 +898,9 @@
 										#{kno},
 										#{sno},
 										'X',
-										sysdate
+										DEFAULT,
+										NULL,
+										NULL
 										)
 	</insert>
 	<select id="instructorCheckEmail" resultType="_int">
