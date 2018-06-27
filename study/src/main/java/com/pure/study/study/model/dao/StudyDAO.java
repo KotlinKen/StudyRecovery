@@ -59,6 +59,8 @@ public interface StudyDAO {
 
 	List<Map<String, Object>> selectReview(int sno);
 
+	int selectApplyCount(int sno);
+
 	
 
 }
