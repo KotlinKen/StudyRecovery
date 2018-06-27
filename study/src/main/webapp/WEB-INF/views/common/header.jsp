@@ -148,149 +148,109 @@ $(function(){
 						<li class="nav-item"><a class="nav-link" href="${rootPath }/board/boardList">게시판</a></li>
 						<li class="nav-item"><a class="nav-link" href="${rootPath }/board/boardWrite">게시글작성</a></li>
 						<c:if test="${memberLoggedIn.mid ne 'manager' }">
-						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminLogin">관리자 로그인</a></li>
+							<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminLogin">관리자 로그인</a></li>
 						</c:if>
 						<c:if test="${memberLoggedIn.mid eq 'manager' }">
-						<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminMain">관리자 메인</a></li>
+							<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminMain">관리자 메인</a></li>
 						</c:if>
 					</ul>
 					<ul class="navbar-nav float-right">
 						<c:if test="${memberLoggedIn == null }">
-						<li class="nav-item"><a id="btn-login" class="nav-link" data-toggle="modal" data-target="#loginModal">로그인</a></li>
-						<li class="nav-item"><a class="nav-link" onclick="location.href='${pageContext.request.contextPath}/member/memberAgreement.do'">회원가입</a></li>
+							<li class="nav-item"><a id="btn-login" class="nav-link" data-toggle="modal" data-target="#loginModal">로그인</a></li>
+							<li class="nav-item"><a class="nav-link" onclick="location.href='${pageContext.request.contextPath}/member/memberAgreement.do'">회원가입</a></li>
 						</c:if>
 						<c:if test="${memberLoggedIn != null }">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/member/memberView.do">${memberLoggedIn.mname }님</a></li>
-						<li class="nav-item"><a class="nav-link" onclick="location.href='${pageContext.request.contextPath}/member/memberLogout.do'">로그아웃</a></li>
+							<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/member/memberView.do">${memberLoggedIn.mname }님</a></li>
+							<li class="nav-item"><a class="nav-link" onclick="location.href='${pageContext.request.contextPath}/member/memberLogout.do'">로그아웃</a></li>
 						</c:if>
 					</ul>
 
-					<c:if test="${memberLoggedIn == null }">
-						<button type="button" id="btn-login" class="btn btn-outline-success" data-toggle="modal" data-target="#loginModal">로그인</button> &nbsp; &nbsp;
-				<!-- 회원가입 버튼 시작 -->
-						<button type="button" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}/member/memberAgreement.do'">회원가입</button>
-						<!-- 회원가입 버튼 끝 -->
-					</c:if>
-					<c:if test="${memberLoggedIn != null }">
-						<p>
-							<a href="${pageContext.request.contextPath }/member/memberView.do">${memberLoggedIn.mname }</a>님
-						</p>
-						<button type="button" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}/member/memberLogout.do'">로그아웃</button>
 
-					</c:if>
-	</header>
-	<section>
-		<!-- 로그인 Modal 시작 -->
-		<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">로그인</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<form action="${pageContext.request.contextPath }/member/memberLogin.do" method="post">
-						<div class="modal-body">
-							<input type="text" class="form-control" name="userId" id="userId" placeholder="아이디" required /> <br /> 
-							<input type="password" class="form-control" name="pwd" id="password" placeholder="비밀번호" required /> 
-							<input type="checkbox" id="idSaveCheck" />
-							<label for="idSaveCheck">아이디 저장</label>
-							<a href="${pageContext.request.contextPath }/member/memberFindPage.do?findType=아이디">아이디/</a> 
-							<a href="${pageContext.request.contextPath }/member/memberFindPage.do?findType=비밀번호">비밀번호 찾기</a>
-						</div>
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-outline-success">로그인</button>
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						</div>
-					</form>
 				</div>
 			</nav>
 		</div>
+		<!-- 로그인 Modal 시작 -->
+		      <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		         <div class="modal-dialog" role="document">
+		            <div class="modal-content">
+		               <div class="modal-header">
+		                  <h5 class="modal-title" id="exampleModalLabel">로그인</h5>
+		                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		                     <span aria-hidden="true">&times;</span>
+		                  </button>
+		               </div>
+		               <form action="${pageContext.request.contextPath }/member/memberLogin.do" method="post">
+		                  <div class="modal-body">
+		                     <input type="text" class="form-control" name="userId" id="userId" placeholder="아이디" required /> <br /> 
+		                     <input type="password" class="form-control" name="pwd" id="password" placeholder="비밀번호" required /> 
+		                     <input type="checkbox" id="idSaveCheck" />
+		                     <label for="idSaveCheck">아이디 저장</label>
+		                     <a href="${pageContext.request.contextPath }/member/memberFindPage.do?findType=아이디">아이디/</a> 
+		                     <a href="${pageContext.request.contextPath }/member/memberFindPage.do?findType=비밀번호">비밀번호 찾기</a>
+		                  </div>
+		                  <div class="modal-footer">
+		                     <button type="submit" class="btn btn-outline-success">로그인</button>
+		                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		                  </div>
+		               </form>
+		            </div>
+		         </div>
+		      </div>
+		      <!-- 로그인 Modal 끝 -->
 	</header>
-	<!-- 로그인 Modal 시작 -->
-					<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h5 class="modal-title" id="exampleModalLabel">로그인</h5>
-									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-										<span aria-hidden="true">&times;</span>
-									</button>
-								</div>
-								<form action="${pageContext.request.contextPath }/member/memberLogin.do" method="post">
-									<div class="modal-body">
-										<input type="text" class="form-control" name="userId" id="userId" placeholder="아이디" required /> <br /> <input type="password" class="form-control" name="pwd" id="password" placeholder="비밀번호" required /> <a href="${pageContext.request.contextPath }/member/memberFindPage.do?findType=아이디">아이디/</a> <a href="${pageContext.request.contextPath }/member/memberFindPage.do?findType=비밀번호">비밀번호 찾기</a>
-									</div>
-									<div class="modal-footer">
-										<button type="submit" class="btn btn-outline-success">로그인</button>
-										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-					<!-- 로그인 Modal 끝 -->
-=======
-		<!-- 로그인 Modal 끝 -->
-		
-		<script>
-		$(document).ready(function(){
-			 
-		    // 저장된 쿠키값을 가져와서 ID 칸에 넣어준다. 없으면 공백으로 들어감.
-		    var key = getCookie("key");
-		    $("#userId").val(key); 
-		     
-		    if($("#userId").val() != ""){ // 그 전에 ID를 저장해서 처음 페이지 로딩 시, 입력 칸에 저장된 ID가 표시된 상태라면,
-		        $("#idSaveCheck").attr("checked", true); // ID 저장하기를 체크 상태로 두기.
-		    }
-		     
-		    $("#idSaveCheck").change(function(){ // 체크박스에 변화가 있다면,
-		        if($("#idSaveCheck").is(":checked")){ // ID 저장하기 체크했을 때,
-		            setCookie("key", $("#userId").val(), 7); // 7일 동안 쿠키 보관
-		        }else{ // ID 저장하기 체크 해제 시,
-		            deleteCookie("key");
-		        }
-		    });
-		     
-		    // ID 저장하기를 체크한 상태에서 ID를 입력하는 경우, 이럴 때도 쿠키 저장.
-		    $("#userId").keyup(function(){ // ID 입력 칸에 ID를 입력할 때,
-		        if($("#idSaveCheck").is(":checked")){ // ID 저장하기를 체크한 상태라면,
-		            setCookie("key", $("#userId").val(), 7); // 7일 동안 쿠키 보관
-		        }
-		    });
-		});
-		 
-		function setCookie(cookieName, value, exdays){
-		    var exdate = new Date();
-		    exdate.setDate(exdate.getDate() + exdays);
-		    var cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString());
-		    document.cookie = cookieName + "=" + cookieValue;
-		}
-		 
-		function deleteCookie(cookieName){
-		    var expireDate = new Date();
-		    expireDate.setDate(expireDate.getDate() - 1);
-		    document.cookie = cookieName + "= " + "; expires=" + expireDate.toGMTString();
-		}
-		 
-		function getCookie(cookieName) {
-		    cookieName = cookieName + '=';
-		    var cookieData = document.cookie;
-		    var start = cookieData.indexOf(cookieName);
-		    var cookieValue = '';
-		    if(start != -1){
-		        start += cookieName.length;
-		        var end = cookieData.indexOf(';', start);
-		        if(end == -1)end = cookieData.length;
-		        cookieValue = cookieData.substring(start, end);
-		    }
-		    return unescape(cookieValue);
-		}
+<script>
+$(document).ready(function(){
+	 
+    // 저장된 쿠키값을 가져와서 ID 칸에 넣어준다. 없으면 공백으로 들어감.
+    var key = getCookie("key");
+    $("#userId").val(key); 
+     
+    if($("#userId").val() != ""){ // 그 전에 ID를 저장해서 처음 페이지 로딩 시, 입력 칸에 저장된 ID가 표시된 상태라면,
+        $("#idSaveCheck").attr("checked", true); // ID 저장하기를 체크 상태로 두기.
+    }
+     
+    $("#idSaveCheck").change(function(){ // 체크박스에 변화가 있다면,
+        if($("#idSaveCheck").is(":checked")){ // ID 저장하기 체크했을 때,
+            setCookie("key", $("#userId").val(), 7); // 7일 동안 쿠키 보관
+        }else{ // ID 저장하기 체크 해제 시,
+            deleteCookie("key");
+        }
+    });
+     
+    // ID 저장하기를 체크한 상태에서 ID를 입력하는 경우, 이럴 때도 쿠키 저장.
+    $("#userId").keyup(function(){ // ID 입력 칸에 ID를 입력할 때,
+        if($("#idSaveCheck").is(":checked")){ // ID 저장하기를 체크한 상태라면,
+            setCookie("key", $("#userId").val(), 7); // 7일 동안 쿠키 보관
+        }
+    });
+});
+ 
+function setCookie(cookieName, value, exdays){
+    var exdate = new Date();
+    exdate.setDate(exdate.getDate() + exdays);
+    var cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString());
+    document.cookie = cookieName + "=" + cookieValue;
+}
+ 
+function deleteCookie(cookieName){
+    var expireDate = new Date();
+    expireDate.setDate(expireDate.getDate() - 1);
+    document.cookie = cookieName + "= " + "; expires=" + expireDate.toGMTString();
+}
+ 
+function getCookie(cookieName) {
+    cookieName = cookieName + '=';
+    var cookieData = document.cookie;
+    var start = cookieData.indexOf(cookieName);
+    var cookieValue = '';
+    if(start != -1){
+        start += cookieName.length;
+        var end = cookieData.indexOf(';', start);
+        if(end == -1)end = cookieData.length;
+        cookieValue = cookieData.substring(start, end);
+    }
+    return unescape(cookieValue);
+}
 
-		</script>
-		
-		
-		</header>
->>>>>>> branch 'KimHoiJin' of https://github.com/KotlinKen/StudyRecovery.git
+</script>
 
