@@ -301,7 +301,7 @@ public class StudyController {
 		
 	}
 	
-	/*//스터디 상세보기
+	//스터디 상세보기
 	@RequestMapping("/study/studyView.do")
 	public ModelAndView selectStudyOne(@RequestParam(value="sno", required=true) int sno,HttpSession session) {
 		ModelAndView mav = new ModelAndView();
@@ -334,7 +334,7 @@ public class StudyController {
 		mav.addObject("reviewList",reviewList);
 		mav.setViewName("study/studyView");
 		return mav;
-	}*/
+	}
 	
 	
 	
