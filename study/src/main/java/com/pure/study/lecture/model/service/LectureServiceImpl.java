@@ -119,4 +119,9 @@ public class LectureServiceImpl implements LectureService {
 		return ld.addWishLecture(map);
 	}
 
+	@Override
+	public int successPay(Map<String, Object> map) {
+		return ld.successPay(map);
+	}
+
 }

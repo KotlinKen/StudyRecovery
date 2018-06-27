@@ -51,6 +51,10 @@
 	<insert id="applyLecture">
 		INSERT INTO APPLY VALUES( SEQ_APPLY.NEXTVAL, #{mno}, #{sno}, DEFAULT)
 	</insert>
+	
+	<insert id="successPay">
+		INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', null, #{price}, SYSDATE)
+	</insert>
 
 	<select id="selectLocList" resultMap="map">
 		SELECT * FROM LOCAL

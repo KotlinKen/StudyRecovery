@@ -16,7 +16,7 @@
 		
 		var sno = ${lecture.SNO};
 		var mno = ${memberLoggedIn.getMno()};	
-		var price = ${lecture.PRICE};
+		var price = 100;
 		
 	   //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	   //이미 신청을 했으면 return;하게 만들어야 함. 
@@ -36,10 +36,12 @@
 	     			    pay_method : 'card',
 	     			    merchant_uid : 'merchant_' + new Date().getTime(),
 	     			    name : '스터디 강의 신청',
-	     			    amount : price,
+	     			    amount : 100,
 	     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
 	     			}, function(rsp) {
-	     			    if ( rsp.success ) {	     			    	
+	     			    if ( rsp.success ) {	
+	     			    	
+	     			    	
 	     			        $.ajax({
 	     			        	url : "applyLecture.do",
 	     			        	data: {
@@ -47,7 +49,12 @@
 	     			        		mno : mno
 	     			        	},
 	     			        	success:function(data){
-	     			        		location.href ="suceessPay.do?mno=" + mno;
+	     			        		var pno = rsp.imp_uid.replace("imp_", "");
+	     			        		alert(pno);
+	     			        		location.href ="successPay.do?mno=" + mno + 
+	     			        									 "&sno=" + sno + 
+	     			        									 "&pno=" + pno + 
+	     			        									 "&price=" + price;
 	     			        	}
 	     			        });
    			        		msg = '결제가 완료되었습니다.';	     	     			        

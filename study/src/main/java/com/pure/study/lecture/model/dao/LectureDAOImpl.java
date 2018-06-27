@@ -122,4 +122,9 @@ public class LectureDAOImpl implements LectureDAO {
 		return session.insert("lecture.addWishLecture", map);
 	}
 
+	@Override
+	public int successPay(Map<String, Object> map) {
+		return session.insert("lecture.successPay", map);
+	}
+
 }

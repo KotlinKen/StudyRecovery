@@ -105,7 +105,7 @@ public class RestController {
 	}
 	
 	
-	@RequestMapping(value="/rest/lecture/{count}", method=RequestMethod.GET)
+/*	@RequestMapping(value="/rest/lecture/{count}", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView selectLectureCount(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
 		
@@ -114,7 +114,7 @@ public class RestController {
 		List<Map<String,String>> list = lectureService.selectLectureList(1, count);
 		mav.addObject("list", list);
 		return mav;
-	}
+	}*/
 	
 	
 	
