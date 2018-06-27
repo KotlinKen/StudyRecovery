@@ -10,6 +10,7 @@
 	order by s.regdate desc
  </select>
  <resultMap type="map" id="mapForStudy">
+ 	<result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
  </resultMap>
  
  <resultMap type="map" id="mapList">
@@ -34,7 +35,7 @@
  </select>
   <insert id="insertStudy">
   	insert into study values(SEQ_STUDY.NEXTVAL,#{mno},#{subno},#{tno},#{dno},#{title},#{freq},
-  	#{content},#{price},null,#{recruit},'모집중',#{time},'study',#{ldate},#{sdate},#{edate},sysdate,#{etc})
+  	#{price},null,#{recruit},'모집중',#{time},'study',#{ldate},#{sdate},#{edate},sysdate,#{etc},#{content})
   	<!-- 전달한 study vo 객체의 sno 프로퍼티에 결과값을 담는다. -->		
    	<selectKey keyProperty="sno"  resultType="_int" order="AFTER"> <!-- order 앞의 쿼리 후에 해라. -->
    		SELECT SEQ_STUDY.CURRVAL FROM DUAL
@@ -51,7 +52,7 @@
   	
   </update>
   
-  <select id="selectStudyForSearch" resultMap="mapList">
+  <select id="selectStudyForSearch" resultMap="mapForStudy">
 	  select s.sno,s.mno, m.mname mname, m.mprofile, m.mid, k.kindname kname, k.kno,sb.subno,sb.subjectname subname, l.lno,l.local lname,t.tno,t.townname tname,
 	  		d.dno,d.DIFFICULTNAME dname,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,to_char(s.ldate,'yyyy-mm-dd') ldate,
 	  		to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate 
@@ -79,7 +80,7 @@
     order by s.regdate desc
   
   </select>
-  <select id="selectStudyAdd" resultMap="mapList">
+  <select id="selectStudyAdd" resultMap="mapForStudy">
   	select  s.sno,s.mno,sb.subno,k.kno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
   		    to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
   			m.mprofile,l.lno,l.local lname,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
@@ -87,7 +88,7 @@
 	where s.type='study' order by s.regdate desc
   </select>
   
-  <select id="selectStudyOne" resultMap="mapList">
+  <select id="selectStudyOne"  resultMap="mapForStudy">
   	select  s.sno,s.mno,s.subno,s.tno,t.lno,s.dno,k.kno,l.lno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
   		to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate,
   		to_char(s.regdate,'yyyy-mm-dd') regdate,m.mprofile,l.lno,l.local lname,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname,
@@ -143,7 +144,7 @@
   	delete from study where sno=#{sno}
   </delete>
   
-  <select id="selectByDeadline" resultMap="mapList">
+  <select id="selectByDeadline" resultMap="mapForStudy">
   select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
   		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
  		  m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
@@ -160,7 +161,7 @@
 	  order by s.ldate
   </select>
   
-  <select id="selectByApply" resultMap="mapList">
+  <select id="selectByApply" resultMap="mapForStudy">
 	  select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
 	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
 	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME dname,local lname, 
@@ -202,6 +203,9 @@
   	select r.*, m.mprofile,m.mname,s.title from review r join member m on r.mno=m.mno join study s on r.sno=s.sno where tmno=(select mno from study where sno=#{sno})
   </select>
   
+  <select id="selectApplyCount" resultType="_int">
+  	select count(*) cnt from apply where sno=#{sno}
+  </select>
   
   
 </mapper>
