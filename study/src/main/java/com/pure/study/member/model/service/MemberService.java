@@ -91,4 +91,10 @@ public interface MemberService {
 
 	List<Map<String, Object>> reviewList(Map<String, Object> listMap);
 
+	String selectStudyName(String studyNo);
+
+	int insertCrew(Map<String, String> map);
+
+	int deleteApply(Map<String, String> map);
+
 }

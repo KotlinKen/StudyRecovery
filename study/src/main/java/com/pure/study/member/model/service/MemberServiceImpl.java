@@ -225,5 +225,20 @@ public class MemberServiceImpl implements MemberService {
 	public List<Map<String, Object>> reviewList(Map<String, Object> listMap) {
 		return memberDAO.reviewList(listMap);
 	}
+
+	@Override
+	public String selectStudyName(String studyNo) {
+		return memberDAO.selectStudyName(studyNo);
+	}
+
+	@Override
+	public int insertCrew(Map<String, String> map) {
+		return memberDAO.insertCrew(map);
+	}
+
+	@Override
+	public int deleteApply(Map<String, String> map) {
+		return memberDAO.deleteApply(map);
+	}
 	
 }

@@ -237,9 +237,7 @@
 								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
 							 -->
 						</div>
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-outline-success">등록</button>
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+						<div class="modal-body" id="div-crew">
 						</div>
 			</div>
 		</div>
@@ -583,10 +581,12 @@
 			}
 		});
 		
+		
+		//신청 현황 보기 버튼
 		$("button[name=applyListView]").on("click",function(){
+			$("div.modal-body#div-crew").html("");
 			console.log(this.id);
 			var studyNo = this.id.split("t")[1];
-			//console.log(studyNo);
 			$.ajax({
 				url: "applyListView.do",
 				data: {studyNo: studyNo},
@@ -595,11 +595,11 @@
 					console.log(data);
 					var html ="<table>";
 					html += "<tr>";
-					html += "<td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td>";
+					html += "<td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td>";
 					html += "</tr>";
 					for(var i in data.applyList){
 						console.log(data.applyList[i]);
-						html += "<tr>";
+						html += "<tr class='mno"+data.applyList[i].mno+"'>";
 						html += "<td>";
 						html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진' style='width:100px;'/>";
 						html += "</td>";
@@ -619,17 +619,85 @@
 						html += "<td>";
 						html += data.applyList[i].cover;
 						html += "</td>";
-						html += "</tr>";
+						html += "<td>";
+						html += "<button type=button class='apply' name='agree' id='agreeq"+data.applyList[i].mno+"'>수락</button>";
+						html += "<button type=button class='apply' name='disagree' id='disagreeq"+data.applyList[i].mno+"'>거절</button>";
+						html += "</td>";
+						html += "</tr>";	
 						
 						$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+")");
 					}
 					html += "</table>";
 					
-					if(data.applyList.length==0){
+					var removehtml = "<br />";
+					removehtml += "<h5>스터디 신청을 수락 완료 회원</h5>";
+					removehtml += "<hr>";
+					removehtml += "<table>"; 
+					removehtml += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td></tr>";
+					for(var i in data.crewList){
+						console.log(data.crewList[i]);
+						removehtml += "<tr class='mno"+data.crewList[i].mno+"'>";
+						removehtml += "<td>";
+						removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+						removehtml += "</td>";
+						removehtml += "<td>";
+						removehtml += data.crewList[i].grade;
+						removehtml += "</td>";
+						removehtml += "<td>";
+						if(data.crewList[i].gender == 'M'){
+							removehtml += "남자";
+						}else{
+							removehtml += "여자";
+						}
+						removehtml += "</td>";
+						removehtml += "<td>";
+						removehtml += data.crewList[i].mname+"("+data.crewList[i].mid+")";
+						removehtml += "</td>";
+						removehtml += "<td>";
+						removehtml += data.crewList[i].cover;
+						removehtml += "</td>";
+						removehtml += "<td>";
+						removehtml += "<button type=button class='cancel' name='' id='??"+data.crewList[i].mno+"'>팀원 취소</button>";
+						removehtml += "</td>";
+						removehtml += "</tr>";	
+					}
+					
+					//스터디 신청 수락된 회원 => 수락 버튼을 누르면 밑으로 
+					removehtml += "</table>";
+					
+					
+					if(data.applyList.length==0 && data.crewList.length==0){
+						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+")");
 						$("#div-reviewView").html("신청한 회원이 없습니다.");
 					}else{
-						$("#div-reviewView").html(html);
+						$("#div-reviewView").html(html+removehtml);
 					}
+					
+					$("button[name=agree]").on("click",function(){
+						$(this).attr("style","color: red;");
+						$("#disagreeq"+this.id.split("q")[1]).attr("style","color: black;");
+						console.log(this.id.split("q")[1]);
+						var mno = this.id.split("q")[1];
+						var sno = data.studyNo;
+						$("#div-reviewView").html(html);
+						$("tr.mno"+mno).html("");
+						//var name = "들어 왔당!";
+						//var name = data.studyName;
+						// 신청 수락 클릭시, 신청이 수락된다.
+						// 신청 수락을 하면  apply테이블에서 crew테이블에 들어가야한다. => 회원번호, 스터디 번호
+						// 신청 현황에는 신청한 사람과 팀원으로 선택한 사람이 들어가 있어야한다.
+						// 신청 기간 안에는 팀원을 다시 거절 할 수 있다?
+						// 거절했던 회원을 다시 신청 목록에 넣을 수 있다?
+						// 신청이 수락되면 이메일을 발송해준다?
+						
+						applyButton(sno, mno);
+					});
+					$("button[name=disagree]").on("click",function(){
+						$(this).attr("style","color: red;");
+						$("#agreeq"+this.id.split("q")[1]).attr("style","color: black;");
+						console.log(this.id.split("q")[1]);
+					});
+					
 					
 				},
 				error: function(){
@@ -639,11 +707,74 @@
 						
 		});
 		
+		
+		
 	});
-	
+	function applyButton(sno, mno){
+			$.ajax({
+				url: "applyButton.do",
+				data: {sno: sno, mno: mno},
+				dataType: "json",
+				success: function(data){
+					var html = "";
+					console.log(data);
+					//<div class="modal-footer">
+					html += "<h5>스터디 신청을 수락 완료 회원</h5>";
+					html += "<hr>";
+					html += "<table>"; 
+					html += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td></tr>";
+					for(var i in data.crewList){
+						console.log(data.crewList[i]);
+						html += "<tr class='mno"+data.crewList[i].mno+"'>";
+						html += "<td>";
+						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+						html += "</td>";
+						html += "<td>";
+						html += data.crewList[i].grade;
+						html += "</td>";
+						html += "<td>";
+						if(data.crewList[i].gender == 'M'){
+							html += "남자";
+						}else{
+							html += "여자";
+						}
+						html += "</td>";
+						html += "<td>";
+						html += data.crewList[i].mname+"("+data.crewList[i].mid+")";
+						html += "</td>";
+						html += "<td>";
+						html += data.crewList[i].cover;
+						html += "</td>";
+						html += "<td>";
+						html += "<button type=button class='cancel' name='' id='??"+data.crewList[i].mno+"'>팀원 취소</button>";
+						html += "</td>";
+						html += "</tr>";	
+					}
+					
+					//스터디 신청 수락된 회원 => 수락 버튼을 누르면 밑으로 
+					html += "</table><br />";
+					
+					$("div.modal-body#div-crew").html(html);
+					
+					
+				},
+				error: function(){
+					console.log("ajax 처리 실패");
+				}
+			});
+			
+	}
 	
 	</script>
 	
 	
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 	
+
+	
+	
+
+
+
+
+

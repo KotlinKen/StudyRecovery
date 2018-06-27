@@ -666,31 +666,23 @@ public class MemberController {
 	}
 	
 	//개인 정보 수정 - 전체 수정
-	   @RequestMapping(value="/member/updateUser.do", method= RequestMethod.POST)
-	   public String updateUser(@RequestParam("mno") int mno, @RequestParam("mid") String mid
-	                     , @RequestParam("mname") String mname, @RequestParam("phone") String phone
-	                     , @RequestParam("post") String post,@RequestParam("addr1") String addr1
-	                     ,@RequestParam("addr2") String addr2,@RequestParam("addrDetail") String addrDetail
-	                     ,@RequestParam("email")String email
-	                     , @RequestParam("birth") Date birth, @RequestParam("gender") String gender
-	                     , @RequestParam("favor") String[] favor, @RequestParam("cover") String cover
+	   @RequestMapping(value="/member/updateUser.do", method= {RequestMethod.GET, RequestMethod.POST})
+	   public String updateUser(@RequestParam(value="mno") int mno, @RequestParam(value="mid") String mid
+	                     , @RequestParam(value="mname") String mname, @RequestParam(value="phone") String phone
+	                     , @RequestParam(value="email")String email
+	                     , @RequestParam(value="birth") Date birth, @RequestParam(value="gender") String gender
+	                     , @RequestParam(value="favor") String[] favor, @RequestParam(value="cover") String cover
 	                     , @RequestParam(value="mprofile", required=false) MultipartFile[] mprofile
-	                     , HttpServletRequest request, Model model, @RequestParam("pre_mprofile") String pre_mprofile
+	                     , HttpServletRequest request, @RequestParam(value="pre_mprofile") String pre_mprofile
 	                     , @ModelAttribute("memberLoggedIn") Member m
 	                     ) {
 	      Member member = new Member();
 	      
 	      String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
-	      System.out.println("저장장소"+ saveDirectory);
-	      System.out.println("왜 400이지?");
-	      if(mprofile.length >0) {
-	    	  System.out.println("1111");
+	      if(mprofile != null ) {
 	         /*********** MultipartFile을 이용한 파일 업로드 처리 로직 시작 **********/
 	         for(MultipartFile f: mprofile) {
-	        	 System.out.println("2222");
 	            if(!f.isEmpty()) {
-	            	System.out.println("3333");
-	            	System.out.println(f);
 	               //파일명 재생성
 	               String originalFileName = f.getOriginalFilename();
 	               String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
@@ -699,7 +691,6 @@ public class MemberController {
 	               String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
 	               
 	               try {
-	            	   System.out.println("4444");
 	                  f.transferTo(new File(saveDirectory+"/"+renamedFileName));
 	               } catch (IllegalStateException e) {
 	                  e.printStackTrace();
@@ -708,22 +699,16 @@ public class MemberController {
 	               }
 	               //vo객체 담기
 	               member.setMprofile(renamedFileName);
-	               System.out.println(renamedFileName);
 	               
 	            }
 	         }
 	      }else {
 	         member.setMprofile(pre_mprofile);
-	         System.out.println(pre_mprofile);
 	      }
 	      
 	      member.setMno(mno);
 	      member.setMname(mname);
 	      member.setPhone(phone);
-	      member.setPost(post);
-	      member.setAddr1(addr1);
-	      member.setAddr2(addr2);
-	      member.setAddrDetail(addrDetail);
 	      member.setEmail(email);
 	      member.setBirth(birth);
 	      member.setGender(gender);
@@ -733,21 +718,22 @@ public class MemberController {
 	      
 	      int result = memberService.updateMember(member);
 	      
-	      if(result>0) {
+	     /* if(result>0) {
 	         model.addAttribute("memberLoggedIn", member);
 	         
 	         if(mid==m.getMid()) {
 	            model.addAttribute("msg", "회원 정보가 변경되었습니다.");
 	         }
-	       
+	        
 	         
 	      }else {
 	         model.addAttribute("msg", "회원 정보가 변경되지 않았습니다.");
 	         model.addAttribute("loc", "/member/memberView.do");
 	      }
-	      
+	      */
 	      return "common/msg";
 	   }
+
 	
 	//개인 정보 수정 - 탈퇴하기
 	@RequestMapping(value="/member/memberDrop.do")
@@ -1054,20 +1040,61 @@ public class MemberController {
 	@RequestMapping(value="/member/applyListView.do")
 	@ResponseBody
 	public ModelAndView applyListView( @RequestParam("studyNo") String studyNo
-									, @ModelAttribute("memberLoggedIn") Member m
+										, @ModelAttribute("memberLoggedIn") Member m
 									) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		Map <String,String> map = new HashMap<>();
 		map.put("studyNo", studyNo);
+		map.put("forCrewList", "forCrewList");
 		int numPerPage = memberService.selectApplyListCnt(map);
+		int crewNumPerPage = memberService.selectMyStudyListCnt(map);
 		int cPage = 1;
 		
 		List<Map<String,String>> list = memberService.selectApplyList(map, numPerPage, cPage);
+		List<Map<String,String>> crewList = memberService.selectMyStudyList(map, crewNumPerPage, cPage);
 		System.out.println(list);
+		System.out.println(crewList);
+		String studyName = memberService.selectStudyName(studyNo);
+		System.out.println(studyName);
+		
 		mav.addObject("applyList", list);
+		mav.addObject("crewList", crewList);
+		mav.addObject("studyName", studyName);
+		mav.addObject("studyNo", studyNo);
 		
 		return mav;
 	}
+	//신청 현황 신청 버튼
+	@RequestMapping(value="/member/applyButton.do")
+	@ResponseBody
+	public ModelAndView applyButton( @RequestParam("sno") String sno, @RequestParam("mno")String mno) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		Map<String, String> map = new HashMap<>();
+		map.put("studyNo", sno);
+		map.put("forCrewList", "forCrewList");
+		map.put("mno", mno);
+		
+		int result = memberService.insertCrew(map);
+		int resultDel = memberService.deleteApply(map);
+		if(result<0 && resultDel<0) {
+			mav.addObject("msg","다시 시도해주세요");
+			mav.setViewName("common/msg");
+		}
+		
+		map.remove("mno");
+		
+		int crewNumPerPage = memberService.selectMyStudyListCnt(map);
+		int cPage = 1;
+		
+		List<Map<String,String>> crewList = memberService.selectMyStudyList(map, crewNumPerPage, cPage);
+		System.out.println(crewList);
+		
+		mav.addObject("crewList", crewList);
+		mav.addObject("studyNo", sno);
+		
+		return mav;
+	}
+	
 	
 	//평가 목록 페이지
 	@RequestMapping(value="/member/searchMyPageEvaluation.do")
