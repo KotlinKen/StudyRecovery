@@ -70,13 +70,17 @@ public class MemberController {
 			logger.debug("회원동의홈페이지");
 		}
 		ModelAndView mav = new ModelAndView();
-		List <Map<String , String>> service = memberService.serviceagree();
-		List <Map<String , String>> information = memberService.informationagree();
-		System.out.println(service);
-		System.out.println(information);
-		
-		mav.addObject("service", service);
-		mav.addObject("information", information);
+		try {
+			List <Map<String , String>> service = memberService.serviceagree();
+			List <Map<String , String>> information = memberService.informationagree();
+			System.out.println(service);
+			System.out.println(information);
+			
+			mav.addObject("service", service);
+			mav.addObject("information", information);
+			
+		} catch (Exception e) {
+		}
 		return mav;
 	}
 	/* 정보 입력페이지 이동 시작 */
@@ -100,10 +104,14 @@ public class MemberController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
-		List<Map<String, String>> list = memberService.selectCategory();
-	
-		System.out.println(list);
-		mav.addObject("list", list);
+		try {
+			List<Map<String, String>> list = memberService.selectCategory();
+			
+			System.out.println(list);
+			mav.addObject("list", list);
+			
+		} catch (Exception e) {
+		}
 		return mav;
 	}
 	
@@ -122,25 +130,28 @@ public class MemberController {
 			ranstr += ran;
 		}
 		System.out.println(tomail);
-		
-		int result = memberService.memberCheckEmail(tomail);
-		if(result >0) {
-			map.put("check", false);
-			return map;
-		}
-		
-		
-		
-		String encoded = bcryptPasswordEncoder.encode(ranstr);
-		content += ranstr;
-
-		int checkemail = memberService.checkEmail(tomail);
-		if (checkemail == 0) {
-			memberService.insertMailCertification(tomail, encoded);
-		} else {
-			memberService.uploadMailCertification(tomail, encoded);
-		}
 		try {
+			int result = memberService.memberCheckEmail(tomail);
+			if(result >0) {
+				map.put("check", false);
+				return map;
+			}
+			
+		} catch (Exception e) {
+		}
+		
+		
+		
+
+		try {
+			String encoded = bcryptPasswordEncoder.encode(ranstr);
+			content += ranstr;
+			int checkemail = memberService.checkEmail(tomail);
+			if (checkemail == 0) {
+				memberService.insertMailCertification(tomail, encoded);
+			} else {
+				memberService.uploadMailCertification(tomail, encoded);
+			}
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
 			messageHelper.setFrom(setfrom); // 보내는사람 생략하거나 하면 정상작동을 안함
@@ -168,7 +179,11 @@ public class MemberController {
 		System.out.println(email);
 		Map<String, String> cer = new HashMap<>();
 		System.out.println(cer);
-		cer = memberService.selectCheckJoinCode(email);
+		try {
+			cer = memberService.selectCheckJoinCode(email);
+			
+		} catch (Exception e) {
+		}
 		if (bcryptPasswordEncoder.matches(inputCode, cer.get("CERTIFICATION"))) {
 			map.put("result", true);
 		} else {
@@ -246,15 +261,18 @@ public class MemberController {
 		System.out.println("member : " + member);
 		logger.debug(email);
 		member.setEmail(email);
-		Map<String, String> cer = memberService.selectCheckJoinCode(email);
-		System.out.println("email : " + email);
 		String loc = "/";
 		String msg = "";
-		if (cer == null) {
-			msg = "회원가입을 실패했습니다.";
-			model.addAttribute("loc", loc);
-			model.addAttribute("msg", msg);
-			return "common/msg";
+		try {
+			Map<String, String> cer = memberService.selectCheckJoinCode(email);
+			System.out.println("email : " + email);
+			if (cer == null) {
+				msg = "회원가입을 실패했습니다.";
+				model.addAttribute("loc", loc);
+				model.addAttribute("msg", msg);
+				return "common/msg";
+			}
+		} catch (Exception e) {
 		}
 
 		String rawPassword = member.getPwd();
@@ -270,9 +288,13 @@ public class MemberController {
 			member.setFavor(favor);
 		}
 
-		int result = memberService.memberEnrollEnd(member);
+		int result = 0;
+		try {
+			result = memberService.memberEnrollEnd(member);
+			memberService.deleteCertification(email);
+		} catch (Exception e) {
+		}
 
-		memberService.deleteCertification(email);
 
 		// 2.처리결과에 따라 view단 분기처리
 
@@ -295,14 +317,15 @@ public class MemberController {
 	public Map<String,Object> checkIdDuplicate(@RequestParam("userId") String userId) throws IOException {
 		logger.debug("@ResponseBody-javaobj ajax : "+userId);
 		Map<String,Object> map = new HashMap<>();
-	
-		//업무로직
-		int count = memberService.checkIdDuplicate(userId);
-		logger.debug("count : "+count);
-		boolean isUsable = count==0?true:false;
-		logger.debug(""+isUsable);
-		
-		map.put("isUsable", isUsable);
+		try {
+			int count = memberService.checkIdDuplicate(userId);
+			logger.debug("count : "+count);
+			boolean isUsable = count==0?true:false;
+			logger.debug(""+isUsable);
+			
+			map.put("isUsable", isUsable);
+		} catch (Exception e) {
+		}
 		
 		return map;
 	}
@@ -1321,7 +1344,6 @@ public class MemberController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
-		/*model.addAttribute("loc", "/member/memberSuccess.do");*/
 		mav.addObject("ckeck", true);
 		mav.setViewName("member/memberSuccess");
 		return mav;
@@ -1341,19 +1363,23 @@ public class MemberController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
-		int result = memberService.instructorCheckO(mno);
-		System.out.println("result : "+ result);
-		if(result ==1) {
-			mav.addObject("loc", "/member/memberView.do");
-			mav.addObject("msg", "이미 강사 이시군요.");
-			mav.setViewName("common/msg");
-			return mav;
+		try {
+			int result = memberService.instructorCheckO(mno);
+			System.out.println("result : "+ result);
+			if(result ==1) {
+				mav.addObject("loc", "/member/memberView.do");
+				mav.addObject("msg", "이미 강사 이시군요.");
+				mav.setViewName("common/msg");
+				return mav;
+			}
+			// 큰 분류 리스트
+			List<Map<String, String>> kindList = ls.selectKindList();
+			mav.addObject("kindList", kindList);
+			mav.addObject("mno", mno);
+			mav.addObject("mid", mid);
+			
+		} catch (Exception e) {
 		}
-		// 큰 분류 리스트
-		List<Map<String, String>> kindList = ls.selectKindList();
-		mav.addObject("kindList", kindList);
-		mav.addObject("mno", mno);
-		mav.addObject("mid", mid);
 		return mav;
 	}
 	/* 회원이 강사 신청  */
@@ -1430,33 +1456,36 @@ public class MemberController {
 	@ResponseBody
 	public Map<String, Object> instructorCertification( @RequestParam(value = "em") String em , @RequestParam(value="mno")String mno , HttpServletRequest request) {
 		Map<String, Object> map = new HashMap<>();
-		
 		Map<String,String> checkInstructor = new HashMap<>();
 		checkInstructor.put("tomail", em);
 		checkInstructor.put("mno", mno);
-		int checkemail = memberService.instructorCheckEmail(checkInstructor);
-
-		int result = 0;
-		if (checkemail == 1) {
-			map = mailCertification(request, em);
-		} else {
-			map.put("check", false);
-			return map;
+		try {
+			int checkemail = memberService.instructorCheckEmail(checkInstructor);
+			
+			if (checkemail == 1) {
+				map = mailCertification(request, em);
+			} else {
+				map.put("check", false);
+				return map;
+			}
+		} catch (Exception e) {
 		}
-		
 		return map;
 	}
 	
-	/*약관동의서 관리*/
+	/*약관동의서 관리 페이지 이동*/
 	@RequestMapping(value = "/member/agreementAdmin.do")
 	public ModelAndView agreementAdmin () {
 		ModelAndView mav = new ModelAndView();
-		
-		List <Map<String , String>> service = memberService.serviceagree();
-		List <Map<String , String>> information = memberService.informationagree();
-		
-		mav.addObject("service", service);
-		mav.addObject("information", information);
+		try {
+			List <Map<String , String>> service = memberService.serviceagree();
+			List <Map<String , String>> information = memberService.informationagree();
+			
+			mav.addObject("service", service);
+			mav.addObject("information", information);
+			
+		} catch (Exception e) {
+		}
 		return mav;
 	}
 	@RequestMapping(value = "/member/agreementAdminEnd.do")
@@ -1507,6 +1536,7 @@ public class MemberController {
 		
 		return map;
 	}
+	/*서비스 삭제*/
 	@RequestMapping(value = "/member/serviceOneDeleteEnd.do")
 	@ResponseBody
 	public Map<String, Object> serviceOneDeleteEnd ( @RequestParam(value = "sno") String sno ) {
@@ -1523,6 +1553,7 @@ public class MemberController {
 		
 		return map;
 	}
+	/*약관동의서 삭제*/
 	@RequestMapping(value = "/member/informationOneDeleteEnd.do")
 	@ResponseBody
 	public Map<String, Object> informationOneDeleteEnd ( @RequestParam(value = "ino") String ino ) {
@@ -1539,36 +1570,45 @@ public class MemberController {
 		
 		return map;
 	}
-	
+	/*서비스동의 문서 수정*/
 	@RequestMapping(value = "/member/serviceInsertEnd.do")
 	@ResponseBody
 	public Map<String, Object> serviceInsertEnd ( @RequestParam(value = "scontent") String scontent ) {
 		Map<String, Object> map = new HashMap<>();
 		
 		System.out.println(scontent);
-		int result = memberService.insertScontent(scontent);
-		
-		if(result ==1) {
-			map.put("check", true);
-		}else {
-			map.put("check", false);
+		try {
+			int result = memberService.insertScontent(scontent);
+			
+			if(result ==1) {
+				map.put("check", true);
+			}else {
+				map.put("check", false);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		
 		return map;
 	}
-	
+	/*약관 동의 문서 수정*/
 	@RequestMapping(value = "/member/informationInsertEnd.do")
 	@ResponseBody
 	public Map<String, Object> informationInsertEnd ( @RequestParam(value = "icontent") String icontent ) {
 		Map<String, Object> map = new HashMap<>();
 		
 		System.out.println(icontent);
-		int result = memberService.insertIcontent(icontent);
-		
-		if(result ==1) {
-			map.put("check", true);
-		}else {
-			map.put("check", false);
+		try {
+			int result = memberService.insertIcontent(icontent);
+			
+			if(result ==1) {
+				map.put("check", true);
+			}else {
+				map.put("check", false);
+			}
+			
+		} catch (Exception e) {
 		}
 		
 		return map;
@@ -1615,8 +1655,11 @@ public class MemberController {
 				mav.setViewName("common/msg");
 			}
 		}
-		List<Map<String, String>> kindList = ls.selectKindList();
-		mav.addObject("kindList", kindList);
+		try {
+			List<Map<String, String>> kindList = ls.selectKindList();
+			mav.addObject("kindList", kindList);
+		} catch (Exception e) {
+		}
 
 		return mav;
 	}
@@ -1630,18 +1673,18 @@ public class MemberController {
 		mav.addObject("list",list);
 		return mav;
 	}
-	
+	/* 경험치 1개 수정 */
 	@RequestMapping(value = "/member/changOneEXP.do" , method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> changOneEXP ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "exp") String exp ) {
 		Map<String, Object> map = new HashMap<>();
-		
-		System.out.println(mno);
-		System.out.println(exp);
 		Map<String,String> expMap = new HashMap<>();
-		expMap.put("mno", mno);
-		expMap.put("exp", exp);
-		int result = memberService.changOneEXP(expMap);
+		int result =0;
+		try {
+			result = memberService.changOneEXP(expMap);
+		} catch (Exception e) {
+			map.put("check", false);
+		}
 		
 		if(result ==1) {
 			map.put("check", true);
@@ -1651,6 +1694,7 @@ public class MemberController {
 		
 		return map;
 	}
+	/* 성실포인트 1개 수정 */
 	@RequestMapping(value = "/member/changOnePOINT.do" , method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> changOnePOINT ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "point") String point ) {
@@ -1661,7 +1705,12 @@ public class MemberController {
 		Map<String,String> expMap = new HashMap<>();
 		expMap.put("mno", mno);
 		expMap.put("point", point);
-		int result = memberService.changOneEXP(expMap);
+		int result = 0;
+		try {
+			result= memberService.changOneEXP(expMap);
+		} catch (Exception e) {
+			map.put("check", false);
+		}
 		
 		if(result ==1) {
 			map.put("check", true);
@@ -1671,6 +1720,7 @@ public class MemberController {
 		
 		return map;
 	}
+	/* 지식포인트 1개 수정 */
 	@RequestMapping(value = "/member/changOneNPOINT.do" , method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> changOneNPOINT ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "npoint") String npoint ) {
@@ -1681,8 +1731,12 @@ public class MemberController {
 		Map<String,String> expMap = new HashMap<>();
 		expMap.put("mno", mno);
 		expMap.put("npoint", npoint);
-		int result = memberService.changOneEXP(expMap);
-		
+		int result = 0;
+		try {
+			result = memberService.changOneEXP(expMap);
+		}catch (Exception e) {
+			map.put("check", false);
+		}
 		if(result ==1) {
 			map.put("check", true);
 		}else {
@@ -1724,20 +1778,24 @@ public class MemberController {
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String,String>> list = new ArrayList<>();
 		int result = 0;
-		for(int i = 0 ; i < mno.length;i++) {
-			Map<String,String> expMap = new HashMap<>();
-			expMap.put("mno", mno[i]);
-			result = memberService.changEXPMINUS(expMap );
+		try {
+			for(int i = 0 ; i < mno.length;i++) {
+				Map<String,String> expMap = new HashMap<>();
+				expMap.put("mno", mno[i]);
+				result = memberService.changEXPMINUS(expMap );
+				
+				Map<String,String> getExp = new HashMap<>();
+				getExp = memberService.getExp(expMap );
+				list.add(getExp);
+			}
+			System.out.println(map);
+			if(result ==1) {
+				map.put("check", true);
+			}else {
+				map.put("check", false);
+			}
 			
-			Map<String,String> getExp = new HashMap<>();
-			getExp = memberService.getExp(expMap );
-			list.add(getExp);
-		}
-		System.out.println(map);
-		if(result ==1) {
-			map.put("check", true);
-		}else {
-			map.put("check", false);
+		} catch (Exception e) {
 		}
 		map.put("list", list);
 		return map;
@@ -1749,21 +1807,25 @@ public class MemberController {
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String,String>> list = new ArrayList<>();
 		int result = 0;
-		for(int i = 0 ; i < mno.length;i++) {
-			Map<String,String> expMap = new HashMap<>();
-			expMap.put("mno", mno[i]);
-			result = memberService.changPOINTPLUS(expMap );
+		try {
+			for(int i = 0 ; i < mno.length;i++) {
+				Map<String,String> expMap = new HashMap<>();
+				expMap.put("mno", mno[i]);
+				result = memberService.changPOINTPLUS(expMap );
+				
+				Map<String,String> getExp = new HashMap<>();
+				getExp = memberService.getPoint(expMap );
+				
+				list.add(getExp);
+			}
+			System.out.println(map);
+			if(result ==1) {
+				map.put("check", true);
+			}else {
+				map.put("check", false);
+			}
 			
-			Map<String,String> getExp = new HashMap<>();
-			getExp = memberService.getPoint(expMap );
-			
-			list.add(getExp);
-		}
-		System.out.println(map);
-		if(result ==1) {
-			map.put("check", true);
-		}else {
-			map.put("check", false);
+		} catch (Exception e) {
 		}
 		map.put("list", list);
 		return map;
@@ -1776,20 +1838,23 @@ public class MemberController {
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String,String>> list = new ArrayList<>();
 		int result = 0;
-		for(int i = 0 ; i < mno.length;i++) {
-			Map<String,String> expMap = new HashMap<>();
-			expMap.put("mno", mno[i]);
-			result = memberService.changPOINTMINUS(expMap );
-			
-			Map<String,String> getExp = new HashMap<>();
-			getExp = memberService.getPoint(expMap );
-			list.add(getExp);
-		}
-		System.out.println(map);
-		if(result ==1) {
-			map.put("check", true);
-		}else {
-			map.put("check", false);
+		try {
+			for(int i = 0 ; i < mno.length;i++) {
+				Map<String,String> expMap = new HashMap<>();
+				expMap.put("mno", mno[i]);
+				result = memberService.changPOINTMINUS(expMap );
+				
+				Map<String,String> getExp = new HashMap<>();
+				getExp = memberService.getPoint(expMap );
+				list.add(getExp);
+			}
+			System.out.println(map);
+			if(result ==1) {
+				map.put("check", true);
+			}else {
+				map.put("check", false);
+			}
+		} catch (Exception e) {
 		}
 		map.put("list", list);
 		return map;
@@ -1801,21 +1866,25 @@ public class MemberController {
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String,String>> list = new ArrayList<>();
 		int result = 0;
-		for(int i = 0 ; i < mno.length;i++) {
-			Map<String,String> expMap = new HashMap<>();
-			expMap.put("mno", mno[i]);
-			result = memberService.changNPOINTPLUS(expMap );
+		try {
+			for(int i = 0 ; i < mno.length;i++) {
+				Map<String,String> expMap = new HashMap<>();
+				expMap.put("mno", mno[i]);
+				result = memberService.changNPOINTPLUS(expMap );
+				
+				Map<String,String> getExp = new HashMap<>();
+				getExp = memberService.getNPoint(expMap );
+				
+				list.add(getExp);
+			}
+			System.out.println(map);
+			if(result ==1) {
+				map.put("check", true);
+			}else {
+				map.put("check", false);
+			}
 			
-			Map<String,String> getExp = new HashMap<>();
-			getExp = memberService.getNPoint(expMap );
-			
-			list.add(getExp);
-		}
-		System.out.println(map);
-		if(result ==1) {
-			map.put("check", true);
-		}else {
-			map.put("check", false);
+		} catch (Exception e) {
 		}
 		map.put("list", list);
 		return map;
@@ -1828,20 +1897,25 @@ public class MemberController {
 		Map<String, Object> map = new HashMap<>();
 		List<Map<String,String>> list = new ArrayList<>();
 		int result = 0;
-		for(int i = 0 ; i < mno.length;i++) {
-			Map<String,String> expMap = new HashMap<>();
-			expMap.put("mno", mno[i]);
-			result = memberService.changNPOINTMINUS(expMap );
+		try {
+			for(int i = 0 ; i < mno.length;i++) {
+				Map<String,String> expMap = new HashMap<>();
+				expMap.put("mno", mno[i]);
+				result = memberService.changNPOINTMINUS(expMap );
+				
+				Map<String,String> getExp = new HashMap<>();
+				getExp = memberService.getNPoint(expMap );
+				list.add(getExp);
+			}
+			System.out.println(map);
+			if(result ==1) {
+				map.put("check", true);
+			}else {
+				map.put("check", false);
+			}
 			
-			Map<String,String> getExp = new HashMap<>();
-			getExp = memberService.getNPoint(expMap );
-			list.add(getExp);
-		}
-		System.out.println(map);
-		if(result ==1) {
-			map.put("check", true);
-		}else {
-			map.put("check", false);
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 		map.put("list", list);
 		return map;
