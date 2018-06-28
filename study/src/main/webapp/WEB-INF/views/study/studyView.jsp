@@ -71,7 +71,7 @@ function studyWish(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//찜하기를 이미 선택했다면 다시 누르면 찜하기에서 삭제됨.
 	var mno=${memberLoggedIn!=null? memberLoggedIn.getMno():"0"};
-	if(${memberLoggedIn!=null}){//로그인을 한 상황
+	if(${memberLoggedIn!=null}){//로그인을 한 상황..
 		
 		if($("input#isWish").val()==0){//사용자는 전에 찜하지 않았음.
 			$.ajax({
