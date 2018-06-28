@@ -445,8 +445,13 @@ $(function(){
 		
 		<select name="endtime" id="endtime" class="time">
 			<c:forEach var="j" begin="7" end="24">
-				<option value="${j }:00">${j }:00</option>			
-			</c:forEach>
+			<c:if test="${j < 24}">
+				<option value="${j }:00">${j }:00</option>	
+			</c:if>
+			 <c:if test="${j == 24 }">
+				<option value="${j }:00" selected>${j }:00</option>		 
+			 </c:if>
+		</c:forEach>
 		</select>
 		<br />
 		

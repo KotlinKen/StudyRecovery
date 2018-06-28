@@ -335,7 +335,7 @@ public class LectureContoller {
 		terms.put("kno", kno);
 		terms.put("dno", dno);
 		terms.put("leadername", leadername);
-		terms.put("cPage", cPage + 1);
+		terms.put("cPage", cPage);
 		terms.put("numPerPage", numPerPage);
 
 		// 검색 조건에 따른 총 스터기 갯수
@@ -345,7 +345,7 @@ public class LectureContoller {
 		List<Map<String, Object>> lectureList = ls.selectLectureListBySearch(terms);
 		mav.addObject("list", lectureList);
 		mav.addObject("total", total);
-		mav.addObject("cPage", cPage);
+		mav.addObject("cPage", cPage+1);
 
 		return mav;
 	}
@@ -526,4 +526,43 @@ public class LectureContoller {
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
+	
+	@ResponseBody
+	@RequestMapping("/lecture/uploadImage.do")
+	public Map<String,String> uploadImage(@RequestParam("file") MultipartFile f,HttpServletRequest request) {
+
+		String renamedFileName="";
+		String saveDirectory="";
+		Map<String,String> map=new HashMap<>();
+	
+		try { 
+			//1. 파일업로드처리
+			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+				if(!f.isEmpty()) {
+					//파일명재생성
+					String originalFileName = f.getOriginalFilename();
+					String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+					int rndNum = (int)(Math.random()*1000); //0~9999
+					renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+				
+					try {
+						f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제저장하는코드. 
+					} catch (IllegalStateException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				
+				}
+			
+			}catch(Exception e) {
+				throw new RuntimeException("이미지등록오류");
+			}
+		
+		map.put("url", renamedFileName);
+		return map;
+	}
+	
+	
 }

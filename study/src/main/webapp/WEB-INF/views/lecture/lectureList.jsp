@@ -6,28 +6,35 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp"/>
 <script src="${pageContext.request.contextPath }/resources/js/jquery-3.3.1.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+<style>
+p.noMore{
+	display:none;
+}
+</style>
 <script>
-	$(document).ready(function(){
-	    $("div#lecture-container").on("click","div.lectureOne",function(){
+   $(document).ready(function(){
+       $("#town").hide(); 
+       $("#sub").hide(); 
+       
+       $("p#noMore").addClass("noMore");
+      
+       //강의 클릭시 강의 상세보기 이동 이벤트
+       $("div#lecture-container").on("click","div.lectureOne",function(){
 	       var sno = $(this).children("input").val();
 	       var mno=${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 	       
 	       location.href="${pageContext.request.contextPath}/lecture/lectureView.do?sno=" + sno +"&mno=" + mno;
 	    });
-	 });   
-   
-   $(document).ready(function(){
-      /* $("#town").hide(); */
-   /*    $("#sub").hide(); */
-      
+       
+       
       // TOWN선택
       $("#local").on("change", function(){
          var localNo = $("option:selected", this).val();
          
-         /* if(localNo == ""){
+          if(localNo == "0"){
             $("#town").hide();
             return;
-         } */
+         } 
          
          $("#town").show();
          
@@ -50,10 +57,10 @@
       $("#kind").on("change", function(){
          var kindNo = $("option:selected", this).val();
          
-         /* if(kindNo == ""){
+          if(kindNo == "0"){
             $("#sub").hide();
             return;
-         } */
+         } 
          
          $("#sub").show();
          
@@ -124,19 +131,24 @@
 				dataType: "json",
 				success: function( data ){
 					var html="";
-		        	for(index in data.list){
-		        	    html+="<div class='lectureOne'>";
-		        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+data.list[index].LOCAL+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
-		        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
-		        		html+="</div>";
-		        	}
+					if(data.list.length>0){
+						for(index in data.list){
+			        	    html+="<div class='lectureOne'>";
+			        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+data.list[index].LOCAL+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+			        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
+			        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
+			        		html+="</div>";
+			        	}
+					}else{
+						html+="<span>해당 강의가 없습니다.<span>";
+					}
+		        	
 					$("div#lecture-container").html(html); 
 					$("input#total").val(data.total);
 					$("input#cPageNo").val(data.cPage);
@@ -281,7 +293,12 @@
 			        	
 			    	}
 			 	});//ajax 끝
-			 }//if문 끝			
+			 }else{
+				  if(!$("p#noMore").prop("noMore")){
+					  $("p#noMore").addClass("noMore");  
+				  }
+				  
+			  }//if문 끝			
 		}    
    });
 </script>
@@ -292,7 +309,7 @@
       <!-- 지역 -->
       <label for="local">지역 : </label>
       <select name="local" id="local">
-         <option value="0" selected>지역</option>
+         <option value="0" selected>전체</option>
          <c:if test="${!empty locList}">
             <c:forEach var="loc" items="${locList }" varStatus="vs">
                <option value="${loc.LNO }">${loc.LOCAL }</option>
@@ -302,13 +319,13 @@
       &nbsp; 
       
       <select name="tno" id="town">
-       <option value='0'>세부 지역을 선택하세요</option>
+       <option value='0'>전체</option>
       </select> 
       
       <!-- 카테고리 -->
       <label for="kind">카테고리</label>
       <select name="kind" id="kind"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
-         <option value="0">과목을 선택하세요.</option>
+         <option value="0">전체</option>
          
          <c:if test="${!empty kindList }">
          <c:forEach var="kind" items="${kindList }" varStatus="vs">
@@ -319,14 +336,14 @@
       
       <!-- ajax로 subject가져오기 -->
       <select name="subno" id="sub"> 
-      	<option value='0'>세부 과목을 선택하세요</option>
+      	<option value='0'>전체</option>
       </select>
       <!-- 카테고리 end -->
       &nbsp;       
       
       <label for="diff">난이도 : </label>
       <select name="dno" id="diff">
-         <option value="0">난이도를 선택하세요</option>
+         <option value="0">전체</option>
          
          <c:if test="${!empty diffList }">
             <c:forEach var="diff" items="${diffList }" varStatus="vs">
@@ -346,6 +363,7 @@
       <div id="lecture-container">
          
       </div>
+      <p id="noMore">더이상 강의가 존재하지 않습니다.</p>
       
        <!-- 페이징시 필요한 값 저장 -->	
 	 <input type="hidden" id="cPageNo" value="1" />
