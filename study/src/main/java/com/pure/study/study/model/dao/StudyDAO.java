@@ -61,6 +61,8 @@ public interface StudyDAO {
 
 	int selectApplyCount(int sno);
 
+	List<Map<String,Object>> selectOwnStudyList(int mno);
+
 	
 
 }

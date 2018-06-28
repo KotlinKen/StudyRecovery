@@ -143,75 +143,131 @@ public class StudyController {
 		i=0;
 		
 		logger.debug("upFiles.length="+upFiles.length);
+		
+		//이미 등록된 스터디 중,  중복된 시간 스터디 검사
+		//List<Map<String,Object>> ownStudyList=studyService.selectOwnStudyList(m.getMno());
+	
+		int cnt=0; //겹치는 여부 검사. 안겹치면 0 겹치면 1
+		
+		String[] times=study.getTime().split("~");
+		int sHour = Integer.parseInt(times[0].split(":")[0]);
+		int eHour = Integer.parseInt(times[1].split(":")[0]);
+		
+		System.out.println("sHour="+sHour);
+		System.out.println("eHour="+eHour);
+		String msg="";
+		String loc="/";
+		// 같은 날짜, 요일, 시간에 있는지를 검사해봅시다..
+		List<Map<String,Object>> ownStudyList=studyService.selectOwnStudyList(m.getMno());
+	      long lectureSdate = study.getSdate().getTime();
+	      long lectureEdate = study.getEdate().getTime();
+	      
+	      for(int j = 0; j < ownStudyList.size(); j++) {
+	         Date sdate =(Date) ownStudyList.get(j).get("SDATE");
+	         Date edate =(Date) ownStudyList.get(j).get("EDATE");
+	        
+	        	// 등록된 날짜들에 포함되지 않는 경우
+		         if( lectureEdate < sdate.getTime() || lectureSdate > edate.getTime() ) {
+		           System.out.println("등록된 날짜에 포함되지 않는 경우.");
+		         }
+		         // 포함되는 경우
+		         else if ( lectureSdate >= sdate.getTime() || lectureEdate <= edate.getTime()) {
+		        	 System.out.println("포함되는 경우");
+		            // 요일을 검사해보자...
+		        	for(int k=0;k<freq.length;k++) {
+		        		if(ownStudyList.get(j).containsValue(freq[k])) {
+		        			System.out.println("ddddddd"+Integer.parseInt(ownStudyList.get(j).get("STARTTIME").toString()));
+		        			
+		        			
+		        			//등록된 시간에 포함되지 않는 경우
+		        			if(Integer.parseInt(ownStudyList.get(j).get("STARTTIME").toString()) > eHour || sHour > Integer.parseInt(ownStudyList.get(j).get("ENDTIME").toString()) ) {
+		        				 System.out.println("등록된 시간에 포함되지 않는 경우");
+		        			}else {
+		        				System.out.println("등록된 시간에 포함되는 경우 중복이다!!!!!!!!!!!!!!!!");
+		        				cnt++;
+		        			}
+		        		}else{
+		        			System.out.println("등록된 요일에 포함되지 않는 경우");
+		        			
+		        		}//요일포함검사 if문
+		        	}//요일 포함 검사. for문 end
+		        	 
+		         }//날짜 포함되는 경우 if문 end
+	      }   
+		
+		if(cnt==0) {
 
-		
-		System.out.println("study="+study);
-		study.setMno(m.getMno()); 
-		System.out.println("study.mno"+study.getMno());
-		//스터디 생성하기 
-		int result = studyService.insertStudy(study);
-		
-		//스터디 생성 성공하면, 첨부 사진들 폴더에 저장, db에 저장
-		if(result>0) {
-			try { //최초 메소드 부른 곳은 controller이기때문에 여기서 에러 처리함. 
-				
-				//1. 파일 업로드 처리 
-				String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/study");
-				//List<Attachment> attachList = new ArrayList<>();
-				System.out.println("save"+saveDirectory);
-				/********* MultipartFile을 이용한 파일 업로드 처리 로직 시작 ********/
-				for(MultipartFile f : upFiles) {
-					
-					if(!f.isEmpty()) {
-						//파일명 재생성
-						String originalFileName = f.getOriginalFilename();
-						String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
-						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
-						int rndNum = (int)(Math.random()*1000); //0~9999
-						String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
-						
-						try {
-							
-							//저장하는 걸, study insert 성공하고 해야 하는 것이 아닌가.? 
-							f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제 저장하는 코드. 
-						} catch (IllegalStateException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						if(i!=0) {
-							imgs+=",";
-						}
-						imgs+=renamedFileName;
-						i++;
-					}
-				}
-		
-				System.out.println("imgs="+imgs);
-			}catch(Exception e) {
-				throw new RuntimeException("스터디 등록 오류");
-			}
+			System.out.println("study="+study);
+			study.setMno(m.getMno()); 
+			System.out.println("study.mno"+study.getMno());
+			//스터디 생성하기 
+			int result = studyService.insertStudy(study);
 			
+			//스터디 생성 성공하면, 첨부 사진들 폴더에 저장, db에 저장
+			if(result>0) {
+				try { //최초 메소드 부른 곳은 controller이기때문에 여기서 에러 처리함. 
+					
+					//1. 파일 업로드 처리 
+					String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/study");
+					//List<Attachment> attachList = new ArrayList<>();
+					System.out.println("save"+saveDirectory);
+					/********* MultipartFile을 이용한 파일 업로드 처리 로직 시작 ********/
+					for(MultipartFile f : upFiles) {
+						
+						if(!f.isEmpty()) {
+							//파일명 재생성
+							String originalFileName = f.getOriginalFilename();
+							String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+							int rndNum = (int)(Math.random()*1000); //0~9999
+							String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+							
+							try {
+								
+								//저장하는 걸, study insert 성공하고 해야 하는 것이 아닌가.? 
+								f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제 저장하는 코드. 
+							} catch (IllegalStateException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							if(i!=0) {
+								imgs+=",";
+							}
+							imgs+=renamedFileName;
+							i++;
+						}
+					}
+			
+					System.out.println("imgs="+imgs);
+				}catch(Exception e) {
+					throw new RuntimeException("스터디 등록 오류");
+				}
+				
+			}
+			/********* MultipartFile을 이용한 파일 업로드 처리 로직 끝 ********/
+			study.setUpfile(imgs);
+			
+			result = studyService.updateStudyImg(study);
+			
+			if(result>0) {
+				msg="스터디 등록 성공";
+			}else
+				msg="스터디 등록 실패";
+			
+		}else {
+			msg="중복된 강의나 스터디가 존재합니다.";
 		}
-		/********* MultipartFile을 이용한 파일 업로드 처리 로직 끝 ********/
-		study.setUpfile(imgs);
-		
-		result = studyService.updateStudyImg(study);
+		loc="/study/studyList.do";
 		
 		//3. view단 분기
-		String loc="/";
-		String msg="";
-		if(result>0) {
-			msg="스터디 등록 성공";
-			loc="/study/studyList.do";
-		}else
-			msg="스터디 등록 실패";
+		
 		
 		mav.addObject("msg",msg);
 		mav.addObject("loc",loc);
-		mav.addObject("memberLoggedIn",m);
+		/*mav.addObject("memberLoggedIn",m);*/
 		mav.setViewName("common/msg");
 		
 		return mav;

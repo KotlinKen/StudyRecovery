@@ -47,7 +47,6 @@ $(document).ready(function() {
  		  enctype:'multipart/form-data',
  		  success:function(data){ 
  			  
- 		  	  console.log("dddd : "+data.url);
  		  	  var file=$("<img>").attr("src",
  		  			  "${pageContext.request.contextPath }/resources/upload/study/"+data.url);
  			  $(el).summernote('insertNode',file[0]);
@@ -96,6 +95,30 @@ function validate(){
 		alert("요일을 선택하세요");
 		return false;	
 	}
+	
+	
+	
+		// 시작 시간
+		var startTime = $("#starttime");
+		var startTimeVal = startTime.val();
+		var startTimeArray = startTimeVal.split(":");
+		var start = Number(startTimeArray[0]);		
+		
+		// 마감 시간
+		var endTime = $("#endtime");
+		var endTimeVal = $("#endtime").val();
+		var endTimeArray = endTimeVal.split(":");
+		var end = Number(endTimeArray[0]);	
+		
+		// 시작시간이 마감시간보다 클 경우.
+		if( start > end ){
+			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
+			startTime.val("6:00");
+			endTime.val("7:00");
+			return false;
+		}
+ 
+	
 	
 	// time만들기.
 	var startTime = $("#starttime option:checked").val();
@@ -152,13 +175,10 @@ $(function(){
 		success:function(data){
 			var html="<option>선택하세요</option>";
 			for(var index in data){
-				//console.log(data[index]);
 				html +="<option value='"+data[index].LNO+"'>"+data[index].LOCAL+"</option><br/>";
 			}
 			$("select#local").html(html); 
 			
-			
-		},error:function(){
 			
 		}
 	}); 
@@ -364,7 +384,7 @@ $(function(){
 		}		
 	});
 	
-	$(".time").on("change", function(){
+	/* $(".time").on("change", function(){
 		// 시작 시간
 		var startTime = $("#starttime");
 		var startTimeVal = startTime.val();
@@ -383,7 +403,7 @@ $(function(){
 			startTime.val("6:00");
 			endTime.val("7:00");
 		}
-	});
+	}); */
 	
 });
 

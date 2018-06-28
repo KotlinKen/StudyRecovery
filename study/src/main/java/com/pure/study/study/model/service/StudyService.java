@@ -61,5 +61,7 @@ public interface StudyService {
 
 	int selectApplyCount(int sno);
 
+	List<Map<String, Object>> selectOwnStudyList(int mno);
+
 
 }

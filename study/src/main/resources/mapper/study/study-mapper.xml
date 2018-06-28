@@ -157,7 +157,7 @@
   <select id="studyDeadlineCount" resultType="_int">
 	  select  count(*) cnt
 	  from 	  study s 
-	  where   s.type='study' and s.ldate>=sysdate
+	  where   s.type='study' and s.status in ('모집 중','마감 임박')
 	  order by s.ldate
   </select>
   
@@ -169,7 +169,7 @@
 	  from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='study' 
+	        where s.type='study' and s.status in ('모집 중','마감 임박','진행 중')
 	        group by s.sno 
 	      ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
 	  order by cnt desc, s.REGDATE
@@ -181,7 +181,7 @@
 	  from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='study' 
+	        where s.type='study' and s.status in ('모집 중','마감 임박','진행 중')
 	        group by s.sno 
 	        order by cnt desc
 	       )
@@ -207,5 +207,13 @@
   	select count(*) cnt from apply where sno=#{sno}
   </select>
   
+  
+  <select id="selectOwnStudyList" resultMap="mapForStudy">
+  	select title,time, substr(time,0,instr(time,':')-1) starttime,substr(time,instr(time,'~')+1,instr(time,':',-1)-instr(time,'~')-1) endtime,
+       	   sdate,edate,freq
+	from study 
+	where mno=#{mno}
+  
+  </select>
   
 </mapper>
