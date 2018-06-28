@@ -31,8 +31,8 @@ span.guide.ok {color: green;}
 span.guide.error{color: red;}
 span#nameok {color: green;}
 span#nameerr{color: red;}
-span.name{ position: absolute;top:418px;right:29%;}
-span.phone{ position: absolute;top:480px;right:29%;}
+span.name{ position: relative;top:0px;left:2%;}
+span.phone{ position: relative;top:0px;left:2%;}
 span#phoneerr{color: red;}
 span#pwd {font-size: 15px;position: absolute;right:2%;top:135px;color:red;}
 span#pwdok {font-size:15px;position:absolute;right:2%;top:135px;color:green;}
@@ -325,7 +325,7 @@ textarea {
 			$("#port").change(function() {
 				var ext = $("#port").val().split(".").pop().toLowerCase();
 				if (ext.length > 0) { 
-					if ($.inArray(ext, [ "txt", "hwp", "docx","pptx" ,"ppt","xlsx","xlsx"]) == -1) {
+					if ($.inArray(ext, [ "txt", "hwp", "docx","pptx" ,"ppt","xls","xlsx"]) == -1) {
 						alert("txt,hwp,docx,pptx,ppt,xlsx,xlsx 파일만 업로드 할수 있습니다.");
 						$("#port").val("");
 						return false;
@@ -335,7 +335,7 @@ textarea {
 			$("#self").change(function() {
 				var ext = $("#self").val().split(".").pop().toLowerCase();
 				if (ext.length > 0) { 
-					if ($.inArray(ext, [ "txt", "hwp", "docx","pptx" ,"ppt","xlsx","xlsx"]) == -1) {
+					if ($.inArray(ext, [ "txt", "hwp", "docx","pptx" ,"ppt","xls","xlsx"]) == -1) {
 						alert("txt,hwp,docx,pptx,ppt,xlsx,xlsx 파일만 업로드 할수 있습니다.");
 						$("#self").val("");
 						return false;
@@ -456,6 +456,26 @@ textarea {
 				}
 				document.getElementById("phoneerr").innerHTML = "";
 			}); 
+		 
+		 $("#userId_").click(function(){
+				$(".guide.error").hide();
+				$(".guide.ok").hide();
+				$("#idDuplicateCheck").val(0);
+			});
+			$("#userId_").blur(function(){
+				fn_checkID();
+			});
+			$("#password_").click(function(){
+				 document.getElementById("pwd").innerHTML = "";
+				 document.getElementById("pwdok").innerHTML = "";
+			});
+			$("#password2").click(function(){
+				 document.getElementById("pwd2").innerHTML = "";
+				 document.getElementById("pwd2ok").innerHTML = "";
+			});
+			$("#phone").click(function(){
+				 document.getElementById("phoneerr").innerHTML = "";
+			});
 		});
 		/* 아이디 확인  */
 		function fn_checkID() {
@@ -465,14 +485,12 @@ textarea {
 				$(".guide.error").html("아이디는 4글자 이상 입니다.");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().trim().length > 11) { 
 				$(".guide.error").html("아이디는 10글자 이하 입니다.");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().indexOf(" ") >= 0) {
@@ -480,28 +498,24 @@ textarea {
 				$(".guide.error").html("아이디는 공백을 사용할 수 없습니다");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().search(/[!@#$%^&*()?_~]/g) >= 0) {
 				$(".guide.error").html("아이디는 특수문자를 사용할 수 없습니다");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) >= 0) {
 				$(".guide.error").html("아이디는 한글을 사용할 수 없습니다");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if(userId.val().search(/[a-z|A-Z]/g)==-1){
 				$(".guide.error").html("숫자만 입력하면 안됩니다.");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			
@@ -527,6 +541,8 @@ textarea {
 					console.log("ajax실패", jqxhr, textStatus, errorThrown);
 				}
 			});
+			
+			
 		}
 		function validate() {
 			/* id */
@@ -714,6 +730,27 @@ textarea {
 				cache : false,
 				processData : false
 			});
+			
+			var kind = $("#kind");
+			if(kind.val() == -1){
+				kind.focus();
+				return false;
+			}
+			var sno = $("#sub");
+			if(sno.val()==-1){
+				sno.focus();
+				return false;
+			}
+			var port = $("#port");
+			if(port.val()== ""){
+				port.focus();
+				return false;
+			}
+			var self = $("#self");
+			if(self.val()== ""){
+				self.focus();
+				return false;
+			}
 		}
 		
 		/* 이메일 인증번호 확인 */
@@ -782,7 +819,7 @@ textarea {
 					data: {kindNo : kindNo},
 					dataType: "json",
 					success : function(data){
-						var html="<option>세부 과목을 선택하세요</option>";
+						var html="<option value='-1'>세부 과목을 선택하세요</option>";
 						
 						for(var index in data){
 							html += "<option value='"+data[index].SUBNO +"'>" + data[index].SUBJECTNAME + "</option></br>";
@@ -835,7 +872,7 @@ textarea {
 			
 			<!-- 전화번호 -->
 			<input type="text" name="phone" id="phone" maxlength="11" placeholder="전화번호(필수)" required required autocomplete="off"  /> <br /> 
-			<span id="phoneerr" class="phone"></span> 
+			<span id="phoneerr" class="phone"></span> <br />
 			
 			<!-- 이메일 -->
 			<input type="text" name="email" id="email" placeholder="이메일(필수)" required  maxlength="15"  autocomplete="off"  /> @ 
@@ -857,17 +894,23 @@ textarea {
 			</div>
 			<div class="blank-ik"></div>
 			<br /><br />
+
+			<!-- 사진 올리기 -->
 			프로필사진(필수) : <input type="file" name="upFile" id="upFile" accept="image/*" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='no' />
 			<div id="div-img-ik"></div>
 			<br />
 			<br />
+			
+			<!-- 파일 올리기 -->
 			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br /><br />
 			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
+			
+			<!-- 카테고리 설정 -->
 			<div class="form-check-inline form-check">
 				<label for="kind">카테고리</label>
 				<select name="kno" id="kind"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
-					<option value="">과목을 선택하세요.</option>
+					<option value="-1">과목을 선택하세요.</option>
 					
 					<c:if test="${!empty kindList }">
 					<c:forEach var="kind" items="${kindList }" varStatus="vs">

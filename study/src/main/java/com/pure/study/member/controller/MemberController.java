@@ -1160,7 +1160,6 @@ public class MemberController {
 		// 큰 분류 리스트
 		List<Map<String, String>> kindList = ls.selectKindList();
 		mav.addObject("kindList", kindList);
-			
 		mav.addObject("list", list);
 		return mav;
 	}
@@ -1329,7 +1328,7 @@ public class MemberController {
 		
 	}
 	
-	
+	/*강사 신청 페이지 이동*/
 	@RequestMapping("/member/instructorApply.do")
 	public ModelAndView instructorApply(@RequestParam(value="mno",required=false , defaultValue="-1") int mno,
 								  @RequestParam(value="mid",required=false, defaultValue="-1") String mid ) {
@@ -1350,7 +1349,9 @@ public class MemberController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
-		
+		// 큰 분류 리스트
+		List<Map<String, String>> kindList = ls.selectKindList();
+		mav.addObject("kindList", kindList);
 		mav.addObject("mno", mno);
 		mav.addObject("mid", mid);
 		return mav;
@@ -1360,7 +1361,7 @@ public class MemberController {
 	public ModelAndView instructorApplyEnd(@RequestParam(value="psFile",required=false) MultipartFile[] psFiles
 			,@RequestParam(value="mno",required=false) int mno,@RequestParam(value="mid",required=false) String mid
 			,@RequestParam(value="kno",required=false) int kno,@RequestParam(value="sno",required=false) int sno
-			,@RequestParam(value="email",required=false) String[] email,HttpServletRequest request) {
+			,HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		/****** MultipartFile을 이용한 파일 업로드 처리로직 시작
 		파일이름변경 파일이름+ 아이디 + 날짜  */
@@ -1388,10 +1389,6 @@ public class MemberController {
 				list.add(renamedFileName);
 			}
 		}
-		System.out.println(email);
-		String em = email[0]+"@"+email[1];
-		System.out.println(em);
-		System.out.println("list : "+list);
 		Instructor instructor = new Instructor();
 		instructor.setPortpolio(list.get(0));
 		instructor.setSelfintroduction(list.get(1));
@@ -1408,7 +1405,6 @@ public class MemberController {
 			}else {
 				result = memberService.updateInstructorEnrollEnd(instructor);
 			}
-			memberService.deleteCertification(em);
 		} catch (Exception e) {
 			msg = "강사신청이 실패했습니다. 관리자에게 문의 하세요";
 			mav.addObject("loc", loc);
@@ -1585,6 +1581,7 @@ public class MemberController {
 		return "common/msg";
 	}
 	
+	/* 회원가입 -> 성공 -> 강사 신청 */
 	@RequestMapping(value="/member/memberLoginInstruct.do", method = RequestMethod.POST)
 	public ModelAndView memberLoginInstruct(HttpServletRequest request, @RequestParam(value="userId",required=false , defaultValue="-1" ) String userId, @RequestParam(value="pwd",required=false , defaultValue="-1") String pwd) {
 		ModelAndView mav = new ModelAndView();
@@ -1618,6 +1615,8 @@ public class MemberController {
 				mav.setViewName("common/msg");
 			}
 		}
+		List<Map<String, String>> kindList = ls.selectKindList();
+		mav.addObject("kindList", kindList);
 
 		return mav;
 	}

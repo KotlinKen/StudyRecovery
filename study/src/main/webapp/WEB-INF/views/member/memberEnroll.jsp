@@ -31,8 +31,8 @@ span.guide.ok {color: green;}
 span.guide.error{color: red;}
 span#nameok {color: green;}
 span#nameerr{color: red;}
-span.name{ position: absolute;top:418px;right:29%;}
-span.phone{ position: absolute;top:480px;right:29%;}
+span.name{ position: relative;top:0px;left:2%;}
+span.phone{ position: relative;top:0px;left:2%;}
 span#phoneerr{color: red;}
 span#pwd {font-size: 15px;position: absolute;right:2%;top:135px;color:red;}
 span#pwdok {font-size:15px;position:absolute;right:2%;top:135px;color:green;}
@@ -438,6 +438,26 @@ textarea {
 				}
 				document.getElementById("phoneerr").innerHTML = "";
 			}); 
+			$("#userId_").click(function(){
+				$(".guide.error").hide();
+				$(".guide.ok").hide();
+				$("#idDuplicateCheck").val(0);
+			});
+			$("#userId_").blur(function(){
+				fn_checkID();
+			});
+			$("#password_").click(function(){
+				 document.getElementById("pwd").innerHTML = "";
+				 document.getElementById("pwdok").innerHTML = "";
+			});
+			$("#password2").click(function(){
+				 document.getElementById("pwd2").innerHTML = "";
+				 document.getElementById("pwd2ok").innerHTML = "";
+			});
+			$("#phone").click(function(){
+				 document.getElementById("phoneerr").innerHTML = "";
+			});
+			
 		});
 		/* 아이디 확인  */
 		function fn_checkID() {
@@ -447,14 +467,12 @@ textarea {
 				$(".guide.error").html("아이디는 4글자 이상 입니다.");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().trim().length > 11) { 
 				$(".guide.error").html("아이디는 10글자 이하 입니다.");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().indexOf(" ") >= 0) {
@@ -462,28 +480,24 @@ textarea {
 				$(".guide.error").html("아이디는 공백을 사용할 수 없습니다");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().search(/[!@#$%^&*()?_~]/g) >= 0) {
 				$(".guide.error").html("아이디는 특수문자를 사용할 수 없습니다");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if (userId.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) >= 0) {
 				$(".guide.error").html("아이디는 한글을 사용할 수 없습니다");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			if(userId.val().search(/[a-z|A-Z]/g)==-1){
 				$(".guide.error").html("숫자만 입력하면 안됩니다.");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
-				userId.focus();
 				return;
 			}
 			
@@ -791,11 +805,21 @@ textarea {
 			</div>
 			
 			<div id="name-phone-email-gender-div-ik">
-			<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="15" required  autocomplete="off"  />
-			<span id="nameerr" class="name"></span> 
-			<span id="nameok" class="name"></span> <br /> 
-			<input type="text" name="phone" id="phone" maxlength="11"  placeholder="전화번호(필수)" required required autocomplete="off"  /> <br /> 
-			<span id="phoneerr" class="phone"></span> 
+			
+			<!-- 이름 -->
+			<div>
+				<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="15" required  autocomplete="off"  />
+				<span id="nameerr" class="name"></span> 
+				<span id="nameok" class="name"></span> <br /> 
+			</div>
+			
+			<!-- 전화번호 -->
+			<div>
+				<input type="text" name="phone" id="phone" maxlength="11"  placeholder="전화번호(필수)" required required autocomplete="off"  /> <br /> 
+				<span id="phoneerr" class="phone"></span> 
+			</div>
+			<br />
+			<!-- 이메일 -->
 			<input type="text" name="email" id="email" placeholder="이메일(필수)"  maxlength="15" required  autocomplete="off"  /> @ 
 			<input type="text" name="email" id="emailaddr" placeholder="직접입력"  maxlength="20" required  autocomplete="off"  />
 			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-outline-secondary"/> 
@@ -803,7 +827,11 @@ textarea {
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
 			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-outline-secondary" /> 
 			<input type="hidden" id="checkPoint" value="0" /> <br />
+			
+			<!-- 생일 -->
 			<input type="date" name="birth" required/><br />
+			
+			<!-- 성별 -->
 			<span class="jender">
 			<input type="radio" name="gender" value="M" id="male" checked /> <label for="male">남</label> 
 			</span>
@@ -813,13 +841,11 @@ textarea {
 			<br />	<br />
 			</div>
 			
-			
 			<div class="blank-ik"></div>
-			
 			
 			<div id="choos-ik">
 			<br />
-			<button type="button" class="btn btn-outline-secondary" id="btn_upFile">당신은 이쁜 사람입니다. 자신감을 가지세요(선택)</button> <input type="file" name="upFile" id="upFile" /> 
+			<button type="button" class="btn btn-outline-secondary" id="btn_upFile">당신은 이쁜 사람입니다. 자신감을 가지세요(선택)</button> <input type="file" name="upFile" id="upFile" accept="image/*" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='no'> <br /><br />
 			<div id="div-img-ik"></div>
 			<div>
