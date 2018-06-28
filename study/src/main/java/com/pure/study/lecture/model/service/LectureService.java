@@ -49,4 +49,11 @@ public interface LectureService {
 
 	int insertPay(Map<String, Object> map);
 
+	int lectureWishCancel(Map<String, Integer> map);
+
+	List<Map<String, Object>> selectLectureListByMno(int mno);
+
+	int confirmInstructor(int mno);
+
+
 }

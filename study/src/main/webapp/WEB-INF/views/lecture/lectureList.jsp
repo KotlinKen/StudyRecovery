@@ -10,8 +10,9 @@
 	$(document).ready(function(){
 	    $("div#lecture-container").on("click","div.lectureOne",function(){
 	       var sno = $(this).children("input").val();
+	       var mno=${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 	       
-	       location.href="${pageContext.request.contextPath}/lecture/lectureView.do?sno=" + sno;
+	       location.href="${pageContext.request.contextPath}/lecture/lectureView.do?sno=" + sno +"&mno=" + mno;
 	    });
 	 });   
    
@@ -284,7 +285,9 @@
 		}    
    });
 </script>
-   <button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의   작성</button>
+	<c:if test="${check > 0 }">
+	   <button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의 작성</button>	
+	</c:if>
    <div id="lectureList-container">   
       <!-- 지역 -->
       <label for="local">지역 : </label>

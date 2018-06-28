@@ -250,7 +250,7 @@ $(function(){
 		if( start > end ){
 			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
 			startTime.val("6:00");
-			endTime.val("7:00");
+			endTime.val("24:00");
 		}
 	});
 });
@@ -332,7 +332,12 @@ $(function(){
 	</select>
 	<select name="endTime" id="endTime" class="time">
 		<c:forEach var="j" begin="7" end="24">
-			<option value="${j }:00">${j }:00</option>		
+			<c:if test="${j < 24}">
+				<option value="${j }:00">${j }:00</option>	
+			</c:if>
+			 <c:if test="${j == 24 }">
+				<option value="${j }:00" selected>${j }:00</option>		 
+			 </c:if>
 		</c:forEach>
 	</select>
 	
@@ -366,6 +371,11 @@ $(function(){
 		  <button type="button" class="removeFile">-</button>
 	</div>
 	
+	
+	<input type="reset" value="취소하기" />
+	<input type="submit" value="등록"/>
+	</form>
+		
 	<div class="input-group mb-3 forCopy" style="padding:0px">
 		  <div class="input-group-prepend" style="padding:0px">
 		    <span class="input-group-text">첨부파일</span>
@@ -377,9 +387,5 @@ $(function(){
 		  <button type="button" class="addFile">+</button>
 		  <button type="button" class="removeFile">-</button>
 	</div>
-	
-	<input type="reset" value="취소하기" />
-	<input type="submit" value="등록"/>
-	</form>	
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
