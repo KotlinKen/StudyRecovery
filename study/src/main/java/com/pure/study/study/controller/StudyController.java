@@ -92,7 +92,7 @@ public class StudyController {
 	//에디터에 사진 첨부시 사진 서버에 업로드함.
 	@ResponseBody
 	@RequestMapping("/study/uploadImage.do")
-	public Map<String,String> sendImage(@RequestParam("file") MultipartFile f,HttpServletRequest request) {
+	public Map<String,String> uploadImage(@RequestParam("file") MultipartFile f,HttpServletRequest request) {
 		
 		String renamedFileName="";
 		String saveDirectory="";
@@ -144,8 +144,8 @@ public class StudyController {
 		
 		logger.debug("upFiles.length="+upFiles.length);
 		
-		//이미 등록된 스터디 중,  중복된 시간 스터디 검사
-		//List<Map<String,Object>> ownStudyList=studyService.selectOwnStudyList(m.getMno());
+		
+		/*                    스터디나 강의 중복 등록 검사                                                 */
 	
 		int cnt=0; //겹치는 여부 검사. 안겹치면 0 겹치면 1
 		
@@ -194,12 +194,14 @@ public class StudyController {
 		        	 
 		         }//날짜 포함되는 경우 if문 end
 	      }   
-		
+	     
+	    /*                    스터디나 강의 중복 등록 검사                                                 */
+	      
+	      
+	    //중복이 발견되지 않았다면 insert 실행.  
 		if(cnt==0) {
 
-			System.out.println("study="+study);
 			study.setMno(m.getMno()); 
-			System.out.println("study.mno"+study.getMno());
 			//스터디 생성하기 
 			int result = studyService.insertStudy(study);
 			
@@ -209,7 +211,6 @@ public class StudyController {
 					
 					//1. 파일 업로드 처리 
 					String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/study");
-					//List<Attachment> attachList = new ArrayList<>();
 					System.out.println("save"+saveDirectory);
 					/********* MultipartFile을 이용한 파일 업로드 처리 로직 시작 ********/
 					for(MultipartFile f : upFiles) {
@@ -304,7 +305,7 @@ public class StudyController {
 		List<Map<String,Object>> studyList = studyService.selectStudyForSearch(terms);
 		mav.addObject("list",studyList);
 		mav.addObject("total",total);
-		mav.addObject("cPage",cPage);
+		mav.addObject("cPage",cPage+1);
 		System.out.println("studyList="+studyList);
 		
 		

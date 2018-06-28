@@ -6,8 +6,6 @@
  	<jsp:param value="" name="pageTitle"/>
 </jsp:include>	 
 
-
-
 <style>
 div.forCopy{
 	display:none;
@@ -97,7 +95,7 @@ function validate(){
 	}
 	
 	
-	
+		/*               시작 시간 마감 시간 유효성 검사             */
 		// 시작 시간
 		var startTime = $("#starttime");
 		var startTimeVal = startTime.val();
@@ -117,7 +115,7 @@ function validate(){
 			endTime.val("7:00");
 			return false;
 		}
- 
+		/*               시작 시간 마감 시간 유효성 검사             */
 	
 	
 	// time만들기.
@@ -133,7 +131,6 @@ function validate(){
 }
 
 $(document).ready(function(){
-	$(".day").attr("disabled", true);
 	
 	
 	$(".day").attr("disabled", true);
@@ -417,7 +414,7 @@ $(function(){
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
-		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
+		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required ></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
@@ -455,7 +452,7 @@ $(function(){
 		
 		<input type="hidden" name="time" id="time"/>
 		<label for="price">일회 사용회비 : </label>
-		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" max="100000" />
+		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" />
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>

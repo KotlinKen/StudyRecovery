@@ -56,7 +56,7 @@ $(function(){
 		
 		var kno= $("option:selected", this).val();
 		
-		if(kno == ""){
+		if(kno == "0"){
 			$("#subject").hide();
 			return;
 		}
@@ -64,7 +64,6 @@ $(function(){
 		
 		
 		var html="";
-		if($(this).val()!="0"){
 			$.ajax({
 				url:"selectSubject.do",
 				data:{kno:$(this).val()},
@@ -76,25 +75,20 @@ $(function(){
 					$("select#subject").html(html);
 				}
 			});
-		}else{
-			$("#subject").hide();
-			/* html ="<option value='0'>카테고리를 선택하세요</option><br/>";
-			$("select#subject").html(html); */
-		}
+		
 	});
 	
 	//지역을 선택하면 그에 맞는 도시들을 가져온다.
 	$("select#local").on("change",function(){
 		
 		var lno=$("select#local option:selected").val();
-		if(lno == ""){
+		if(lno == "0"){
 			$("#town").hide();
 			return;
 		}
 		$("#town").show();
 		
 		var html="";
-		if($(this).val()!="0"){
 			$.ajax({
 				url:"selectTown.do",
 				data:{lno:$(this).val()},
@@ -102,24 +96,17 @@ $(function(){
 				success:function(data){
 					for(var index in data){
 						html +="<option value='"+data[index].TNO+"'>"+data[index].TOWNNAME+"</option><br/>";
-						
 					}
 					$("select#town").html(html);
 				}
 			});
-		}else{
-			$("#town").hide();
-			/* html ="<option value='0'>지역을 선택하세요</option><br/>";
-			$("select#town").html(html); */
-		}
 	});
 	
 	
 	//스터디 클릭시 스터디 상세보기 페이지로 이동하는 이벤트
 	$("div#study-list").on("click","div.studyone",function(){
-		console.log("되나");
 		location.href="${pageContext.request.contextPath}/study/studyView.do?sno="+$(this).children("input").val();
-	});//스터디를 클릭하면..
+	});
 	
 	
 	//필터 조건 정하고 검색 버튼을 누른 이벤트
@@ -162,8 +149,6 @@ $(function(){
 	        	$("input#cPageNo").val(data.cPage);
 	        	$("input#total").val(data.total);
 	        	
-			},error:function(){
-				
 			}
 		});
 	});
@@ -332,7 +317,6 @@ $(function(){
 			</c:forEach>
 			</select>&nbsp;
 			<select name="tno" id="town">
-			<option value="0">지역을 선택하세요</option>
 			</select>
 			<label for="subject">카테고리 :</label>
 			<select name="kno" id="kind">
@@ -342,8 +326,6 @@ $(function(){
 			</c:forEach>
 			</select>&nbsp;
 			<select name="subno" id="subject">
-			<option value="0">카테고리를 선택하세요</option>
-		
 			</select>
 			
 			<label for="diff">난이도 : </label>
@@ -353,7 +335,7 @@ $(function(){
 				<option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
 			</c:forEach>
 			</select>
-			<input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" />
+			<input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" maxlength="50" />
 			<input type="button" id="filterSearch" value="필터 검색" />
 			
 		</div>
