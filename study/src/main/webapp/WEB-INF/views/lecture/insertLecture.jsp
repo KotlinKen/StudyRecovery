@@ -366,6 +366,11 @@ $(function(){
 		  <button type="button" class="removeFile">-</button>
 	</div>
 	
+	
+	<input type="reset" value="취소하기" />
+	<input type="submit" value="등록"/>
+	</form>
+		
 	<div class="input-group mb-3 forCopy" style="padding:0px">
 		  <div class="input-group-prepend" style="padding:0px">
 		    <span class="input-group-text">첨부파일</span>
@@ -377,9 +382,5 @@ $(function(){
 		  <button type="button" class="addFile">+</button>
 		  <button type="button" class="removeFile">-</button>
 	</div>
-	
-	<input type="reset" value="취소하기" />
-	<input type="submit" value="등록"/>
-	</form>	
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

@@ -124,4 +124,20 @@ public class LectureServiceImpl implements LectureService {
 		return ld.insertPay(map);
 	}
 
+	@Override
+	public int lectureWishCancel(Map<String, Integer> map) {
+		return ld.lectureWishCancel(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectLectureListByMno(int mno) {
+		return ld.selectLectureListByMno(mno);
+	}
+
+	@Override
+	public int confirmInstructor(int mno) {
+		return ld.confirmInstructor(mno);
+	}
+
+
 }

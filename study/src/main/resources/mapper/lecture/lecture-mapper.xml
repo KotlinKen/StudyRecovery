@@ -13,7 +13,8 @@
 									 #{tno}, 
 									 #{dno}, 
 									 #{title}, 
-									 #{freqs}, 
+									 #{freqs},
+									 #{content}, 
 									 #{price}, 
 									 NULL, 
 									 #{recruit}, 
@@ -24,8 +25,7 @@
 									 #{sdate}, 
 									 #{edate}, 
 									 sysdate,
-									 #{etc},
-									 #{content})
+									 #{etc})
 		</if>
 		<if test="!upfile.equals('')">
 			INSERT INTO STUDY VALUES(SEQ_STUDY.NEXTVAL,
@@ -35,6 +35,7 @@
 										 #{dno}, 
 										 #{title}, 
 										 #{freqs}, 
+										 #{content}, 
 										 #{price}, 
 										 #{upfile}, 
 										 #{recruit}, 
@@ -45,8 +46,7 @@
 										 #{sdate}, 
 										 #{edate}, 
 										 sysdate,
-										 #{etc}, 
-										 #{content})
+										 #{etc})
 		</if>
 	</insert>
 	
@@ -93,15 +93,15 @@
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
-		        TITLE,
-		        UPFILE,
-		        TIME,
-		        NVL(PRICE, 0) AS PRICE,
-		        STATUS,        
-		        TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
-		        TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
-		        TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
-		        TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
+		       TITLE,
+		       UPFILE,
+		       TIME,
+		       NVL(PRICE, 0) AS PRICE,
+		       STATUS,        
+		       TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
+		       TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
+		       TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
+		       TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
 		FROM (SELECT S.*, 
 		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
 		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
@@ -230,6 +230,15 @@
 		SELECT COUNT(*) FROM APPLY WHERE SNO = #{sno} AND MNO = #{mno}
 	</select>
 	
+	<select id="selectLectureListByMno" resultMap="map">
+		SELECT SDATE,
+			   EDATE,
+		       FREQ,
+		       SUBSTR(TIME,0,INSTR(TIME,':')-1) AS STIME,
+		       SUBSTR(TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
+		FROM STUDY WHERE MNO = #{mno}
+	</select>
+	
 	<delete id="deleteLecture">
 		DELETE FROM STUDY WHERE SNO = #{sno} and STATUS = '모집 중'
 	</delete>
@@ -273,15 +282,22 @@
 	        where s.type='lecture' 
 	        group by s.sno 
 	        order by cnt desc
-	       )
-	
+	       )	
 	</select>	
 	
 	<select id="lectureWish" resultType="_int">
 		SELECT COUNT(*) AS CNT FROM WISH WHERE SNO = #{sno} AND MNO = #{mno}
 	</select>
 	
+	<select id="confirmInstructor" resultType="_int">
+		SELECT COUNT(*) AS CNT FROM INSTRUCTOR WHERE MNO = #{mno}
+	</select>
+	
 	<insert id="addWishLecture">
 		INSERT INTO WISH VALUES(SEQ_WISH.NEXTVAL, #{mno}, #{sno}, SYSDATE)
 	</insert>
+	
+	<delete id="lectureWishCancel">
+		DELETE FROM WISH WHERE MNO = #{mno} AND SNO = #{sno}
+	</delete>
 </mapper>

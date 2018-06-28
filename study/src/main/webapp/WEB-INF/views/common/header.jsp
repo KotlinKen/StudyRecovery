@@ -144,7 +144,7 @@ $(function(){
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item ${pageTitle}"><a class="nav-link" href="${rootPath }/study/studyList.do">스터디</a></li>
-						<li class="nav-item"><a class="nav-link" href="${rootPath }/lecture/lectureList.do">강의</a></li>
+						<li class="nav-item"><a class="nav-link" href="${rootPath }/lecture/lectureList.do?mno=${memberLoggedIn != null ? memberLoggedIn.getMno():'0'}">강의</a></li>
 						<li class="nav-item"><a class="nav-link" href="${rootPath }/board/boardList">게시판</a></li>
 						<li class="nav-item"><a class="nav-link" href="${rootPath }/board/boardWrite">게시글작성</a></li>
 						<c:if test="${memberLoggedIn.mid ne 'manager' }">

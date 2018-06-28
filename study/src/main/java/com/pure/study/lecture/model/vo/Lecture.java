@@ -11,7 +11,7 @@ public class Lecture {
 	private String title;
 	private String freqs;
 	private String content;
-	private String price;
+	private int price;
 	private String upfile;
 	private String recruit;
 	private String status;
@@ -28,9 +28,9 @@ public class Lecture {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Lecture(int sno, int mno, int subno, int tno, int dno, String title, String freqs, String content,
-			String price, String upfile, String recruit, String status, String time, String type, Date ldate,
-			Date sdate, Date edate, Date regDate, String etc) {
+	public Lecture(int sno, int mno, int subno, int tno, int dno, String title, String freqs, String content, int price,
+			String upfile, String recruit, String status, String time, String type, Date ldate, Date sdate, Date edate,
+			Date regDate, String etc) {
 		super();
 		this.sno = sno;
 		this.mno = mno;
@@ -117,11 +117,11 @@ public class Lecture {
 		this.content = content;
 	}
 
-	public String getPrice() {
+	public int getPrice() {
 		return price;
 	}
 
-	public void setPrice(String price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
 

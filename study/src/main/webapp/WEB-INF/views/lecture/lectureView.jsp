@@ -50,7 +50,6 @@
 	     			        	success:function(data){
 	     			        		var pno = rsp.imp_uid.replace("imp_", "");
 	     			        		
-	     			        		alert(pno);
 	     			        		location.href = "successPay.do?mno=" + mno + 
 	     			        									 "&sno=" + sno + 
 	     			        									 "&pno=" + pno + 
@@ -86,19 +85,34 @@
 		var sno = ${lecture.SNO};
 		var mno = ${memberLoggedIn.getMno()};
 		
-	   //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
-	   //찜하기를 이미 선택했다면 다시 누르면 찜하기에서 삭제됨.
-	   $.ajax({
-	      url:"lectureWish.do",
-	      data:{
-	    	  sno : sno,
-	    	  mno : mno
-	      },
-	      dataType : "text",
-	      success:function(data){
-	    	  alert(data);
-	      }
-	   });
+		$.ajax({
+			url : "lectureWish.do",
+			data : {
+				sno : sno,
+				mno : mno
+			},
+			success : function(){
+				alert("찜해쑝");
+				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+			}
+		});
+	}
+	
+	function lectureWishCancel(){
+		var sno = ${lecture.SNO};
+		var mno = ${memberLoggedIn.getMno()};
+		
+		$.ajax({
+			url : "lectureWishCancel.do",
+			data : {
+				sno : sno,
+				mno : mno
+			},
+			success : function(){
+				alert("찜취소해쑝");
+				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+			}
+		});
 	}
 	
 	$(function(){   
@@ -190,7 +204,13 @@
 
 	<c:if test="${memberLoggedIn.getMno() ne null && memberLoggedIn.getMno() ne lecture.MNO  }">
 		<button type="button" onclick="lectureApply();">참여 신청하기</button>
-		<button type="button" onclick="lectureWish();">찜하기</button>
+		
+		<c:if test="${pre eq 0}">
+			<button type="button" onclick="lectureWish();">찜하기</button>
+		</c:if>
+		<c:if test="${pre ne 0 }">
+			<button type="button" onclick="lectureWishCancel();">찜 취소</button>
+		</c:if>
 	</c:if>
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />
