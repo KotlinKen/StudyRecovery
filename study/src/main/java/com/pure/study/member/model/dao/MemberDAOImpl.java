@@ -352,5 +352,12 @@ public class MemberDAOImpl implements MemberDAO {
 	public int changNPOINTMINUS(Map<String, String> expMap) {
 		return sqlSession.update("member.changPOINTMINUS", expMap);
 	}
+
+	@Override
+	public int selectCntEmail(String newEmail) {
+		Map<String,String> map = new HashMap<>();
+		map.put("newEmail", newEmail);
+		return sqlSession.selectOne("member.selectCntEmail", map);
+	}
 	
 }

@@ -5,9 +5,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 	<a href="${rootPath }/member/memberView.do">개인정보</a>|
-	<a href="${rootPath }/member/searchMyPageKwd.do?myPage=study">내 스터디</a>|
-	<a href="${rootPath }/member/searchMyPageKwd.do?myPage=apply">스터디 신청 목록</a>|
-	<a href="${rootPath }/member/searchMyPageKwd.do?myPage=wish">스터디 관심 목록</a>
+	<a href="${rootPath }/member/searchMyPageKwd.do?myPage=study" style="color: ${myPage eq 'study'?'red':'black'}">내 스터디</a>|
+	<a href="${rootPath }/member/searchMyPageKwd.do?myPage=apply" style="color: ${myPage eq 'apply'?'red':'black'}">스터디 신청 목록</a>|
+	<a href="${rootPath }/member/searchMyPageKwd.do?myPage=wish" style="color: ${myPage eq 'wish'?'red':'black'}">스터디 관심 목록</a>
 	|<a href="#" onclick="javascript:document.myForm.submit();">강사신청</a>
 	<a href="${rootPath }/member/searchMyPageEvaluation.do">평가 관리</a>
 
@@ -15,3 +15,5 @@
 	<input type="hidden" name="mid" value="${memberLoggedIn.mid }" />
 	<input type="hidden" name="mno" value="${memberLoggedIn.mno }" />
 	</form>
+	
+	

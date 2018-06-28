@@ -142,4 +142,7 @@ public interface MemberDAO {
 
 	int deleteApply(Map<String, String> map);
 
+	int selectCntEmail(String newEmail);
+
+
 }

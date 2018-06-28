@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@page import = 'com.pure.study.member.model.vo.Member' %>
+<%@page import = 'com.pure.study.member.model.vo.Member, java.util.List, java.util.Map' %>
 
 <style>
    span.check-no{
@@ -22,7 +22,7 @@
       <jsp:param value="내 정보 보기" name="pageTitle"/>
    </jsp:include>
          <jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
-         <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" >
+         <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >
             <c:if test="${memberLoggedIn != null }">
                   <input type="hidden" name="mno" id="mno" value="${memberLoggedIn.mno }" />
                   회원 아이디 : 
@@ -65,24 +65,40 @@
                   <br />
                   
                   생년월일 : 
-                  <input type="date" name="birth" id="birth" value="${memberLoggedIn.birth }" />
+                  <input type="date" name="birth" id="birth" value="${memberLoggedIn.birth }" readonly />
                   <br />
                   
-                  성별 : 
+                  성별 : 	${memberLoggedIn.gender=='M'?'남자':'여자' }
+                  <%-- 
                   <input type="radio" name="gender" id="M" value="M" ${memberLoggedIn.gender=='M'?'checked':'' }/>
-                  <label for="M">남</label>
-                  <input type="radio" name="gender" id="F" value="F" ${memberLoggedIn.gender=='F'?'checked':'' } />
-                  <label for="F">여</label>
+                  <label for="M" >남</label>
+                  <input type="radio" name="gender" id="F" value="F" ${memberLoggedIn.gender=='F'?'checked':'' }/>
+                  <label for="F" >여</label>
+                   --%>
                   <br />
                   
                   관심사 : 
-                  <c:forEach var="f" items="${favor }" varStatus="vs">
-                     <input type="checkbox" name="favor" id="favor${vs.index }" value="${f.KINDNAME}" ${ f.KINDNAME eq memberLoggedIn.favor[vs.index] ?'checked':''}/>
-                     <label for="favor${vs.index }">${f.KINDNAME }</label>                     
-                  </c:forEach>      
-                  <br />
-                  자기 소개 : 
-                  <textarea class="form-control" name="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항">${memberLoggedIn.cover }</textarea>
+                  <%
+                  	Member m = (Member)request.getAttribute("memberLoggedIn");
+                  	System.out.println("mfavor=="+m);
+                  	String[] mfavor = m.getFavor();
+                  	List<Map<String, String>> list = (List<Map<String, String>>)request.getAttribute("favor");
+                  	System.out.println("mfavor=="+list);
+                  	int cnt=0;
+                  %>
+          			<% for(Map a : list) {%>
+          				<input type="checkbox" name="favor" id="favor<%=cnt %>" value="<%=a.get("KINDNAME")%>" 
+          				<%for(String b : mfavor) {%>
+          					<%=a.get("KINDNAME").equals(b)?"checked":"" %>
+          				<% }%>/>
+             				
+            			<label for="favor<%=cnt %>"><%=a.get("KINDNAME")%></label>   
+          			<% cnt++; }%>
+                  <br/>
+                  <br/>
+
+                  자기 소개 : 	<p id="length"></p>
+                  <textarea class="form-control" name="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항" style="resize: none;">${memberLoggedIn.cover }</textarea>
                   <br/>
                   <button type="submit" id="submit">수정</button>                  
             </c:if>
@@ -114,7 +130,7 @@
             <input type="hidden" id="pwd-ok" value="1" />
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-outline-success" onsubmit="return changePwd();">변경</button>
+              <button type="submit" class="btn btn-outline-success" >변경</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
             </form>
@@ -137,7 +153,7 @@
                <input type="email" class="form-control" name="email" id="newEmail" placeholder="이메일 변경" required/>
                <button type="button" class="btn btn-outline-success" id="emailUpdate">인증번호 발송</button>
                <br />
-               <input type="hidden" id="send" value="keySend" />
+               <input type="hidden" id="send" value="duplication" />
                <input type="text" id="key" placeholder="인증키 입력" />
                <input type="hidden" id="keyCheck" value="check" />
                <button type="button" class="btn btn-outline-success" id="emailUpdateCheck">인증번호 확인</button>
@@ -157,11 +173,13 @@
          
          <script>
             $(function(){
+            	var len = 2000;
+            	$("#length").html($("textarea[name=cover]").val().length+"/"+len);
                $("#newPwdCheck").on("keyup",function(){
                   var p1 = $("#newPwd").val();
                   var p2 = $(this).val();
-                  console.log(p1);
-                  console.log(p2);
+                  //console.log(p1);
+                  //console.log(p2);
                   if(p1==p2){
                      //console.log("일치");
                      $(".check-no").hide();
@@ -179,29 +197,16 @@
                //이메일 변경
                $("[type=button]#emailUpdate").click(function(){
                   var newEmail = $("#newEmail").val().trim();
-                  console.log("확인");
-                  if($("#send").val()=="keySend"){
-                     console.log("확인"+$("#send").val());
-                     $.ajax({
-                        url: "newEmailKey.do",
-                        data: {newEmail: newEmail},
-                        dataType: "json",
-                        success: function(data){
-                           console.log(data);
-                           if(data.isUsable==true){
-                              //console.log(data.tempPwd);
-                              $("#keyCheck").val(data.tempPwd);
-                           }else{
-                              
-                           }
-                           
-                        },
-                        error: function(jqxhr, textStatus, errorThrown){
-                           console.log("ajax실패",jqxhr, textStatus, errorThrown);
-                        }
-                        
-                     });
-                     
+                  	//console.log("확인");
+                  if($("#newEmail").val().trim()==""){
+                	  alert("새로 변경할 이메일을 입력해주세요.");
+                  }
+                  if($("input#send").val()=="duplication"){	//이메일이 중복되는지 체크하기
+                	  emailDuplication(newEmail);
+                  }
+                  if($("input#send").val()=="keySend"){ //조건문 바꿔야함.
+                     //console.log("확인"+$("#send").val());
+                     emailSendKey(newEmail);
                   }
                });
                
@@ -210,12 +215,12 @@
                   var inputKey = $("#key").val();
                   
                   if(key==inputKey){
-                     console.log("이메일 인증키 일치!");
+                     //console.log("이메일 인증키 일치!");
                      $(".check-no").hide();
                      $(".check-yes").show();
                      $("#email-ok").val(0);
                   }else{
-                     console.log("이메일 인증키 불일치!");      
+                     //console.log("이메일 인증키 불일치!");      
                      $(".check-yes").hide();
                      $(".check-no").show();
                      $("#email-ok").val(1);
@@ -223,30 +228,111 @@
                   
                   
                });
-               
+               //텍스트 길이 제한
+               $("textarea[name=cover]").keyup(function(){
+            	  var textLength = $(this).val().length;
+            	  if(len<=2000){
+              		  $(this).val($(this).val().substr(0,len));
+              		  $("p#length").html(textLength+"/"+len);
+              		  if(textLength==2000){
+    	            		  alert("최대 길이는 "+len+"자 입니다.");            		
+              		  }
+                	}
+               });
                
             });
-            function pwdDuplicateCheck(){
-               var po = $("#pwd-ok").val();
-               if(po=="1"){
-                  console.log("ok");
-                  alert("비밀번호가 불일치합니다.");
-                  return false;
-               }
-               
-               return true;
+            function textLeng(){
+            	
             }
+            function pwdDuplicateCheck(){
+	        	var newPwd = $("#newPwd").val().trim();
+	   			var reg = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/;
+	   			var isValid = true;
+	   			
+	           	var po = $("#pwd-ok").val();
+	            if(po=="1"){
+	                 //console.log("ok");
+	                 alert("비밀번호가 불일치합니다.");
+	                 isValid= false;
+	              }
+	            if(newPwd.length<8 || newPwd.length>16){
+	            	alert("암호를 8자이상 16자 이하로 설정해주세요.");
+	            	return false;
+	            }
+	   			if(!reg.test(newPwd)){
+	   				alert("영대소문자, 숫자, 특수문자로 비밀번호를 입력해주세요.");
+	   				return false;
+	   			}
+               
+               
+               return isValid;
+            }
+            
             function emailDuplicateCheck(){
                var po = $("#email-ok").val();
                if(po=="1"){
-                  console.log("ok");
+                  //console.log("ok");
                   alert("인증키가 불일치 합니다.");
                   return false;
                }
                
                return true;
             }
-           
+            function submitCheck(){
+           		if( $("input[type=file]").val() != "" ){
+	               	var ext = $('input[type=file]').val().split('.').pop().toLowerCase();
+	              	      if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+		               		 alert('gif,png,jpg,jpeg 파일만 업로드 할수 있습니다.');
+		               		 return false;
+	              	      }
+	               	}
+            	return true;
+            }
+            function emailSendKey(newEmail){
+            	$.ajax({
+                    url: "newEmailKey.do",
+                    data: {newEmail: newEmail},
+                    dataType: "json",
+                    success: function(data){
+                       //console.log(data);
+                       if(data.isUsable==true){
+                          //console.log(data.tempPwd);
+                          $("#keyCheck").val(data.tempPwd);
+                       }else{
+                          
+                       }
+                       
+                    },
+                    error: function(jqxhr, textStatus, errorThrown){
+                       console.log("ajax실패",jqxhr, textStatus, errorThrown);
+                    }
+                    
+                 });
+            }
+            function emailDuplication(newEmail){
+            	if(newEmail != ""){
+	            	$.ajax({
+	                    url: "emailDuplication.do",
+	                    data: {newEmail: newEmail},
+	                    dataType: "json",
+	                    success: function(data){
+	                    	
+	                       if(data.isDulpl==false){//이메일이 중복일 경우
+	                    	   $("input#send").val("duplication");
+	                       		alert("이메일이 중복됩니다.");
+	                       }else{
+	                    	   emailSendKey(newEmail);//중복되지 않으면
+	                       }
+	                       
+	                    },
+	                    error: function(jqxhr, textStatus, errorThrown){
+	                       console.log("ajax실패",jqxhr, textStatus, errorThrown);
+	                    }
+	                    
+	                 });
+            		
+            	}
+            }
          </script>
    
    <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

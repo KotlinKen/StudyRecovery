@@ -142,4 +142,6 @@ public interface MemberService {
 
 	int deleteApply(Map<String, String> map);
 
+	int selectCntEmail(String newEmail);
+
 }

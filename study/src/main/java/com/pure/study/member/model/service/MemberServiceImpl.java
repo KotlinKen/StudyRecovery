@@ -351,5 +351,10 @@ public class MemberServiceImpl implements MemberService {
 	public int deleteApply(Map<String, String> map) {
 		return memberDAO.deleteApply(map);
 	}
+
+	@Override
+	public int selectCntEmail(String newEmail) {
+		return memberDAO.selectCntEmail(newEmail);
+	}
 	
 }

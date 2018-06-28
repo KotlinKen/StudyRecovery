@@ -18,16 +18,23 @@
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
 	<br />
+	
 	<input type="hidden" id="hiddenUserId" value="${memberLoggedIn.mid }" />
 	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
+	
+	<!-- 팀장/팀원 구분 -->
 	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y" ${leader eq 'y' ? "style='color:red'" :'' }>팀장</a>|
 	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n" ${leader eq 'n' ? "style='color:red'" :'' }>팀원</a>
 	<br />
+	
+	<!-- 스터디/강의 구분 -->
 	<input type="radio" name="type" id="study" ${(type eq 'study') or (type == null)?'checked':'' }/>
 	<label for="study">study</label>
 	<input type="radio" name="type" id="lecture"  ${type eq 'lecture'?'checked':'' } />
 	<label for="lecture">lecture</label>
 	<br />
+	
+	<!-- 검색 키워드 -->
 	<select id="searchKwd">
 		<option value="title" ${searchKwd eq 'title'?'selected':'' }>강의/스터디명</option>
 		<option value="captain" ${searchKwd eq 'captain'?'selected':'' }>팀장/강사명</option>
@@ -37,16 +44,22 @@
 		<option value="term" ${searchKwd eq 'term'?'selected':'' }>스터디 시작일</option>
 		<option value="freq" ${searchKwd eq 'freq'?'selected':'' }>주기</option>
 	</select>
-	<form action="searchMyPageKwd.do" 
-		  method="post" id="formSearch" >
-		<c:if test="${kwd != null and searchKwd != null and searchKwd != 'term' and searchKwd != 'freq' }">
-			<input type='text' name='kwd' value="${kwd }" />
-			<input type='hidden' name='searchKwd' value='${searchKwd }' />
-		</c:if>
+	
+	<!-- 검색할 폼 제출 -->
+	<form action="searchMyPageKwd.do" id="formSearch" >
+		<!-- 초기 설정 -->
 		<c:if test="${kwd == null }">
 			<input type='text' name='kwd' placeholder='강의/스터디명'  />
 			<input type='hidden' name='searchKwd' value='title' />
 		</c:if>
+		
+		<!-- input:text가 아닌 검색 항목 처리 -->
+		<c:if test="${kwd != null and searchKwd != null and searchKwd != 'term' and searchKwd != 'freq' }">
+			<input type='text' name='kwd' value="${kwd }" />
+			<input type='hidden' name='searchKwd' value='${searchKwd }' />
+		</c:if>
+		
+		<!-- 기간 처리 -->
 		<c:if test="${kwd != null and searchKwd == 'term' }">
 			<select name='kwd' id='dateKwdYear'>
 				<c:forEach var='y' begin='2016' end='2022'>
@@ -61,10 +74,12 @@
 			</select>
 			<input type='hidden' name='searchKwd' value='term' />
 		</c:if>
+		
 		<%
 			String[] arr = {"월","화","수","목","금","토","일"};
 			request.setAttribute("arr", arr);
 		%>
+		<!-- 주기 처리 -->
 		<c:if test="${kwd != null and searchKwd == 'freq' }">
 			<c:forEach var='f' items="${arr}" varStatus='vs'>
 				<input type='checkbox' name='kwd' id='freqKwd${vs.index }' value='${f }' ${fn:contains(kwd,f) ?'checked':'' } />
@@ -74,19 +89,24 @@
 			<input type='hidden' name='kwd' value='none' />
 		</c:if>
 		
-		
-		<input type="hidden" name="type" value="${type }" />
 		<input type="hidden" name="myPage" value="${myPage}" />
 		<input type="hidden" name="leader" value="${leader}" />
+		<input type="hidden" name="type" value="${type }" />
 		<button type='submit' id='btn-search'>검색</button>
 	</form>
-	<c:if test="${leader eq 'n' }"> <!-- 나중에 처리해줘야함 -->
-		<p>총 ${count }의 스터디 팀원 건이 있습니다.</p> <!--  스터디 가져올 경우 기간 마감된 것도 표시해줌. -->
+	
+	<!-- 팀장/팀원 스터디의 건수 표시 -->
+	<c:if test="${leader eq 'n' }"> 
+		<p>총 ${count }의 스터디 팀원 건이 있습니다.</p> 
 	</c:if>
 	<c:if test="${leader eq 'y'}">
-		<p>총 ${leaderCount }의 스터디 팀장 건이 있습니다.</p> <!--  스터디 가져올 경우 기간 마감된 것도 표시해줌. -->
+		<p>총 ${leaderCount }의 스터디 팀장 건이 있습니다.</p> 
 	</c:if>
+	
+	
+	<!-- 스터디/강의 목록 -->
 	<table>
+		<!-- 팀장/팀원으로서의 스터디 목록이 존재하면 컬럼명을 쓴다. -->
 		<c:if test="${count != 0 or leaderCount != 0 }">
 			<tr>
 				<th>번호</th>
@@ -102,9 +122,12 @@
 				<th>평가</th>
 			</tr>
 		</c:if>
-		<c:if test="${count == 0 and leaderCount == 0 }">
+		<!--  -->
+		<c:if test="${(count == 0 and leader eq 'n') or (leaderCount == 0 and leader eq 'y')}">
 			<p>검색 결과가 없습니다.</p>
 		</c:if>
+		
+		<!-- 팀원일 때, 스터디 목록 -->
 		<c:if test="${myPageList != null and leader eq 'n' }">
 			<c:forEach var="ms" items="${myPageList}" varStatus="vs" >
 				<tr>
@@ -118,11 +141,14 @@
 					<td>${ms.freq}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button id="btn-detail" value="${ms.sno }">자세히</button>
+						<button type=button class="btn-detail" value="${ms.sno }">자세히</button>
 					</td>
 					<td>
+					<!-- 오늘의 날짜를 알려주는 코드(사용 안함.) -->
 					<c:set var="now" value="<%=new java.util.Date()%>" />
 					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set> 
+					
+					<!-- 평가부분 새로 추가하기 -->
 					<c:if test="${fn:contains(ms.status,'종료') }">
 						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
 						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal">평가 보기</button>
@@ -132,10 +158,13 @@
 						<button type=button class="btn btn-outline-success disabled">스터디 진행 중</button>
 					</c:if>
 					
+					
 					</td>
 				</tr>
 			</c:forEach>
 		</c:if>
+		
+		<!-- 팀장일때 스터디 목록 -->
 		<c:if test="${leaderList != null and leader eq 'y'}">
 			<c:forEach var="ms" items="${leaderList}" varStatus="vs" >
 				<tr>
@@ -149,9 +178,10 @@
 					<td>${ms.freq}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button id="btn-detail" value="${ms.sno }">자세히</button>
+						<button type=button class="btn-detail" value="${ms.sno }">자세히</button>
 					</td>
 					<td>
+					
 					<c:if test="${fn:contains(ms.status,'종료') }">
 						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
 						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal">평가 보기</button>
@@ -171,6 +201,7 @@
 		
 	</table>
 	<br />
+	
 	<!-- 페이지바 -->
 	<%
 		request.setCharacterEncoding("utf-8");
@@ -231,41 +262,18 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					</div>
-						<div class="modal-body" id="div-reviewView">
-							<!-- 
-								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
-							 -->
-						</div>
-						<div class="modal-body" id="div-crew">
-						</div>
+				</div>
+				<div class="modal-body" id="div-reviewView">
+					<!-- 
+						간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
+					 -->
+				</div>
+				<div class="modal-body" id="div-crew">
+				</div>
 			</div>
 		</div>
 	</div>
 	<!-- 스터디 리뷰 보기 끝 -->
-	<!-- 스터디 신청 현황 보기 시작 -->
-	<!-- <div class="modal fade" id="applyViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
-		<div class="modal-dialog modal-lg" role="document" >
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="applyModalLabel">스터디 신청 현황</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-					</div>
-						<div class="modal-body" id="div-applyView">
-							
-								간략한 스터디 정보(스터디 제목, 팀장이름), 작성자 아이디, 평가할 회원(select?), 좋아요/싫어요, 내용 
-							
-						</div>
-						<div class="modal-footer">
-							<button type="submit" class="btn btn-outline-success">등록</button>
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-						</div>
-			</div>
-		</div>
-	</div> -->
-	<!-- 스터디 신청 현황 보기 끝 -->
 	
 	<script>
 		$(function(){
@@ -379,7 +387,7 @@
 			});
 			
 			//스터디 자세히 보기
-			$("#btn-detail").click(function(){
+			$(".btn-detail").click(function(){
 				console.log($(this).val());
 				location.href="${rootPath}/study/studyView.do?sno="+$(this).val();
 			});
@@ -393,7 +401,7 @@
 						url: "reviewEnrollView.do",
 						data: {studyNo: studyNo, leader: leader},
 						dataType: "json",
-						contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
+						//contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
 						success: function(data){
 							var html = "<table><tr><th>스터디명</th><th>팀장이름</th><th>작성자</th><th>평가할 팀원</th><th>평가</th><th>내용</th><th>보기</th></tr>";
 							var userId = $("input#hiddenUserId").val();
@@ -439,10 +447,10 @@
 							}
 							html +="</table>";
 							
+							html += "<input type='hidden' name='leader' value='<%=leader%>' /> ";
+							html += "<input type='hidden' name='type' value='<%=type%>' /> ";
 							html += "<input type='hidden' name='searchKwd' value='<%=searchKwd%>' /> ";
 							html += "<input type='hidden' name='kwd' value='<%=kwd%>' /> ";
-							html += "<input type='hidden' name='type' value='<%=type%>' /> ";
-							html += "<input type='hidden' name='leader' value='<%=leader%>' /> ";
 							html += "<input type='hidden' name='cPage' value='<%=cPage%>' /> ";
 							
 							if(data.length<2){
