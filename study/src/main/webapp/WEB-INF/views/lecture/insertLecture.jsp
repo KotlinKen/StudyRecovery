@@ -250,7 +250,7 @@ $(function(){
 		if( start > end ){
 			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
 			startTime.val("6:00");
-			endTime.val("7:00");
+			endTime.val("24:00");
 		}
 	});
 });
@@ -332,7 +332,12 @@ $(function(){
 	</select>
 	<select name="endTime" id="endTime" class="time">
 		<c:forEach var="j" begin="7" end="24">
-			<option value="${j }:00">${j }:00</option>		
+			<c:if test="${j < 24}">
+				<option value="${j }:00">${j }:00</option>	
+			</c:if>
+			 <c:if test="${j == 24 }">
+				<option value="${j }:00" selected>${j }:00</option>		 
+			 </c:if>
 		</c:forEach>
 	</select>
 	
