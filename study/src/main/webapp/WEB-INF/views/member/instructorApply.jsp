@@ -154,25 +154,22 @@ body {
 			});
 			$("#port").change(function() {
 				var ext = $("#port").val().split(".").pop().toLowerCase();
-				if (ext.length > 0) { 
-					if ($.inArray(ext, [ "txt", "hwp", "docx","pptx" ,"ppt","xlsx","xlsx"]) == -1) {
-						alert("txt,hwp,docx,pptx,ppt,xlsx,xlsx 파일만 업로드 할수 있습니다.");
-						$("#port").val("");
-						return false;
-					}
-				}
+				changeFile(ext);
 			});
 			$("#self").change(function() {
 				var ext = $("#self").val().split(".").pop().toLowerCase();
-				if (ext.length > 0) { 
-					if ($.inArray(ext, [ "txt", "hwp", "docx","pptx" ,"ppt","xlsx","xlsx"]) == -1) {
-						alert("txt,hwp,docx,pptx,ppt,xlsx,xlsx 파일만 업로드 할수 있습니다.");
-						$("#self").val("");
-						return false;
-					}
-				}
+				changeFile(ext);
 			});
 		});
+		function changeFile(ext) {
+			if (ext.length > 0) { 
+				if ($.inArray(ext, [ "txt", "hwp", "docx","pptx" ,"ppt","xlsx","xlsx"]) == -1) {
+					alert("txt,hwp,docx,pptx,ppt,xlsx,xlsx 파일만 업로드 할수 있습니다.");
+					$("#self").val("");
+					return false;
+				}
+			}
+		}
 
 		$(function(){
 			//kind 리스트를 가져와 select 만듦. 프로그래밍, 회화, 운동 등등..
@@ -222,6 +219,7 @@ body {
 				return false;
 			}
 		}
+		
 	</script>
 	<div id="inindivik1"></div>
 	<div id="inindivik2">

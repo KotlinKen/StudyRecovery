@@ -1477,15 +1477,32 @@ public class MemberController {
 	@RequestMapping(value = "/member/agreementAdmin.do")
 	public ModelAndView agreementAdmin () {
 		ModelAndView mav = new ModelAndView();
+		Map<String,String> link = new HashMap<>();
+		link.put("urlname","agreementadmin");
+		link.put("check","1");
+		List <Map<String , String>> service = null;
+		List <Map<String , String>> information = null;
+		int states = memberService.selectInnerAdmin(link);
 		try {
-			List <Map<String , String>> service = memberService.serviceagree();
-			List <Map<String , String>> information = memberService.informationagree();
 			
-			mav.addObject("service", service);
-			mav.addObject("information", information);
-			
+			if(states==0) {
+				System.out.println("???");
+				int result = memberService.adminInnerCheck(link);
+				service = memberService.serviceagree();
+				information = memberService.informationagree();
+				mav.addObject("service", service);
+				mav.addObject("information", information);
+			}else {
+				mav.addObject("loc", "/");
+				mav.addObject("msg", "이미 입장되어 있습니다. 확인 부탁 드립니다.");
+				mav.setViewName("common/msg");
+			}
+
 		} catch (Exception e) {
+		
 		}
+		
+	
 		return mav;
 	}
 	@RequestMapping(value = "/member/agreementAdminEnd.do")
@@ -1920,4 +1937,25 @@ public class MemberController {
 		map.put("list", list);
 		return map;
 	}
+	/* 관리자 접속 여부 확인 */
+	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> adminInnerCheck( @RequestParam(value = "urlname") String urlname){
+		Map<String,Object> map = new HashMap<>();
+		Map<String,String> link = new HashMap<>();
+		link.put("urlname",urlname);
+		link.put("check","0");
+		int result = 0;
+		try {
+			result = memberService.adminInnerCheck(link);			
+		} catch (Exception e) {
+		}
+		if(result ==1) {
+			map.put("check", true);
+		}else {
+			map.put("check", false);
+		}
+		return map;
+	}
+	
 }

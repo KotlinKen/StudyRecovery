@@ -1,5 +1,6 @@
 package com.pure.study.member.model.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -350,6 +351,16 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int deleteApply(Map<String, String> map) {
 		return memberDAO.deleteApply(map);
+	}
+
+	@Override
+	public int adminInnerCheck(Map<String, String> urlname) {
+		return memberDAO.adminInnerCheck(urlname);
+	}
+
+	@Override
+	public int selectInnerAdmin(Map<String, String> link) {
+		return memberDAO.selectInnerAdmin(link);
 	}
 	
 }

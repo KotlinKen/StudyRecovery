@@ -34,7 +34,7 @@
 				<p id="p-s-ik${v.SNO }"></p>
 				<br />
 			</c:forEach>
-			<button type="button" id="insertSButton" class="btn btn-outline-success" onclick="fn_serviceInsert();"><b>+</b></button>
+			<button type="button" id="insertSButton" class="btn btn-outline-success" onclick="fn_serviceInsert('01');"><b>+</b></button>
 		</div>
 		<hr />
 		<span>개인정보 수집 및 이요 동의</span> <br />
@@ -51,13 +51,42 @@
 			</c:forEach>
 			<button type="button" id="insertIButton" class="btn btn-outline-success" onclick="fn_informationInsert();"><b>+</b></button>
 		</div>
-		<button type="button" id="buttona" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}'">돌아가기</button>
+		<button type="button" id="buttona" class="btn btn-outline-success" onclick="backspace();">돌아가기</button>
 		<br /><br />
 		</form>
 	
 </div>
 <br /><br />
 <script>
+	history.pushState(null, null, location.href);
+	window.onpopstate = function(event) {
+	backspace('02');
+	};
+	function backspace(e) {
+		var urlname = "agreementadmin";
+		var data = new FormData();
+		data.append("urlname", urlname);
+		$.ajax({
+	    	url:"adminInnerCheck.do",
+	    	type:"POST",
+	    	data : data,
+	    	contentType : false,
+			processData : false,
+	    	dataType : "json",
+	    	success : function (data) {
+	    		if(e=='02'){
+	    			history.back(2);
+	    		}else{
+	    		location.href="${pageContext.request.contextPath}"
+	    			
+	    		}
+			},error : function (jqxhr,textStatus,textStatus) {
+				console.log(jqxhr);
+				console.log(textStatus);
+				console.log(textStatus);
+			}
+	    });
+	}
 	function fn_serviceChange(e) {
 		console.log(e);
 		var sno = e;

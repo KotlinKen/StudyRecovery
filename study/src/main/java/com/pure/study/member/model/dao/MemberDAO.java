@@ -1,5 +1,6 @@
 package com.pure.study.member.model.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -141,5 +142,9 @@ public interface MemberDAO {
 	int insertCrew(Map<String, String> map);
 
 	int deleteApply(Map<String, String> map);
+
+	int adminInnerCheck(Map<String, String> urlname);
+
+	int selectInnerAdmin(Map<String, String> link);
 
 }

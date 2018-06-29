@@ -1020,4 +1020,13 @@
 				NPOINT = (SELECT NPOINT FROM MEMBER WHERE MNO = ${mno})-1000
 				where mno =${mno}
 	</update>
+	<update id="adminInnerCheck">
+		UPDATE INNERCHECK SET
+				states = ${check}
+				where
+				iname = #{urlname}
+	</update>
+	<select id="selectInnerAdmin" resultType="_int" >
+		SELECT states from INNERCHECK where iname = #{urlname}
+	</select>
 </mapper>

@@ -352,5 +352,16 @@ public class MemberDAOImpl implements MemberDAO {
 	public int changNPOINTMINUS(Map<String, String> expMap) {
 		return sqlSession.update("member.changPOINTMINUS", expMap);
 	}
+
+	@Override
+	public int adminInnerCheck(Map<String, String> urlname) {
+		return sqlSession.update("member.adminInnerCheck", urlname);
+	}
+
+	@Override
+	public int selectInnerAdmin(Map<String, String> link) {
+		System.out.println(link);
+		return sqlSession.selectOne("member.selectInnerAdmin" ,link);
+	}
 	
 }
