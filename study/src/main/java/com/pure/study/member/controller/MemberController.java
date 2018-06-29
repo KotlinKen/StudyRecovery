@@ -1482,9 +1482,9 @@ public class MemberController {
 		link.put("check","1");
 		List <Map<String , String>> service = null;
 		List <Map<String , String>> information = null;
-		int states = memberService.selectInnerAdmin(link);
 		try {
 			
+			int states = memberService.selectInnerAdmin(link);
 			if(states==0) {
 				System.out.println("???");
 				int result = memberService.adminInnerCheck(link);
@@ -1508,8 +1508,6 @@ public class MemberController {
 	@RequestMapping(value = "/member/agreementAdminEnd.do")
 	public ModelAndView agreementAdminEnd ( @RequestParam(value = "em") String em ) {
 		ModelAndView mav = new ModelAndView();
-		
-	
 		return mav;
 	}
 	
@@ -1686,8 +1684,28 @@ public class MemberController {
 	public ModelAndView memberList() {
 		ModelAndView mav = new ModelAndView();
 		
-		List<Map<String,Object>> list = memberService.selectMemberList();
-		mav.addObject("list",list);
+		Map<String,String> link = new HashMap<>();
+		link.put("urlname","memberlist");
+		link.put("check","1");
+	
+		try {
+			
+			int states = memberService.selectInnerAdmin(link);
+			if(states==0) {
+				System.out.println("???");
+				int result = memberService.adminInnerCheck(link);
+				List<Map<String,Object>> list = memberService.selectMemberList();
+				mav.addObject("list",list);
+			
+			}else {
+				mav.addObject("loc", "/");
+				mav.addObject("msg", "이미 입장되어 있습니다. 확인 부탁 드립니다.");
+				mav.setViewName("common/msg");
+			}
+
+		} catch (Exception e) {
+		}
+		
 		return mav;
 	}
 	/* 경험치 1개 수정 */

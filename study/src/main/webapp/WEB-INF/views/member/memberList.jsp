@@ -49,6 +49,35 @@
 </table>
 
 <script>
+	history.pushState(null, null, location.href);
+	window.onpopstate = function(event) {
+	backspace('02');
+	};
+	function backspace(e) {
+		var urlname = "memberlist";
+		var data = new FormData();
+		data.append("urlname", urlname);
+		$.ajax({
+	    	url:"adminInnerCheck.do",
+	    	type:"POST",
+	    	data : data,
+	    	contentType : false,
+			processData : false,
+	    	dataType : "json",
+	    	success : function (data) {
+	    		if(e=='02'){
+	    			history.back(2);
+	    		}else{
+	    		location.href="${pageContext.request.contextPath}"
+	    			
+	    		}
+			},error : function (jqxhr,textStatus,textStatus) {
+				console.log(jqxhr);
+				console.log(textStatus);
+				console.log(textStatus);
+			}
+	    });
+	}
 	$("td").click(function () {
 		$(".number").css({"display":"none"});
 		$(this).find("input").css({"display":"inline-block"});
