@@ -6,7 +6,7 @@
 										#{mid},
 										#{mname},
 										#{pwd},
-										${phone},
+									 LPAD(${phone}, 11, '0'),
 										'.',
 										'.',
 										'.',

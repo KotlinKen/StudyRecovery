@@ -1013,7 +1013,6 @@ public class MemberController {
 		try {
 			kwd =URLEncoder.encode(kwd, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1030,9 +1029,7 @@ public class MemberController {
 				System.out.println("리뷰 등록 실패");				
 			}
 		}
-		
-		
-		
+	
 		mav.setViewName("redirect:/member/searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&leader="+leader+"&cPage="+cPage);
 		//redirect시 한글이 깨져서 가기 때문에 인코딩을 반드시 해줘야한다.
 		
@@ -1484,19 +1481,19 @@ public class MemberController {
 		List <Map<String , String>> information = null;
 		try {
 			
-			int states = memberService.selectInnerAdmin(link);
+/*			int states = memberService.selectInnerAdmin(link);
 			if(states==0) {
+			}else {
+				mav.addObject("loc", "/");
+				mav.addObject("msg", "이미 입장되어 있습니다. 확인 부탁 드립니다.");
+				mav.setViewName("common/msg");
+			}*/
 				System.out.println("???");
 				int result = memberService.adminInnerCheck(link);
 				service = memberService.serviceagree();
 				information = memberService.informationagree();
 				mav.addObject("service", service);
 				mav.addObject("information", information);
-			}else {
-				mav.addObject("loc", "/");
-				mav.addObject("msg", "이미 입장되어 있습니다. 확인 부탁 드립니다.");
-				mav.setViewName("common/msg");
-			}
 
 		} catch (Exception e) {
 		
@@ -1602,7 +1599,6 @@ public class MemberController {
 			}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
 		
 		return map;
@@ -1680,7 +1676,7 @@ public class MemberController {
 	}
 	
 	/* 멤버 강사 $ 포인트 관리 */
-	@RequestMapping(value = "/member/memberList.do")
+	@RequestMapping(value = "/member/memberPointList.do")
 	public ModelAndView memberList() {
 		ModelAndView mav = new ModelAndView();
 		
@@ -1690,18 +1686,18 @@ public class MemberController {
 	
 		try {
 			
-			int states = memberService.selectInnerAdmin(link);
+/*			int states = memberService.selectInnerAdmin(link);
 			if(states==0) {
+			}else {
+				mav.addObject("loc", "/");
+				mav.addObject("msg", "이미 입장되어 있습니다. 확인 부탁 드립니다.");
+				mav.setViewName("common/msg");
+			}*/
 				System.out.println("???");
 				int result = memberService.adminInnerCheck(link);
 				List<Map<String,Object>> list = memberService.selectMemberList();
 				mav.addObject("list",list);
 			
-			}else {
-				mav.addObject("loc", "/");
-				mav.addObject("msg", "이미 입장되어 있습니다. 확인 부탁 드립니다.");
-				mav.setViewName("common/msg");
-			}
 
 		} catch (Exception e) {
 		}
@@ -1714,11 +1710,15 @@ public class MemberController {
 	public Map<String, Object> changOneEXP ( @RequestParam(value = "mno") String mno ,@RequestParam(value = "exp") String exp ) {
 		Map<String, Object> map = new HashMap<>();
 		Map<String,String> expMap = new HashMap<>();
+	
+		expMap.put("mno", mno);
+		expMap.put("exp", exp);
 		int result =0;
 		try {
 			result = memberService.changOneEXP(expMap);
-		} catch (Exception e) {
+			System.out.println("result : "+result);
 			map.put("check", false);
+		} catch (Exception e) {
 		}
 		
 		if(result ==1) {
@@ -1906,10 +1906,8 @@ public class MemberController {
 				Map<String,String> expMap = new HashMap<>();
 				expMap.put("mno", mno[i]);
 				result = memberService.changNPOINTPLUS(expMap );
-				
 				Map<String,String> getExp = new HashMap<>();
 				getExp = memberService.getNPoint(expMap );
-				
 				list.add(getExp);
 			}
 			System.out.println(map);
@@ -1921,6 +1919,7 @@ public class MemberController {
 			
 		} catch (Exception e) {
 		}
+		System.out.println("list : "+list);
 		map.put("list", list);
 		return map;
 	}
@@ -1937,7 +1936,6 @@ public class MemberController {
 				Map<String,String> expMap = new HashMap<>();
 				expMap.put("mno", mno[i]);
 				result = memberService.changNPOINTMINUS(expMap );
-				
 				Map<String,String> getExp = new HashMap<>();
 				getExp = memberService.getNPoint(expMap );
 				list.add(getExp);
@@ -1955,7 +1953,7 @@ public class MemberController {
 		map.put("list", list);
 		return map;
 	}
-	/* 관리자 접속 여부 확인 */
+	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String,Object> adminInnerCheck( @RequestParam(value = "urlname") String urlname){
@@ -1974,6 +1972,6 @@ public class MemberController {
 			map.put("check", false);
 		}
 		return map;
-	}
+	}*/
 	
 }

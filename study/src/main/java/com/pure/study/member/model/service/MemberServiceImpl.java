@@ -305,17 +305,17 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	public int changNPOINTPLUS(Map<String, String> expMap) {
-		return memberDAO.changPOINTPLUS(expMap);
+		return memberDAO.changNPOINTPLUS(expMap);
 	}
 
 	@Override
 	public Map<String, String> getNPoint(Map<String, String> expMap) {
-		return memberDAO.getPoint(expMap);
+		return memberDAO.getNPoint(expMap);
 	}
 
 	@Override
 	public int changNPOINTMINUS(Map<String, String> expMap) {
-		return memberDAO.changPOINTMINUS(expMap);
+		return memberDAO.changNPOINTMINUS(expMap);
 	}
 	
 	@Override
