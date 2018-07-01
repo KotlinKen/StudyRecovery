@@ -958,14 +958,13 @@ public class MemberController {
 			lList =	memberService.leaderReviewEnrollView(studyNo); 
 			for(Map<String,Object> a :lList) { 
 				list.add(a); 
-				} 
-		} 
-		System.out.println(list.contains(lList));
-		
+			} 
+		} 			
 		
 		mav.addObject("list", list);
 		
-		return mav; }
+		return mav; 
+		}
 	
 	//insert all을 통해 평가 내용을 등록한다.
 	
@@ -987,12 +986,12 @@ public class MemberController {
 		//	int	result = memberService.reviewEnrollView(); 
 		for(int i=0; i<tmno.length; i++) {
 			Review r = new Review(); 
-			System.out.println("tmno="+tmno[i]);
-			System.out.println("sno="+sno[i]); 
-			System.out.println("mno="+mno[i]);
-			System.out.println("point="+point[i]);
-			System.out.println("content="+content[i]); 
-			System.out.println("~~~~~~~~");
+//			System.out.println("tmno="+tmno[i]);
+//			System.out.println("sno="+sno[i]); 
+//			System.out.println("mno="+mno[i]);
+//			System.out.println("point="+point[i]);
+//			System.out.println("content="+content[i]); 
+//			System.out.println("~~~~~~~~");
 			r.setTmno(tmno[i]); 
 			r.setSno(sno[i]); 
 			r.setMno(mno[i]); 
@@ -1031,7 +1030,6 @@ public class MemberController {
 	}
 	
 	//평가 완료 버튼 처리 & 평가 보기
-	
 	@RequestMapping(value="/member/reviewFinish.do")
 	@ResponseBody 
 	public ModelAndView reviewFinish(@RequestParam("studyNo") String studyNo 
@@ -1040,7 +1038,10 @@ public class MemberController {
 		String[] sno = studyNo.split(",");
 		List<Map<String, Object>> reviewList = new ArrayList<>(); 
 		Map<String,Object> reviewListMap = new HashMap<>();
-		
+		List<Map<String, Object>> giveReviewList = new ArrayList<>(); 
+		Map<String,Object> giveReviewListMap = new HashMap<>();
+		System.out.println(sno);
+		System.out.println(m.getMid());
 		//평가를 완료하고, 다른 사람이 평가를 줬을 경우 평가 리스트 
 		for(int i=0; i<sno.length; i++) { 
 			Map	<String,Object> listMap = new HashMap<>(); 
@@ -1052,15 +1053,29 @@ public class MemberController {
 			reviewListMap.put(String.valueOf(sno[i]), list);//평가를 한 스터디의 평가 리스트 담기
 			System.out.println(reviewList); 
 		} 
+		//평가를 완료하고, 내가 다른 사람에게 준 평가 리스트 
+		for(int i=0; i<sno.length; i++) { 
+			Map	<String,Object> listMap = new HashMap<>(); 
+			listMap.put("sno", sno[i]);
+			listMap.put("mno", m.getMno());
+			
+			List<Map<String,Object>> list = memberService.giveReviewList(listMap);
+			
+			giveReviewListMap.put(String.valueOf(sno[i]), list);//평가를 한 스터디의 평가 리스트 담기
+			System.out.println(reviewList); 
+		} 
 		reviewList.add(reviewListMap);
+		giveReviewList.add(giveReviewListMap);
 		
 		//평가 완료한 스터디 리스트 
-		Map <String,Object> map = new HashMap<>(); map.put("sno", sno); 
+		Map <String,Object> map = new HashMap<>(); 
+		map.put("sno", sno); 
 		map.put("mno", m.getMno()); 
 		List<Integer> studyNoList =	memberService.reviewFinish(map);
 		
 		mav.addObject("studyNoList", studyNoList); 
 		mav.addObject("reviewList",	reviewList); 
+		mav.addObject("giveReviewList",	giveReviewList); 
 		return mav; 
 	}
 	
@@ -1072,7 +1087,7 @@ public class MemberController {
 		ModelAndView mav = new ModelAndView("jsonView"); 
 		Map <String,String> map = new HashMap<>(); 
 		map.put("studyNo", studyNo); 
-		map.put("forCrewList", "forCrewList"); 
+		//map.put("forCrewList", "forCrewList"); 
 		int numPerPage = memberService.selectApplyListCnt(map); 
 		int	crewNumPerPage = memberService.selectMyStudyListCnt(map); 
 		int cPage = 1;
@@ -1092,20 +1107,33 @@ public class MemberController {
 		return mav; 
 	} 
 	
-	//신청 현황 신청 버튼
+	//신청 현황 수락 버튼
 	@RequestMapping(value="/member/applyButton.do")
 	@ResponseBody 
 	public ModelAndView applyButton( @RequestParam("sno") String sno
-									, @RequestParam("mno")String mno) { 
+									, @RequestParam("mno")String mno
+									, @RequestParam("confirm") String confirm
+									) { 
 		ModelAndView mav = new ModelAndView("jsonView"); 
 		Map<String, String> map = new HashMap<>();
 		map.put("studyNo", sno); 
-		map.put("forCrewList", "forCrewList");
+		//map.put("forCrewList", "forCrewList");
 		map.put("mno", mno);
 		
-		int resultDel = memberService.deleteApply(map); 
-		int result = memberService.insertCrew(map); 
-		if(result<0 || resultDel<0) {
+		int resultDel = 0;
+		int result=0;
+		
+		if("agree".equals(confirm)) {
+			resultDel = memberService.deleteApply(map); 
+			result = memberService.insertCrew(map); 
+					
+		}else if("cancel".equals(confirm)){
+			result = memberService.insertApply(map);
+			resultDel = memberService.deleteCrew(map);
+			
+		}
+		
+		if(result<=0 || resultDel<=0) {
 			mav.addObject("msg","다시 시도해주세요"); 
 			mav.setViewName("common/msg"); 
 		}
@@ -1124,22 +1152,34 @@ public class MemberController {
 		return mav; 
 	}
 	
-	
 	//평가 목록 페이지
-	
 	@RequestMapping(value="/member/searchMyPageEvaluation.do")
 	@ResponseBody 
-	public ModelAndView searchMyPageEvaluation( @RequestParam(value="eval", defaultValue="exp")	String eval 
+	public ModelAndView searchMyPageEvaluation( @RequestParam(value="eval",required=false, defaultValue="exp")	String eval 
 											, @ModelAttribute("memberLoggedIn") Member m ) { 
 		ModelAndView mav = new ModelAndView(); 
-		//Map <String,Object> map = new HashMap<>();
-	
-	//평가 관리 페이지로 이동
-	mav.addObject("eval", eval); 
-	mav.setViewName("member/MyEvaluation");
+		Map <String,Object> map = new HashMap<>();
+		map.put("eval", eval);
+		map.put("mno", m.getMno());
+		
+		Map<String, Object> list = memberService.searchEvaluation(map);
+		List<Map<String,Object>> gradeList = memberService.selectGradeList();
+		//경험치 및 포인트 등급 보여주기
+		
+		System.out.println(list);
+		System.out.println(gradeList.get(0));
+		//평가 관리 페이지로 이동
+		mav.addObject("eval", eval); 
+		mav.addObject("list", list); 
+		mav.addObject("gradeList", gradeList); 
+		mav.addObject("gradeMin", gradeList.get(0)); 
+		mav.addObject("gradeMax", gradeList.get(gradeList.size()-1)); 
+		mav.addObject("m", m); 
+		mav.setViewName("member/MyEvaluation");
 	
 	return mav; 
 	}
+	
 	
 
 	/* 로그인 및 마이페이지(김회진) 끝 **********************************************/

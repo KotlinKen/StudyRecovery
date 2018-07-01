@@ -162,7 +162,8 @@
 				to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
 				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
-				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
+				to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
+				(select g.status from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=s.mno) and g.point <![CDATA[ > ]]> (select point from member where mno=s.mno)-5000) as "grade"
 		from study s join member m on m.mno=s.mno
 		where 1=1
 		<if test="studyNo != null">
@@ -336,14 +337,14 @@
 				to_char(s.ldate,'yyyy/mm/dd') as "ldate", -- 신청 마감일
 				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
-				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
-				
+				to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
+				(select g.status from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=c.mno) and g.point <![CDATA[ > ]]> (select point from member where mno=c.mno)-5000) as "grade"
 		from crew c join study s on s.sno=c.sno
 				    join member m on m.mno=c.mno
 		where 1=1
-		<if test="forCrewList == null">
+		<!-- <if test="forCrewList == null">
 		and s.status in ('진행 중', '강의 종료','스터디 종료')		
-		</if>
+		</if> -->
 		<if test="studyNo != null">
 		and c.sno=#{studyNo}
 		</if>
@@ -411,9 +412,9 @@
 		from crew c join study s on s.sno=c.sno
 					join member m on m.mno=c.mno
 		where 1=1
-		<if test="forCrewList == null">
+		<!-- <if test="forCrewList == null">
 		and s.status in ('진행 중', '강의 종료','스터디 종료')		
-		</if>
+		</if> -->
 		<if test="studyNo != null">
 		and c.sno=#{studyNo}
 		</if>
@@ -554,10 +555,10 @@
 		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
-		and #{kwd} = extract( year from s.sdate) 
+		and #{kwd} = extract( year from s.ldate) 
 		</if>
 		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
-		and #{kwd1} = extract( month from s.sdate)
+		and #{kwd1} = extract( month from s.ldate)
 		</if>
 		<if test="searchKwd=='freq'">
 		and ( 1=0
@@ -587,10 +588,10 @@
 		or 1=0 )
 		</if>
 		<if test="applyDate == 'present'">
-		and s.ldate <![CDATA[ >= ]]> sysdate
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ >= ]]> to_char(sysdate,'yyy/mm/dd')
 		</if>    
 		<if test="applyDate == 'last'">
-		and s.ldate <![CDATA[ < ]]> sysdate
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ < ]]> to_char(sysdate,'yyy/mm/dd')
 		</if>    
 	</select>
 	
@@ -628,10 +629,10 @@
 		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
-		and #{kwd} = extract( year from s.sdate) 
+		and #{kwd} = extract( year from s.ldate) 
 		</if>
 		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
-		and #{kwd1} = extract( month from s.sdate)
+		and #{kwd1} = extract( month from s.ldate)
 		</if>
 		<if test="searchKwd=='freq'">
 		and ( 1=0
@@ -661,10 +662,10 @@
 		or 1=0 )
 		</if>
 		<if test="applyDate == 'present'">
-		and s.ldate <![CDATA[ >= ]]> sysdate
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ >= ]]> to_char(sysdate,'yyy/mm/dd')
 		</if>    
 		<if test="applyDate == 'last'">
-		and s.ldate <![CDATA[ < ]]> sysdate
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ < ]]> to_char(sysdate,'yyy/mm/dd')
 		</if>    
 	</select>
 	<!-- 마이페이지 신청 목록 resultMap -->
@@ -740,10 +741,10 @@
 		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
-		and #{kwd} = extract( year from s.sdate) 
+		and #{kwd} = extract( year from s.ldate) 
 		</if>
 		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
-		and #{kwd1} = extract( month from s.sdate)
+		and #{kwd1} = extract( month from s.ldate)
 		</if>
 		<if test="searchKwd=='freq'">
 		and ( 1=0
@@ -773,10 +774,10 @@
 		or 1=0 )
 		</if>    
 		<if test="applyDate == 'present'">
-		and s.ldate <![CDATA[ >= ]]> sysdate
-		</if>    
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ >= ]]> to_char(sysdate,'yyy/mm/dd')
+		</if>        
 		<if test="applyDate == 'last'">
-		and s.ldate <![CDATA[ < ]]> sysdate
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ < ]]> to_char(sysdate,'yyy/mm/dd')
 		</if>
 	</select>
 	<!-- 마이페이지 찜 목록 수 -->
@@ -807,10 +808,10 @@
 		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
-		and #{kwd} = extract( year from s.sdate) 
+		and #{kwd} = extract( year from s.ldate) 
 		</if>
 		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
-		and #{kwd1} = extract( month from s.sdate)
+		and #{kwd1} = extract( month from s.ldate)
 		</if>
 		<if test="searchKwd=='freq'">
 		and ( 1=0
@@ -840,10 +841,10 @@
 		or 1=0 )
 		</if>
 		<if test="applyDate == 'present'">
-		and s.ldate <![CDATA[ >= ]]> sysdate
-		</if>    
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ >= ]]> to_char(sysdate,'yyy/mm/dd')
+		</if>        
 		<if test="applyDate == 'last'">
-		and s.ldate <![CDATA[ < ]]> sysdate
+		and to_char(s.ldate,'yyy/mm/dd') <![CDATA[ < ]]> to_char(sysdate,'yyy/mm/dd')
 		</if>
 	</select>
 	<!-- 마이페이지 찜 resultMap -->
@@ -871,13 +872,14 @@
 	<insert id="reviewEnroll" parameterType="java.util.Map">
 		insert all
 			<foreach item="item" collection="list" index="i">
-				into review values(fn_seq_all(),#{item.mno},#{item.sno},#{item.tmno},#{item.point},#{item.content}, sysdate)
+				into review (rno, sno, mno, tmno, point, content, regdate)
+				values(fn_seq_all(),#{item.sno},#{item.mno},#{item.tmno},#{item.point},#{item.content}, sysdate)
 			</foreach>
 		select * from dual
 	</insert>
 	
 	<select id="reviewFinish" resultType="_int" parameterType="hashmap">
-		select sno as "sno"
+		select distinct sno as "sno"
 		from review 
 		where mno = #{mno} and sno in
 		<foreach collection="sno" item="item"  open="(" close=")" separator=",">
@@ -890,11 +892,18 @@
 				where mno=#{mno}
 	</update>
 	<select id="reviewList" parameterType="hashmap" resultMap="reviewListMap">
-		select point as "point", content as "content", mno as "mno"
-		from review
-		where sno=#{sno} and tmno=#{tmno}
+		select r.point as "point", r.content as "content", r.mno as "mno", m.mname as "mname"
+		from review r join member m on m.mno=r.tmno
+		where r.sno=#{sno} and r.tmno=#{tmno}
 	</select>
 	<resultMap type="map" id="reviewListMap"></resultMap>
+	
+	<select id="giveReviewList" parameterType="hashmap" resultMap="giveReviewListMap">
+		select r.point as "point", r.content as "content", r.mno as "mno", m.mname as "mname"
+		from review r join member m on m.mno=r.tmno
+		where r.sno=#{sno} and r.mno=#{mno}
+	</select>
+	<resultMap type="map" id="giveReviewListMap"></resultMap>
 
 	<select id="selectStudyName" parameterType="string" resultType="string">
 		select title from study where sno=#{studyNo}
@@ -907,6 +916,32 @@
 	<delete id="deleteApply">
 		delete from apply where mno=#{mno} and sno=#{studyNo}
 	</delete>
+	
+	<delete id="deleteCrew">
+		delete from crew where mno=#{mno} and sno=#{studyNo}
+	</delete>
+	
+	<insert id="insertApply">
+		insert into apply values(seq_apply.nextval, #{mno}, #{studyNo}, sysdate)
+	</insert>
+	
+	<select id="searchEvaluation" resultMap="evaluation">
+		<if test="eval == 'exp'">
+			select e.expname as "expname", e.exp as "tblExp", (select exp from member where mno=#{mno}) as "exp"  from exp e where e.exp <![CDATA[ > ]]> (select exp from member where mno=#{mno}) and e.exp <![CDATA[ <= ]]> (select exp from member where mno=#{mno})+1000
+		</if>
+		<if test="eval == 'point'">
+			select g.status as "status", (select point from member where mno=#{mno}) as "point" from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=#{mno}) and g.point <![CDATA[ > ]]> (select point from member where mno=#{mno})-5000 
+		</if>
+		<if test="eval == 'npoint'">
+			select npoint from member where mno=#{mno}
+		</if>
+		
+	</select>
+	<resultMap type="map" id="evaluation"></resultMap>
+	<select id="selectGradeList" resultMap="grade">
+		select * from grade order by point
+	</select>
+	<resultMap type="map" id="grade"></resultMap>
 	<!-- 김회진 mapper 끝 -->
 	
 	

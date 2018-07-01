@@ -4,12 +4,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<link type="text/css" rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
 <style>
-	table, th, td, tr{
-		border: 2px solid black;
+	ul#ul-page > li:nth-child(3){
+		background: #ffffff;
 	}
 </style>
-
+<div class="page">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="내 신청 목록" name="pageTitle"/>
 	</jsp:include>
@@ -31,12 +32,11 @@
 		<option value="subject" ${searchKwd eq 'subject'?'selected':'' }>과목</option>
 		<option value="place" ${searchKwd eq 'place'?'selected':'' }>스터디 장소</option>
 		<option value="diff" ${searchKwd eq 'diff'?'selected':'' }>난이도</option>
-		<option value="term" ${searchKwd eq 'term'?'selected':'' }>스터디 시작일</option>
+		<option value="term" ${searchKwd eq 'term'?'selected':'' }>신청 마감일</option>
 		<option value="freq" ${searchKwd eq 'freq'?'selected':'' }>주기</option>
 	</select>
 	
-	<form action="searchMyPageKwd.do" 
-		  method="post" id="formSearch">
+	<form action="searchMyPageKwd.do" id="formSearch" autocomplete="off">
 		<c:if test="${kwd != null and searchKwd != null and searchKwd != 'term' and searchKwd != 'freq' }">
 			<input type='text' name='kwd' value="${kwd }" />
 			<input type='hidden' name='searchKwd' value='${searchKwd }' />
@@ -82,7 +82,7 @@
 
 		
 		
-		<button type='submit' id='btn-search'>검색</button>
+		<button type='submit' id='btn-search'><span class='icon'><i class='fa fa-search'></i></span></button>
 	</form>
 	<p>총 ${count }의 스터디 신청 건이 있습니다.</p> <!-- 스터디 가져올 경우 기간 마감된 것도 표시해줌. -->
 	<table>
@@ -123,7 +123,7 @@
 				<td>${a.ldate}</td>
 				<td>${a.adate}</td>
 				<td>
-					<button type=button class="btn-detail" value="${a.sno }">자세히</button>
+					<button type=button class="btn btn-outline-success btncss btn-detail" value="${a.type },${a.sno }">자세히</button>
 				</td>
 			</tr>
 		</c:forEach>
@@ -146,7 +146,7 @@
 			
 		}
 	%>
-	<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type, myPage) %>
+	<%=com.pure.study.common.util.MyPageUtil.getPageBar(totalContents, cPage, numPerPage,"searchMyPageKwd.do?searchKwd="+searchKwd+"&kwd="+kwd+"&type="+type+"&applyDate="+applyDate, myPage) %>
 	
 	<script>
 		var exec = 0;
@@ -238,7 +238,7 @@
 				if(<%="last".equals(applyDate)%>){
 					html+="<input type='hidden' name='applyDate' value='last' />";					
 				}
-				html+="<button type='submit' id='btn-search'>검색</button>";
+				html+="<button type='submit' id='btn-search'><span class='icon'><i class='fa fa-search'></i></span></button>";
 				html+="<input type='hidden' name='type' value='${type}' />";
 				html+="<input type='hidden' name='myPage' value='${myPage}' />";
 
@@ -312,8 +312,14 @@
 		});
 		$(function(){
 			$(".btn-detail").click(function(){
-				console.log($(this).val());
-				location.href="${rootPath}/study/studyView.do?sno="+$(this).val();
+				var type = $(this).val().split(",")[0];
+				var sno = $(this).val().split(",")[1];
+				if(type=='study'){
+					location.href="${rootPath}/study/studyView.do?sno="+sno;					
+				}
+				if(type=='lecture'){
+					location.href="${rootPath}/lecture/lectureView.do?sno="+sno;										
+				}
 			});
 		})
 		
@@ -322,3 +328,4 @@
 	
 	
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
+</div>

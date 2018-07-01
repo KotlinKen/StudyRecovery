@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page import = 'com.pure.study.member.model.vo.Member, java.util.List, java.util.Map' %>
-
+<link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
 <style>
    span.check-no{
       color: red;
@@ -15,38 +15,93 @@
       color: green;
       display: none;
    }
-   
+   ul#ul-page > li:first-child{
+		background: #ffffff;
+	}
+	td{
+		text-align: left;
+	}
+	p#length{
+		text-align: right;
+		font-size: 20px;
+	}
+	
+	div.btn-center1{
+		text-align: center;
+		position: relative;
+		top: 0;
+		left: -50px;
+	}
+	div.btn-center2{
+		text-align: center;
+		position: relative;
+		top: -43px;
+		left: 50px;
+	}
+	.btncss{
+		width: auto;
+		height: auto;
+		font-size: 17px;
+		border-radius: 15px;
+		padding-left: 15px;
+		padding-right: 15px;
+		padding-top: 7px;
+		padding-bottom: 7px;
+		background: #ffffff;
+		border-style: solid;
+	}
+	.btncss:hover{
+		background: #0056e9;
+		color: white;
+	}
+	#submit:hover{
+		background: #0056e9;
+		color: white;
+	}
 </style>
-
+<div class="page">
    <jsp:include page="/WEB-INF/views/common/header.jsp"> 
       <jsp:param value="내 정보 보기" name="pageTitle"/>
    </jsp:include>
          <jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
+         <br />
+         
          <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >
             <c:if test="${memberLoggedIn != null }">
-                  <input type="hidden" name="mno" id="mno" value="${memberLoggedIn.mno }" />
-                  회원 아이디 : 
-                  <input type="text" name="mid" id="mid" value="${memberLoggedIn.mid }" readonly/>               
-                  <br />
-                  
-                  회원 이름 : 
-                  <input type="text" name="mname" id="mname" value="${memberLoggedIn.mname }" />
-                  <br />
-                  
-                  비밀번호 변경 : 
-                  <button type="button" 
-                     class="btn btn-outline-success"
-                      data-toggle="modal" 
+         <table>
+         	<tr>
+         		<th>회원 아이디</th>
+         		<td>
+	                <input type="hidden" name="mno" id="mno" value="${memberLoggedIn.mno }" />
+	                <input type="text" name="mid" id="mid" value="${memberLoggedIn.mid }" readonly/>               
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>회원 이름</th>
+         		<td>
+         			<input type="text" name="mname" id="mname" value="${memberLoggedIn.mname }" />
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>비밀번호 변경</th>
+         		<td>
+         			<button type="button" class="btn btn-outline-success" data-toggle="modal" 
                       data-target="#pwdUpdate">비밀번호 변경</button>
-                  <br />
-                  
-                  연락처 : 
-                  <input type="text" name="phone" id="phone" value="${memberLoggedIn.phone }" />
-                  <br />
-              
-                  사진 : 
-                  <c:if test="${!(memberLoggedIn.mprofile eq 'no')}">
-                     <img src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" style="width:100px;" /> 
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>연락처</th>
+         		<td>
+         			<input type="text" name="phone" id="phone" value="${memberLoggedIn.phone }" />
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>사진</th>
+         		<td>
+         			<c:if test="${!(memberLoggedIn.mprofile eq 'no')}">
+                  <div id="imgChange" style="width:100px;">
+                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" style="width:100px;" /> 
+                  </div>
                   </c:if>
                   <c:if test="${memberLoggedIn.mprofile eq 'no'}">
                      <p>프로필 사진이 없습니다.</p>
@@ -54,31 +109,34 @@
                   <br />
                   <input type="file" name="upFile" />
                   <input type="hidden" name="preMprofile" value="${memberLoggedIn.mprofile }" />
-                  <br />
-                  
-                  이메일 변경 : 
-                  <button type="button"
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>이메일 변경</th>
+         		<td>
+         			<button type="button"
                         class="btn btn-outline-success"
                          data-toggle="modal" 
                          data-target="#emailUpdate">이메일 변경</button>
                   <input type="email" name="email" id="email" value="${memberLoggedIn.email }" readonly /> 
-                  <br />
-                  
-                  생년월일 : 
-                  <input type="date" name="birth" id="birth" value="${memberLoggedIn.birth }" readonly />
-                  <br />
-                  
-                  성별 : 	${memberLoggedIn.gender=='M'?'남자':'여자' }
-                  <%-- 
-                  <input type="radio" name="gender" id="M" value="M" ${memberLoggedIn.gender=='M'?'checked':'' }/>
-                  <label for="M" >남</label>
-                  <input type="radio" name="gender" id="F" value="F" ${memberLoggedIn.gender=='F'?'checked':'' }/>
-                  <label for="F" >여</label>
-                   --%>
-                  <br />
-                  
-                  관심사 : 
-                  <%
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>생년월일</th>
+         		<td>
+         			<input type="date" name="birth" id="birth" value="${memberLoggedIn.birth }" readonly />
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>성별</th>
+         		<td>
+         			${memberLoggedIn.gender=='M'?'남자':'여자' }
+         		</td>
+         	</tr>
+         	<tr>
+         		<th> 관심사</th>
+         		<td>
+         			<%
                   	Member m = (Member)request.getAttribute("memberLoggedIn");
                   	System.out.println("mfavor=="+m);
                   	String[] mfavor = m.getFavor();
@@ -94,19 +152,27 @@
              				
             			<label for="favor<%=cnt %>"><%=a.get("KINDNAME")%></label>   
           			<% cnt++; }%>
-                  <br/>
-                  <br/>
-
-                  자기 소개 : 	<p id="length"></p>
+         		</td>
+         	</tr>
+         	<tr>
+         		<th>자기 소개</th>
+         		<td>
+         			<p id="length"></p>
                   <textarea class="form-control" name="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항" style="resize: none;">${memberLoggedIn.cover }</textarea>
-                  <br/>
-                  <button type="submit" id="submit">수정</button>                  
-            </c:if>
-            
+                  
+         		</td>
+         	</tr>
+         </table>
+         <div class="btn-center1">
+	         <button type="submit" class='btncss' id="submit">수정</button>                  
+         </div>
+         </c:if>
          </form>
          <form id="drop-form" action="${pageContext.request.contextPath }/member/memberDrop.do" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
             <input type="hidden" name="mid" value="${memberLoggedIn.mid }" />
-            <button type="submit" id="drop">탈퇴하기</button>
+         	<div class="btn-center2">
+            	<button type="submit" class='btncss' id="drop">탈퇴하기</button>
+            </div>
          </form>
          <!-- 비밀번호 팝업창 시작 -->
       <div class="modal fade" id="pwdUpdate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -235,15 +301,30 @@
               		  $(this).val($(this).val().substr(0,len));
               		  $("p#length").html(textLength+"/"+len);
               		  if(textLength==2000){
-    	            		  alert("최대 길이는 "+len+"자 입니다.");            		
+    	            	alert("최대 길이는 "+len+"자 입니다.");            		
               		  }
                 	}
                });
                
             });
-            function textLeng(){
-            	
-            }
+            
+            //업로드 할 이미지 보여주기
+            var upload = document.getElementsByName('upFile')[0];
+            upload.onchange = function (e) {
+            	  e.preventDefault();
+
+            	  var file = upload.files[0],
+            	  reader = new FileReader();
+            	  reader.onload = function (event) {
+            	    var img = new Image();
+            	    img.src = event.target.result;
+            	    img.width = 200;
+            	    $("#imgChange").html(img);
+            	  };
+            	  reader.readAsDataURL(file);
+
+            	  return false;
+            	};
             function pwdDuplicateCheck(){
 	        	var newPwd = $("#newPwd").val().trim();
 	   			var reg = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/;
@@ -336,7 +417,92 @@
          </script>
    
    <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
-   
+</div> 
 
+<%-- 
+ <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >
+            <c:if test="${memberLoggedIn != null }">
+                  <input type="hidden" name="mno" id="mno" value="${memberLoggedIn.mno }" />
+                  회원 아이디 : 
+                  <input type="text" name="mid" id="mid" value="${memberLoggedIn.mid }" readonly/>               
+                  <br />
+                  
+                  회원 이름 : 
+                  <input type="text" name="mname" id="mname" value="${memberLoggedIn.mname }" />
+                  <br />
+                  
+                  비밀번호 변경 : 
+                  <button type="button" 
+                     class="btn btn-outline-success"
+                      data-toggle="modal" 
+                      data-target="#pwdUpdate">비밀번호 변경</button>
+                  <br />
+                  
+                  연락처 : 
+                  <input type="text" name="phone" id="phone" value="${memberLoggedIn.phone }" />
+                  <br />
+              
+                  사진 : 
+                  <c:if test="${!(memberLoggedIn.mprofile eq 'no')}">
+                  <div id="imgChange" style="width:100px;">
+                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" style="width:100px;" /> 
+                  </div>
+                  </c:if>
+                  <c:if test="${memberLoggedIn.mprofile eq 'no'}">
+                     <p>프로필 사진이 없습니다.</p>
+                  </c:if>
+                  <br />
+                  <input type="file" name="upFile" />
+                  <input type="hidden" name="preMprofile" value="${memberLoggedIn.mprofile }" />
+                  <br />
+                  
+                  이메일 변경 : 
+                  <button type="button"
+                        class="btn btn-outline-success"
+                         data-toggle="modal" 
+                         data-target="#emailUpdate">이메일 변경</button>
+                  <input type="email" name="email" id="email" value="${memberLoggedIn.email }" readonly /> 
+                  <br />
+                  
+                  생년월일 : 
+                  <input type="date" name="birth" id="birth" value="${memberLoggedIn.birth }" readonly />
+                  <br />
+                  
+                  성별 : 	${memberLoggedIn.gender=='M'?'남자':'여자' }
+                  
+                  <input type="radio" name="gender" id="M" value="M" ${memberLoggedIn.gender=='M'?'checked':'' }/>
+                  <label for="M" >남</label>
+                  <input type="radio" name="gender" id="F" value="F" ${memberLoggedIn.gender=='F'?'checked':'' }/>
+                  <label for="F" >여</label>
+                  
+                  <br />
+                  
+                  관심사 : 
+                  <%
+                  	Member m = (Member)request.getAttribute("memberLoggedIn");
+                  	System.out.println("mfavor=="+m);
+                  	String[] mfavor = m.getFavor();
+                  	List<Map<String, String>> list = (List<Map<String, String>>)request.getAttribute("favor");
+                  	System.out.println("mfavor=="+list);
+                  	int cnt=0;
+                  %>
+          			<% for(Map a : list) {%>
+          				<input type="checkbox" name="favor" id="favor<%=cnt %>" value="<%=a.get("KINDNAME")%>" 
+          				<%for(String b : mfavor) {%>
+          					<%=a.get("KINDNAME").equals(b)?"checked":"" %>
+          				<% }%>/>
+             				
+            			<label for="favor<%=cnt %>"><%=a.get("KINDNAME")%></label>   
+          			<% cnt++; }%>
+                  <br/>
+                  <br/>
 
+                  자기 소개 : 	<p id="length"></p>
+                  <textarea class="form-control" name="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항" style="resize: none;">${memberLoggedIn.cover }</textarea>
+                  <br/>
+                  <button type="submit" id="submit">수정</button>                  
+            </c:if>
+            
+         </form>
 
+ --%>

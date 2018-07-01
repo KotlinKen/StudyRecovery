@@ -144,4 +144,14 @@ public interface MemberService {
 
 	int selectCntEmail(String newEmail);
 
+	int deleteCrew(Map<String, String> map);
+
+	int insertApply(Map<String, String> map);
+
+	List<Map<String, Object>> giveReviewList(Map<String, Object> listMap);
+
+	Map<String, Object> searchEvaluation(Map<String, Object> map);
+
+	List<Map<String, Object>> selectGradeList();
+
 }

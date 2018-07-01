@@ -4,27 +4,25 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <% response.setContentType("text/html"); %>
+<link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
 <style>
-	table, tr, th, td{
-		border: 2px solid black;
-	}
-	button[name=evaluationView]{
-		display: none;
+	ul#ul-page > li:nth-child(2){
+		background: #ffffff;
 	}
 </style>
-	
+
+<div class="page">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="내 스터디 목록" name="pageTitle"/>
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
 	<br />
-	
 	<input type="hidden" id="hiddenUserId" value="${memberLoggedIn.mid }" />
 	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
 	
 	<!-- 팀장/팀원 구분 -->
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y" ${leader eq 'y' ? "style='color:red'" :'' }>팀장</a>|
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n" ${leader eq 'n' ? "style='color:red'" :'' }>팀원</a>
+	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y" ${leader eq 'y' ? "style='color:#007bff'" :'' }>팀장</a>|
+	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n" ${leader eq 'n' ? "style='color:#007bff'" :'' }>팀원</a>
 	<br />
 	
 	<!-- 스터디/강의 구분 -->
@@ -46,7 +44,7 @@
 	</select>
 	
 	<!-- 검색할 폼 제출 -->
-	<form action="searchMyPageKwd.do" id="formSearch" >
+	<form action="searchMyPageKwd.do" id="formSearch" autocomplete="off" style="display: inline">
 		<!-- 초기 설정 -->
 		<c:if test="${kwd == null }">
 			<input type='text' name='kwd' placeholder='강의/스터디명'  />
@@ -92,9 +90,8 @@
 		<input type="hidden" name="myPage" value="${myPage}" />
 		<input type="hidden" name="leader" value="${leader}" />
 		<input type="hidden" name="type" value="${type }" />
-		<button type='submit' id='btn-search'>검색</button>
+		<button type='submit' id='btn-search'><span class='icon'><i class='fa fa-search'></i></span></button>
 	</form>
-	
 	<!-- 팀장/팀원 스터디의 건수 표시 -->
 	<c:if test="${leader eq 'n' }"> 
 		<p>총 ${count }의 스터디 팀원 건이 있습니다.</p> 
@@ -117,6 +114,7 @@
 				<th>스터디 장소</th>
 				<th>난이도</th>
 				<th>수업일정(주기)</th>
+				<th>스터디 마감일</th>
 				<th>스터디 기간 및 시간</th> <!-- 18/5/6 ~ 18/6/6(시간) -->
 				<th>보기</th>
 				<th>평가</th>
@@ -139,25 +137,36 @@
 					<td>${ms.place}</td>
 					<td>${ms.diff}</td>
 					<td>${ms.freq}</td>
+					<td>${ms.ldate}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button class="btn-detail" value="${ms.sno }">자세히</button>
+						<button type=button class="btn btn-outline-success btncss btn-detail " value="${ms.type },${ms.sno }">자세히</button>
 					</td>
 					<td>
-					<!-- 오늘의 날짜를 알려주는 코드(사용 안함.) -->
+					<!-- 오늘의 날짜를 알려주는 코드(신청 버튼, 평가, 평가 완료, 평가보기 버튼 구분) -->
 					<c:set var="now" value="<%=new java.util.Date()%>" />
-					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set> 
+					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set>
 					
-					<!-- 평가부분 새로 추가하기 -->
-					<c:if test="${fn:contains(ms.status,'종료') }">
-						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
-						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal">평가 보기</button>
+					<!-- 신청 중 -->
+					<c:if test="${sysdate lt ms.ldate or sysdate eq ms.ldate }">
+						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" disabled >모집 중</button>						
 					</c:if>
 					
-					<c:if test="${fn:contains(ms.status,'진행') }">
-						<button type=button class="btn btn-outline-success disabled">스터디 진행 중</button>
+					<!-- 신청 마감 -->
+					<c:if test="${((sysdate gt ms.ldate) or (sysdate eq ms.ldate)) and ((sysdate lt ms.sdate)) }">
+						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" disabled >심사 중</button>						
+					</c:if>
+		
+					<!-- 스터디 진행 중 => 팀원 목록 분기 하기? -->
+					<c:if test="${((sysdate gt ms.sdate) or (sysdate eq ms.sdate) )and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) }">
+						<button type=button id="crewList${ms.sno }" value="1" name="crewListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#crewListModal" >스터디 진행 중(팀원 목록)</button>						
 					</c:if>
 					
+					<!-- 스터디 종료 => 평가 보기에서 내가 한 평가, 남이 한 평가 같이 보기 -->
+					<c:if test="${sysdate gt ms.edate  }">
+						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#reviewModal">평가</button>
+						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal">평가 보기</button>					
+					</c:if>
 					
 					</td>
 				</tr>
@@ -176,24 +185,33 @@
 					<td>${ms.place}</td>
 					<td>${ms.diff}</td>
 					<td>${ms.freq}</td>
+					<td>${ms.ldate}</td>
 					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
 					<td>
-						<button type=button class="btn-detail" value="${ms.sno }">자세히</button>
+						<button type=button class="btn btn-outline-success btncss btn-detail " value="${ms.type },${ms.sno }">자세히</button>
 					</td>
 					<td>
+					<c:set var="now" value="<%=new java.util.Date()%>" />
+					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set>
 					
-					<c:if test="${fn:contains(ms.status,'종료') }">
-						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success" data-toggle="modal" data-target="#reviewModal">평가</button>
-						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal">평가 보기</button>
+					<!-- 신청 중 & 신청 마감 & 스터디 진행 전 => 팀원 취소 하기 기능-->
+					<c:if test="${sysdate lt ms.sdate  }">
+						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal" >신청 현황</button>
 					</c:if>
 					
-					<c:if test="${fn:contains(ms.status,'진행') }">
-						<button type=button class="btn btn-outline-success disabled" >${ms.status }</button>
+					<!-- 스터디 진행 중 => 팀원 목록 분기하기(신청현황에서) -->
+					<c:if test="${((sysdate gt ms.sdate) or (sysdate eq ms.sdate)) and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) }">
+						<button type=button id="crewList${ms.sno }" value="1" name="crewListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#crewListModal" >팀원 목록</button>						
 					</c:if>
 					
-					<c:if test="${fn:contains(ms.status,'모집 중') or fn:contains(ms.status,'마감 임박') or fn:contains(ms.status,'모집 마감') }">
-						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success" data-toggle="modal" data-target="#viewModal" >신청 현황</button>
+					<!-- 스터디 종료 -->
+					<c:if test="${sysdate gt ms.edate  }">
+						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#reviewModal">평가</button>
+						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal">평가 보기</button>					
+						<!-- 내가 한 평가도 보여주기 -->
 					</c:if>
+					
+					
 					</td>
 				</tr>
 			</c:forEach>
@@ -245,7 +263,7 @@
 							 -->
 						</div>
 						<div class="modal-footer">
-							<button type="submit" class="btn btn-outline-success">등록</button>
+							<button type="submit" class="btn btn-outline-success btncss">등록</button>
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
 						</div>
 				</form>
@@ -274,6 +292,23 @@
 		</div>
 	</div>
 	<!-- 스터디 리뷰 보기 끝 -->
+	<!-- 스터디 팀원 목록 보기 시작 -->
+	<div class="modal fade" id="crewListModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" >
+		<div class="modal-dialog modal-lg" role="document" >
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">스터디 팀원 목록</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="div-crewList" >
+				
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 스터디 팀원 목록 보기 끝 -->
 	
 	<script>
 		$(function(){
@@ -285,31 +320,31 @@
 					html="<input type='text' name='kwd' id='titleKwd' placeholder='강의/스터디명' />";
 					html+="<input type='hidden' name='searchKwd' value='title' />";
 					
-					console.log('title');
+					//console.log('title');
 				} 
 				if($(this).val()=='captain'){ //팀장 명
 					html="<input type='text' name='kwd' id='captainKwd' placeholder='강사/팀장명' />";
 					html+="<input type='hidden' name='searchKwd' value='captain' />";
 					
-					console.log('captain');
+					//console.log('captain');
 				} 
 				if($(this).val()=='subject'){ //과목명
 					html="<input type='text' name='kwd' id='subjectKwd' placeholder='과목명' />";
 					html+="<input type='hidden' name='searchKwd' value='subject' />";
 					
-					console.log('subject');
+					//console.log('subject');
 				} 
 				if($(this).val()=='place'){ //장소명
 					html="<input type='text' name='kwd' id='subjectKwd' placeholder='장소' />";
 					html+="<input type='hidden' name='searchKwd' value='place' />";
 					
-					console.log('place');
+					//console.log('place');
 				} 
 				if($(this).val()=='diff'){ //난이도
 					html="<input type='text' name='kwd' id='subjectKwd' placeholder='난이도' />";
 					html+="<input type='hidden' name='searchKwd' value='diff' />";
 					
-					console.log('diff');
+					//console.log('diff');
 				} 
 				if($(this).val()=='term'){ //기간
 					html="<select name='kwd' id='dateKwdYear'>";
@@ -337,7 +372,7 @@
 					html+="<option value='12'>12월</option>";
 					html+="</select>";
 					html+="<input type='hidden' name='searchKwd' value='term' />";
-					console.log('term');
+					//console.log('term');
 				} 
 				if($(this).val()=='freq'){ //스터디 주기
 					html = "<input type='checkbox' name='kwd' id='freqKwd1' value='월' />";
@@ -356,12 +391,12 @@
 					html += "<label for='freqKwd7'>일</label>";
 					html+="<input type='hidden' name='searchKwd' value='freq' />";
 					html+="<input type='hidden' name='kwd' value='none' />";
-					console.log('freq');
+					//console.log('freq');
 				}
 				html+="<input type='hidden' name='type' value='${type}' />";
 				html+="<input type='hidden' name='leader' value='${leader}' />";
 				html+="<input type='hidden' name='myPage' value='${myPage}' />";
-				html+="<button type='submit' id='btn-search'>검색</button>";
+				html+="<button type='submit' id='btn-search'><span class='icon'><i class='fa fa-search'></i></span></button>";
 				$("form#formSearch").html(html);
 				
 			});
@@ -387,11 +422,16 @@
 			});
 			
 			//스터디 자세히 보기
-			$(".btn-detail").click(function(){
-				console.log($(this).val());
-				location.href="${rootPath}/study/studyView.do?sno="+$(this).val();
+			$(".btn-detail ").click(function(){
+				var type = $(this).val().split(",")[0];
+				var sno = $(this).val().split(",")[1];
+				if(type=='study'){
+					location.href="${rootPath}/study/studyView.do?sno="+sno;					
+				}
+				if(type=='lecture'){
+					location.href="${rootPath}/lecture/lectureView.do?sno="+sno;										
+				}
 			});
-			
 			//평가 버튼 클릭시, 평가할 폼이 나옴.
 			$("button[name=evaluation]").on("click",function(){
 				var studyNo = this.id;
@@ -408,7 +448,7 @@
 							var mno = $("input#hiddenMno").val();
 							for(var i in data.list){
 								var index = data.list[i];
-								console.log(data);
+								//console.log(data);
 								if(userId!=index.tmid){ //자기 자신을 평가 할 수 없음
 									html += "<tr>";
 									html += "<td>"+index.title;
@@ -453,21 +493,22 @@
 							html += "<input type='hidden' name='kwd' value='<%=kwd%>' /> ";
 							html += "<input type='hidden' name='cPage' value='<%=cPage%>' /> ";
 							
-							if(data.length<2){
+							if(data.list.length<1){
 								$("div#form-reviewEnroll").html("평가할 팀원이 없습니다.");																
+							}else{
+								$("div#form-reviewEnroll").html(html);																
 							}
 							
-							$("div#form-reviewEnroll").html(html);								
 							
 							$(".like").on("click",function(){
-								console.log($(this).val());
+								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
 								$("#dislikeq"+tmno).attr("style","color: black");
 								$(this).attr("style","color: red");
 								$("#pointq"+tmno).val($(this).val());
 							});
 							$(".dislike").on("click",function(){
-								console.log($(this).val());
+								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
 								$("#likeq"+tmno).attr("style","color: black");
 								$(this).attr("style","color: red");
@@ -477,7 +518,7 @@
 							 
 						},
 						error: function(){
-							console.log("ajax실패");
+							//console.log("ajax실패");
 						}
 						
 					});
@@ -489,7 +530,7 @@
 	function giveReview(){
 		var point = document.getElementsByName("point");
 		var cnt = 0;
-		console.log(point);
+		//console.log(point);
 		for(var i=0; i<point.length; i++){
 			if(point[i].value=='1000' || point[i].value=='-1000'){
 				cnt++;
@@ -504,6 +545,7 @@
 		return false;
 	}
 	var array = new Array("");
+	var giveReviewArray = new Array("");
 	
 	$(document).ready(function() { 
 		var once = 0;
@@ -517,43 +559,58 @@
 					
 				}
 			}
-			console.log(arr);
+			//console.log(arr);
 			$.ajax({
 				url: "reviewFinish.do",
 				data: {studyNo: arr},
 				dataType: "json",
 				success: function(data){
-					console.log(data);
+					//console.log(data);
 					var cnt=0;
+					var cntt=0;
 					
-					//로그인 한 회원은 평가를 했지만, 자신의 평가 값이 없을 경우, 평가 완료
+					//로그인 한 회원은 평가를 했지만, 자신의 평가 값이 없을 경우
 					for(var index in data.studyNoList){
-						$("#"+data.studyNoList[index]).attr("disabled","true");
-						$("#"+data.studyNoList[index]).html("평가 완료");
-						$("#"+data.studyNoList[index]).val("0");  //로그인 한 회원이 평가를 했는지 알려준다.
-					}
+						$("#"+data.studyNoList[index]).remove();
+						$("#"+data.studyNoList[index]).val("0");  //로그인 한 회원이 평가를 했는지 알려준다. 
+						$("#evalView"+data.studyNoList[index]).attr("style","display: inline");
+					} 
 					
+					for(var index in data.giveReviewList[0]){
+						for(var i in data.giveReviewList[0][index]){
+								//$(".btn.btn-outline-success.disabled").remove();
+								var map = {};
+								map.point=data.giveReviewList[0][index][i].point.toString();
+								map.content = data.giveReviewList[0][index][i].content;
+								map.mname = data.giveReviewList[0][index][i].mname;
+								map.sno = index;
+								giveReviewArray[cntt] = map;
+								//console.log(map);
+								cntt++;
+							}
+					}
+					 
 					//로그인 한 회원이 평가를 하고, 자신의 평가 값이 있을 경우, 평가 보기
 					for(var index in data.reviewList[0]){
 						for(var i in data.reviewList[0][index]){
-								//자신의 평가 값이 있고, 로그인 한 회원이 평가를 했다면 0, 안했다면 1
-								if(i.length>0 && $("#"+index).val()=='0'){ 
-									$("#"+index).remove();
-									$(".btn.btn-outline-success.disabled").remove();
-									$("#evalView"+index).attr("style","display: inline");
-								}
-							
-							var map = {};
-							map.point=data.reviewList[0][index][i].point.toString();
-							map.content = data.reviewList[0][index][i].content;
-							map.sno = index;
-							array[cnt] = map;
+							//자신의 평가 값이 있고, 로그인 한 회원이 평가를 했다면 0, 안했다면 1
+							if(i.length>0){ 
+								//$(".btn.btn-outline-success.disabled").remove();
+								var map = {};
+								map.point=data.reviewList[0][index][i].point.toString();
+								map.content = data.reviewList[0][index][i].content;
+								map.mname = data.reviewList[0][index][i].mname;
+								map.sno = index;
+								array[cnt] = map;
+							}
 							cnt++;
 						}
 					}
+					
+
 				},
 				error: function(){
-					console.log("ajax 처리 실패");
+					//console.log("ajax 처리 실패");
 				}
 				
 			});
@@ -565,55 +622,100 @@
 	$(function(){
 		//평가 보기 버튼 클릭시, 해당 스터디의 스터디의 평가 리스트를 볼 수 있다.
 		$("[name=evaluationView]").on("click",function(){
+			var ahtml ="내가 받은 평가<br /><hr/>";
+			ahtml+="<table><tr><th>평가 등급</th><th>평가 내용</th></tr>";
+			var bhtml ="내가 준 평가<br /><hr/>";
+			bhtml+="<table><tr><th>평가 등급</th><th>평가한 회원</th><th>평가 내용</th></tr>";
+			//console.log(array);
+			//console.log(giveReviewArray);
 			for(var i=0; i<array.length; i++){
 				if(this.id=="evalView"+array[i].sno){
-					console.log(array[i]);
-					var html ="<table>";
-					html += "<tr>";
-					html += "<td>";
+					//console.log(array[i]);
+					
+					ahtml += "<tr>";
+					ahtml += "<td>";
 					if(array[i].point == "1000"){
-						html += "좋아요";
+						ahtml += "좋아요";
 					}
 					if(array[i].point=="-1000"){
-						html += "싫어요";						
+						ahtml += "싫어요";						
 					}
-					html += "</td>";
-					html += "<td>";
-					html += array[i].content;
-					html += "</td>";
-					html += "</tr>";									
-					html += "</table>";
-					$("#div-reviewView").html(html);
-					$("h5#modalLabel").html("스터디 내 평가");
+					ahtml += "</td>";
+					ahtml += "<td>";
+					ahtml += array[i].content;
+					ahtml += "</td>";
+					ahtml += "</tr>";									
+					
 				}
 			}
+			ahtml += "</table>";
+			for(var i=0; i<giveReviewArray.length; i++){
+				if(this.id=="evalView"+giveReviewArray[i].sno){
+					////console.log(giveReviewArray[i]);
+					
+					bhtml += "<tr>";
+					bhtml += "<td>";
+					if(giveReviewArray[i].point == "1000"){
+						bhtml += "좋아요";
+					}
+					if(giveReviewArray[i].point=="-1000"){
+						bhtml += "싫어요";						
+					}
+					bhtml += "</td>";
+					bhtml += "<td>";
+					bhtml += giveReviewArray[i].mname;
+					bhtml += "</td>";
+					bhtml += "<td>";
+					bhtml += giveReviewArray[i].content;
+					bhtml += "</td>";
+					bhtml += "</tr>";									
+					
+				}
+			}
+			bhtml += "</table>";
+			if(array.length<1){
+				ahtml="내가 받은 평가<br /><hr/>";	
+				ahtml+="받은 평가가 없습니다.";
+				ahtml+="<br/><br/><br/>";
+			
+			}
+			$("#div-crew").html("");
+			$("#div-reviewView").html(ahtml+"<br/>"+bhtml);
+			$("h5#modalLabel").html("스터디 내 평가");
 		});
 		
 		
 		//신청 현황 보기 버튼
 		$("button[name=applyListView]").on("click",function(){
 			$("div.modal-body#div-crew").html("");
-			console.log(this.id);
+			////console.log(this.id);
 			var studyNo = this.id.split("t")[1];
-			applyLog(studyNo);
+			applyLog(studyNo, "apply");
 						
 		});
 		
+		//팀원 목록 보기 버튼
+		$( "button[name=crewListView]").on("click",function(){
+			$("div.modal-body#div-crewList").html("");
+			////console.log(this.id);
+			var studyNo = this.id.split("t")[1];
+			applyLog(studyNo, "crew");
+		});
 	});
 	
-	function applyLog(studyNo){
+	function applyLog(studyNo, crew){
 		$.ajax({
 			url: "applyListView.do",
 			data: {studyNo: studyNo},
 			dataType: "json",
 			success: function(data){
-				console.log(data);
+				////console.log(data);
 				var html ="<table>";
 				html += "<tr>";
 				html += "<td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td>";
 				html += "</tr>";
 				for(var i in data.applyList){
-					console.log(data.applyList[i]);
+					////console.log(data.applyList[i]);
 					html += "<tr id='amno"+data.applyList[i].mno+"'>";
 					html += "<td>";
 					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진' style='width:100px;'/>";
@@ -632,7 +734,11 @@
 					html += data.applyList[i].mname+"("+data.applyList[i].mid+")";
 					html += "</td>";
 					html += "<td>";
-					html += data.applyList[i].cover;
+					if(data.applyList[i].cover != null){
+						html += data.applyList[i].cover;						
+					}else{
+						html += "X";	
+					}
 					html += "</td>";
 					html += "<td>";
 					html += "<button type=button class='apply' name='agree' id='agreeq"+data.applyList[i].mno+"'>수락</button>";
@@ -644,12 +750,12 @@
 				html += "</table>";
 				
 				var removehtml = "<br />";
-				removehtml += "<h5>스터디 신청을 수락 완료 회원</h5>";
+				removehtml += "<h5>스터디 신청을 수락 완료한 회원</h5>";
 				removehtml += "<hr>";
 				removehtml += "<table>"; 
 				removehtml += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td></tr>";
 				for(var i in data.crewList){
-					console.log(data.crewList[i]);
+					//console.log(data.crewList[i]);
 					removehtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
 					removehtml += "<td>";
 					removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
@@ -671,7 +777,7 @@
 					removehtml += data.crewList[i].cover;
 					removehtml += "</td>";
 					removehtml += "<td>";
-					removehtml += "<button type=button class='cancel' name='' id='??"+data.crewList[i].mno+"'>팀원 취소</button>";
+					removehtml += "<button type=button class='cancel'  value='"+data.crewList[i].type+","+data.crewList[i].mno+","+data.crewList[i].sno+"'>팀원 취소</button>";
 					removehtml += "</td>";
 					removehtml += "</tr>";	
 				}
@@ -680,67 +786,111 @@
 				removehtml += "</table>";
 				
 				
+				//스터디 팀원 목록
+				var crewhtml = "";
+				crewhtml += "<table>"; 
+				crewhtml += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>전화번호</td><td>자기 소개</td></tr>";
+				for(var i in data.crewList){
+					//console.log(data.crewList[i]);
+					crewhtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
+					crewhtml += "<td>";
+					crewhtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+					crewhtml += "</td>";
+					crewhtml += "<td>";
+					crewhtml += data.crewList[i].grade;
+					crewhtml += "</td>";
+					crewhtml += "<td>";
+					if(data.crewList[i].gender == 'M'){
+						crewhtml += "남자";
+					}else{
+						crewhtml += "여자";
+					}
+					crewhtml += "</td>";
+					crewhtml += "<td>";
+					crewhtml += data.crewList[i].mname+"("+data.crewList[i].mid+")";
+					crewhtml += "</td>";
+					crewhtml += "<td>";
+					crewhtml += data.crewList[i].phone;
+					crewhtml += "</td>";
+					crewhtml += "<td>";
+					crewhtml += data.crewList[i].cover;
+					crewhtml += "</td>";
+					crewhtml += "</tr>";	
+				}
+				
+				//스터디 신청 수락된 회원 => 수락 버튼을 누르면 밑으로 
+				crewhtml += "</table>";
+				
+				
 				if(data.applyList.length==0){
 					$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+")");
 					$("#div-reviewView").html("신청한 회원이 없습니다.");
-					if(data.crewList.length!=0){
+					if(data.crewList.length>0){
 						$("#div-crew").html(removehtml);
 					}else{
-						$("#div-crew").html("팀원이 없습니다.");
+						$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
 					}
 				} else{
 					$("#div-reviewView").html(html);
-					$("#div-crew").html(removehtml);
+					if(data.crewList.length>0){
+						$("#div-crew").html(removehtml);
+					}else{
+						$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+					}
+				} 
+				if(crew=="crew"){
+					if(data.crewList.length>0){
+						$("#div-crewList").html(crewhtml);												
+					}else{
+						$("#div-crewList").html("해당 스터디의 팀원이 없습니다.");
+					}
 				}
 				
 				$("button[name=agree]").on("click",function(){
 					$(this).attr("style","color: red;");
 					$("#disagreeq"+this.id.split("q")[1]).attr("style","color: black;");
-					console.log(this.id.split("q")[1]);
+					//console.log(this.id.split("q")[1]);
 					var mno = this.id.split("q")[1];
 					var sno = data.studyNo;
 					$("#div-reviewView").html(html);
 					$("tr#amno"+mno).remove();
-					//var name = "들어 왔당!";
-					//var name = data.studyName;
-					// 신청 수락 클릭시, 신청이 수락된다.
-					// 신청 수락을 하면  apply테이블에서 crew테이블에 들어가야한다. => 회원번호, 스터디 번호
-					// 신청 현황에는 신청한 사람과 팀원으로 선택한 사람이 들어가 있어야한다.
-					// 신청 기간 안에는 팀원을 다시 거절 할 수 있다?
-					// 거절했던 회원을 다시 신청 목록에 넣을 수 있다?
-					// 신청이 수락되면 이메일을 발송해준다?
 					
-					applyButton(sno, mno);
+					applyButton(sno, mno, "agree");
 				});
-				$("button[name=disagree]").on("click",function(){
-					$(this).attr("style","color: red;");
-					$("#agreeq"+this.id.split("q")[1]).attr("style","color: black;");
-					console.log(this.id.split("q")[1]);
+				$(".cancel").on("click", function(){
+					var type = $(this).val().split(",")[0];
+					var mno = $(this).val().split(",")[1];
+					var sno = $(this).val().split(",")[2];
+					if(type=='lecture'){
+						alert("강의는 팀원을 취소할 수 없습니다. 관리자에게 문의하세요.");
+					}else{						
+						applyButton(sno, mno, "cancel");					
+					}
 				});
 				
 				
 			},
 			error: function(){
-				console.log("ajax 처리 실패");
+				//console.log("ajax 처리 실패");
 			}
 		});
 	}
 	
-	function applyButton(sno, mno){
+	function applyButton(sno, mno, confirm){
 			$("div#div-reviewView").html("");
 			$.ajax({
 				url: "applyButton.do",
-				data: {sno: sno, mno: mno},
+				data: {sno: sno, mno: mno, confirm: confirm},
 				dataType: "json",
 				success: function(data){
 					var html = "";
-					console.log(data);
-					html += "<h5>스터디 신청을 수락 완료 회원</h5>";
+					//console.log(data);
+					html += "<h5>스터디 신청을 수락 완료한 회원</h5>";
 					html += "<hr>";
 					html += "<table>"; 
 					html += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td></tr>";
 					for(var i in data.crewList){
-						console.log(data.crewList[i]);
+						//console.log(data.crewList[i]);
 						html += "<tr class='mno"+data.crewList[i].mno+"'>";
 						html += "<td>";
 						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
@@ -762,7 +912,7 @@
 						html += data.crewList[i].cover;
 						html += "</td>";
 						html += "<td>";
-						html += "<button type=button class='cancel' name='' id='cancel"+data.crewList[i].mno+"'>팀원 취소</button>";
+						html += "<button type=button class='cancel' value='"+data.crewList[i].type+","+data.crewList[i].mno+","+data.crewList[i].sno+"'>팀원 취소</button>";
 						html += "</td>";
 						html += "</tr>";	
 					}
@@ -775,19 +925,17 @@
 					
 				},
 				error: function(){
-					console.log("ajax 처리 실패");
+					//console.log("ajax 처리 실패");
 				}
 			});
 			
 	}
 	
 	</script>
-	
-	
+		
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 	
-
-	
+</div>
 	
 
 
