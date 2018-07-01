@@ -53,12 +53,6 @@ h1{display: inline-block;}
 	<a  href="${rootPath }/lecture/lectureList.do">강의 둘러보기</a><br /><br />
 	<a id="headaik" href="${pageContext.request.contextPath}">홈으로</a>
 	
-	
-	<script>
-	alert("${check}");
-	console.log("${check}")
-	
-	</script>
 </div>
 <script>
 function fn_instruct() {

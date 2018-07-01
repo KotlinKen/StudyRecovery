@@ -30,13 +30,15 @@
 		text-align: center;
 		position: relative;
 		top: 0;
-		left: -50px;
+		left: 680px;
+		display: inline;
 	}
 	div.btn-center2{
 		text-align: center;
 		position: relative;
 		top: -43px;
-		left: 50px;
+		left: 760px;
+		display: inline;
 	}
 	.btncss{
 		width: auto;
@@ -163,10 +165,10 @@
          		</td>
          	</tr>
          </table>
+         </c:if>
          <div class="btn-center1">
 	         <button type="submit" class='btncss' id="submit">수정</button>                  
          </div>
-         </c:if>
          </form>
          <form id="drop-form" action="${pageContext.request.contextPath }/member/memberDrop.do" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
             <input type="hidden" name="mid" value="${memberLoggedIn.mid }" />
@@ -418,91 +420,3 @@
    
    <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 </div> 
-
-<%-- 
- <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >
-            <c:if test="${memberLoggedIn != null }">
-                  <input type="hidden" name="mno" id="mno" value="${memberLoggedIn.mno }" />
-                  회원 아이디 : 
-                  <input type="text" name="mid" id="mid" value="${memberLoggedIn.mid }" readonly/>               
-                  <br />
-                  
-                  회원 이름 : 
-                  <input type="text" name="mname" id="mname" value="${memberLoggedIn.mname }" />
-                  <br />
-                  
-                  비밀번호 변경 : 
-                  <button type="button" 
-                     class="btn btn-outline-success"
-                      data-toggle="modal" 
-                      data-target="#pwdUpdate">비밀번호 변경</button>
-                  <br />
-                  
-                  연락처 : 
-                  <input type="text" name="phone" id="phone" value="${memberLoggedIn.phone }" />
-                  <br />
-              
-                  사진 : 
-                  <c:if test="${!(memberLoggedIn.mprofile eq 'no')}">
-                  <div id="imgChange" style="width:100px;">
-                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" style="width:100px;" /> 
-                  </div>
-                  </c:if>
-                  <c:if test="${memberLoggedIn.mprofile eq 'no'}">
-                     <p>프로필 사진이 없습니다.</p>
-                  </c:if>
-                  <br />
-                  <input type="file" name="upFile" />
-                  <input type="hidden" name="preMprofile" value="${memberLoggedIn.mprofile }" />
-                  <br />
-                  
-                  이메일 변경 : 
-                  <button type="button"
-                        class="btn btn-outline-success"
-                         data-toggle="modal" 
-                         data-target="#emailUpdate">이메일 변경</button>
-                  <input type="email" name="email" id="email" value="${memberLoggedIn.email }" readonly /> 
-                  <br />
-                  
-                  생년월일 : 
-                  <input type="date" name="birth" id="birth" value="${memberLoggedIn.birth }" readonly />
-                  <br />
-                  
-                  성별 : 	${memberLoggedIn.gender=='M'?'남자':'여자' }
-                  
-                  <input type="radio" name="gender" id="M" value="M" ${memberLoggedIn.gender=='M'?'checked':'' }/>
-                  <label for="M" >남</label>
-                  <input type="radio" name="gender" id="F" value="F" ${memberLoggedIn.gender=='F'?'checked':'' }/>
-                  <label for="F" >여</label>
-                  
-                  <br />
-                  
-                  관심사 : 
-                  <%
-                  	Member m = (Member)request.getAttribute("memberLoggedIn");
-                  	System.out.println("mfavor=="+m);
-                  	String[] mfavor = m.getFavor();
-                  	List<Map<String, String>> list = (List<Map<String, String>>)request.getAttribute("favor");
-                  	System.out.println("mfavor=="+list);
-                  	int cnt=0;
-                  %>
-          			<% for(Map a : list) {%>
-          				<input type="checkbox" name="favor" id="favor<%=cnt %>" value="<%=a.get("KINDNAME")%>" 
-          				<%for(String b : mfavor) {%>
-          					<%=a.get("KINDNAME").equals(b)?"checked":"" %>
-          				<% }%>/>
-             				
-            			<label for="favor<%=cnt %>"><%=a.get("KINDNAME")%></label>   
-          			<% cnt++; }%>
-                  <br/>
-                  <br/>
-
-                  자기 소개 : 	<p id="length"></p>
-                  <textarea class="form-control" name="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항" style="resize: none;">${memberLoggedIn.cover }</textarea>
-                  <br/>
-                  <button type="submit" id="submit">수정</button>                  
-            </c:if>
-            
-         </form>
-
- --%>

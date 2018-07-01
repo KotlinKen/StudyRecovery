@@ -1,5 +1,6 @@
 package com.pure.study.member.model.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -153,5 +154,9 @@ public interface MemberService {
 	Map<String, Object> searchEvaluation(Map<String, Object> map);
 
 	List<Map<String, Object>> selectGradeList();
+	
+	int adminInnerCheck(Map<String, String> link);
+
+	int selectInnerAdmin(Map<String, String> link);
 
 }

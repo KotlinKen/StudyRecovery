@@ -340,17 +340,28 @@ public class MemberDAOImpl implements MemberDAO {
 	
 	@Override
 	public int changNPOINTPLUS(Map<String, String> expMap) {
-		return sqlSession.update("member.changPOINTPLUS", expMap);
+		return sqlSession.update("member.changNPOINTPLUS", expMap);
 	}
 	
 	@Override
 	public Map<String, String> getNPoint(Map<String, String> expMap) {
-		return sqlSession.selectOne("member.getPoint", expMap);
+		return sqlSession.selectOne("member.getNPoint", expMap);
 	}
 	
 	@Override
 	public int changNPOINTMINUS(Map<String, String> expMap) {
-		return sqlSession.update("member.changPOINTMINUS", expMap);
+		return sqlSession.update("member.changNPOINTMINUS", expMap);
+	}
+
+	@Override
+	public int adminInnerCheck(Map<String, String> urlname) {
+		return sqlSession.update("member.adminInnerCheck", urlname);
+	}
+
+	@Override
+	public int selectInnerAdmin(Map<String, String> link) {
+		System.out.println(link);
+		return sqlSession.selectOne("member.selectInnerAdmin" ,link);
 	}
 
 	@Override

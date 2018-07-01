@@ -1,25 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>${param.pageTitle}</title>
-<script src="${pageContext.request.contextPath }/resources/js/jquery-3.3.1.js"></script>
-<!-- 부트스트랩관련 라이브러리 -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-<!-- 사용자작성 css -->
-<link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/style.css" />
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="MEMBER" name="pageTitle" /></jsp:include>
+<div class="studyList">
+<!-- 장익순 작업 머리 버튼 설정 시작  -->
+ <jsp:include page="/WEB-INF/views/member/admin_member_button.jsp"/>
+<!-- 장익순 버튼 설정 끝 -->
 
-</head>
-<body>
-
-<div id="inindivik1"></div>
-<div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><h2>STUDY GROUPT</h2></a></div>
 <div id="indivik">
 		<form action="${pageContext.request.contextPath}/member/agreementAdminEnd.do" method="post" name='mainForm' id='mainForm'>
 		<span>서비스 이용약관 동의</span><br />
@@ -34,7 +19,7 @@
 				<p id="p-s-ik${v.SNO }"></p>
 				<br />
 			</c:forEach>
-			<button type="button" id="insertSButton" class="btn btn-outline-success" onclick="fn_serviceInsert();"><b>+</b></button>
+			<button type="button" id="insertSButton" class="btn btn-outline-success" onclick="fn_serviceInsert('01');"><b>+</b></button>
 		</div>
 		<hr />
 		<span>개인정보 수집 및 이요 동의</span> <br />
@@ -51,13 +36,42 @@
 			</c:forEach>
 			<button type="button" id="insertIButton" class="btn btn-outline-success" onclick="fn_informationInsert();"><b>+</b></button>
 		</div>
-		<button type="button" id="buttona" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}'">돌아가기</button>
+		<button type="button" id="buttona" class="btn btn-outline-success" onclick="location.href='${rootPath}/admin/adminMember'">돌아가기</button>
 		<br /><br />
 		</form>
 	
 </div>
 <br /><br />
 <script>
+	/* history.pushState(null, null, location.href);
+	window.onpopstate = function(event) {
+	backspace('02');
+	};
+	function backspace(e) {
+		var urlname = "agreementadmin";
+		var data = new FormData();
+		data.append("urlname", urlname);
+		$.ajax({
+	    	url:"adminInnerCheck.do",
+	    	type:"POST",
+	    	data : data,
+	    	contentType : false,
+			processData : false,
+	    	dataType : "json",
+	    	success : function (data) {
+	    		if(e=='02'){
+	    			history.back(2);
+	    		}else{
+	    		location.href="${pageContext.request.contextPath}"
+	    			
+	    		}
+			},error : function (jqxhr,textStatus,textStatus) {
+				console.log(jqxhr);
+				console.log(textStatus);
+				console.log(textStatus);
+			}
+	    });
+	} */
 	function fn_serviceChange(e) {
 		console.log(e);
 		var sno = e;
@@ -235,6 +249,75 @@
 			processData : false
 		});
 	}
-</script>
-</body>
-</html>
+
+
+	$(function(){
+		loadInstructor(1, 5, "member");
+	});
+
+	function loadInstructor(cPage, pageBarSize, type){
+		$.ajax({
+			url:"${rootPath}/rest/member/"+type+"/"+cPage+"/"+pageBarSize,
+			dataType:"json",
+			success:function(data){
+				
+				var numPerPage = data.numPerPage;
+				var cPage = data.cPage;
+				var total = data.total;
+				var totalPage = Math.ceil(parseFloat(total)/numPerPage);
+				var pageNo = (Math.floor((cPage - 1)/parseFloat(pageBarSize))) * pageBarSize +1;
+				var pageEnd = pageNo + pageBarSize - 1;
+				var pageNation ="";
+				
+				$pagination = $(".pagination");
+				
+				if(pageNo == 1 ){
+					pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>';
+				}else{
+					pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+(pageNo-1)+','+5+',\'member\')">Previous</a></li>';
+				}
+				while(!(pageNo > pageEnd || pageNo > totalPage)){
+					console.log("test");
+					pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadInstructor('+pageNo+','+5+',\'member\')">'+pageNo+'</a></li>';
+					pageNo++;
+				}
+				//다음 버튼
+				
+				if(pageNo > totalPage){
+					pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
+				}else{
+					pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+pageNo+','+5+',\'member\')">Next</a></li>';
+				}
+				
+				//페이지 버튼 생성
+				$pagination.html(pageNation);
+				
+				console.log(data);
+				var rmHtml = "";
+				var member = null;
+		    	for(index in data.list){
+		    		member = data.list[index];
+		    		var upfile = (data.list[index].UPFILE);
+		    			rmHtml += "<tr>"
+		    				rmHtml += "<td>"+ member.MNO+"</td>";
+			    			rmHtml += "<td>" +member.MID +"</td>";
+			    			rmHtml += "<td>" +member.MNAME+"</td>";
+			    			rmHtml += "<td>" +member.PHONE+"</td>";
+			    			rmHtml += "<td>" +member.GENDER+"</td>";
+			    			rmHtml += "<td>" +member.POINT+"</td>";
+			    			rmHtml += "<td>" +member.NPOINT+"</td>";
+			    			rmHtml += "<td>" +member.REGDATES+"</td>";
+		    			rmHtml += "</tr>";
+		    	}
+				$(".table-responsive tbody").html(rmHtml);
+
+			},error:function(){
+				
+			}
+		});
+	}
+
+	</script>
+
+	<jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />
+

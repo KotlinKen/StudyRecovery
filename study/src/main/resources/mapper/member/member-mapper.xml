@@ -6,7 +6,7 @@
 										#{mid},
 										#{mname},
 										#{pwd},
-										${phone},
+									 LPAD(${phone}, 11, '0'),
 										'.',
 										'.',
 										'.',
@@ -1022,17 +1022,19 @@
 										#{kno},
 										#{sno},
 										'X',
-										sysdate
+										DEFAULT,
+										NULL,
+										NULL
 										)
 	</insert>
 	<select id="instructorCheckEmail" resultType="_int">
 		SELECT COUNT(*) CNT FROM MEMBER WHERE MNO = #{mno} AND EMAIL = #{tomail}
 	</select>
 	<select id="instructorApproval" resultType="_int">
-		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND STATE = 'O'
 	</select>
 	<select id="instructorCheckX" resultType="_int">
-		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'X'
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND STATE = 'X'
 	</select>
 	<update id="updateInstructorEnrollEnd">
 		update instructor set portpolio = #{portpolio},
@@ -1065,7 +1067,7 @@
 	<!-- 김률민 추가 끝 2018-06-23 10:19 -->
 
 	<select id="instructorCheckO" resultType="_int">
-		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND APPROVAL = 'O'
+		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND state = 'O'
 	</select>
 	<update id="updateScontent">
 		UPDATE SERVICEAGREE SET SCONTENT = #{scontent} where SNO = #{sno} 
@@ -1142,4 +1144,13 @@
 				NPOINT = (SELECT NPOINT FROM MEMBER WHERE MNO = ${mno})-1000
 				where mno =${mno}
 	</update>
+	<update id="adminInnerCheck">
+		UPDATE INNERCHECK SET
+				states = ${check}
+				where
+				iname = #{urlname}
+	</update>
+	<select id="selectInnerAdmin" resultType="_int" >
+		SELECT states from INNERCHECK where iname = #{urlname}
+	</select>
 </mapper>
