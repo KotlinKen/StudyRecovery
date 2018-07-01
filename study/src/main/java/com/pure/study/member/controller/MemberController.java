@@ -1948,10 +1948,18 @@ public class MemberController {
 			}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
 		map.put("list", list);
 		return map;
+	}
+	@RequestMapping("/member/memberSelectONEView.do")
+	public ModelAndView memberSelectONEView(@RequestParam(value="mid") String mid) {
+		ModelAndView mav = new ModelAndView();
+		System.out.println(mid);
+		Member m = memberService.selectOneMember(mid);
+		System.out.println(m);
+		
+		return mav;
 	}
 	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)

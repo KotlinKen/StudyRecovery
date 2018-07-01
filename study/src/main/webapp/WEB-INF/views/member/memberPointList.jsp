@@ -79,11 +79,11 @@ function loadInstructor(cPage, pageBarSize, type){
 	    		var upfile = (data.list[index].UPFILE);
 	    			rmHtml += "<tr>"
 	    				rmHtml += "<td><input type=\"checkbox\" class = \"check\" /> <input type=\"hidden\" value=\" "+member.MNO+ " \" /></td>";
-		    			rmHtml += "<td>" +member.MID +"</td>";
+		    			rmHtml += "<td><a href=\"${rootPath }/member/memberSelectONEView.do?mid="+member.MID+"\">" +member.MID +"</a></td>";
 		    			rmHtml += "<td>" +member.MNAME+"</td>";
-		    			rmHtml += "<td class=\"td1\" id=\"tdexp"+member.MNO+"\"> <input type=\"number\" value=\""+member.EXP+ "\" id=\"exp"+member.MNO+"\" class=\"number num1\" min=\"0\"  /> <br/><button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_expInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_expCancel('"+member.MNO+"','"+member.EXP+"');\">되돌리기</button></td>";
-		    			rmHtml += "<td class=\"td2\" id=\"tdpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.POINT+ "\" id=\"point"+member.MNO+"\" class=\"number num2\"  /> <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_pointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_pointCancel('"+member.MNO+"','"+member.POINT+"');\">되돌리기</button></td>";
-		    			rmHtml += "<td class=\"td3\" id=\"tdnpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.NPOINT+ "\" id=\"npoint"+member.MNO+"\" class=\"number num3\"  />  <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_npointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_npointCancel('"+member.MNO+"','"+member.NPOINT+"');\">되돌리기</button>";
+		    			rmHtml += "<td class=\"td1\" id=\"tdexp"+member.MNO+"\"> <input type=\"number\" value=\""+member.EXP+ "\" id=\"exp"+member.MNO+"\" class=\"number num1\" max=\"1000\" min=\"0\"  /> <br/><button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_expInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_expCancel('"+member.MNO+"','"+member.EXP+"');\">되돌리기</button></td>";
+		    			rmHtml += "<td class=\"td2\" id=\"tdpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.POINT+ "\" id=\"point"+member.MNO+"\" class=\"number num2\" max=\"100000\" min=\"-100000\"  /> <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_pointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_pointCancel('"+member.MNO+"','"+member.POINT+"');\">되돌리기</button></td>";
+		    			rmHtml += "<td class=\"td3\" id=\"tdnpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.NPOINT+ "\" id=\"npoint"+member.MNO+"\" class=\"number num3\" max=\"100000\" min=\"-100000\"  />  <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_npointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_npointCancel('"+member.MNO+"','"+member.NPOINT+"');\">되돌리기</button>";
 	    			rmHtml += "</tr>";
 	    	}
 			$(".table-responsive tbody").html(rmHtml);
@@ -96,9 +96,19 @@ function loadInstructor(cPage, pageBarSize, type){
 /* 경험치 */
 function fn_expInsert(mno) {
 	var exp = $("#exp"+mno).val(); 
+	exp = Math.floor(exp);
+	if(exp<0){
+		exp = 0;
+		$("#exp"+mno).val(0); 
+	}
+	if(exp>1000){
+		exp = 1000;
+		$("#exp"+mno).val(1000); 
+	}
 	var data = new FormData();
 	data.append("mno", mno);
 	data.append("exp", exp);
+	console.log(exp)
 	$.ajax({
 		url:"changOneEXP.do",
 		data : data,
@@ -107,10 +117,7 @@ function fn_expInsert(mno) {
 		type : "POST",
 		dataType : "json",
 		success : function(date) {
-			if(data.check == true){
-			alert(mno+" : "+ exp)
-				
-			}
+			$("#exp"+mno).val(exp);
 		},
 		error : function(jqxhr, textStatus,
 				errorThrown) {
@@ -122,7 +129,7 @@ function fn_expInsert(mno) {
 		processData : false
 	});
 }
-function fn_expCancel(mno,exp) {
+function fn_expCancel(mno,exp) { 
 	var data = new FormData();
 	data.append("mno", mno);
 	data.append("exp", exp);
@@ -149,6 +156,15 @@ function fn_expCancel(mno,exp) {
 /* 포인트 */
 function fn_pointInsert(mno) {
 	var point = $("#point"+mno).val();
+	point = Math.floor(point);
+	if(point<-100000){
+		point = -100000;
+		$("#point"+mno).val(-100000); 
+	}
+	if(point > 100000){
+		point = 100000;
+		$("#point"+mno).val(100000);
+	}
 	var data = new FormData();
 	data.append("mno", mno);
 	data.append("point", point);
@@ -160,10 +176,7 @@ function fn_pointInsert(mno) {
 		type : "POST",
 		dataType : "json",
 		success : function(date) {
-			if(data.check == true){
-			alert(mno+" : "+ exp)
-				
-			}
+			$("#point"+mno).val(point);
 		},
 		error : function(jqxhr, textStatus,
 				errorThrown) {
@@ -176,7 +189,6 @@ function fn_pointInsert(mno) {
 	});
 }
 function fn_pointCancel(mno,point) {
-
 	var data = new FormData();
 	data.append("mno", mno);
 	data.append("point", point);
@@ -203,6 +215,15 @@ function fn_pointCancel(mno,point) {
 /* 지식포인트 */
 function fn_npointInsert(mno) {
 	var npoint = $("#npoint"+mno).val();
+	npoint = Math.floor(npoint);
+	if(npoint <-100000){
+		npoint = -100000;
+		$("#npoint"+mno).val(-100000);
+	}
+	if(npoint > 100000){
+		npoint = 100000;
+		$("#npoint"+mno).val(100000);
+	}
 	var data = new FormData();
 	data.append("mno", mno);
 	data.append("npoint", npoint);
@@ -214,7 +235,7 @@ function fn_npointInsert(mno) {
 		type : "POST",
 		dataType : "json",
 		success : function(date) {
-			
+			$("#npoint").val(npoint);
 		},
 		error : function(jqxhr, textStatus,
 				errorThrown) {
@@ -282,8 +303,16 @@ $(function(){
 		for(var i = 0; i<check.length;i++ ){
 			if(check[i].checked == true){
 				var c = $(check[i]).siblings().val();
-				mno.push(c);
-				console.log(c);
+				var id = ("#exp"+c).replace(" ","");
+				var exp = $(id).val(); 
+				exp = Math.floor(exp);
+				console.log("#exp"+c);
+				console.log(exp);
+				if(exp+10 <1000){
+					console.log("");
+					mno.push(c);
+					console.log(c);
+				}
 			}
 		} 
 		var data = new FormData();
@@ -324,7 +353,16 @@ $(function(){
 		for(var i = 0; i<check.length;i++ ){
 			if(check[i].checked == true){
 				var c = $(check[i]).siblings().val();
-				mno.push(c);
+				var id = ("#exp"+c).replace(" ","");
+				var exp = $(id).val();
+				exp = Math.floor(exp);
+				console.log("#exp"+c);
+				console.log(exp);
+				if(exp-10>0){
+					console.log("");
+					mno.push(c);
+					console.log(c);
+				}
 			}
 		} 
 		var data = new FormData();
@@ -366,7 +404,16 @@ $(function(){
 		for(var i = 0; i<check.length;i++ ){
 			if(check[i].checked == true){
 				var c = $(check[i]).siblings().val();
-				mno.push(c);
+				var id = ("#point"+c).replace(" ","");
+				var point = $(id).val(); 
+				point = Math.floor(point);
+				console.log("#point"+c);
+				console.log(point);
+				if(point+1000 <100000){
+					console.log("");
+					mno.push(c);
+					console.log(c);
+				}
 			}
 		} 
 		var data = new FormData();
@@ -405,10 +452,19 @@ $(function(){
 		var mno = [];
 		var check = $(".check");
 		for(var i = 0; i<check.length;i++ ){
+				$("#div2").fadeOut("slow");
 			if(check[i].checked == true){
 				var c = $(check[i]).siblings().val();
-				mno.push(c);
-				console.log(c);
+				var id = ("#point"+c).replace(" ","");
+				var point = $(id).val(); 
+				point = Math.floor(point);
+				console.log("#point"+c);
+				console.log(point);
+				if(point-1000>-100000){
+					console.log("");
+					mno.push(c);
+					console.log(c);
+				}
 			}
 		} 
 		
@@ -451,7 +507,16 @@ $(function(){
 		for(var i = 0; i<check.length;i++ ){
 			if(check[i].checked == true){
 				var c = $(check[i]).siblings().val();
-				mno.push(c);
+				var id = ("#npoint"+c).replace(" ","");
+				var npoint = $(id).val(); 
+				npoint = Math.floor(npoint);
+				console.log("#point"+c);
+				console.log(npoint);
+				if(npoint+1000<100000){
+					console.log("");
+					mno.push(c);
+					console.log(c);
+				}
 			}
 		} 
 		var data = new FormData();
@@ -492,7 +557,16 @@ $(function(){
 		for(var i = 0; i<check.length;i++ ){
 			if(check[i].checked == true){
 				var c = $(check[i]).siblings().val();
-				mno.push(c);
+				var id = ("#npoint"+c).replace(" ","");
+				var npoint = $(id).val(); 
+				npoint = Math.floor(npoint);
+				console.log("#point"+c);
+				console.log(npoint);
+				if(npoint-1000>-100000){
+					console.log("");
+					mno.push(c);
+					console.log(c);
+				}
 			}
 		} 
 		var data = new FormData();

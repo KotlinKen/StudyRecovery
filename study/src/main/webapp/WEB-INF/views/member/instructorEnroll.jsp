@@ -351,7 +351,7 @@ textarea {
 					 $("#name").val("");
 					return;
 				}
-				if (name.val().trim().length > 8) {
+				if (name.val().trim().length > 7) {
 					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
 					 document.getElementById("nameok").innerHTML = "";
 					 $("#name").val("");
@@ -369,13 +369,13 @@ textarea {
 					 $("#name").val("");
 					return;
 				}
-				if (name.val().search(/[!@#$%^&*()?_+~]/g) > 0) {
+				if (name.val().search(/[!@#$%^&*()?_+~]/g)  != -1) {
 					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
 					 document.getElementById("nameok").innerHTML = "";
 					 $("#name").val("");
 					return;
 				} 
-				if (name.val().search(/[0-9]/g) > 0) {
+				if (name.val().search(/[0-9]/g)  != -1) {
 					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
 					 document.getElementById("nameok").innerHTML = "";
 					 $("#name").val("");
@@ -626,6 +626,11 @@ textarea {
 				name.focus();
 				return false;
 			}
+			if (name.val().trim().length > 7) {
+				alert("이름을 2글자 이상 입력해 주세요.");
+				name.focus();
+				return false;
+			}
 			if (name.val().indexOf(" ") >= 0) {
 				alert("이름을에 공백을  사용할 수 없습니다.");
 				name.focus();
@@ -866,7 +871,7 @@ textarea {
 			<div id="name-phone-email-gender-div-ik">
 			
 			<!-- 이름 -->
-			<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="15" required  autocomplete="off"  />
+			<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off"  />
 			<span id="nameerr" class="name"></span> 
 			<span id="nameok" class="name"></span> <br /> 
 			
