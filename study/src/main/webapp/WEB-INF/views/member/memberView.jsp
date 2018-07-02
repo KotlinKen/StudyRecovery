@@ -351,7 +351,6 @@
             var upload = document.getElementsByName('upFile')[0];
             upload.onchange = function (e) {
             	  e.preventDefault();
->>>>>>> branch 'KimHoiJin' of https://github.com/KotlinKen/StudyRecovery.git
 
 
 
