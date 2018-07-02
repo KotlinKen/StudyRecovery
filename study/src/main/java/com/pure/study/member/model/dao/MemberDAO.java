@@ -169,4 +169,6 @@ public interface MemberDAO {
 
 	int updateInstructorApply(int ino);
 
+	int updateInstructorCancel(int ino);
+
 }

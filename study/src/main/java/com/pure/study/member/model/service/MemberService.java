@@ -169,4 +169,6 @@ public interface MemberService {
 
 	int updateInstructorApply(int ino);
 
+	int updateInstructorCancel(int ino);
+
 }

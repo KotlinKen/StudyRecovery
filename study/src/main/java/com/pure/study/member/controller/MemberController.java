@@ -2105,6 +2105,18 @@ public class MemberController {
 		mav.setViewName("redirect:"+referer);
 		return mav;
 	}
+	@RequestMapping(value="/member/applyInstructCancel.do")
+	public ModelAndView applyInstructCancel(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino , HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		int result = memberService.updateInstructorCancel(ino);
+		if(result <0) {
+			
+		}else {
+		}
+		String referer = request.getHeader("Referer");
+		mav.setViewName("redirect:"+referer);
+		return mav;
+	}
 	
 	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)

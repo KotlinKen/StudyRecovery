@@ -424,6 +424,11 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.update("member.updateInstructorApply", ino);
 		
 	}
+
+	@Override
+	public int updateInstructorCancel(int ino) {
+		return sqlSession.update("member.updateInstructorCancel", ino);
+	}
 	
 	
 }

@@ -239,14 +239,24 @@ table{text-align: center;}
 				</th>
 			</tr>
 			<tr>
+				<th>
+					승인 취소일
+				</th>
+				<th>
+ 					${instruct.OUTDATE }
+				</th>
+			</tr>
+			<tr>
 				<th colspan="2">
-				<c:if test="${instruct.STATE  eq 'O'}">
-				???
-				</c:if>
-				<c:if test="${instruct.STATE  eq 'X'}">
-				????
-				</c:if>
-					<button type="button" onclick="fn_submit();"  class="btn btn-info" > 승인</button>
+				<c:choose>
+					<c:when test="${instruct.STATE eq 'X  '}">
+						<button type="button" onclick="fn_submit(01);"  class="btn btn-info" > 승인</button>
+					</c:when>
+					<c:otherwise>
+						<button type="button" onclick="fn_submit(02);"  class="btn btn-info" > 승인취소</button>
+				    </c:otherwise>
+
+				</c:choose>
 				</th>
 			</tr>
 	</thead>
@@ -255,7 +265,11 @@ table{text-align: center;}
 	
 
 <script>
-	function fn_submit() {
-		location.href="${pageContext.request.contextPath}/member/applyInstructAgree.do?ino="+${instruct.INO }
+	function fn_submit(e) {
+		if(e==01){
+			location.href="${pageContext.request.contextPath}/member/applyInstructAgree.do?ino="+${instruct.INO }
+		}else{
+			location.href="${pageContext.request.contextPath}/member/applyInstructCancel.do?ino="+${instruct.INO }
+		}
 	}
 </script>
