@@ -11,7 +11,8 @@ public interface BoardService {
 
 	List<Map<String, String>> selectBoardList(int cPage, int numPerPage);
 	int selectCount();
-	int insertBoard(Board board, List<Attachment> attachList);
+	int selectCount(Map<String, String> queryMap);
+	int insertBoard(Board board);
 	Map<String, String> selectOne(int boardNo);
 	List<Map<String, String>> selectBoardList(int cPage, int numPerPage, Map<String, String> params);
 	int updateBoard(Map<String, String> queryMap);

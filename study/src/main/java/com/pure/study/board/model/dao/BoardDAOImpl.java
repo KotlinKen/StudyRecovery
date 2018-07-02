@@ -27,6 +27,11 @@ public class BoardDAOImpl implements BoardDAO {
 	public int selectCount() {
 		return sqlSession.selectOne("board.boardCount"); 
 	}
+	
+	@Override
+	public int selectCount(Map<String, String> queryMap) {
+		return sqlSession.selectOne("board.boardCount", queryMap); 
+	}
 
 	@Override
 	public int insertBoard(Board board) {

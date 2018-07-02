@@ -1,20 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="BOARD" name="pageTitle" /></jsp:include>
+<div class="fluid-container">
+  <div class="row text-left" style="margin-bottom:10px;">
+    <div class="col">
+    </div>
+    <div class="col-8">
+    </div>
+    <div class="col text-right">
+      <button type="button" class="btn btn-primary" onclick="javascript:location.href='${rootPath}/admin/boardWrite'">게시물작성</button>
+    </div>
+  </div>
+</div>
 <div class="studyList">
 	<div class="table-responsive">
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
-					<th>No</th>
-					<th>아이디</th>
-					<th>이름</th>
-					<th>연락처</th>
-					<th>성별</th>
-					<th>포인트</th>
-					<th>지식포인트</th>
-					<th>등록일</th>
-					<th>수정하기</th>
-					<th>게시글보기</th>
+					<th width="5%">번호</th>
+					<th width="15%">제목</th>
+					<th width="35%">내용</th>
+					<th width="5%">타입</th>
+					<th width="10%">채택</th>
+					<th width="10%">작성자</th>
+					<th width="10%">등록일</th>
+					<th width="5%">수정</th>
+					<th width="5%">보기</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -28,22 +38,11 @@
 	  </ul>
 	</nav>
 </div>
-<div class="fluid-container">
-  <div class="row text-left">
-    <div class="col">
-	
-    </div>
-    <div class="col-8">
-    </div>
-    <div class="col text-right">
-      <button type="button" class="btn btn-primary" onclick="javascript:location.href='${rootPath}/admin/boardWrite'">게시물작성</button>
-    </div>
-  </div>
-</div>
+
 
 <script>
 $(function(){
-	loadInstructor(1, 5, "all");
+	loadInstructor(1, 10, "all");
 });
 
 function loadInstructor(cPage, pageBarSize, type){
@@ -65,11 +64,11 @@ function loadInstructor(cPage, pageBarSize, type){
 			if(pageNo == 1 ){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>';
 			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+(pageNo-1)+','+5+',\'all\')">Previous</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+(pageNo-1)+','+pageBarSize+',\'all\')">Previous</a></li>';
 			}
 			while(!(pageNo > pageEnd || pageNo > totalPage)){
 				console.log("test");
-				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadInstructor('+pageNo+','+5+',\'all\')">'+pageNo+'</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadInstructor('+pageNo+','+pageBarSize+',\'all\')">'+pageNo+'</a></li>';
 				pageNo++;
 			}
 			//다음 버튼
@@ -77,7 +76,7 @@ function loadInstructor(cPage, pageBarSize, type){
 			if(pageNo > totalPage){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
 			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+pageNo+','+5+',\'all\')">Next</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+pageNo+','+pageBarSize+',\'all\')">Next</a></li>';
 			}
 			
 			//페이지 버튼 생성
@@ -91,12 +90,11 @@ function loadInstructor(cPage, pageBarSize, type){
 	    		var upfile = (data.list[index].UPFILE);
 	    			rmHtml += "<tr>"
 	    				rmHtml += "<td>"+board.BNO+"</td>";
-		    			rmHtml += "<td>" +board.TITLE +"</td>";
-		    			rmHtml += "<td>" +(board.CONTENT.replace(/(<([^>]+)>)/ig,"")).replace("&nbsp;","").substring(0,10)+"</td>";
+		    			rmHtml += "<td class='text-left'>" +board.TITLE +"</td>";
+		    			rmHtml += "<td class='text-left'>" +(board.CONTENT.replace(/(<([^>]+)>)/ig,"")).replace("&nbsp;","").substring(0,45)+"</td>";
 		    			rmHtml += "<td>" +board.TYPE+"</td>";
-		    			rmHtml += "<td>" +board.UPFILE+"</td>";
 		    			rmHtml += "<td>" +board.FORK+"</td>";
-		    			rmHtml += "<td>" +board.POINT+"</td>";
+		    			rmHtml += "<td>" +board.MNAME+"</td>";
 		    			rmHtml += "<td>" +board.REG+"</td>";
 		    			rmHtml += "<td><button class='btn btn-primary' onclick='fn_boardModify("+board.BNO+")'>수정</button></td>";
 		    			rmHtml += "<td><button class='btn btn-primary' onclick='fn_boardView("+board.BNO+")'>보기</button></td>";

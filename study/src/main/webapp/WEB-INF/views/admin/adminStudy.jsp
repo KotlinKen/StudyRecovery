@@ -49,7 +49,6 @@ function loadStudy(cPage, pageBarSize, type){
 		url:"${rootPath}/rest/"+type+"/all/"+cPage+"/"+pageBarSize,
 		dataType:"json",
 		success:function(data){
-			
 			var numPerPage = data.numPerPage;
 			var cPage = data.cPage;
 			var total = data.total;

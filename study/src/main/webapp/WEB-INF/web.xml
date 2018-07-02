@@ -10,6 +10,8 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+  
+  
   <servlet>
     <servlet-name>appServlet</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -23,6 +25,10 @@
     <servlet-name>appServlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+  
+ 
+  
+  
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -42,4 +48,38 @@
       <include-prelude>/WEB-INF/views/common/prelude.jsp</include-prelude>
     </jsp-property-group>
   </jsp-config>
+  
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/common/error/throwable</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/common/error/exception</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/common/error/404</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/common/error/403</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/common/error/500</location>
+	</error-page>
+	<error-page>
+		<error-code>503</error-code>
+		<location>/common/error/503</location>
+	</error-page>
+	<error-page>
+		<error-code>400</error-code>
+		<location>/common/error/400</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/common/error/405</location>
+	</error-page>
+  
 </web-app>

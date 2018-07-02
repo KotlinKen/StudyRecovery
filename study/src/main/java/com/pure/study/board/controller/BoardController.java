@@ -15,7 +15,9 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +53,7 @@ public class BoardController {
 	@RequestMapping(value="/{location}/boardList", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
-										@RequestParam (value="map", required=false) Map<String, String> queryMap,
+										@RequestParam (required=false) Map<String, String> queryMap,
 										@PathVariable(value="location", required=false) String location){
 		ModelAndView mav = new ModelAndView();
 		
@@ -62,19 +64,28 @@ public class BoardController {
 			return mav;
 		}
 		
+		logger.info("queryMap"+queryMap);
 		int numPerPage = 10; 
+		
+
+		if(queryMap.get("type") == null) {
+			queryMap.put("type", "일반");
+		}
+
 		
 		//1. 현재 페이지 컨텐츠 구하기
 		List<Map<String, String>> list = boardService.selectBoardList(cPage, numPerPage, queryMap);
-		
 		logger.debug("보드 리스트 값을 알려주세요"+list);
+
 		
 		//2. 페이지바 처리를 위한 전체 컨텐츠수 구하기
-		int totalBoardNumber = boardService.selectCount();
+		int totalBoardNumber = boardService.selectCount(queryMap);
 		
 		mav.addObject("count", totalBoardNumber);
 		mav.addObject("list", list);
+		mav.addObject("cPage", cPage);
 		mav.addObject("numPerPage", numPerPage);
+		mav.addObject("queryMap", queryMap);
 		
 		return mav;
 	};
@@ -104,13 +115,10 @@ public class BoardController {
 			return mav;
 		}
 		
-		
-		
 		try {
 			//1.파일업로드 처리
 			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
 					
-			List<Attachment> attachList = new ArrayList<>();
 			
 			for(MultipartFile f : upFiles) {
 				if(!f.isEmpty()) {
@@ -136,7 +144,7 @@ public class BoardController {
 			board.setUpfile(image);
 			
 			
-			int result = boardService.insertBoard(board, attachList);
+			int result = boardService.insertBoard(board);
 			
 			
 			//3. view단 분기
@@ -145,8 +153,7 @@ public class BoardController {
 			
 			if(result>0) {
 				msg = "게시물 등록 성공";
-				//loc = "/board/boardView.do?boardNo="+board.getBno();
-				loc = "/";
+				loc = "/"+location+"/boardList";
 			}else {
 				msg = "게시물 등록 실패";
 			}
@@ -163,7 +170,7 @@ public class BoardController {
 	
 	
 	@RequestMapping(value="/{location}/boardView", method=RequestMethod.GET)
-	public ModelAndView selectOne(@RequestParam int bno, @PathVariable(value="location", required=false) String location) {
+	public ModelAndView selectOne(@RequestParam int bno, @PathVariable(value="location", required=false) String location, HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		
 		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
@@ -176,11 +183,21 @@ public class BoardController {
 		
 		Map<String, String> board = boardService.selectOne(bno);
 		mav.addObject("board", board);
+		logger.info(board.toString());
 		return mav;
 	}
 	@RequestMapping(value="/{location}/boardModify", method=RequestMethod.GET)
-	public ModelAndView boardModify(@RequestParam int bno, @PathVariable(value="location", required=false) String location) {
+	public ModelAndView boardModify(@RequestParam(value="bno", required=true) int bno, 
+									@RequestParam Map<String, String> map, 
+									@PathVariable(value="location", required=false) String location,
+							   	    HttpServletRequest request,
+							   	    Board board, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles){	
+		
+		
+		
 		ModelAndView mav = new ModelAndView();
+		List<String> images = new ArrayList<String>();
+		
 		
 		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
 			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
@@ -189,12 +206,102 @@ public class BoardController {
 			return mav;
 		}
 		
+		Map<String, String> oldFeed = boardService.selectOne(bno);
 		
-		Map<String, String> board = boardService.selectOne(bno);
-		mav.addObject("board", board);
+		HttpSession session = request.getSession();
+		Member m = (Member)session.getAttribute("memberLoggedIn");
+		String boardWriter = String.valueOf(oldFeed.get("MNO"));
+		
+		if(m == null) {
+			mav.addObject("msg", "로그인 후 이용해주세요");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}else {
+			if(!(String.valueOf(m.getMno()).equals(boardWriter)) && (String.valueOf(m.getMno()).equals("manager"))) {
+				System.out.println("내번호"+ m.getMno() + "보드 글 작성자 "+boardWriter );
+				mav.addObject("msg", "본인의 글만 수정이 가능합니다.");
+				mav.addObject("loc", "/board/boardView?bno="+bno);
+				mav.setViewName("common/msg");
+				return mav;
+			}
+		}
+		
+		mav.addObject("board", oldFeed);
 		return mav;
 	}
-	
+
+
+	@RequestMapping(value="/{location}/boardModifyEnd", method=RequestMethod.POST)
+	public ModelAndView boardModifyEnd(@RequestParam(value="bno", required=false) int bno,
+									   @RequestParam Map<String, String> map, 
+									   @PathVariable(value="location", required=false) String location,
+								   	   HttpServletRequest request, Board board,  
+								   	   @RequestParam(value="upFile", required=false) MultipartFile[] upFiles){
+		
+		List<String> images = new ArrayList<String>();
+		ModelAndView mav = new ModelAndView();
+		
+		System.out.println("test"+ map.get("oldFileList"));
+ 		images.add(map.get("oldFileList")); //기존 파일 추가
+		
+		if(location == null || !(location.equals("admin") || location.equals("board"))) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+
+		
+		try {
+			//1.파일업로드 처리
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+					
+			for(MultipartFile f : upFiles) {
+				if(!f.isEmpty()) {
+					//파일명 재생성
+					String originalFileName = f.getOriginalFilename();
+					String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+					int rndNum = (int)(Math.random() * 1000);
+					String renamedFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + rndNum + "." + ext;
+					
+					try {
+						f.transferTo(new File(saveDirectory + "/" + renamedFileName));
+					} catch (IllegalStateException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					//VO객체 담기
+					images.add(renamedFileName);
+				}
+			}
+			
+			map.put("upfile", String.join(",", images));
+			int result = boardService.updateBoard(map);
+			
+			//3. view단 분기
+			String loc = "/";
+			String msg = "";
+			System.out.println(location);
+			if(result>0) {
+				msg = "게시물 수정 성공 했습니다.";
+				loc = "/"+location+"/boardView?bno="+bno;
+
+			}else {
+				msg = "게시물 수정실패 실패";
+				loc = "/";
+			}
+			
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+			mav.setViewName("common/msg");
+		} catch(Exception e) {
+			throw new BoardException("게시물 DB 등록 오류");
+		}
+	return mav; 
+	}
 	
 	
 	@RequestMapping("/board/boardDownload.do")
@@ -250,10 +357,59 @@ public class BoardController {
 	
 	
 	@RequestMapping("/{location}/boardReplyFork")
+	@ResponseBody
 	public ModelAndView boardReplyFork(@PathVariable(value="location", required=false) String location,
-									   @RequestParam (value="map", required=false) Map<String, String> queryMap) {
+									   @RequestParam(value="bno", required=true, defaultValue="") String bno,
+									   @RequestParam(value="rno", required=true, defaultValue="") String rno,
+									   @RequestParam(value="mno", required=true, defaultValue="") String mno,
+									   @RequestParam (required=false) Map<String, String> queryMap) {
 										
-		ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
+			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		System.out.println(bno);
+		System.out.println(rno);
+		System.out.println(mno);
+		
+		Member member = memberService.selectOneMember(mno);
+		
+		if(member != null) {
+			member.setPoint(1000);
+			//int result = memberService.updateNpoint(member);
+		}
+		
+		
+		
+		queryMap.put("bno", bno);
+		queryMap.put("mno", mno);
+		queryMap.put("rno", rno);
+		queryMap.put("fork", rno);
+	
+		
+		
+		
+		int result = boardService.updateBoard(queryMap);
+		// 회원정보 조회 
+		queryMap.put("result", String.valueOf(result));
+		
+		if(result > 0 ) {
+			//int mresult =memberService.updateMember(member);
+		}
+		
+		return mav;
+	}
+	@RequestMapping("/{location}/uploadImage")
+	@ResponseBody
+	public ModelAndView sendImage(@PathVariable(value="location", required=false) String location,
+										@RequestParam("file") MultipartFile upFile,
+										HttpServletRequest request) {
+		
+		ModelAndView mav = new ModelAndView("jsonView");
 		
 		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
 			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
@@ -262,17 +418,38 @@ public class BoardController {
 			return mav;
 		}
 		
-		Member member = new Member();
 		
-		//멤버 아이디로 선택후 현재 포인트를 가져온후 더해서 다시 넣는다 
-		member.setMno(Integer.parseInt(queryMap.get("mno")));
 		
-		int result = boardService.updateBoard(queryMap);
-		if(result > 0 ) {
-			int mresult =memberService.updateMember(member);
+		String renamedFileName="";
+		String saveDirectory="";
+		
+		try { 
+			//1. 파일 업로드 처리 
+			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/"+location);		
+			if(!upFile.isEmpty()) {
+				//파일명 재생성
+				String originalFileName = upFile.getOriginalFilename();
+				String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+				int rndNum = (int)(Math.random()*1000); //0~9999
+				renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+				
+				try {
+					upFile.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제 저장하는 코드. 
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		
+		}catch(Exception e) {
+			throw new RuntimeException("이미지 등록 오류");
 		}
-		
-		
+		mav.addObject("imageUrl", renamedFileName);
 		return mav;
-	}	
+	}
+	
+	
 }

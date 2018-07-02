@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"	pageEncoding="UTF-8"%>
 <jsp:include page ="/WEB-INF/views/common/header.jsp">
-	<jsp:param value="광고등록" name="pageTitle"/>
+	<jsp:param value="${board.TITLE }" name="pageTitle"/>
 </jsp:include>
 <div class="container">
-${memberLoggedIn }
 <c:set var = "images" value = "${fn:split(board.UPFILE, ',')}" />
+<br />
 
 
 
@@ -12,64 +12,168 @@ ${memberLoggedIn }
 <input type="hidden" name="type" value="일반"/>
 <div class="form-row">
 	<div class="form-group col-md-6">
+		 <div> 작성자 :  ${board.MNAME }</div>
+	</div>
+	<div class="form-group col-md-6">
+		 <div> 작성일 :  ${board.REGDATE }</div>
+	</div>
+</div>
+<div class="form-row">
+	<div class="form-group col-md-6">
 		 <div> 제목 :  ${board.TITLE }</div>
 	</div>
 </div>
 
 <div class="form-row">
-	<div class="form-group col-md-6">
-		내용:
-		<textarea class="form-control" name="content" rows="2" readonly>${board.CONTENT}</textarea>
+	<div class="form-group col-md-12">
+		<div class="form-control" style="padding:30px; min-height:500px;">${board.CONTENT}</div> 
+	</div>
+</div>
 
+<div class="panel buttonPanel">
+	<div class="leftSection">
+	
+
+	</div>
+	<div class="rightSection">
+	<c:if test="${mber.mno eq board.MNO }">
+	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardModify?bno=${board.BNO}'">수정</button> 
+	</c:if>
+	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardList'">목록</button> 
 	</div>
 </div>
 
 
-	<form action="${rootPath }/board/replyWrite" method="post" class="form-inline">
-		<input type="hidden" name="bno" value="${board.BNO}" /> <input type="hidden" name="mno" value="${memberLoggedIn.mno}" />
-		<div class="form-group md-4">
-			<span class="comment_profile" style="background-image:url('${rootPath }/resources/upload/member/${memberLoggedIn.mprofile }')"></span>
+
+	<c:if test="${memberLoggedIn != null }">
+	<form action="${rootPath }/board/replyWrite" method="post">
+		<div class="form-row">
+			<input type="hidden" name="mno" value="${mber.mno }"/>
+			<input type="hidden" name="bno" value="${board.BNO}"/>
+			
+			<div class="form-group col-md-1 text-center">
+				<c:if test="${memberLoggedIn.mprofile != null }">
+				<div class="comment_profile backCover text-center" style="background-image:url('${rootPath }/resources/upload/member/${memberLoggedIn.mprofile }')"></div>
+				</c:if>
+				
+					
+				
+				<div class="text-center">${mber.mid }</div>
+			</div>
+			<div class="form-group col-md-10">
+				<textarea class="form-control commentArea" id="comment" rows="3" style="width:100%;" name="content"></textarea>
+				<div class="commentCounter text-right"><span>0</span>/200</div>
+			</div>
+			<div class="form-group col-md-1">
+				<button type="submit" class="btn rm_custom_btn" onclick="return fn_commentCheck()">전송</button>
+			</div>
 		</div>
-		<div class="form-group md-8">
-			<label for="comment">코멘트</label>
-			<textarea class="form-control" id="comment" rows="3" name="content"></textarea>
-		</div>
-		<button type="submit">전송</button>
 	</form>
+	</c:if>
+
+
+
+	<c:if test="${memberLoggedIn == null }">
+	<div class="form-row">
+		<div class="form-group col-md-1 profile-col">
+			<span class="comment_profile backCover" style="background-image:url('${rootPath }/resources/images/noprofile.jpg')"></span>
+		</div>
+		<div class="form-group col-md-10">
+			<textarea class="form-control commentArea needLogin" id="comment" rows="3" style="width:100%" name="content" readonly> 로그인후 작성하실수 있습니다.</textarea>
+			
+		
+		</div>
+		<div class="form-group col-md-1">
+			<button type="button" class="btn rm_custom_btn" onclick="return commentLoginfirst()">전송</button>
+		</div>
+	</div>
+	</c:if>
+	
+	
+	<form action="${rootPath }/board/replyDelete" method="post" id="replyHandler">
+		<input type="hidden" name="bno" value="${board.BNO}"/>
+		<input type="hidden" name="rno" id="rno" />
+		<input type="hidden" name="mno" value="${mber.mno }"/>
+	</form>
+	
+	<form action="${rootPath }/board/replyModify" method="post" id="replyModifyHandler">
+		<input type="hidden" name="bno" value="${board.BNO}"/>
+		<input type="hidden" name="rno"  />
+		<input type="hidden" name="mno" value="${mber.mno }"/>
+		<textarea hidden="hidden" name="content" id="textAreaforReplyHandler" cols="1" rows="1"></textarea>
+	</form>
+
+	<div class="replyList">
+
+	</div>
+
+<style>
+.commentArea{border:1px solid #ededed; width:100%; resize:none; overflow:hidden;}
+.needLogin{padding-top:40px; padding-left:30px; padding-bottom:0px;}
+.commentArea:focus{border:1px solid #ededed;}
+.rm_custom_btn{ width:100%; height:100px; border-radius:0.15rem; }
+</style>
+<script type="text/javascript">
+
+function fn_commentCheck(){
+	$comment = $("#comment");
+	
+	if($comment.val().trim() == ""){
+		alert("코멘트를 입력해 주세요.");
+		$comment.focus();
+		return false;
+	}
+	
+}
+
+function commentLoginfirst(){
+	if(confirm("코멘트를 남기려면 우선 로그인해주세요")){
+		$("#btn-login").click();	
+	}else{
+		
+	}
+}
+
+$(document).ready(function() {
+    $('.commentArea').on('keydown', function() {
+    	var count = $(this).val().length;
+    	var maxCount = 199;
+    	$(this).parent().find(".commentCounter span").text(count);
+    	
+        if(count > maxCount) {
+            $(this).val($(this).val().substring(0, 199));
+        }
+    });
+});
+
+</script>
+
+
 
 
 <div class="studyList">
-	<div class="table-responsive">
-		<table class="table table-striped table-sm">
-			<thead>
-				<tr>
-					<th>No</th>
-					<th>제목</th>
-					<th>내용</th>
-					<th>이미지</th>
-					<th>링크</th>
-				</tr>
-			</thead>
-			<tbody>
-			
-			</tbody>
-		</table>
-	</div>
 	<nav aria-label="Page navigation example">
 	  <ul class="pagination">
 	    <li class="page-item"><a class="page-link" href="#">Next</a></li>
 	  </ul>
 	</nav>
 </div>
-<button type="button" class="btn btn-primary" onclick="javascript:location.href='${rootPath}'/board/boardList">목록</button>
-  
+
+
+
+	
+
+
+
+
+</div>
 
 
 <script>
 
 
 $(function(){
-loadData(${board.BNO }, 1, 1, 5);
+	loadData( ${board.BNO }, 1, 1, 5);
 });
 
 function loadData(bno, type, cPage, pageBarSize){
@@ -115,42 +219,47 @@ function loadData(bno, type, cPage, pageBarSize){
 			console.log(data);
 			var rmHtml = "";
 			var reply = null;
+			
 	    	for(index in data.list){
 	    		reply = data.list[index];
 	    		var upfile = (data.list[index].UPFILE);
-	    			rmHtml += "<tr onclick=fn_replyView(this,"+reply.RNO+")>"
-		    			rmHtml += "<td>" +reply.CONTENT +"</td>";
-		    			rmHtml += "<td>" +reply.CONTENT +"</td>";
-		    			rmHtml += "<td>" +reply.MID+"</td>";
-		    			if('${memberLoggedIn.mno}'== reply.MNO){ 
-		    				rmHtml += "<td><button>수정</button><button>삭제</button></td>";
+	    		var profile = reply.MPROFILE;
+	    		
+	    			rmHtml += "<div class='reply'>"
+		    			rmHtml += "<div class='replyInfo text-center'>";
+							if(profile == "no" || profile == null || profile == ""){
+		    					rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/images/noprofile.jpg)' ></div></div>";
+							}else{
+			    				rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/upload/member/"+profile+")' ></div></div>";
+							}
+			    			rmHtml += "<div class='replyMid'>" +reply.MID+"</div>";
+		    			rmHtml += "</div>";
+
+		    			rmHtml += "<div class='replyContent'><div class='oldContent'>" +reply.CONTENT +"</div></div>";
+		    			rmHtml += "<div class='replyRegdate'>" +reply.REGS+"</div>";
+		    			
+		    			
+		    			
+		    			rmHtml += "<div class='replyCommand'>";
+		    			
+		    			
+		    			if('${mber.mno}'== reply.MNO){ 
+		    				rmHtml += "<div><a class='replyModify' onclick='replyModify(this, "+reply.MNO+", "+reply.RNO+");'>수정</a><a class='replyDelete' onclick='replyDelete("+reply.MNO+", "+reply.RNO+")'>삭제</a></div>";
 		    			}
-		    			if('${memberLoggedIn.mno}'== '${board.MNO}' && '${memberLoggedIn.mno}' != reply.MNO && '${board.FORK}' != "1"){ 
-		    				rmHtml += "<td><button onclick='fn_fork("+reply.MNO+", "+${board.BNO}+")'>채택</button></td>";
+		    			if('${mber.mno}'== '${board.MNO}' && '${mber.mno}' != reply.MNO && '${board.FORK}' == 0){ 
+		    				rmHtml += "<div><a onclick='fn_fork("+reply.MNO+", "+${board.BNO}+", "+reply.RNO+")'>채택</a></div>";
+		    			}else{
+		    				if('${board.FORK}' == reply.RNO){
+		    					rmHtml += "<div style='color:red'>채택글</div>";
+		    				}
 		    			}
-		    			rmHtml += "<td>" +reply.MPROFILE+"</td>";
-		    			rmHtml += "<td>" +reply.REGDATE+"</td>";
-	    			rmHtml += "</tr>";
-	    			//대댓글용
-/* 	    			rmHtml += "<tr>";
-		    			rmHtml += "<td> ";
-		    			rmHtml += "</td>";
-		    			rmHtml += "<td colspan='3'>";
-	    				rmHtml += "<form action='${rootPath}/admin/replyWrite' method='post'>";
-		    			rmHtml += "<input type='hidden' name='parentno' value='"+reply.RNO+"'/>";
-		    			rmHtml += "<input type='hidden' name='bno' value='"+reply.BNO+"'/>";
-		    			rmHtml += "<input type='hidden' name='mno' value='${memberLoggedIn.mno}'/>";
-		    			rmHtml += "<input type='hidden' name='lev' value='"+(reply.LEV+1)+"'/>";
-		    			rmHtml += "<input type='text' name='title'/>";
-		    			rmHtml += "<textarea name='content'></textarea>";
-		    			rmHtml += "<button type='submit'>전송</button>";
-		    			rmHtml += "</form>";
-		    			rmHtml += "</td>";
-		    			rmHtml += "<td>";
-		    			rmHtml += "</td>";
-	    			rmHtml += "</tr>"; */
+		    			
+		    			
+		    			rmHtml += "</div>";
+		    			
+	    			rmHtml += "</div>";
 	    	}
-			$(".table-responsive tbody").html(rmHtml);
+			$(".replyList").html(rmHtml);
 			
 			
 		},error:function(){
@@ -159,14 +268,107 @@ function loadData(bno, type, cPage, pageBarSize){
 	});
 }
 
+function replyDelete(mno, rno){
+	if("${mber.mno}" != mno){
+		alert("본인의 글만 삭제 가능합니다.");
+		return false;
+	}
+	console.log(rno);
+	$rh = $("#replyHandler");
+	
+	$rno = $rh.find("[name=rno]");
+	console.log($rno);
+	
+	$rno.val(rno);
+	
+	$rh.submit();
+}
+
+function replyModify(t, mno, rno){
+	$parent =$(t).parent().parent().parent();
+	$sel = $(t).parent().parent().parent().find(".replyContent");
+	$date = $(t).parent().parent().parent().find(".replyRegdate");
+	$command = $(t).parent().parent().parent().find(".replyCommand");
+	
+	console.log(t);
+	$old = $(t).parent().parent().parent().find(".oldContent");
+	$old.hide();
+	$date.hide();
+	$command.hide();
+	$sel.append("<textarea class='newContent commentArea'>"+$old.text()+"</textarea>");
+	$parent.append("<div class='newContentBtn'><button onclick='replyModifyEnd("+mno+","+ rno+")'>수정</button><button onclick='replyModifyCancel(this)'>취소</button></div>");
+}
+
+function replyModifyCancel(t){
+
+	
+	
+	$parent = $(t).parent().parent();
+	console.log($parent);
+	
+	
+	
+	$content = $parent.find(".newContent").remove();
+	$btn = $parent.find(".newContentBtn").remove();
+	$old = $parent.find(".oldContent").show();
+	$date = $parent.find(".replyRegdate").show();
+	$command = $parent.find(".replyCommand").show();
+	
+}
+function replyModifyEnd(mno, rno){
+	if("${mber.mno}" != mno){
+		alert("본인의 글만 수정 가능합니다.");
+		return false;
+	}
+	$rh = $("#replyModifyHandler");
+	$rno = $rh.find("[name=rno]");
+	console.log($rno);
+	$rno.val(rno);
+	
+	$rh.find("#textAreaforReplyHandler").val($(".newContent").val());
+	$rh.submit();
+}
 
 
-function fn_fork(mno, bno){
-	location.href='${rootPath}/board/boardReplyFork?mno='+mno+'&bno='+bno;
+function fn_fork(mno, bno, rno){
+	console.log(mno);
+	console.log(bno);
+	console.log(rno);
+	if(confirm("채택 하시겠습니까?")){
+		$.ajax({
+	        url : "${rootPath}/board/boardReplyFork",
+	        type : "POST",
+	        data : {"mno" : mno, "bno" : bno, "rno" : rno },
+	        dataType : "json",
+	        success : function(response) {
+	            console.log(response);
+	        },
+	        error : function() {
+	            alert("opps.....");
+	        }
+	     });
+	}
 }
 	
 </script>
 
+<style>
+	.reply{ display:flex;  margin-bottom:20px; padding-top:10px; padding-bottom:20px; border-bottom:1px solid #dedede;}
+	.replyInfo{width:10%}
+	.felxerJustify{justify-content: center; display:flex;}
+	.replyPic{width:60px; height:60px; border-radius:30px; }
+	.replyMid{}
+	.replyContent{flex-grow:10;   border: 1px solid #ededed;}
+	.oldContent{padding:10px;}
+	.newContent{width:100%; height:100%; padding:10px;}
+	.newContentBtn{align-self:center; flex-basis:90px; margin-left:10px; border:none; }
+	.newContentBtn button{ font-size:1rem; border:none; background:none; margin-left:10px; cursor:pointer; }
+	.replyRegdate{ align-self:center; flex-basis: 100px; color:#999; margin-left:20px;}
+	.replyModify{margin-right:10px; }
+	.replyCommand{flex-basis: 100px; align-self:center;}
+	.replyCommand a{cursor:pointer;}
+	
+</style>
 
 
 <jsp:include page ="/WEB-INF/views/common/footer.jsp" />

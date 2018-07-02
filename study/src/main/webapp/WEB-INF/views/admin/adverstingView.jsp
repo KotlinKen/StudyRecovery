@@ -1,17 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="BOARD" name="pageTitle" /></jsp:include>
+<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="광고수정" name="pageTitle" /></jsp:include>
 
 
 
 <form action="${rootPath}/admin/adverstingUpdate"  name="adverstingUpdate"  method="post" enctype="multipart/form-data">
 	<div class="form-row">
 		<div class="form-group col-md-2">
-			<label for="position">배너위치</label> <select id="position" name="position" class="form-control">
+			<label for="position">배너위치</label>
+			<select id="position" name="position" class="form-control">
 				<option value="TOP">TOP</option>
-				<option value="BANNER" ${("베너" eq adversting.POSITION) ? "selected" : ""}>베너</option>
+				<option value="BANNER" ${("BANNER" eq adversting.POSITION) ? "selected" : ""}>베너</option>
 				<option value="POPUP" ${("POPUP" eq adversting.POSITION) ? "selected" : ""}>팝업</option>
 				<option value="WINGRIGHT" ${("WINGRIGHT" eq adversting.POSITION) ? "selected" : ""}>윙 2</option>
-				<option ${("윙 3" eq adversting.POSITION) ? "selected" : ""}>윙 3</option>
 			</select>
 		</div>
 	</div>
@@ -25,7 +25,7 @@
 	<div class="form-row">
 		<input type="hidden" name="ano" value="${adversting.ANO }" />
 		<div class="form-group col-md-6">
-			<label for="inputEmail4">제목</label> <input type="text" class="form-control" id="title" name="title" placeholder="광고 제목을 입력해주세요" autocomplete="off" value="${adversting.TITLE}">
+			<label for="inputEmail4">제목</label> <input type="text" class="form-control" id="title" name="title" placeholder="광고 제목을 입력해주세요" autocomplete="off" value="${adversting.TITLE}" required="required">
 		</div>
 
 
@@ -33,8 +33,7 @@
 	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="content">광고 내용을 간략히 적어주세요.</label>
-			<textarea class="form-control" name="content" id="summernote" rows="3" >${adversting.CONTENT}</textarea>
-			${adversting.CONTENT}
+			<textarea class="form-control" name="content" id="summernote" rows="3" required="required">${adversting.CONTENT}</textarea>
 		</div>
 	</div>
 
@@ -51,23 +50,26 @@
 			</div>
 		</div>
 	</div>
+	<c:if test="${adversting.ADVIMG ne null && adversting.ADVIMG ne '' }">
 	<div class="form-row">
 		<div class="form-group col-md-6">
-			<label for="img1">섬네일</label>
+			<label for="img1">섬네일 <span class="sizeAlert"></span></label> 
 			<div class="form-control thumnail">
+			
 				<img src="${rootPath}/resources/upload/adversting/${adversting.ADVIMG}" alt="" class="col-md-12 customCols" />
+			
 			</div>
-			<div class="imgSize">권장 사이즈 1110 x 80</div>
+			<div class="imgSize"></div>
 		</div>
 	</div>
-
+	</c:if>
 
 
 
 	<div class="form-row">
 		 <div class="form-group col-md-6">
 		  <label for="startAd">시작일</label> 
-		  <input type="date" class="form-control" name="startAd" id="startAd" />
+		  <input type="date" class="form-control" name="startAd" id="startAd" min=""/>
 		</div>
 	</div>
 	<div class="form-row">
@@ -93,20 +95,37 @@
 
 
   <button type="submit" class="btn btn-primary">수정</button>
-  <button type="button" class="btn btn-primary" onclick="fn_delete()">삭제</button>
+  <button type="submit" class="btn btn-primary" onclick="return fn_delete()">삭제</button>
 </form>
 
 <script>
 
 function fn_delete(){
-	$("[name=adverstingReWrite]").attr("action", "${rootPath}/adv/adverstingDelete");
-	$("[name=adverstingReWrite]").submit();
+	$status = $("#status");
+	$status.removeAttr("checked");
+	if(confirm("정말 삭제하시겠습니까?")){
+		return true;
+	}else{
+	$status.attr("checked", "checked");
+		return false;
+	}
 }
+
+$("#position").on("change", function(){
+	var values = $(this).val();
+	var text = "";
+	switch(values){
+		case "TOP" : text = "1110 x 80"; break;
+		case "BANNER" : text = "350 x 500"; break;
+		case "POPUP" : text = "350 x 500"; break;
+		case "WINGRIGHT" : text = "100 x 100"; break;
+	}
+	$(".sizeAlert").text(text);
+});
 
 
 
 $(function(){
-	console.log("${adversting.STARTAD}");
 	var startDate = "${adversting.STARTDATE}";
 	var endDate = "${adversting.ENDDATE}";
 	$("[name=startAd]").val(startDate);
@@ -193,106 +212,4 @@ $(".upfile_name").on("change", function(){
 </script>
 
 
-
-
-<div class="studyList">
-	<div class="table-responsive">
-		<table class="table table-striped table-sm">
-			<thead>
-				<tr>
-					<th>No</th>
-					<th>제목</th>
-					<th>내용</th>
-					<th>이미지</th>
-					<th>링크</th>
-					<th>위치</th>
-					<th>상태</th>
-					<th>컬러</th>
-					<th>시작일</th>
-					<th>종료일</th>
-				</tr>
-			</thead>
-			<tbody>
-			
-			</tbody>
-		</table>
-	</div>
-	<nav aria-label="Page navigation example">
-	  <ul class="pagination">
-	    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-	  </ul>
-	</nav>
-</div>
-
-
-<script>
-$(function(){
-	loadData("all", 1, 5);
-});
-
-function loadData(type, cPage, pageBarSize){
-	$.ajax({
-		url:"${rootPath}/rest/adversting/"+type+"/"+cPage+"/"+pageBarSize,
-		dataType:"json",
-		success:function(data){
-			console.log(data);
-			var numPerPage = data.numPerPage;
-			var cPage = data.cPage;
-			var total = data.total;
-			var totalPage = Math.ceil(parseFloat(total)/numPerPage);
-			var pageNo = (Math.floor((cPage - 1)/parseFloat(pageBarSize))) * pageBarSize +1;
-			var pageEnd = pageNo + pageBarSize - 1;
-			var pageNation ="";
-			
-			$pagination = $(".pagination");
-			
-			if(pageNo == 1 ){
-				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>';
-			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor(\'all\,'+(pageNo-1)+','+5+')">Previous</a></li>';
-			}
-			while(!(pageNo > pageEnd || pageNo > totalPage)){
-				console.log("test");
-				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadInstructor(\'all\,'+pageNo+','+5+')">'+pageNo+'</a></li>';
-				pageNo++;
-			}
-			//다음 버튼
-			
-			if(pageNo > totalPage){
-				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
-			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor(\'all\','+pageNo+','+5+')">Next</a></li>';
-			}
-			
-			//페이지 버튼 생성
-			$pagination.html(pageNation);
-			
-			console.log(data);
-			var rmHtml = "";
-			var adversting = null;
-	    	for(index in data.list){
-	    		adversting = data.list[index];
-	    		var upfile = (data.list[index].UPFILE);
-	    			rmHtml += "<tr onclick=fn_adverstingView("+adversting.ANO+")>"
-	    				rmHtml += "<td>"+adversting.ANO+"</td>";
-		    			rmHtml += "<td>" +adversting.TITLE +"</td>";
-		    			rmHtml += "<td>" +(adversting.CONTENT.replace(/(<([^>]+)>)/ig,"")).substring(0,10)+"</td>";
-		    			rmHtml += "<td>" +adversting.ADVIMG+"</td>";
-		    			rmHtml += "<td>" +adversting.URL+"</td>";
-		    			rmHtml += "<td>" +adversting.POSITION+"</td>";
-		    			rmHtml += "<td>" +adversting.STATUS+"</td>";
-		    			rmHtml += "<td>" +adversting.BACKCOLOR+"</td>";
-		    			rmHtml += "<td>" +adversting.STARTDATE+"</td>";
-		    			rmHtml += "<td>" +adversting.ENDDATE+"</td>";
-	    			rmHtml += "</tr>";
-	    	}
-			$(".table-responsive tbody").html(rmHtml);
-
-		},error:function(){
-			
-		}
-	});
-}
-
-</script>
 <jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />

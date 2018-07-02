@@ -8,12 +8,27 @@
 	</style>
 </head>
 <body>
-	<div id="error-container">
+<%-- 	<div id="error-container">
 		<h1>에러!</h1>
 		<h2 style="color: red;"><%=exception.getMessage() %></h2>
-		<a href="${pageContext.request.contextPath }">
+
+	</div> --%>
+	
+		<div id="wrapper">
+		<div id="page-wrapper">
+			<div align="center">
+				<c:out value='${msg }'/>
+			</div>
+		</div>
+	</div>
+			<a href="${pageContext.request.contextPath }">
 			시작페이지로 돌아가기
 		</a>
-	</div>
+<c:out value="${requestScope['javax.servlet.error.status_code']}"/>
+<c:out value="${requestScope['javax.servlet.error.exception_type']}"/>
+<c:out value="${requestScope['javax.servlet.error.message']}"/>
+<c:out value="${requestScope['javax.servlet.error.request_uri']}"/>
+<c:out value="${requestScope['javax.servlet.error.exception']}"/>
+<c:out value="${requestScope['javax.servlet.error.servlet_name']}"/>
 </body>
 </html>

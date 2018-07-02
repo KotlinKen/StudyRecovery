@@ -1,29 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="BOARD" name="pageTitle" /></jsp:include>
-${memberLoggedIn }
-	<form action="${rootPath}/board/boardWriteEnd"  method="post" enctype="multipart/form-data">
+	<form action="${rootPath}/admin/boardWriteEnd"  method="post" enctype="multipart/form-data">
 		<input type="hidden" name="mno" value="${memberLoggedIn.mno}"/>
-		<input type="hidden" name="type" value="one"/>
+	<select name="type" id="boardType" required="required" style="padding:15px; margin-bottom:10px;">
+		<option value="일반">일반</option>
+		<option value="공지">공지</option>
+		<option value="faq">FAQ</option>
+		<option value="event">이벤트</option>
+	</select>
 		<div class="form-row">
-			<div class="form-group col-md-6">
-				<label for="inputEmail4">제목</label> <input type="text" class="form-control" id="title" name="title" id="title" placeholder="광고 제목을 입력해주세요" autocomplete="off">
+			<div class="form-group col-md-12">
+				 <input type="text" class="form-control" id="title" name="title" id="title" placeholder="제목을 입력해주세요" autocomplete="off">
 			</div>
 		</div>
 	
 		<div class="form-row">
-			<div class="form-group col-md-6">
-				<label for="content">광고 내용을 간략히 적어주세요.</label>
-				<textarea class="form-control summernote" name="content" id="summernote" rows="2" class=""></textarea>
+			<div class="form-group col-md-12">
+				<textarea class="form-control summernote" name="content" id="summernote" rows="2" class="" required="required"></textarea>
 			</div>
 		</div>
 	
 	
 	
 		<div class="input_fields_wrap">
-			<button class="add_field_button">Add More Fields</button>
+			<button class="btn add_field_button">Add More Fields</button>
 			<div class="form-row">
 				<div class="form-group col-md-6">
-					<label for="img1">메인이미지</label> <input type="hidden" />
+					<label for="img1">이미지</label>
 					<div class="upfile_name">
 						<input type="file" class="form-control" id="img1" name="upFile">
 						<div class="upfile_cover">${adversting.ADVIMG }</div>
@@ -32,17 +35,33 @@ ${memberLoggedIn }
 				</div>
 			</div>
 		</div>
-	
-		<div class="form-row">
-		   <div class="form-group col-md-6">
-		      <label for="url">링크를 작성해주세요.</label> 
-		      <input type="text" class="form-control" id="url" name="url" placeholder="링크를 작성해주세요." autocomplete="off">
-		    </div>
-		</div>
-	  <button type="submit" class="btn btn-primary">등록</button>
+	  <button type="submit" class="btn btn-primary" onclick="return boardValidation()">등록</button>
 	</form>
 </div>
 <script>
+function boardValidation(){
+	$title = $("#title").val().trim();
+	$textAreaVal = $("#summernote").val().replace(/(<([^>]+)>)/ig,"");
+	
+	if($title == ""){
+		alert("제목을 입력해 주세요");
+		 $("#title").focus();
+		return false; 
+	}
+	
+	console.log($title.length);
+	if($title.length > 150){
+		alert("제목은 150글자 이내로 작성해주세요");
+		$("#title").val($("#title").val().substring(0, 149));
+	 	$("#title").focus();
+		 return false; 
+	}
+	if($textAreaVal == ""){
+		alert("내용을 입력해 주세요");
+		return false;
+	}
+	return true;
+}
 $(function(){
 	var startDate = new Date();
 	var endDate = new Date();
@@ -122,12 +141,6 @@ $(".input_fields_wrap").on("change",".upfile_name",  function(){
 	});
 	
 	
-	$(document).ready(function() {
-	    $('#summernote').summernote({
-	      focus: true,
-	      height: 500// 페이지가 열릴때 포커스를 지정함
-	    });
-	  });
 
 	$(document).ready(function() {
 	      $('#title').keyup(function(e){
@@ -140,28 +153,67 @@ $(".input_fields_wrap").on("change",".upfile_name",  function(){
 	});
 	
 	
-	$(document).ready(function() {
-	    var max_fields      = 10; //maximum input boxes allowed
-	    var wrapper         = $(".input_fields_wrap"); //Fields wrapper
-	    var add_button      = $(".add_field_button"); //Add button ID
-	    
-	    var x = 1; //initlal text box count
-	    $(add_button).click(function(e){ //on add input button click
-	        e.preventDefault();
-	        if(x < max_fields){ //max input box allowed
-	            x++; //text box increment
-	            $(wrapper).append('<div class="form-row"><div class="form-group col-md-6"><div class="upfile_name"><input type="file" class="form-control"  name="upFile"/> <div class="upfile_cover"></div>    <button type="button" class="upfile_button">파일업로드</button> </div></div><div class="form-group col-md-2"> <a href="#" class="remove_field">Remove</a>  </div></div>'); //add input box
-	        }
-	    });
-	    
-	    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-	        e.preventDefault(); $(this).parent().prev().remove();   $(this).parent("div").remove();x--;
-	    })
-	});
-	
-	
+$(document).ready(function() {
+    var max_fields      = 10; //maximum input boxes allowed
+    var wrapper         = $(".input_fields_wrap"); //Fields wrapper
+    var add_button      = $(".add_field_button"); //Add button ID
+    
+    var x = 1; //initlal text box count
+    $(add_button).click(function(e){ //on add input button click
+        e.preventDefault();
+        if(x < max_fields){ //max input box allowed
+            x++; //text box increment
+            $(wrapper).append('<div class="form-row"><div class="form-group col-md-6"><div class="upfile_name"><input type="file" class="form-control"  name="upFile"/> <div class="upfile_cover"></div>    <button type="button" class="upfile_button">파일업로드</button> </div></div><div class="form-group col-md-2"> <a href="#" class="remove_field">Remove</a>  </div></div>'); //add input box
+        }
+    });
+    
+    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+        e.preventDefault(); $(this).parent().prev().remove();   $(this).parent("div").remove();x--;
+    })
+});
+
+//summernote settings
+$(document).ready(function() {
+    $('#summernote').summernote({
+      focus: true,
+      height: 500, // 페이지가 열릴때 포커스를 지정함
+      callbacks:{
+    	  onImageUpload:function(files){
+	   	  	  console.log("onImageUpload");
+	   		  uploadImage(files[0],this);
+      	}
+      },
+      lang:'ko-KR'
+    });
+    
+  });
+ 
+//summernote upFile
+function uploadImage(file,el){
+    console.log("파일 업로드 함수 호출");
+	  var data=new FormData();
+	  data.append('file',file);
+	  $.ajax({
+		  data:data,
+		  type:"POST",
+		  processData:false,
+		  contentType:false,
+		  dataType:'json',
+		  url:"${rootPath}/board/uploadImage",
+		  cache:false,
+		  enctype:'multipart/form-data',
+		  success:function(data){ 
+		  	  console.log("data : "+data.imageUrl);
+		  	  var file=$("<img>").attr("src", "${rootPath }/resources/upload/board/"+data.imageUrl).attr("style" , "width:100%");
+			  $(el).summernote('insertNode', file[0]);
+		  },error:function(data){
+			  console.log("error:"+data);
+		  }
+	 });
+}
 	
 </script>
+
 
 
 <jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />

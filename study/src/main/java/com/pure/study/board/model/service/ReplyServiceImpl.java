@@ -15,6 +15,10 @@ public class ReplyServiceImpl implements ReplyService {
 	ReplyDAO replyDao;
 	
 	@Override
+	public int replyCount() {
+		return replyDao.replyCount();
+	}
+	@Override
 	public int replyCount(Map<String, String> queryMap) {
 		return replyDao.replyCount(queryMap);
 	}
@@ -27,6 +31,26 @@ public class ReplyServiceImpl implements ReplyService {
 	@Override
 	public int replyWrite(Map<String, String> queryMap) {
 		return replyDao.replyWrite(queryMap);
+	}
+
+	@Override
+	public int replyDelete(Map<String, String> queryMap) {
+		return replyDao.replyDelete(queryMap);
+	}
+
+	@Override
+	public Map<String, String> replyOne(Map<String, String> queryMap) {
+		return replyDao.replyOne(queryMap);
+	}
+
+	@Override
+	public int replyModify(Map<String, String> queryMap) {
+		return replyDao.replyModify(queryMap);
+	}
+
+	@Override
+	public List<Map<String, String>> replyDateStatisticsList(Map<String, String> queryMap) {
+		return replyDao.replyDateStatisticsList(queryMap);
 	}
 	
 

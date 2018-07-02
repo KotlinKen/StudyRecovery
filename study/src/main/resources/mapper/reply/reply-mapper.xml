@@ -21,6 +21,7 @@
 			AND STATUS ='Y'
 		</trim>
 	</select>
+	
 	<select id="replyList" resultMap="replyMap">
 		SELECT R.*, M.*, B.*, TO_CHAR(R.REGDATE, 'YYYY-MM-DD') REGS
 		FROM REPLY R INNER JOIN BOARD  B ON R.BNO = B.BNO
@@ -38,10 +39,34 @@
 		START WITH R.LEV = 1 CONNECT BY PRIOR R.RNO = R.PARENTNO ORDER SIBLINGS BY R.REGDATE DESC
 	</select>
 	
+	<update id="replyModify">
+	  	UPDATE REPLY
+	    <trim prefix="SET" suffixOverrides=",">
+	      <if test="content != null"> CONTENT=#{content},</if>
+	      <if test="status != null"> STATUS=#{status}</if>
+	    </trim>
+	  	WHERE RNO = #{rno}
+	</update>
+	
 	
 	<select id="replyOne" resultMap="replyMap">
-		SELECT * FROM BOARD WHERE BNO = #{bno}
+		SELECT * FROM REPLY WHERE RNO = #{rno}
 	</select>
+	
+	<delete id="replyDelete">
+		DELETE FROM REPLY WHERE RNO = #{rno}
+	</delete>
+	
+	<select id="replyDateStatisticsList" resultMap="replyMap"> 
+		<![CDATA[ 
+		SELECT NVL(TO_CHAR(REGDATE, 'YYYY-MM-DD'), '전체') RDATE, COUNT(*) CNT
+		FROM REPLY
+		WHERE REGDATE >= TO_DATE('20120620', 'YYYY-MM-DD')
+		AND REGDATE < TO_DATE('20190505', 'YYYY-MM-DD') + 1
+		GROUP BY ROLLUP(TO_CHAR(REGDATE, 'YYYY-MM-DD'))
+		]]>
+	</select>
+	
 	
 	<resultMap type="map" id="replyMap">
 	</resultMap>
