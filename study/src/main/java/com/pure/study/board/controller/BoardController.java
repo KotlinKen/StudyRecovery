@@ -377,31 +377,40 @@ public class BoardController {
 		System.out.println(rno);
 		System.out.println(mno);
 		
-		Member member = memberService.selectOneMemberMno(mno);
+		int mNumber = 0; 
+		try {
+			mNumber = Integer.parseInt(mno);
+		}catch(NumberFormatException e){
+			e.printStackTrace();
+			mav.addObject("msg", "멤버넘버 숫자 에러가 났습니다.");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
+		Member member = memberService.selectOneMemberMno(mNumber);
 		
 		if(member != null) {
 			member.setPoint(1000);
 			queryMapObject.put("mno", mno);
 			queryMapObject.put("npoint", 1000);
 			int result = memberService.updateNpoint(queryMapObject);
-			System.out.println(result+"결과 결과 결과");
-			queryMapString.put("bno", bno);
-			queryMapString.put("mno", mno);
-			queryMapString.put("rno", rno);
-			queryMapString.put("fork", rno);
 			
-			int result = boardService.updateBoard(queryMapString);
+			if(result > 0 ) {
+				System.out.println(result+"결과 결과 결과");
+				queryMapString.put("bno", bno);
+				queryMapString.put("mno", mno);
+				queryMapString.put("rno", rno);
+				queryMapString.put("fork", rno);
+				int updateResult = boardService.updateBoard(queryMapString);
+				queryMapString.put("result", String.valueOf(updateResult));
+			}else {
+				queryMapString.put("result", result+"멤버 점수 업데이트에 실패하였습니다.");
+				mav.addObject("loc", "/");
+				mav.setViewName("common/msg");
+			}
 		}
-		
-		
-		
-		// 회원정보 조회 
-		queryMapString.put("result", String.valueOf(result));
-		
-		if(result > 0 ) {
-			//int mresult =memberService.updateMember(member);
-		}
-		
+ 
 		return mav;
 	}
 	@RequestMapping("/{location}/uploadImage")

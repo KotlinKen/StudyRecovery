@@ -161,5 +161,7 @@ public interface MemberDAO {
 
 	int updateNpoint(Map<String, Object> map);
 
+	Member selectOneMemberMno(int mno);
+
 
 }

@@ -160,4 +160,6 @@ public interface MemberService {
 	int selectInnerAdmin(Map<String, String> link);
 	
 	int updateNpoint(Map<String,Object> map);
+	
+	Member selectOneMemberMno(int mno);
 }
