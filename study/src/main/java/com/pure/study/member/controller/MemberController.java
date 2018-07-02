@@ -2094,14 +2094,15 @@ public class MemberController {
 		}
 		
 	@RequestMapping(value="/member/applyInstructAgree.do")
-	public ModelAndView applyInstructAgree(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino) {
+	public ModelAndView applyInstructAgree(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino , HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		int result = memberService.updateInstructorApply(ino);
 		if(result <0) {
 			
 		}else {
 		}
-		mav.setViewName("redirect:/");
+		String referer = request.getHeader("Referer");
+		mav.setViewName("redirect:"+referer);
 		return mav;
 	}
 	

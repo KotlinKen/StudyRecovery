@@ -194,58 +194,65 @@ table{text-align: center;}
 </table>
 
 
-<table class="container" >
-	<thead>
 	
 <c:if test="${instruct != null}">
-	<tr>
-		<th>
-			강사 신청 번호	
-		</th>
-		<th>
-			${instruct.INO }
-		</th>
-		</tr>
+<table class="container" >
+	<thead>
 		<tr>
 			<th>
-				포트폴리오	
+				강사 신청 번호	
 			</th>
 			<th>
-				${instruct.PORTPOLIO }
+				${instruct.INO }
 			</th>
-		</tr>
-		<tr>
-			<th>
-				자기소계서
-			</th>
-			<th>
-				${instruct.SELFINTRODUCTION }
-			</th>
-		</tr>
-		<tr>
-			<th>
-				승인여부
-			</th>
-			<th>
-				${instruct.STATE }
-			</th>
-		</tr>
-		<tr>
-			<th>
-				신청일
-			</th>
-			<th>
-				${instruct.APPLICATIONDATE }
-			</th>
-		</tr>
-		<tr>
-			<th colspan="2">
-				<button type="button" onclick="fn_submit();"  class="btn btn-info" > 승락</button>
-			</th>
-		</tr>
+			</tr>
+			<tr>
+				<th>
+					포트폴리오	
+				</th>
+				<th>
+					${instruct.PORTPOLIO }
+				</th>
+			</tr>
+			<tr>
+				<th>
+					자기소계서
+				</th>
+				<th>
+					${instruct.SELFINTRODUCTION }
+				</th>
+			</tr>
+			<tr>
+				<th>
+					승인여부
+				</th>
+				<th>
+					${instruct.STATE }
+				</th>
+			</tr>
+			<tr>
+				<th>
+					신청일
+				</th>
+				<th>
+					${instruct.APPLICATIONDATE }
+				</th>
+			</tr>
+			<tr>
+				<th colspan="2">
+				<c:if test="${instruct.STATE  eq 'O'}">
+				???
+				</c:if>
+				<c:if test="${instruct.STATE  eq 'X'}">
+				????
+				</c:if>
+					<button type="button" onclick="fn_submit();"  class="btn btn-info" > 승인</button>
+				</th>
+			</tr>
+	</thead>
+</table>
 </c:if>
 	
-</thead>
 
 <script>
 	function fn_submit() {
