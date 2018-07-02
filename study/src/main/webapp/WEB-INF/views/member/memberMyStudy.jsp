@@ -129,7 +129,7 @@
 		<c:if test="${myPageList != null and leader eq 'n' }">
 			<c:forEach var="ms" items="${myPageList}" varStatus="vs" >
 				<tr>
-					<td>${vs.index+1 }</td>
+					<td>${(numPerPage*cPage)-(numPerPage-1)+vs.index }</td>
 					<td>${ms.title }</td>
 					<td>${ms.captain}</td>
 					<td>${ms.type }</td>
@@ -177,7 +177,7 @@
 		<c:if test="${leaderList != null and leader eq 'y'}">
 			<c:forEach var="ms" items="${leaderList}" varStatus="vs" >
 				<tr>
-					<td>${vs.index+1 }</td>
+					<td>${(numPerPage*cPage)-(numPerPage-1)+vs.index }</td>
 					<td>${ms.title }</td>
 					<td>${ms.captain}</td>
 					<td>${ms.type }</td>
@@ -536,9 +536,12 @@
 				cnt++;
 			}
 		}
-		if(cnt==point.length){
+		if(cnt==point.length && point.length!=0){
 			return ture;
-		}else{
+		}else if(point.length ==0){
+			
+		}
+		else{
 			alert("모든 평가 버튼을 눌러주세요");
 		}
 		

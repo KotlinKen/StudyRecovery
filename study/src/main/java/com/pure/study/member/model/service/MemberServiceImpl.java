@@ -391,5 +391,10 @@ public class MemberServiceImpl implements MemberService {
 	public int selectInnerAdmin(Map<String, String> link) {
 		return memberDAO.selectInnerAdmin(link);
 	}
+
+	@Override
+	public int updateNpoint(Map<String, Object> map) {
+		return memberDAO.updateNpoint(map);
+	}
 	
 }

@@ -60,6 +60,10 @@
 		background: #0056e9;
 		color: white;
 	}
+	p#pmname{
+		display: none;
+		color: red;
+	}
 </style>
 <div class="page">
    <jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -81,7 +85,8 @@
          	<tr>
          		<th>회원 이름</th>
          		<td>
-         			<input type="text" name="mname" id="mname" value="${memberLoggedIn.mname }" />
+         			<input type="text" name="mname" id="mname" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
+         			<p id="pmname">한글 2자이상 7자 이하로 적어주세요.</p>
          		</td>
          	</tr>
          	<tr>
@@ -94,7 +99,7 @@
          	<tr>
          		<th>연락처</th>
          		<td>
-         			<input type="text" name="phone" id="phone" value="${memberLoggedIn.phone }" />
+         			<input type="text" name="phone" id="phone" maxlenght="11" value="${memberLoggedIn.phone }" autocomplete="off" />
          		</td>
          	</tr>
          	<tr>
@@ -294,7 +299,6 @@
                      $("#email-ok").val(1);
                   }
                   
-                  
                });
                //텍스트 길이 제한
                $("textarea[name=cover]").keyup(function(){
@@ -307,6 +311,43 @@
               		  }
                 	}
                });
+               $("input#mid").click(function(){
+             	  alert("회원 아이디는 변경할 수 없습니다.");
+               });
+               $("input#birth").click(function(){
+             	  alert("생년월일은 변경할 수 없습니다. 관리자에게 문의해주세요. 1111-2222");
+               });
+             //이름 크기 제한
+               $("input[name=mname]").on("keyup",function(){
+            	  var textLength = $(this).val().trim().length;
+            	  if(textLength>7){
+            		
+             		  $(this).val($(this).val().substr(0,7));
+            		  $("p#pmname").attr("style","display:none;");
+            		  
+             		} else if(textLength<=7){
+            		  $("p#pmname").attr("style","display:none;");             			
+             		}
+               });
+             //연락처 크기 제한
+               $("input[name=phone]").keyup(function(){
+            	   var text = $(this).val().trim();
+            	  var textLength = text.length;
+            	  var reg = /^(?=.*[0-9]).{0,11}$/;
+            	  if(!reg.test(text) && textLength!=0){
+            		  alert("연락처는 11자리, 숫자만 입력해주세요.");
+            		  console.log(textLength);
+            		  if(textLength==12){
+            			  
+            		  }else{
+            		  	$(this).val("");            			  
+            		  }
+            	  } 
+            	  if(textLength>11){
+             		  $(this).val($(this).val().substr(0,11));      		
+             		}
+               });
+               
                
             });
             
@@ -369,6 +410,11 @@
 		               		 return false;
 	              	      }
 	               	}
+           		if($("input[name=mname]").val().length<2 || $("input[name=mname]").val().length>7){
+           			alert("한글 2자이상 7자 이하로 적어주세요.");
+           			return false;
+           		}
+           			
             	return true;
             }
             function emailSendKey(newEmail){

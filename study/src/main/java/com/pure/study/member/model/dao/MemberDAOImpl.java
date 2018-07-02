@@ -395,5 +395,12 @@ public class MemberDAOImpl implements MemberDAO {
 	public List<Map<String, Object>> selectGradeList() {
 		return sqlSession.selectList("member.selectGradeList");
 	}
+
+	@Override
+	public int updateNpoint(Map<String, Object> map) {
+		return sqlSession.update("member.updateNpoint");
+	}
+
+	
 	
 }

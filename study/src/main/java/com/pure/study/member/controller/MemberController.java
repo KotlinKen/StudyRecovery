@@ -1002,7 +1002,7 @@ public class MemberController {
 	//insert all을 통해 평가 내용을 등록한다.
 	
 	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST, produces = "application/text; charset=utf8")
-	@ResponseBody public ModelAndView reviewEnroll(@RequestParam("tmno") String[] tmno 
+	@ResponseBody public ModelAndView reviewEnroll(@RequestParam(value="tmno") String[] tmno 
 												, @RequestParam("sno") String[] sno 
 												, @RequestParam("mno") String[] mno
 												, @RequestParam("point") String[] point 

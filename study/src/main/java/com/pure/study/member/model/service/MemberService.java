@@ -158,5 +158,6 @@ public interface MemberService {
 	int adminInnerCheck(Map<String, String> link);
 
 	int selectInnerAdmin(Map<String, String> link);
-
+	
+	int updateNpoint(Map<String,Object> map);
 }

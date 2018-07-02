@@ -159,4 +159,7 @@ public interface MemberDAO {
 
 	int selectInnerAdmin(Map<String, String> link);
 
+	int updateNpoint(Map<String, Object> map);
+
+
 }

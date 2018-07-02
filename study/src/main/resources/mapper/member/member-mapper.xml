@@ -119,11 +119,17 @@
 						<if test="cover != null">
 							cover=#{cover}
 						</if>
+						
 			where mno=#{mno}
 	</update>
 	
-	
-	
+	<update id="updateNpoint">
+		update member set 
+						<if test="npoint != null">
+							npoint=npoint+#{npoint}
+						</if>
+			where mno=#{mno}
+	</update>
 	
 	
 	
@@ -942,6 +948,7 @@
 		select * from grade order by point
 	</select>
 	<resultMap type="map" id="grade"></resultMap>
+	
 	<!-- 김회진 mapper 끝 -->
 	
 	
