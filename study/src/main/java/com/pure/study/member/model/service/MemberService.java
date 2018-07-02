@@ -1,5 +1,6 @@
 package com.pure.study.member.model.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -142,4 +143,21 @@ public interface MemberService {
 
 	int deleteApply(Map<String, String> map);
 
+	int selectCntEmail(String newEmail);
+
+	int deleteCrew(Map<String, String> map);
+
+	int insertApply(Map<String, String> map);
+
+	List<Map<String, Object>> giveReviewList(Map<String, Object> listMap);
+
+	Map<String, Object> searchEvaluation(Map<String, Object> map);
+
+	List<Map<String, Object>> selectGradeList();
+	
+	int adminInnerCheck(Map<String, String> link);
+
+	int selectInnerAdmin(Map<String, String> link);
+	
+	int updateNpoint(Map<String,Object> map);
 }

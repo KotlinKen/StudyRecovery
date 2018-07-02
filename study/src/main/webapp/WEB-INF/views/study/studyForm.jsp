@@ -111,6 +111,27 @@ function validate(){
 
 $(document).ready(function(){
 	$(".day").attr("disabled", true);
+	
+	
+	$(".day").attr("disabled", true);
+	$("#subject").hide();
+	$("#town").hide();
+	
+	var date = new Date();
+	var year = date.getFullYear();
+	var month = new String(date.getMonth()+1);
+	var day = new String(date.getDate());
+	
+	if(month.length == 1 )
+		month = "0" + month;
+	if( day.length == 1 )
+		day = "0" + day;
+	
+	var today = year + "-" + month + "-" + day;
+	
+	$("#ldate").attr("min", today);
+	$("#sdate").attr("min", today);
+	$("#edate").attr("min", today);
 });
 
 $(function(){
@@ -146,7 +167,14 @@ $(function(){
 	//on(change) event, ajax event
 	 $("select#local").on("change",function(){
 		 var lno=$("select#local option:selected").val();
-		 console.log(lno);
+
+		if(lno == ""){
+			$("#town").hide();
+			return;
+		}
+		
+		$("#town").show();
+		 
 		$.ajax({
 			url:"selectTown.do",
 			dataType:"json",
@@ -183,6 +211,15 @@ $(function(){
 	
 	//kind를 선택하면 해당하는 과목들을들을 가져와 리스트를 생성한다.
 	 $("select#kind").on("change",function(){
+		 
+		var kno= $("option:selected", this).val();
+			
+		if(kno == ""){
+			$("#subject").hide();
+			return;
+		}
+		$("#subject").show();
+		 
 		$.ajax({
 			url:"selectSubject.do",
 			dataType:"json",
@@ -359,7 +396,7 @@ $(function(){
 		</select>
 		<select name="tno" id="town">
 		</select>	
-		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
+		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
 		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
@@ -398,7 +435,7 @@ $(function(){
 		
 		<input type="hidden" name="time" id="time"/>
 		<label for="price">일회 사용회비 : </label>
-		<input type="text" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
+		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" max="100000" />
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>
@@ -409,7 +446,7 @@ $(function(){
 		</select>
 		<br />
 		
-		<label for="etc">기타 : </label><textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea><br /> 
+		<label for="etc">기타 : </label><textarea name="etc" id="etc" cols="30" rows="10" class="form-control" maxlength="1000"></textarea><br /> 
 		
 		<!-- 첨부파일 영역 -->
 		<div class="input-group mb-3 fileWrapper" style="padding:0px">

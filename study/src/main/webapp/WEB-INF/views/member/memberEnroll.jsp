@@ -25,39 +25,20 @@ div#userId-container span.guide {
 	display: none;
 	font-size: 15px;
 	position: absolute;
-	right: 10px;
+	left: 10px;
 }
 span.guide.ok {color: green;}
 span.guide.error{color: red;}
-span#pwd {
-	font-size: 15px;
-	position: relative;
-	left: 70%;
-	top : -50px;
-	color: red;
-}
-span#pwdok {
-	font-size: 15px;
-	position: relative;
-	left: 70%;
-	top : -50px;
-	color: green;
-}
-span#pwd2 {
-	font-size: 15px;
-	position: relative;
-	left: 70%;
-	top : -50px;
-	color: red;
-}
-span#pwd2ok {
-	font-size: 15px;
-	position: relative;
-	left: 70%;
-	top : -50px;
-	color: green;
-}
-div{width: 600px; min-height: 25px;margin: auto; background: rgb(255, 255, 255);}
+span#nameok {color: green;}
+span#nameerr{color: red;}
+span.name{ position: relative;top:0px;left:2%;}
+span.phone{ position: relative;top:0px;left:2%;}
+span#phoneerr{color: red;}
+span#pwd {font-size: 15px;position: absolute;right:2%;top:135px;color:red;}
+span#pwdok {font-size:15px;position:absolute;right:2%;top:135px;color:green;}
+span#pwd2 {font-size: 15px;position: absolute;right:2%;top:200px;color:red;}
+span#pwd2ok {font-size:15px;position:absolute;right:2%;top:200px;color:green;}
+div{width: 600px; min-height: 25px;margin: auto; }
 div#indivik{margin: auto;}
 div#inindivik1{ background: rgb(230, 230, 230)}
 div#inindivik2{margin: auto; text-align: center; background: rgb(230, 230, 230)}
@@ -96,7 +77,11 @@ input[type=date] {
     border: none;
     border-bottom: 1px solid #cccccc;
 }
-#email{ width: 30%;}#userId_{width: 60%}#emailaddr{width: 50%}#submit{width: 100%; position: relative; top: 10px;}#inputCode{width: 40%;}
+#email{ width: 30%;}
+#userId_{width: 60%}
+#emailaddr{width: 50%}
+#submit{width: 100%; position: relative; top: 10px;}
+#inputCode{width: 40%;}
 .jender {
     position: relative;
     z-index: 10;
@@ -171,7 +156,6 @@ textarea {
     cursor: pointer;
     text-align: center;
     color: #8e8e8e;
-    background: #fff;
     text-align: center;
 }
 .category input:checked+label {
@@ -179,9 +163,10 @@ textarea {
     color: #08a600;
     border: solid 1px #08a600;
 }
+#div-img-ik{display:none;}
 #upFile{width: 0px; height: 0px; position: absolute; left: -100px;}
-#div-img-ik{width: 280px;height: 320px; border: solid 1px #8e8e8e; margin-left: 5px;}
-.call_img{width: 100%;height: 100%; position: relative;}
+#div-img-ik{width: 280px;min-height: 0px; border: solid 1px #8e8e8e; margin-left: 5px;}
+.call_img{width: 100%; position: relative;}
 </style>
 </head>
 <body>
@@ -189,78 +174,122 @@ textarea {
 	<script>
 		$(function() {
 			/* 패스워드 */
+			$("#password_").on("keyup",function() {
+				var p1 = $("#password_").val();
+				if(p1.length>15){
+					document.getElementById("pwd").innerHTML = "패스워드가 길어요";
+					document.getElementById("pwdok").innerHTML = "";
+					$("#password_").val(p1.substr(0,15));
+					$("#pwdDuplicateCheck").val(0);
+					return;
+				}
+			});
 			$("#password_").blur(function() {
 				var p1 = $("#password_");
 				var p2 = $(this).val();
 				if(p1.val().trim().length ==0){
 					 document.getElementById("pwd").innerHTML = "패스워드를 입력하세요";
-					p1.focus();
+					 document.getElementById("pwdok").innerHTML = "";
 					return;
 				}
-					
+				if (p1.val() == $("#userId_").val()) {
+					document.getElementById("pwd").innerHTML = "아이디와 비번이 동일합니다.";
+					document.getElementById("pwdok").innerHTML = "";
+					return false;
+				}
 				if (p1.val().trim().length < 8) {
-					document.getElementById("pwd").innerHTML = "사용불가";
-					password.focus();
+					document.getElementById("pwd").innerHTML = "비밀 번호는 8글자 이상 입니다.";
+					document.getElementById("pwdok").innerHTML = "";
 					return;
 				}
 				if (p1.val().indexOf(" ") >= 0) {
-					document.getElementById("pwd").innerHTML = "사용불가";
-					password.focus();
+					document.getElementById("pwd").innerHTML = "공백은 사용 할 수 없습니다.";
+					document.getElementById("pwdok").innerHTML = "";
 					return;
 				}
-				if (p1.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) >= 0) {
-					document.getElementById("pwd").innerHTML = "사용불가";
-					password.focus();
+				if (p1.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) > 0) {
+					document.getElementById("pwd").innerHTML = "한글은 사용할 수 없습니다.";
+					document.getElementById("pwdok").innerHTML = "";
 					return;
 				}
-			
 				if (p1.val().search(/[!@#$%^&*()?_+~]/g) == -1) {
-					document.getElementById("pwd").innerHTML = "사용불가";
-					password.focus();
+					document.getElementById("pwd").innerHTML = "특수문자 1개 이상 입니다.";
+					document.getElementById("pwdok").innerHTML = "";
 					return;
 				} 
-			  
 				if (p1.val().search(/[0-9]/g) == -1) {
-					document.getElementById("pwd").innerHTML = "사용불가";
-					password.focus();
+					document.getElementById("pwd").innerHTML = "숫자 1개 이상 입니다.";
+					document.getElementById("pwdok").innerHTML = "";
 					return;
 				}
 				document.getElementById("pwd").innerHTML = "";
 				document.getElementById("pwdok").innerHTML = "사용가능";
 			});
-			$("#password2").blur(function() {
+			/* 패스워드 확인  */
+			$("#password2").on("keyup",function() {
 				var p1 = $("#password_").val();
 				var p2 = $(this).val();
-				if(p1.trim().length==0){
-					document.getElementById("pwd2").innerHTML = "패스워드를 입력하세요.";
+				if(p2.length>15){
+					document.getElementById("pwd2").innerHTML = "패스워드가 길어요";
+					document.getElementById("pwd2ok").innerHTML = "";
+					$("#password2").val(p2.substr(0,15));
 					$("#pwdDuplicateCheck").val(0);
-					$("#password_").focus();
+					return;
+				}
+				if(p2.trim().length>15){
+					document.getElementById("pwd2").innerHTML = "패스워드가 길어요";
+					document.getElementById("pwd2ok").innerHTML = "";
+					$("#password2").val(p2.substr(0,15));
+					$("#pwdDuplicateCheck").val(0);
 					return;
 				}
 				if (p1 != p2) {
 					document.getElementById("pwd2").innerHTML = "패스워드가 다릅니다.";
+					document.getElementById("pwd2ok").innerHTML = "";
 					$("#pwdDuplicateCheck").val(0);
-					$("#password_").focus();
 				} else {
 					document.getElementById("pwd2").innerHTML = "";
 					document.getElementById("pwd2ok").innerHTML = "패스워드가 동일합니다.";
 					$("#pwdDuplicateCheck").val(1);
 				}
 			});
-			/* 아이디 */
-			$("#userId_").on("keyup", function() {
-				var userId = $(this).val().trim();
-				if (userId.length > 11)
-					alert("아이디가 너무 김니다.")
+			$("#password2").blur(function() {
+				var p1 = $("#password_").val();
+				var p2 = $(this).val();
+				if(p1.trim().length==0){
+					document.getElementById("pwd2").innerHTML = "패스워드를 입력하세요.";
+					document.getElementById("pwd2ok").innerHTML = "";
+					$("#pwdDuplicateCheck").val(0);
+					return;
+				}
+				if (p1 != p2) {
+					document.getElementById("pwd2").innerHTML = "패스워드가 다릅니다.";
+					document.getElementById("pwd2ok").innerHTML = "";
+					$("#pwdDuplicateCheck").val(0);
+				} else {
+					document.getElementById("pwd2").innerHTML = "";
+					document.getElementById("pwd2ok").innerHTML = "패스워드가 동일합니다.";
+					$("#pwdDuplicateCheck").val(1);
+				}
 			});
+			/* 아이디 길이 확인 */
+		 	$("#userId_").on("keyup", function() {
+				var userId = $("#userId_");
+				if (userId.val().trim().length > 10){
+					var d = userId.val().substr(0,10);
+					console.log(d);
+					userId.val(d);
+					alert("글자 수는 11 미만 입니다.")
+					userId.focus();
+					return;			
+				}
+			});  
 			/* 파일 업로드 */
 			$("input:file").change(
 			function() {
-				var ext = $("input:file").val().split(".")
-						.pop().toLowerCase();
+				var ext = $("input:file").val().split(".").pop().toLowerCase();
 				if (ext.length > 0) {
-					if ($.inArray(ext, [ "gif", "png", "jpg",
-							"jpeg" ]) == -1) {
+					if ($.inArray(ext, [ "gif", "png", "jpg","jpeg" ]) == -1) {
 						alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
 						return false;
 					}
@@ -277,14 +306,12 @@ textarea {
 					type : "POST",
 					dataType : "json",
 					success : function(date) {
+						$("#div-img-ik").css({"display":"inline-block"});
 						var html = "";
-						html += "<img class ='call_img'   src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
+						html += "<img class ='call_img' src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
 						$("#div-img-ik").html(html);
 						$("#mprofile").val(date.renamedFileName)
-						$(".fa").on("click",function() {
-								$(this).parent()
-										.remove();
-								});
+					
 					},
 					error : function(jqxhr, textStatus,
 							errorThrown) {
@@ -296,47 +323,203 @@ textarea {
 					processData : false
 				});
 			});
+	
+			/* 이름 검사 */
+			$("#name").blur(function() {
+				var name = $("#name");
+				if(name.val().trim().length ==0){
+					 document.getElementById("nameerr").innerHTML = "이름를 입력하세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val("");
+					return;
+				}
+				if (name.val().trim().length < 2) {
+					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val("");
+					return;
+				}
+				if (name.val().trim().length > 7) {
+					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val("");
+					return;
+				}
+				if (name.val().indexOf(" ")  != -1) {
+					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val("");
+					return;
+				}
+				if (name.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ]/g) != -1 ) {
+					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val("");
+					return;
+				}
+				if (name.val().search(/[!@#$%^&*()?_+~]/g) != -1) {
+					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val("");
+					return;
+				} 
+				if (name.val().search(/[0-9]/g) != -1) {
+					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val("");
+					return;
+				}
+				if (name.val().search(/[a-z|A-Z]/g) != -1) {
+					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
+					 document.getElementById("nameok").innerHTML = "";
+					 $("#name").val(""); 
+					return;
+				}
+				document.getElementById("nameerr").innerHTML = "";
+				document.getElementById("nameok").innerHTML = "ok";
+			});
+			$("#name").click(function() {
+				document.getElementById("nameerr").innerHTML = "";
+			});
+			/* 전화번호 */
+			$("#phone").on("keyup",function(){
+				var phone = $("#phone").val();
+				console.log(phone);
+				if(phone.indexOf(" ")>0){
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "공백은 사용 할 수 없습니다";
+					return;
+				}
+				if(phone.search(/[a-z|A-Z]/g) != -1){
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
+					return;
+				}
+				if(phone.search(/[!@#$%^&*()?_+~]/g) != -1){
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
+					return;
+				}
+				if(phone.search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) != -1){
+					console.log(phone.length-1)
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
+					return;
+				}
+				document.getElementById("phoneerr").innerHTML = "";
+				
+			});
+			 $("#phone").blur(function(){
+				var phone = $("#phone").val();
+				if(phone.trim()==0){
+					document.getElementById("phoneerr").innerHTML = "전화번호를 입력 하세요";
+					$("#phone").val("");
+					return;
+				}
+				if(phone.trim()<8){
+					document.getElementById("phoneerr").innerHTML = "전화번호를 입력 하세요";
+					$("#phone").val("");
+					return;
+				}
+				if(phone.indexOf(" ")>0){
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "공백은 사용 할 수 없습니다";
+					return;
+				}
+				if(phone.search(/[a-z|A-Z]/g) != -1){
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
+					return;
+				}
+				if(phone.search(/[!@#$%^&*()?_+~]/g) != -1){
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
+					return;
+				}
+				if(phone.search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) != -1){
+					console.log(phone.length-1)
+					$("#phone").val(phone.substr(0,phone.length-1));
+					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
+					return;
+				}
+				document.getElementById("phoneerr").innerHTML = "";
+			}); 
+			$("#userId_").click(function(){
+				$(".guide.error").hide();
+				$(".guide.ok").hide();
+				$("#idDuplicateCheck").val(0);
+			});
+			$("#userId_").blur(function(){
+				fn_checkID();
+			});
+			$("#password_").click(function(){
+				 document.getElementById("pwd").innerHTML = "";
+				 document.getElementById("pwdok").innerHTML = "";
+			});
+			$("#password2").click(function(){
+				 document.getElementById("pwd2").innerHTML = "";
+				 document.getElementById("pwd2ok").innerHTML = "";
+			});
+			$("#phone").click(function(){
+				 document.getElementById("phoneerr").innerHTML = "";
+			});
+			
 		});
+		/* 아이디 확인  */
 		function fn_checkID() {
-			var userId = $("#userId_").val().trim();
-			if (userId.length < 4) {
-				alert("아이디는 4글자 이상 입니다.");
-				userId.focus();
+			var userId = $("#userId_");
+			console.log(userId.val().trim().length);
+			if (userId.val().trim().length < 4) {
+				$(".guide.error").html("아이디는 4글자 이상 입니다.");
+				$(".guide.error").show();
+				$(".guide.ok").hide();
 				return;
 			}
-			if (userId.length > 11) {
-				alert("아이디는 10글자 이하 입니다.");
-				userId.focus();
+			if (userId.val().trim().length > 11) { 
+				$(".guide.error").html("아이디는 10글자 이하 입니다.");
+				$(".guide.error").show();
+				$(".guide.ok").hide();
 				return;
 			}
-			if (userId.indexOf(" ") >= 0) {
-				alert("아이디는 공백을 사용할 수 없습니다");
-				userId.focus();
+			if (userId.val().indexOf(" ") >= 0) {
+				userId.val(userId.val().trim());
+				$(".guide.error").html("아이디는 공백을 사용할 수 없습니다");
+				$(".guide.error").show();
+				$(".guide.ok").hide();
 				return;
 			}
-			if (userId.search(/[!@#$%^&*()?_~]/g) >= 0) {
-				alert("아이디는 특수문자를 사용할 수 없습니다");
-				userId.focus();
+			if (userId.val().search(/[!@#$%^&*()?_~]/g) >= 0) {
+				$(".guide.error").html("아이디는 특수문자를 사용할 수 없습니다");
+				$(".guide.error").show();
+				$(".guide.ok").hide();
 				return;
 			}
-			if (userId.search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) >= 0) {
-				alert("아이디는 한글을 사용할 수 없습니다");
-				userId.focus();
+			if (userId.val().search(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g) >= 0) {
+				$(".guide.error").html("아이디는 한글을 사용할 수 없습니다");
+				$(".guide.error").show();
+				$(".guide.ok").hide();
 				return;
 			}
+			if(userId.val().search(/[a-z|A-Z]/g)==-1){
+				$(".guide.error").html("숫자만 입력하면 안됩니다.");
+				$(".guide.error").show();
+				$(".guide.ok").hide();
+				return;
+			}
+			
 			$.ajax({
 				url : "checkIdDuplicate.do",
-				data : {
-					userId : userId
-				},
+				data : {userId : userId.val()},
 				dataType : "json",
 				success : function(data) {
 					console.log(data);
 					if (data.isUsable == true) {
+						$(".guide.ok").html("사용가능");
 						$(".guide.ok").show();
 						$(".guide.error").hide();
 						$("#idDuplicateCheck").val(1);
 					} else {
+						$(".guide.error").html("아이디가 중복 됩니다.");
 						$(".guide.error").show();
 						$(".guide.ok").hide();
 						$("#idDuplicateCheck").val(0);
@@ -347,6 +530,7 @@ textarea {
 				}
 			});
 		}
+		/* submit */
 		function validate() {
 			/* id */
 			var userId = $("#userId_");
@@ -377,13 +561,14 @@ textarea {
 			}
 			var idcheck = $("#idDuplicateCheck").val();
 			if (idcheck == 0) {
-				alert("아이디가 확인 하세요.");
+				alert("아이디를 확인 하세요.");
 				userId.focus();
 				return false;
 			}
 			/* password */
 			var password = $("#password_");
 			var pwdcheck = $("#pwdDuplicateCheck").val();
+
 			if (password.val() == userId.val()) {
 				alert("아이디와 패스워드가 동일합니다.");
 				password.focus();
@@ -421,13 +606,19 @@ textarea {
 				password.focus();
 				return false;
 			}
+			/* name */
 			var name = $("#name");
 			if (name.val().trim().length < 2) {
 				alert("이름을 2글자 이상 입력해 주세요.");
 				name.focus();
 				return false;
 			}
-			if (name.val().trim().indexOf(" ") >= 0) {
+			if (name.val().trim().length > 7) {
+				alert("이름을 2글자 이상 입력해 주세요.");
+				name.focus();
+				return false;
+			}
+			if (name.val().indexOf(" ") >= 0) {
 				alert("이름을에 공백을  사용할 수 없습니다.");
 				name.focus();
 				return false;
@@ -452,6 +643,7 @@ textarea {
 				name.focus();
 				return false;
 			}
+			/* phone */
 			var phone = $("#phone");
 			if (phone.val().search(/[a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|!@#$%^&*()?_~]/g) != -1) {
 				alert("전화번호는 숫자만 가능합니다.");
@@ -477,25 +669,7 @@ textarea {
 				emailaddr.focus();
 				return false;
 			}
-			/* 생년월일  */
-			var year = $("#year");
-			var month = $("#month");
-			var day = $("#day");
-			if (year.val().trim().length != 4) {
-				alert("생년월일을 다시 입력하세요.");
-				year.focus();
-				return false;
-			}
-			if (month.val().trim().length == 0) {
-				alert("생년월일을 다시 입력하세요.");
-				year.focus();
-				return false;
-			}
-			if (day.val().trim().length == 0) {
-				alert("생년월일을 다시 입력하세요.");
-				year.focus();
-				return false;
-			}
+			
 			return true;
 		}
 		
@@ -533,7 +707,7 @@ textarea {
 			var data = new FormData();
 			var em = email + "@" + emailaddr;
 			data.append("em", em);
-			alert("인증번호 전송");
+			alert("인증번호 전송중 ...");
 			$.ajax({
 				url : "certification.do",
 				data : data,
@@ -545,7 +719,7 @@ textarea {
 					if(date.check==true){
 					$("#checkcertification").val(1);
 					}else{
-					alert("인증번호 전송실패");
+					alert("인증번호 전송실패  이미 가입하셨나요?");
 					}
 				},
 				error : function(jqxhr, textStatus, errorThrown) {
@@ -595,7 +769,7 @@ textarea {
 						alert("이메일 인증을 성공했습니다.")
 					} else {
 						$("#checkPoint").val(0);
-						alert("이메일 인증을 실패했습니다.")
+						alert("이메일 인증을 실패했습니다.");
 					}
 				},
 				error : function(jqxhr, textStatus, errorThrown) {
@@ -619,20 +793,20 @@ textarea {
 			<div id="id-password-div-ik">
 				<br />
 				<div id="userId-container">
-					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)" required autocomplete="off" />
+					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)"  maxlength="15" required autocomplete="off" />
 					<button type="button" onclick="fn_checkID();" class="btn btn-outline-secondary">아이디 확인</button>
 					<br />
 					<div id="check-id">
-					<span class="guide ok">중복된 아이디가 없습니다.</span> 
-					<span class="guide error">중복된 아이디가 있습니다.</span> 
+					<span class="guide ok"></span> 
+					<span class="guide error"></span> 
 					</div>
 					<input type="hidden" id="idDuplicateCheck" value="0" />
 				</div>
 				<div>
-					<input type="password" name="pwd" id="password_" placeholder="비밀번호(필수)" required autocomplete="off"  /> <br /> 
+					<input type="password" name="pwd" id="password_"  maxlength="15" placeholder="비밀번호(필수)" required autocomplete="off"  /> <br /> 
 					<span id="pwd"></span>  
 					<span id="pwdok"></span>  
-					<input type="password" id="password2" placeholder="비밀번호 확인(필수)"  required autocomplete="off"  /> <br /> 
+					<input type="password" id="password2" placeholder="비밀번호 확인(필수)"  maxlength="15"  required autocomplete="off"  /> <br /> 
 					<span id="pwd2"></span> 
 					<span id="pwd2ok"></span> 
 					<input type="hidden" id="pwdDuplicateCheck" value="0" />
@@ -642,16 +816,33 @@ textarea {
 			</div>
 			
 			<div id="name-phone-email-gender-div-ik">
-			<input type="text" name="mname" id="name" placeholder="이름(필수)" required  autocomplete="off"  /><br /> 
-			<input type="text" name="phone" id="phone" maxlength="11" placeholder="전화번호(필수)" required required autocomplete="off"  /> <br /> 
-			<input type="text" name="email" id="email" placeholder="이메일(필수)" required  autocomplete="off"  /> @ 
-			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required  autocomplete="off"  />
+			
+			<!-- 이름 -->
+			<div>
+				<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off"  />
+				<span id="nameerr" class="name"></span> 
+				<span id="nameok" class="name"></span> <br /> 
+			</div>
+			
+			<!-- 전화번호 -->
+			<div>
+				<input type="text" name="phone" id="phone" maxlength="11"  placeholder="전화번호(필수)" required required autocomplete="off"  /> <br /> 
+				<span id="phoneerr" class="phone"></span> 
+			</div>
+			<br />
+			<!-- 이메일 -->
+			<input type="text" name="email" id="email" placeholder="이메일(필수)"  maxlength="15" required  autocomplete="off"  /> @ 
+			<input type="text" name="email" id="emailaddr" placeholder="직접입력"  maxlength="20" required  autocomplete="off"  />
 			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-outline-secondary"/> 
 			<input type="hidden" id="checkcertification" value="0" /> 
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
 			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-outline-secondary" /> 
 			<input type="hidden" id="checkPoint" value="0" /> <br />
+			
+			<!-- 생일 -->
 			<input type="date" name="birth" required/><br />
+			
+			<!-- 성별 -->
 			<span class="jender">
 			<input type="radio" name="gender" value="M" id="male" checked /> <label for="male">남</label> 
 			</span>
@@ -661,18 +852,16 @@ textarea {
 			<br />	<br />
 			</div>
 			
-			
 			<div class="blank-ik"></div>
-			
 			
 			<div id="choos-ik">
 			<br />
-			<button type="button" class="btn btn-outline-secondary" id="btn_upFile">당신은 이쁜 사람입니다. 자신감을 가지세요(선택)</button> <input type="file" name="upFile" id="upFile" /> 
-			<input type='hidden' name='mprofile' id="mprofile" value='no'> <br />
+			<button type="button" class="btn btn-outline-secondary" id="btn_upFile">당신은 이쁜 사람입니다. 자신감을 가지세요(선택)</button> <input type="file" name="upFile" id="upFile" accept="image/*" /> 
+			<input type='hidden' name='mprofile' id="mprofile" value='no'> <br /><br />
 			<div id="div-img-ik"></div>
 			<div>
 			<br />
-			<textarea rows="10" cols="50" name="cover" placeholder="당신을 소개 하세요 모두가 알 수 있도록...(선택)" ></textarea>
+			<textarea rows="10" cols="50" name="cover" placeholder="당신을 소개 하세요 모두가 알 수 있도록...(선택)" maxlength="1000" ></textarea>
 			</div>
 			<br />
 			

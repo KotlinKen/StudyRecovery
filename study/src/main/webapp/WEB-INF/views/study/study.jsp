@@ -6,8 +6,18 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp">
 	<jsp:param value="" name="pageTitle"/>
 </jsp:include>	 
+<style>
+p.noMore{
+	display:none;
+}
+
+</style>
 <script>
 $(function(){
+	$("p#noMore").addClass("noMore");
+	
+	$("#subject").hide();
+	$("#town").hide();
 	
 	/* 처음에 조건없이 리스트를 가져오는 ajax */
 	$.ajax({
@@ -43,7 +53,17 @@ $(function(){
 	
 	//카테고리를 선택하면 그에 맞는 과목들을 가져온다.
 	$("select#kind").on("change",function(){
-		var html="<option value='0'>전체</option>";
+		
+		var kno= $("option:selected", this).val();
+		
+		if(kno == ""){
+			$("#subject").hide();
+			return;
+		}
+		$("#subject").show();
+		
+		
+		var html="";
 		if($(this).val()!="0"){
 			$.ajax({
 				url:"selectSubject.do",
@@ -52,19 +72,28 @@ $(function(){
 				success:function(data){
 					for(var index in data){
 						html +="<option value='"+data[index].SUBNO+"'>"+data[index].SUBJECTNAME+"</option><br/>";
-						$("select#subject").html(html);
 					}
+					$("select#subject").html(html);
 				}
 			});
 		}else{
-			html ="<option value='0'>카테고리를 선택하세요</option><br/>";
-			$("select#subject").html(html);
+			$("#subject").hide();
+			/* html ="<option value='0'>카테고리를 선택하세요</option><br/>";
+			$("select#subject").html(html); */
 		}
 	});
 	
 	//지역을 선택하면 그에 맞는 도시들을 가져온다.
 	$("select#local").on("change",function(){
-		var html="<option value='0'>전체</option>";
+		
+		var lno=$("select#local option:selected").val();
+		if(lno == ""){
+			$("#town").hide();
+			return;
+		}
+		$("#town").show();
+		
+		var html="";
 		if($(this).val()!="0"){
 			$.ajax({
 				url:"selectTown.do",
@@ -73,13 +102,15 @@ $(function(){
 				success:function(data){
 					for(var index in data){
 						html +="<option value='"+data[index].TNO+"'>"+data[index].TOWNNAME+"</option><br/>";
-						$("select#town").html(html);
+						
 					}
+					$("select#town").html(html);
 				}
 			});
 		}else{
-			html ="<option value='0'>지역을 선택하세요</option><br/>";
-			$("select#town").html(html);
+			$("#town").hide();
+			/* html ="<option value='0'>지역을 선택하세요</option><br/>";
+			$("select#town").html(html); */
 		}
 	});
 	
@@ -105,23 +136,26 @@ $(function(){
 			dataType:"json",
 			success:function(data){
 				console.log(data);
-			 	
 				var html="";
-	        	for(index in data.list){
-	        		html+="<div class='studyone'>";
-	        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+data.list[index].LNAME+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+data.list[index].SUBNAME+ data.list[index].KNAME+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].MPROFILE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
-	        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
-	        		html+="</div>"; 
-	        	} 
-	        	
-	         	
+			 	if(data.list.length>0){
+			 		
+		        	for(index in data.list){
+		        		html+="<div class='studyone'>";
+		        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].LNAME+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+data.list[index].SUBNAME+ data.list[index].KNAME+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].MPROFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
+		        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
+		        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
+		        		html+="</div>"; 
+		        	} 
+			 	}else{
+			 		html+="<span>해당 스터디가 없습니다.<span>";
+			 	}
+				
 	        	$("div#study-list").html(html); 
 	        	
 	        	//새로 cPage 1로 설정
@@ -275,6 +309,11 @@ $(function(){
 		        	
 		        }
 		      });//ajax 끝
+		  }else{
+			  if(!$("p#noMore").prop("noMore")){
+				  $("p#noMore").addClass("noMore");  
+			  }
+			  
 		  }//if문 끝
 		
 	}
@@ -283,7 +322,7 @@ $(function(){
 
 </script>
 <div id="studylist-container">
-		
+		<button onclick="location.href='${pageContext.request.contextPath}/study/studyForm.do'">스터디 작성</button>
 		<div id="study-search">
 			<label for="local">지역:</label>
 			<select name="lno" id="local">
@@ -327,11 +366,13 @@ $(function(){
 		<div id="study-list">
 		
 		</div>
-	
-	<input type="hidden" id="cPageNo" value="1" />
-	<input type="hidden" id="total" value="0" />
-	<input type="hidden" id="numPerPage" />
-	<input type="hidden" name="case" value="none" /> <!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부.-->
+		
+		<p id="noMore">더이상 스터디가 존재하지 않습니다.</p>
+		
+		<input type="hidden" id="cPageNo" value="1" />
+		<input type="hidden" id="total" value="0" />
+		<input type="hidden" id="numPerPage" />
+		<input type="hidden" name="case" value="none" /> <!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부.-->
 	
 	
 	

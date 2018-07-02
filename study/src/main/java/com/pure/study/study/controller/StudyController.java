@@ -144,7 +144,7 @@ public class StudyController {
 		
 		logger.debug("upFiles.length="+upFiles.length);
 
-		if(study.getPrice()==null) study.setPrice(0+"원");
+		
 		System.out.println("study="+study);
 		study.setMno(m.getMno()); 
 		System.out.println("study.mno"+study.getMno());
@@ -219,7 +219,7 @@ public class StudyController {
 	
 	//검색조건으로 첫 페이징 결과를 가져옴. total, list, cPage 넘김
 	@RequestMapping("/study/searchStudy.do")
-	public ModelAndView selectStudyForSearch(@RequestParam(value="lno") int lno,@RequestParam(value="tno", defaultValue="null") int tno, @RequestParam(value="subno") int subno,
+	public ModelAndView selectStudyForSearch(@RequestParam(value="lno") int lno,@RequestParam(value="tno", defaultValue="0") int tno, @RequestParam(value="subno",defaultValue="0") int subno,
 			@RequestParam(value="kno") int kno,@RequestParam(value="dno") int dno,@RequestParam(value="leadername") String leadername
 			,@RequestParam(value="cPage", required=false, defaultValue="1") int cPage) {
 		
@@ -235,7 +235,7 @@ public class StudyController {
 		terms.put("kno", kno);
 		terms.put("dno", dno);
 		terms.put("leadername", leadername);
-		terms.put("cPage", cPage+1);
+		terms.put("cPage", cPage);
 		terms.put("numPerPage", numPerPage);
 		System.out.println("map="+terms);
 		
@@ -418,13 +418,11 @@ public class StudyController {
 		}
 		study.setFreq(dayname);
 		
-		
 		String newImgs="";
 		i=0;
 		
 		System.out.println("upFiles.length="+upFiles.length);
 		 
-		if(study.getPrice()==null) study.setPrice("0");
 		System.out.println("study="+study);
 		
 		
