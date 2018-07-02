@@ -149,5 +149,10 @@ public class LectureServiceImpl implements LectureService {
 		return ld.selectLectureByMnoTypeLecture(sno);
 	}
 
+	@Override
+	public List<Map<String, Object>> restTypeLister(Map<String, String> queryMap) {
+		return ld.restTypeLister(queryMap);
+	}
+
 
 }

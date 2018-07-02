@@ -64,10 +64,10 @@ public class LectureContoller {
 		Map<String, Object> key = new HashMap<>();
 		key.put("mno", lecture.getMno());
 		key.put("key", "study");
-
+		System.out.println("---------------------------------"+lecture);
 		int result = 0;
 		String msg = "";
-		String loc = "lecture/lectureList";
+		String loc = "/lecture/lectureList";
 
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
@@ -83,6 +83,7 @@ public class LectureContoller {
 
 		// 같은 날짜, 요일, 시간에 있는지를 검사해봅시다..
 		List<Map<String, Object>> list = ls.selectLectureListByMno(key);
+	
 		int cnt = checkDate(lecture, list, freqs);
 
 		if (cnt == 0) {
@@ -575,6 +576,7 @@ public class LectureContoller {
 
 			// 뽑아올 시간들.
 			String[] times = lecture.getTime().split("~");
+			
 			int sHour = Integer.parseInt(times[0].split(":")[0]);
 			int eHour = Integer.parseInt(times[1].split(":")[0]);
 

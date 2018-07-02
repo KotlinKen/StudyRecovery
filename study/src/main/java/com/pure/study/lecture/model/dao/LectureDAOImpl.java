@@ -151,4 +151,9 @@ public class LectureDAOImpl implements LectureDAO {
 	public Lecture selectLectureByMnoTypeLecture(int sno) {
 		return session.selectOne("lecture.selectLectureByMnoTypeLecture", sno);
 	}
+
+	@Override
+	public List<Map<String, Object>> restTypeLister(Map<String, String> queryMap) {
+		return session.selectList("lecture.restTypeLister", queryMap);
+	}
 }

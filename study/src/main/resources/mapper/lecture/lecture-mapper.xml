@@ -321,4 +321,57 @@
 	<delete id="lectureWishCancel">
 		DELETE FROM WISH WHERE MNO = #{mno} AND SNO = #{sno}
 	</delete>
+
+
+
+
+
+
+	<!-- 김률민 추가 -->
+	<select id="restTypeLister" resultMap="map">
+		SELECT * FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
+		<trim prefix="WHERE" prefixOverrides="AND | OR ">
+			<if test="searchType != null and searchType != '' ">
+				<if test="searchKeyword != null and searchKeyword != '' ">
+					AND ${searchType} like '%'||#{searchKeyword}||'%'
+				</if>
+			</if>
+			S.MNO = M.MNO AND S.TNO = T.TNO AND S.DNO = D.DNO AND 
+			T.LNO = L.LNO AND S.SUBNO = SUB.SUBNO AND SUB.KNO = K.KNO
+			
+			<!-- 스터디냐 강의냐 -->
+			<if test="type != null and type != '' ">
+				AND TYPE = #{type}
+			</if>
+			<if test="status != null and status !='' ">
+				AND STATUS = #{status}
+			</if>
+			
+			<if test="rownum != null and rownum !='' ">
+				AND ROWNUM <![CDATA[ <= ]]> #{rownum}
+			</if>
+		</trim>
+		<if test="order != null and order != '' ">
+			ORDER BY
+			<choose>
+				<when test="order eq 'SDATE'">SDATE</when>
+				<when test="order eq 'LDATE'">LDATE</when>
+				<when test="order eq 'EDATE'">EDATE</when>
+				<when test="order eq 'SATUS'">STATUS</when>
+			</choose>
+			<choose>
+				<when test="desc eq 'desc'"> DESC </when>
+				<otherwise> ASC </otherwise>
+			</choose>
+		</if>
+	</select>
+<!-- 김률민 추가 -->
+	
+	
+	
+	
+	
+	
+	
+	
 </mapper>

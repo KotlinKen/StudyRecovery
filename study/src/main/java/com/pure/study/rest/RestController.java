@@ -355,8 +355,17 @@ public class RestController {
 	}
 	
 	
-	
-	
-	
+	@RequestMapping(value="/rest/{location}/restTypeLister", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView restTypeLister(HttpServletRequest request,
+										@PathVariable(value="location", required=false) String location, 
+										@RequestParam Map<String, String> queryMap) {
+		
+		
+		List<Map<String, Object>> list = lectureService.restTypeLister(queryMap);
+		ModelAndView mav = new ModelAndView("jsonView");
+		mav.addObject("list", list);
+		return mav;
+	}
 	
 }
