@@ -163,5 +163,14 @@ public interface MemberDAO {
 
 	Member selectOneMemberMno(int mno);
 
+	List<Map<String, String>> selectMemberReviewList(int mno);
+
+	List<Map<String, Object>> selectmemberReply(int mno);
+
+	List<Map<String, Object>> selectInstructorMemberOX();
+
+	Map<String, String> selectOneInstruct(int mno);
+
+	void updateInstructorApply(int ino);
 
 }
