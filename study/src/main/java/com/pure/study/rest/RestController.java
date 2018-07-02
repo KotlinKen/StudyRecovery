@@ -73,7 +73,6 @@ public class RestController {
 	@RequestMapping(value="/rest/study/all/{count}", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView selectStudyCount(@PathVariable(value="count", required=false) int count,  @RequestParam(value="filter", required=false) String filter) {
-
 		
 		Adversting adversting = new Adversting();
 		Map<String, String> map = new HashMap<>();
@@ -105,16 +104,16 @@ public class RestController {
 	}
 	
 	
-/*	@RequestMapping(value="/rest/lecture/{count}", method=RequestMethod.GET)
-	@ResponseBody
-	public ModelAndView selectLectureCount(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
-		
-		
-		ModelAndView mav = new ModelAndView("jsonView");
-		//List<Map<String,String>> list = lectureService.selectLectureList(1, count);
-		//mav.addObject("list", list);
-		return mav;
-	}*/
+//	@RequestMapping(value="/rest/lecture/{count}", method=RequestMethod.GET)
+//	@ResponseBody
+//	public ModelAndView selectLectureCount(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
+//		
+//		
+//		ModelAndView mav = new ModelAndView("jsonView");
+//		List<Map<String,String>> list = lectureService.selectLectureList(1, count);
+//		mav.addObject("list", list);
+//		return mav;
+//	}
 	
 	
 	

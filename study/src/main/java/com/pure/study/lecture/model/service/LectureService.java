@@ -51,9 +51,13 @@ public interface LectureService {
 
 	int lectureWishCancel(Map<String, Integer> map);
 
-	List<Map<String, Object>> selectLectureListByMno(int mno);
+	List<Map<String, Object>> selectLectureListByMno(Map<String, Object> key);
 
 	int confirmInstructor(int mno);
+
+	int deleteLectures(Map<String, Object> map);
+
+	Lecture selectLectureByMnoTypeLecture(int sno);
 
 
 }

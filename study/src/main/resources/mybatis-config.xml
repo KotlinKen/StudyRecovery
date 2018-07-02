@@ -8,6 +8,7 @@
 				   alias="strArrTypeHandler"/>
 		<typeAlias type="com.pure.study.member.model.vo.Member" alias="member"/>
 		<typeAlias type="com.pure.study.study.model.vo.Study" alias="study"/>
+		<typeAlias type="com.pure.study.lecture.model.vo.Lecture" alias="lecture"/>
 	</typeAliases>
 </configuration>
 
