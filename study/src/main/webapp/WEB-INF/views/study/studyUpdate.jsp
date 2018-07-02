@@ -227,35 +227,118 @@ $(function(){
 		});
 		
 
+		$("#ldate").on("change", function(){		
+			var ldate = $(this);
+			var ldateVal = ldate.val();
+			var lArray = ldateVal.split("-");
+			var deadline = new Date(lArray[0], lArray[1], lArray[2]).getTime();
+			
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = new String(date.getMonth()+1);
+			var day = new String(date.getDate());
+			
+			if(month.length == 1 )
+				month = "0" + month;
+			if( day.length == 1 )
+				day = "0" + day;
+			
+			var today = new Date(year, month, day);
+			
+			if( (deadline-today.getTime()) < 0 ){
+				alert("과거가 마감일이 될 수 없습니다.");
+				ldate.val("");
+			}
+			
+			var sdate = $("#sdate");		
+			var edate = $("#edate");
+			sdate.val("");
+			edate.val("");
+			
+			$("input[class=day]").prop("checked", false);
+			$("input[class=day]").attr("disabled", true);
+			
+			sdate.attr("min", $(this).val());
+			edate.attr("min", $(this).val());		
+		});
 		
-		 $("input[class=changeDate]").on("change", function(){
-		      $("input[class=day]").prop("checked", false);
-		      
-		      var sdate = $("#sdate").val();
-		      var sday = new Date(sdate).getDay();
-		      var startArray = sdate.split("-");
-		      var start_date = new Date(startArray[0], startArray[1], startArray[2]);
-		      
-		      var edate = $("#edate").val();
-		      var endArray = edate.split("-");
-		      var end_date = new Date(endArray[0], endArray[1], endArray[2]);   
-		      
-		      var difference = (end_date.getTime()-start_date.getTime())/1000/24/60/60;
-		      alert(difference);
-		      if( difference >= 0 && difference < 7 ){         
-		         $("input[class=day]").attr("disabled", true);
-		          for( var i = 0; i < difference+1; i++ ){
-		             if( sday + i < 7)         
-		                $("input[class=day]").eq(sday+i).attr("disabled", false);             
-		             else
-		                $("input[class=day]").eq(sday+i-7).attr("disabled", false);   
-		          }
-		      }
-		      else if( difference > 7 )
-		         $(".day").attr("disabled", false);
-		      else
-		         $(".day").attr("disabled", false);
-		   }); 
+		// 유효성 검사 - 강의기간
+		$("input[class=changeDate]").on("change", function(){
+			$("input[class=day]").prop("checked", false);
+			$("input[class=day]").attr("disabled", true);
+			
+			// 시작하는 날
+			var sdate = $("#sdate");
+			var sdateVal = sdate.val();
+			var sday = new Date(sdateVal).getDay();
+			var startArray = sdateVal.split("-");
+			var start_date = new Date(startArray[0], startArray[1], startArray[2]).getTime();
+			
+			// 끝나는 날
+			var edate = $("#edate");
+			var edateVal = edate.val();
+			var endArray = edateVal.split("-");
+			var end_date = new Date(endArray[0], endArray[1], endArray[2]).getTime();	
+			
+			// 신청 마감일
+			var ldateVal = $("#ldate").val();
+			
+			if( ldateVal == "" ){
+				alert("마감일 먼저 설정해주세요.");
+				sdate.val("");
+				edate.val("");
+			}			
+			
+			// 날짜 차이
+			var difference = (end_date - start_date) /1000/24/60/60;			
+			
+			// 알고리즘
+			if( sdateVal != "" && edateVal != "" ){
+				if( difference >= 0 && difference < 7 ){			
+					$("input[class=day]").attr("disabled", true);
+				 	for( var i = 0; i < difference+1; i++ ){
+				 		if( sday + i < 7)			
+				 			$("input[class=day]").eq(sday+i).attr("disabled", false);		 		
+				 		else
+				 			$("input[class=day]").eq(sday+i-7).attr("disabled", false);	
+				 	}
+				}
+				else if( difference > 7 )
+					$(".day").attr("disabled", false);
+				// 강의 끝나는 날이 시작하는 날보다 빠를 경우 초기화.
+				else if( difference < 0 ){
+					alert("강의가 끝나는 날이 시작하는 날보다 빠를 수 없습니다.");
+					sdate.val("");
+					edate.val("");
+				}
+				else
+					$(".day").attr("disabled", false);	
+			}
+			else{
+				$(".day").attr("disabled", true);	
+			}		
+		});
+		
+		$(".time").on("change", function(){
+			// 시작 시간
+			var startTime = $("#starttime");
+			var startTimeVal = startTime.val();
+			var startTimeArray = startTimeVal.split(":");
+			var start = Number(startTimeArray[0]);		
+			
+			// 마감 시간
+			var endTime = $("#endtime");
+			var endTimeVal = $("#endtime").val();
+			var endTimeArray = endTimeVal.split(":");
+			var end = Number(endTimeArray[0]);	
+			
+			// 시작시간이 마감시간보다 클 경우.
+			if( start > end ){
+				alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
+				startTime.val("6:00");
+				endTime.val("7:00");
+			}
+		});
 
 	
 });
@@ -263,11 +346,47 @@ $(function(){
 //유효성 검사
 function validate(){
 	
-		// time만들기.
-	   var starttime = $("select#starttime option:checked").val();
-	   var endtime = $("select#endtime option:checked").val();   
-	   
-	   $("input#time").val(starttime + "~" + endtime);
+	
+	// 유효성 검사 - 지역,도시
+	var local = $("#local").val();
+	var town = $("#town").val();
+	
+	if( local=="" || town=="세부 지역을 선택하세요"){
+		alert("지역을 선택해주세요");
+		return false;	
+	}
+	
+	// 유효성 검사 - 카테고리, 세부종목
+	var kind = $("#kind").val();
+	var sub = $("#subject").val();
+	
+	if( kind=="" || sub=="세부 과목을 선택하세요"){
+		alert("강의 과목을 선택해주세요");
+		return false;
+	}
+	
+	// 유효성 검사 - 난이도
+	var diff = $("#diff").val();
+	
+	if(diff==""){
+		alert("난이도를 선택해주세요");
+		return false;
+	}	
+	
+	// 유효성 검사 - 일정, 빈도
+	if( $(".day:checked").length == 0 ){
+		alert("요일을 선택하세요");
+		return false;	
+	}
+	
+	
+	
+	
+	// time만들기.
+   var starttime = $("select#starttime option:checked").val();
+   var endtime = $("select#endtime option:checked").val();   
+   
+   $("input#time").val(starttime + "~" + endtime);
 	   
 	   
 	   //기존의 파일 이름 연결해서 보내기 
@@ -287,6 +406,11 @@ function validate(){
 	   
 	return true;
 }
+
+$(document).ready(function(){
+	$(".day").attr("disabled", true);
+});
+
 
 </script>
 <form action="studyUpdateEnd.do" name="studyFrm" method="post" onsubmit="return validate();" enctype="multipart/form-data">
@@ -311,26 +435,26 @@ function validate(){
 		<label for="ldate">신청마감 : </label><input type="date" name="ldate" id="ldate" value="${study.LDATE }"/>
 		<label for="schedule">스터디 일정 : </label><input type="date" name="sdate" class="changeDate" id="sdate" value="${study.SDATE }"/>~<input type="date" name="edate" class="changeDate" id="edate" value="${study.EDATE }"/><br />
 		<label for="freq">스터디빈도 : </label>
-		<label>일 </label><input type="checkbox" name="freq" id="" value="일" ${fn:contains(study.FREQ, "일")? "checked":""}/>
-		<label>월 </label><input type="checkbox" name="freq" id="" value="월" ${fn:contains(study.FREQ, "월")? "checked":""}/>
-		<label>화 </label><input type="checkbox" name="freq" id="" value="화" ${fn:contains(study.FREQ, "화")? "checked":""}/>
-		<label>수 </label><input type="checkbox" name="freq" id="" value="수" ${fn:contains(study.FREQ, "수")? "checked":""}/>
-		<label>목 </label><input type="checkbox" name="freq" id="" value="목" ${fn:contains(study.FREQ, "목")? "checked":""}/>
-		<label>금 </label><input type="checkbox" name="freq" id="" value="금" ${fn:contains(study.FREQ, "금")? "checked":""}/>
-		<label>토 </label><input type="checkbox" name="freq" id="" value="토" ${fn:contains(study.FREQ, "토")? "checked":""}/> 
+		<label>일 </label><input type="checkbox" name="freq" class="day"value="일" ${fn:contains(study.FREQ, "일")? "checked":""}/>
+		<label>월 </label><input type="checkbox" name="freq" class="day" value="월" ${fn:contains(study.FREQ, "월")? "checked":""}/>
+		<label>화 </label><input type="checkbox" name="freq" class="day" value="화" ${fn:contains(study.FREQ, "화")? "checked":""}/>
+		<label>수 </label><input type="checkbox" name="freq" class="day" value="수" ${fn:contains(study.FREQ, "수")? "checked":""}/>
+		<label>목 </label><input type="checkbox" name="freq" class="day" value="목" ${fn:contains(study.FREQ, "목")? "checked":""}/>
+		<label>금 </label><input type="checkbox" name="freq" class="day" value="금" ${fn:contains(study.FREQ, "금")? "checked":""}/>
+		<label>토 </label><input type="checkbox" name="freq" class="day" value="토" ${fn:contains(study.FREQ, "토")? "checked":""}/> 
 		
 		<label for="starttime">스터디 시간</label>
 		
 		<!-- 시간을 시작시간, 끝나는 시간으로 나누어서 비교하기 위해서 spilt함 -->
 		<c:set var="times" value="${fn:split(study.TIME,'~')}"/>
 		
-		<select id="starttime">
+		<select id="starttime" class="time">
 			<c:forEach var="i" begin="6" end="23">
 			<option value="${i }:00" ${fn:contains(fn:split(study.TIME,'~')[0],i)? "selected":""} >${i }:00</option>
 			
 			</c:forEach>
 		</select>
-		<select id="endtime">
+		<select id="endtime" class="time">
 			<c:forEach var="j" begin="7" end="24">
 			<option value="${j }:00"${fn:contains(times[1],j)? "selected":""}>${j }:00</option>
 			

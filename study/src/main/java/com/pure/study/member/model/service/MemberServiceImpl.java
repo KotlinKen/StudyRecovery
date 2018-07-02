@@ -354,6 +354,35 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	public int selectCntEmail(String newEmail) {
+		return memberDAO.selectCntEmail(newEmail);
+	}
+
+	@Override
+	public int deleteCrew(Map<String, String> map) {
+		return memberDAO.deleteCrew(map);
+	}
+
+	@Override
+	public int insertApply(Map<String, String> map) {
+		return memberDAO.insertApply(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> giveReviewList(Map<String, Object> listMap) {
+		return memberDAO.giveReviewList(listMap);
+	}
+
+	@Override
+	public Map<String, Object> searchEvaluation(Map<String, Object> map) {
+		return memberDAO.searchEvaluation(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectGradeList() {
+		return memberDAO.selectGradeList();
+	}
+
 	public int adminInnerCheck(Map<String, String> urlname) {
 		return memberDAO.adminInnerCheck(urlname);
 	}

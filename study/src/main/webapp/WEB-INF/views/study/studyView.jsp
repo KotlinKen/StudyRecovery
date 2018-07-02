@@ -61,7 +61,7 @@ function studyApply(sno){
 		}
 	}else{
 		//alert("로그인 후 이용하세요");
-		$("button#btn-login").trigger('click');
+		$("a#btn-login").trigger('click');
 	}
 	
 }
@@ -71,17 +71,18 @@ function studyWish(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//찜하기를 이미 선택했다면 다시 누르면 찜하기에서 삭제됨.
 	var mno=${memberLoggedIn!=null? memberLoggedIn.getMno():"0"};
-	if(${memberLoggedIn!=null}){//로그인을 한 상황
+	if(${memberLoggedIn!=null}){//로그인을 한 상황..
 		
-		if(${isWish==0}){//사용자는 전에 찜하지 않았음.
+		if($("input#isWish").val()==0){//사용자는 전에 찜하지 않았음.
 			$.ajax({
 				url:"wishStudy.do",
 				data:{sno:sno,mno:mno},
 				success:function(data){
 					console.log("찜했다");
 					$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/nowish.png");
-					if(confirm("찜한 목록으로 가시겠습니까?")){
-						location.href="${pageContext.request.contextPath}/member/memberWish.do?mno="+mno;
+					if(confirm("찜했습니다. 찜 장바구니로 가시겠습니까?")){
+						$("input#isWish").val("1");//찜했음을 저장
+						location.href="${pageContext.request.contextPath}/member/searchMyPageKwd.do?myPage=wish";
 					}
 				},error:function(){
 					
@@ -94,6 +95,7 @@ function studyWish(sno){
 					data:{sno:sno,mno:mno},
 					success:function(data){
 						$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/wish.png");
+						$("input#isWish").val("0");//찜취소한거 저장
 					},error:function(){
 						
 					}
@@ -101,7 +103,7 @@ function studyWish(sno){
 			}
 		}
 	}else{//로그인창 띄움.
-		$("button#btn-login").trigger('click');
+		$("a#btn-login").trigger('click');
 	}
 	
 }
@@ -133,7 +135,7 @@ $(function(){
 	<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
 </c:if>	
 
-
+<input type="hidden" id="isWish" value="${isWish }" />
 <!-- 사진 뷰 -->
 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
@@ -219,8 +221,14 @@ $(function(){
 <span>${study.KNAME } : ${study.SUBNAME }</span>
 <span>${study.TITLE }</span><br />
 <span>${study.SDATE }~${study.EDATE }</span>
-<button type="button" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
-<button type="button" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
+<c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
+	<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
+		<button type="button" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
+		<button type="button" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
+	</c:if>
+	
+</c:if>	
+
 
 
 </div>

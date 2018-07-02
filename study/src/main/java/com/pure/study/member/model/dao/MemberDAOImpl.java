@@ -365,8 +365,39 @@ public class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
+
 	public List<Map<String, String>> selectMemberReviewList(int mno) {
 		return sqlSession.selectList("member.selectMemberReviewList", mno);
+	}
+	public int selectCntEmail(String newEmail) {
+		Map<String,String> map = new HashMap<>();
+		map.put("newEmail", newEmail);
+		return sqlSession.selectOne("member.selectCntEmail", map);
+	}
+
+	@Override
+	public int deleteCrew(Map<String, String> map) {
+		return sqlSession.delete("member.deleteCrew", map);
+	}
+
+	@Override
+	public int insertApply(Map<String, String> map) {
+		return sqlSession.insert("member.insertApply", map);
+	}
+
+	@Override
+	public List<Map<String, Object>> giveReviewList(Map<String, Object> listMap) {
+		return sqlSession.selectList("member.giveReviewList", listMap);
+	}
+
+	@Override
+	public Map<String, Object> searchEvaluation(Map<String, Object> map) {
+		return sqlSession.selectOne("member.searchEvaluation", map);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectGradeList() {
+		return sqlSession.selectList("member.selectGradeList");
 	}
 	
 }
