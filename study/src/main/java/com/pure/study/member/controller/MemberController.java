@@ -1198,6 +1198,51 @@ public class MemberController {
 	} 
 	
 	//신청 현황 수락 버튼
+		@RequestMapping(value="/member/applyButton.do")
+		@ResponseBody 
+		public ModelAndView applyButton( @RequestParam("sno") String sno
+										, @RequestParam("mno")String mno
+										, @RequestParam("confirm") String confirm
+										) { 
+			ModelAndView mav = new ModelAndView("jsonView"); 
+			Map<String, String> map = new HashMap<>();
+			map.put("studyNo", sno); 
+			//map.put("forCrewList", "forCrewList");
+			map.put("mno", mno);
+			
+			int resultDel = 0;
+			int result=0;
+			
+			if("agree".equals(confirm)) {
+				resultDel = memberService.deleteApply(map); 
+				result = memberService.insertCrew(map); 
+						
+			}else if("cancel".equals(confirm)){
+				result = memberService.insertApply(map);
+				resultDel = memberService.deleteCrew(map);
+				
+			}
+			
+			if(result<=0 || resultDel<=0) {
+				mav.addObject("msg","다시 시도해주세요"); 
+				mav.setViewName("common/msg"); 
+			}
+			
+			map.remove("mno");
+			
+			int crewNumPerPage = memberService.selectMyStudyListCnt(map); 
+			int cPage = 1;
+			
+			List<Map<String,String>> crewList = memberService.selectMyStudyList(map, crewNumPerPage, cPage); 
+			System.out.println(crewList);
+			
+			mav.addObject("crewList", crewList); 
+			mav.addObject("studyNo", sno);
+			
+			return mav; 
+		}
+	/*
+	//신청 현황 수락 버튼
 	@RequestMapping(value="/member/applyButton.do")
 	@ResponseBody 
 	public ModelAndView applyButton( @RequestParam("sno") String sno
@@ -1241,7 +1286,7 @@ public class MemberController {
 		
 		return mav; 
 	}
-	
+	*/
 	//평가 목록 페이지
 	@RequestMapping(value="/member/searchMyPageEvaluation.do")
 	@ResponseBody 
