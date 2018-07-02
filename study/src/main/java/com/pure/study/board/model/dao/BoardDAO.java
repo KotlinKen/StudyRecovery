@@ -11,6 +11,8 @@ public interface BoardDAO {
 	List<Map<String, String>> selectBoardList(int cPage, int numPerPage);
 
 	int selectCount();
+	
+	int selectCount(Map<String, String> queryMap);
 
 	int insertBoard(Board board);
 
@@ -25,6 +27,8 @@ public interface BoardDAO {
 	List<Map<String, String>> selectBoardList(int cPage, int numPerPage, Map<String, String> params);
 
 	int updateBoard(Map<String, String> queryMap);
+
+
 
 
 }

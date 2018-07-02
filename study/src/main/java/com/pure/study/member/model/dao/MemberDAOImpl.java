@@ -401,6 +401,11 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.update("member.updateNpoint");
 	}
 
+	@Override
+	public Member selectOneMemberMno(int mno) {
+		return sqlSession.selectOne("member.selectOneMemberMno",mno);
+	}
+
 	
 	
 }

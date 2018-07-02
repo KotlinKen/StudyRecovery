@@ -753,7 +753,11 @@
 				html += "</table>";
 				
 				var removehtml = "<br />";
-				removehtml += "<h5>스터디 신청을 수락 완료한 회원</h5>";
+				<%if(("lecture").equals(type)){%>
+					removehtml += "<h5>강의 신청을 수락 완료한 회원</h5>";
+				<%} else{%>
+					removehtml += "<h5>스터디 신청을 수락 완료한 회원</h5>";
+				<%}%>
 				removehtml += "<hr>";
 				removehtml += "<table>"; 
 				removehtml += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td></tr>";
@@ -826,26 +830,43 @@
 				
 				
 				if(data.applyList.length==0){
-					$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+")");
+					<%if(("lecture").equals(type)){%>
+						$("h5#modalLabel").html("강의 신청 현황("+data.studyName+")");
+					<%} else{%>
+						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+")");
+					<%}%>
+					
 					$("#div-reviewView").html("신청한 회원이 없습니다.");
 					if(data.crewList.length>0){
 						$("#div-crew").html(removehtml);
 					}else{
-						$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+						<%if(("lecture").equals(type)){%>
+							$("#div-crew").html("<br/><h5>강의 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+						<%} else{%>
+							$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+						<%}%>
 					}
 				} else{
 					$("#div-reviewView").html(html);
 					if(data.crewList.length>0){
 						$("#div-crew").html(removehtml);
 					}else{
-						$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+						<%if(("lecture").equals(type)){%>
+							$("#div-crew").html("<br/><h5>강의 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+						<%} else{%>
+							$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+						<%}%>
 					}
 				} 
 				if(crew=="crew"){
 					if(data.crewList.length>0){
 						$("#div-crewList").html(crewhtml);												
 					}else{
-						$("#div-crewList").html("해당 스터디의 팀원이 없습니다.");
+						<%if(("lecture").equals(type)){%>
+							$("#div-crewList").html("해당 강의의 팀원이 없습니다.");
+						<%} else{%>
+							$("#div-crewList").html("해당 스터디의 팀원이 없습니다.");
+						<%}%>
 					}
 				}
 				
@@ -888,7 +909,11 @@
 				success: function(data){
 					var html = "";
 					//console.log(data);
-					html += "<h5>스터디 신청을 수락 완료한 회원</h5>";
+					<%if(("lecture").equals(type)){%>
+						html += "<h5>강의 신청을 수락 완료한 회원</h5>";
+					<%} else{%>
+						html += "<h5>스터디 신청을 수락 완료한 회원</h5>";
+					<%}%>
 					html += "<hr>";
 					html += "<table>"; 
 					html += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td></tr>";

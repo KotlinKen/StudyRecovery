@@ -61,6 +61,13 @@ public class AdminController {
 		return mav;
 	}
 	
+	/* 게시판 관리페이지 */
+	@RequestMapping("/admin/restSessions")
+	public ModelAndView restMember() {
+		ModelAndView mav = new ModelAndView();
+		return mav;
+	}
+	
 
 	
 	

@@ -80,5 +80,16 @@
 			<beans:bean class="com.pure.study.common.interceptor.AdminCheckInterceptor" id="adminCheck"/>
 		</interceptor>
 	</interceptors>
-		
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/board/boardModify"/>
+			<mapping path="/board/boardModifyEnd"/>
+			<mapping path="/board/boardWrite"/>
+			<mapping path="/board/boardWriteEnd"/>
+			<mapping path="/board/replyWrite"/>
+			<!-- <exclude-mapping path="/admin/adminLogin"/> -->
+			<beans:bean class="com.pure.study.common.interceptor.BoardCheckInterceptor" id="boardCheck"/>
+		</interceptor>
+	</interceptors>
 </beans:beans>

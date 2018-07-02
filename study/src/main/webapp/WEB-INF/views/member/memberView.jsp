@@ -60,10 +60,7 @@
 		background: #0056e9;
 		color: white;
 	}
-	p#pmname{
-		display: none;
-		color: red;
-	}
+	
 </style>
 <div class="page">
    <jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -86,7 +83,7 @@
          		<th>회원 이름</th>
          		<td>
          			<input type="text" name="mname" id="mname" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
-         			<p id="pmname">한글 2자이상 7자 이하로 적어주세요.</p>
+         			
          		</td>
          	</tr>
          	<tr>
@@ -99,7 +96,7 @@
          	<tr>
          		<th>연락처</th>
          		<td>
-         			<input type="text" name="phone" id="phone" maxlenght="11" value="${memberLoggedIn.phone }" autocomplete="off" />
+         			<input type="text" name="phone" id="phone" maxlength="11" value="${fn:trim(memberLoggedIn.phone) }" autocomplete="off" />
          		</td>
          	</tr>
          	<tr>
@@ -322,11 +319,10 @@
             	  var textLength = $(this).val().trim().length;
             	  if(textLength>7){
             		
+            		  alert("7자리 이하로 입력해주세요.");
              		  $(this).val($(this).val().substr(0,7));
-            		  $("p#pmname").attr("style","display:none;");
             		  
-             		} else if(textLength<=7){
-            		  $("p#pmname").attr("style","display:none;");             			
+             		} else if(textLength<=7){        			
              		}
                });
              //연락처 크기 제한

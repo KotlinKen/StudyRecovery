@@ -1,5 +1,7 @@
 package com.pure.study.rest;
 
+import java.security.Principal;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,10 +9,14 @@ import java.util.Map;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.pure.study.adversting.model.service.AdverstingService;
 import com.pure.study.adversting.model.vo.Adversting;
 import com.pure.study.board.model.service.BoardService;
+import com.pure.study.board.model.service.ReplyService;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Member;
@@ -49,6 +56,11 @@ public class RestController {
 	@Autowired
 	private BCryptPasswordEncoder bcryptPasswordEncoder;
 	
+	@Autowired
+	private ReplyService replyService; 
+	
+	@Autowired
+	private RestMemberService rs;
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -66,6 +78,54 @@ public class RestController {
 		mav.addObject("numPerPage", count);
 		mav.addObject("cPage",cPage);
 		mav.addObject("total",total);
+		return mav;
+	}
+
+	@RequestMapping(value="/rest/studyCount", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView studyCounter() {
+		ModelAndView mav = new ModelAndView("jsonView");
+		int count = studyService.studyTotalCount();
+		mav.addObject("count", count);
+		return mav;
+	}
+	
+	@RequestMapping(value="/rest/lectureCount", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView lectureCounter() {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		int count = lectureService.selectTotalLectureCount();
+		mav.addObject("count", count);
+		return mav;
+	}
+
+	@RequestMapping(value="/rest/memberCount", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView memberCounter() {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		int count = memberService.selectCntAllMemberList();
+		mav.addObject("count", count);
+		return mav;
+	}
+	
+	
+	@RequestMapping(value="/rest/counter", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView counter() {
+		ModelAndView mav = new ModelAndView("jsonView");
+		int study = studyService.studyTotalCount();
+		int lecture = lectureService.selectTotalLectureCount();
+		int member = memberService.selectCntAllMemberList();
+		int board = boardService.selectCount();
+		int reply = replyService.replyCount();
+		
+		mav.addObject("study", study);
+		mav.addObject("lecture", lecture);
+		mav.addObject("member", member);
+		mav.addObject("board", board);
+		mav.addObject("reply", reply);
 		return mav;
 	}
 	
@@ -105,16 +165,17 @@ public class RestController {
 	}
 	
 	
-/*	@RequestMapping(value="/rest/lecture/{count}", method=RequestMethod.GET)
+	@RequestMapping(value="/rest/lecture/{count}", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView selectLectureCount(@PathVariable int count,  @RequestParam(value="filter", required=false) String filter) {
 		
 		
 		ModelAndView mav = new ModelAndView("jsonView");
-		//List<Map<String,String>> list = lectureService.selectLectureList(1, count);
-		//mav.addObject("list", list);
+		System.out.println(count);
+		List<Map<String, Object>> list = lectureService.selectLectureList(1, count);
+		mav.addObject("list", list);
 		return mav;
-	}*/
+	}
 	
 	
 	
@@ -221,7 +282,7 @@ public class RestController {
 				//msg = "로그인성공!";
 				
 				mav.addObject("memberLoggedIn", m);
-				
+				System.out.println("remember " + remember );
 				if(remember != null) {
 					Cookie rememberLogin = new Cookie("remember", m.getMid()); // 쿠키 생성
 					
@@ -229,12 +290,11 @@ public class RestController {
 					rememberLogin.setPath("/");
 					response.addCookie(rememberLogin);
 				}else {
-					Cookie[] cookies = request.getCookies();
-					for(Cookie cookie : cookies) {
-						if(cookie.getName().equals("remember")) {
-							cookie.setValue("N");
-						}
-					}
+					Cookie rememberLogin = new Cookie("remember", "");
+					rememberLogin.setMaxAge(0);
+					rememberLogin.setPath("/");
+					response.addCookie(rememberLogin);
+					
 				}
 				if(admin==null) {
 					mav.setViewName("redirect:/");
@@ -257,10 +317,45 @@ public class RestController {
 	
 	
 	
+	//통계관련
+	@RequestMapping(value="/rest/{location}/replyDateStatisticsList", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView replyDateStatisticsList( 
+												  @PathVariable(value="location", required=false) String location, 
+												  @RequestParam Map<String, String> queryMap) {
+		
+		ModelAndView mav = new ModelAndView("jsonView");
+		String msg = ""; 
+		String loc = "/";
+		
+		System.out.println(location);
+		if( location !=  null && !location.equals("admin")) {
+			mav.addObject("msg", "잘못된 경로입니다");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
+
+		List<Map<String, String>> list = replyService.replyDateStatisticsList(queryMap);
+		
+		mav.addObject("list", list);
+		return mav;
+	}
 	
 	
 	
-	
+	@RequestMapping(value="/rest/AllSessions", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView getAllSession(HttpServletRequest request, HttpSession session) {
+		
+
+		
+		ModelAndView  mav = new ModelAndView("jsonView");
+		
+		mav.addObject("list" ,rs.getMemberLists());
+		return mav;
+	}
 	
 	
 	

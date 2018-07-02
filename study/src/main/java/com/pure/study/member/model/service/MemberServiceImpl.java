@@ -396,5 +396,10 @@ public class MemberServiceImpl implements MemberService {
 	public int updateNpoint(Map<String, Object> map) {
 		return memberDAO.updateNpoint(map);
 	}
+
+	@Override
+	public Member selectOneMemberMno(int mno) {
+		return memberDAO.selectOneMemberMno(mno);
+	}
 	
 }

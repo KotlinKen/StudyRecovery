@@ -54,13 +54,15 @@ public class LectureContoller {
 	}
 
 	@RequestMapping("/lecture/lectureFormEnd.do")
-	public ModelAndView insetLecture(Lecture lecture,
+	public ModelAndView insertLecture(Lecture lecture,
 			@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage,
 			@RequestParam(value = "freqs") String[] freqs, @RequestParam(value = "upFile") MultipartFile[] upFiles,
 			HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 
 		int result = 0;
+		String msg = "";
+		String loc = "lecture/lectureList";
 
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
@@ -74,50 +76,107 @@ public class LectureContoller {
 		String freq = String.join(",", freqs);
 		lecture.setFreqs(freq);
 
-		// 1.파일업로드처리
-		int i = 0;
-		int last = upFiles.length;
-		String img = "";
-		String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+		// 같은 날짜, 요일, 시간에 있는지를 검사해봅시다..
+		int cnt = 0;
+		List<Map<String, Object>> list = ls.selectLectureListByMno(lecture.getMno());
 
-		/****** MultipartFile을 이용한 파일 업로드 처리로직 시작 ******/
-		for (MultipartFile f : upFiles) {
-			i++;
+		// 시간 뽑기
+		// 등록 될 시간들.
+		long lectureSdate = lecture.getSdate().getTime();
+		long lectureEdate = lecture.getEdate().getTime();
 
-			if (!f.isEmpty()) {
-				// 파일명 재생성
-				String originalFileName = f.getOriginalFilename();
-				String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
-				int rndNum = (int) (Math.random() * 1000);
-				String renamedFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + rndNum + "." + ext;
+		// 뽑아올 시간들.
+		String[] times = lecture.getTime().split("~");
+		int sHour = Integer.parseInt(times[0].split(":")[0]);
+		int eHour = Integer.parseInt(times[1].split(":")[0]);
 
-				if (i != last)
-					img += renamedFileName + ", ";
+		for (int i = 0; i < list.size(); i++) {
+			Date sdate = (Date) list.get(i).get("SDATE");
+			Date edate = (Date) list.get(i).get("EDATE");
 
-				if (i == last) {
-					img += renamedFileName;
-
-					lecture.setUpfile(img);
-					result = ls.insertLecture(lecture);
-
-					if (result > 0) {
-						try {
-							f.transferTo(new File(saveDirectory + "/" + renamedFileName));
-						} catch (IllegalStateException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
+			// 등록된 날짜들에 포함되지 않는 경우
+			if (lectureEdate < sdate.getTime() || lectureSdate > edate.getTime()) {
+				System.out.println("날짜가 안겹쳐서 들어감");
+			}
+			// 포함되는 경우
+			else if (lectureSdate >= sdate.getTime() || lectureEdate <= edate.getTime()) {
+				// 요일을 검사해보자...
+				for (int j = 0; j < freqs.length; j++) {
+					/* if (list.get(i).get("FREQ").toString().contains(freq)) { */
+					if (list.get(i).containsValue(freqs[j])) {
+						// 등록이 가능한 경우.
+						if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
+								|| eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
+							System.out.println("시간이 안겹쳐서 들어감");
 						}
+						// 불가능한 경우.
+						else {
+							cnt++;
+						}
+					} else {
+						System.out.println("요일이 안겹쳐서 들어감");					
 					}
 				}
-			} else {
-				lecture.setUpfile(img);
-				result = ls.insertLecture(lecture);
 			}
 		}
 
-		mav.setViewName("lecture/lectureList");
+		if (cnt == 0) {
+			// 1.파일업로드처리
+			int l = 1;
+			int last = upFiles.length;
+
+			String img = "";
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+
+			/****** MultipartFile을 이용한 파일 업로드 처리로직 시작 ******/
+			for (MultipartFile f : upFiles) {
+				if (!f.isEmpty()) {
+					System.out.println("if = " + f);
+					// 파일명 재생성
+					String originalFileName = f.getOriginalFilename();
+					String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+					int rndNum = (int) (Math.random() * 1000);
+					String renamedFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + rndNum + "."
+							+ ext;
+
+					if (l != last)
+						img += renamedFileName + ",";
+
+					if (l == last) {
+						img += renamedFileName;
+						lecture.setUpfile(img);
+
+						result = ls.insertLecture(lecture);
+
+						if (result > 0) {
+							try {
+								f.transferTo(new File(saveDirectory + "/" + renamedFileName));
+							} catch (IllegalStateException e) {
+								e.printStackTrace();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+
+					l++;
+
+				} else {
+					lecture.setUpfile(img);
+					result = ls.insertLecture(lecture);
+				}
+			}
+
+			msg = "강의가 등록되었습니다.";
+		} else {
+			msg = "등록하시려는 시간대와 겹치는 강의 또는 스터디가 존재합니다.";
+		}
+
+		mav.addObject("msg", msg);
+		mav.addObject("loc", loc);
+
+		mav.setViewName("/common/msg");
 
 		return mav;
 	}
@@ -139,25 +198,44 @@ public class LectureContoller {
 	}
 
 	@RequestMapping("/lecture/lectureList.do")
-	public ModelAndView lectureList(@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage) {
+	public ModelAndView lectureList(@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage,
+				@RequestParam(required=false, defaultValue="0") int mno) {
 		ModelAndView mav = new ModelAndView();
 
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
 		List<Map<String, String>> diffList = ls.selectDiff();
+		
+		int check = 0;
+		
+		if( mno > 0 )
+			check = ls.confirmInstructor(mno);
 
 		mav.addObject("locList", locList);
 		mav.addObject("kindList", kindList);
 		mav.addObject("diffList", diffList);
 		mav.addObject("cPage", cPage);
+		mav.addObject("check", check);
+		
 		mav.setViewName("lecture/lectureList");
 
 		return mav;
 	}
 
 	@RequestMapping("/lecture/lectureView.do")
-	public ModelAndView lectureView(@RequestParam int sno) {
+	public ModelAndView lectureView(@RequestParam int sno,
+			@RequestParam(required = false, defaultValue = "0") int mno) {
 		ModelAndView mav = new ModelAndView();
+		Map<String, Integer> map = new HashMap<>();
+		map.put("sno", sno);
+
+		// 이미 찜이 들어가 있는지 확인하려고~
+		if (mno > 0) {
+			map.put("mno", mno);
+			int pre = ls.lectureWish(map);
+			mav.addObject("pre", pre);
+		}
+
 		Map<String, String> lecture = ls.selectLectureOne(sno);
 
 		mav.addObject("lecture", lecture);
@@ -240,8 +318,8 @@ public class LectureContoller {
 	// 검색 첫 페이징 처리
 	@RequestMapping("/lecture/searchLecture.do")
 	public ModelAndView searchLecture(@RequestParam(value = "lno") int lno,
-			@RequestParam(value = "tno", defaultValue = "null") int tno, @RequestParam(value = "subno") int subno,
-			@RequestParam(value = "kno") int kno, @RequestParam(value = "dno") int dno,
+			@RequestParam(value = "tno", defaultValue = "0") int tno, @RequestParam(value = "kno") int kno,
+			@RequestParam(value = "subno", defaultValue = "0") int subno, @RequestParam(value = "dno") int dno,
 			@RequestParam(value = "leadername") String leadername,
 			@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage) {
 		ModelAndView mav = new ModelAndView("jsonView");
@@ -275,8 +353,8 @@ public class LectureContoller {
 	// 스크롤 페이징 처리 - 검색
 	@RequestMapping("/lecture/lectureSearchAdd.do")
 	public ModelAndView lectureSearchAdd(@RequestParam(value = "lno") int lno,
-			@RequestParam(value = "tno", defaultValue = "null") int tno, @RequestParam(value = "subno") int subno,
-			@RequestParam(value = "kno") int kno, @RequestParam(value = "dno") int dno,
+			@RequestParam(value = "tno", defaultValue = "0") int tno, @RequestParam(value = "kno") int kno,
+			@RequestParam(value = "subno", defaultValue = "0") int subno, @RequestParam(value = "dno") int dno,
 			@RequestParam(value = "leadername") String leadername,
 			@RequestParam(value = "cPage", required = false) int cPage) {
 		ModelAndView mav = new ModelAndView("jsonView");
@@ -361,29 +439,33 @@ public class LectureContoller {
 		return mav;
 	}
 
-	@RequestMapping(value = "/lecture/lectureWish.do", produces = "application/text; charset=utf8")
-	@ResponseBody
+	@RequestMapping("/lecture/lectureWish.do")
 	public String lectureWish(@RequestParam int sno, @RequestParam int mno) {
-		ModelAndView mav = new ModelAndView();
 		Map<String, Integer> map = new HashMap<>();
+		ModelAndView mav = new ModelAndView();
 
 		map.put("sno", sno);
 		map.put("mno", mno);
 
 		int confirm = ls.lectureWish(map);
 
-		String msg = "";
+		if (confirm == 0)
+			ls.addWishLecture(map);
 
-		if (confirm > 0)
-			msg = "이미 찜한 강의입니다.";
-		else {
-			int result = ls.addWishLecture(map);
+		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
+	}
 
-			if (result > 0)
-				msg = "강의를 찜했습니다.";
-		}
+	@RequestMapping("/lecture/lectureWishCancel.do")
+	public String lectureWishCancel(@RequestParam int sno, @RequestParam int mno) {
+		Map<String, Integer> map = new HashMap<>();
+		ModelAndView mav = new ModelAndView();
 
-		return msg;
+		map.put("sno", sno);
+		map.put("mno", mno);
+
+		ls.lectureWishCancel(map);
+
+		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
 
 	@RequestMapping("/lecture/updateLecture.do")
@@ -414,46 +496,34 @@ public class LectureContoller {
 	}
 
 	@RequestMapping("/lecture/successPay.do")
-	public ModelAndView seccessPay(@RequestParam int mno, @RequestParam int sno, @RequestParam(required=true) long pno, @RequestParam int price) {
-		ModelAndView mav = new ModelAndView();
-		
+	public String seccessPay(@RequestParam int mno, @RequestParam int sno, @RequestParam(required = true) long pno,
+			@RequestParam int price) {
 		Map<String, Object> map = new HashMap<>();
-		
+
 		map.put("pno", pno);
 		map.put("sno", sno);
 		map.put("mno", mno);
 		map.put("price", price);
 		map.put("status", 1);
-		
+
 		int result = ls.insertPay(map);
-		
-		String loc = "/lecture/lectureView.do?sno=" + sno;
-		
-		mav.addObject("loc", loc);
-		mav.setViewName("/common/msg");
-		
-		return mav;
+
+		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
-	
+
 	@RequestMapping("/lecture/failedPay.do")
-	public ModelAndView failedPay(@RequestParam int mno, @RequestParam int sno, @RequestParam(required=true) long pno, @RequestParam int price) {
-		ModelAndView mav = new ModelAndView();
-		
+	public String failedPay(@RequestParam int mno, @RequestParam int sno, @RequestParam(required = true) long pno,
+			@RequestParam int price) {
 		Map<String, Object> map = new HashMap<>();
-		
+
 		map.put("pno", pno);
 		map.put("sno", sno);
 		map.put("mno", mno);
 		map.put("price", price);
 		map.put("status", 0);
-		
+
 		int result = ls.insertPay(map);
-		
-		String loc = "/lecture/lectureView.do?sno=" + sno;
-		
-		mav.addObject("loc", loc);
-		mav.setViewName("/common/msg");
-		
-		return mav;
+
+		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
 }

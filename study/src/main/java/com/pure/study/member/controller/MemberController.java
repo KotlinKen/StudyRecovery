@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.member.model.vo.Review;
+import com.pure.study.rest.RestMemberService;
 import com.pure.study.study.model.service.StudyService;
 
 @SessionAttributes({ "memberLoggedIn" })
@@ -61,7 +63,11 @@ public class MemberController {
 
 	@Autowired
 	private JavaMailSender mailSender;
-
+	
+	@Autowired
+	private RestMemberService rs;
+	
+	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	/********************************** 회원가입(장익순) 시작 */
@@ -334,6 +340,10 @@ public class MemberController {
 			@RequestParam(value = "pwd") String pwd, @RequestParam(value = "admin", required = false) String admin) {
 		ModelAndView mav = new ModelAndView();
 
+		/*김률민 추가 로그인시 이전 페이지로 바로 갈수 있게 처리*/
+		String referer = request.getHeader("Referer");
+		String root = request.getRequestURL().toString().replaceAll(request.getRequestURI(), "");
+		String prev = referer.replaceAll(root, "").replaceAll("/study", "");
 		Member m = memberService.selectOneMember(userId);
 
 		String msg = "";
@@ -345,10 +355,33 @@ public class MemberController {
 			if (bcryptPasswordEncoder.matches(pwd, m.getPwd())) {
 				// msg = "로그인성공!";
 				mav.addObject("memberLoggedIn", m);
-				if (admin == null) {
-					mav.setViewName("redirect:/");
-				} else {
-					mav.setViewName("redirect:/admin/adminMain");
+				
+				
+				/*김률민 추가 */
+				Map<String, Object> rmMap = new HashMap<>();
+				String ip =request.getHeader("X-FORWARDED-FOR");
+				Calendar calendar = Calendar.getInstance();
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+				if (ip == null || ip.length() == 0) {
+			         ip = request.getHeader("Proxy-Client-IP");
+			     }
+			     if (ip == null || ip.length() == 0) {
+			         ip = request.getHeader("WL-Proxy-Client-IP"); 
+			     }
+			     if (ip == null || ip.length() == 0) {
+			         ip = request.getRemoteAddr() ;
+			     }
+				rmMap.put("member", m);
+				rmMap.put("ip", ip);
+				rmMap.put("time", dateFormat.format(calendar.getTime()));
+				rmMap.put("log", "login");
+				rs.addMember(rmMap);
+				/*김률민 추가 */
+				
+				if(admin==null) {
+					mav.setViewName("redirect:"+prev);
+				}else {
+					mav.setViewName("redirect:/admin/adminMain"); 
 				}
 
 				return mav;
@@ -364,9 +397,30 @@ public class MemberController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/member/memberLogout.do")
-	public String memberLogout(SessionStatus sessionStatus) {
+	@RequestMapping(value="/member/memberLogout.do")
+	public String memberLogout(SessionStatus sessionStatus, HttpServletRequest request) {
+		/* 김률민 추가*/
+		Map<String, Object> rmMap = new HashMap<>();
+		String ip =request.getHeader("X-FORWARDED-FOR");
+		if (ip == null || ip.length() == 0) {
+	         ip = request.getHeader("Proxy-Client-IP");
+	     }
+	     if (ip == null || ip.length() == 0) {
+	         ip = request.getHeader("WL-Proxy-Client-IP"); 
+	     }
+	     if (ip == null || ip.length() == 0) {
+	         ip = request.getRemoteAddr() ;
+	     }
+	     
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
 
+	    rmMap.put("member", ((Member) request.getSession().getAttribute("memberLoggedIn"))); 
+	    rmMap.put("ip", ip);
+	    rmMap.put("time", dateFormat.format(calendar.getTime()));
+		rmMap.put("log", "logout");
+		rs.addMember(rmMap);
+		/* 김률민 추가*/
 		if (!sessionStatus.isComplete())
 			sessionStatus.setComplete();
 
