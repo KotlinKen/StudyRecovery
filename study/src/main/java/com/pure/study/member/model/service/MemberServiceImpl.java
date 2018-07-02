@@ -396,5 +396,25 @@ public class MemberServiceImpl implements MemberService {
 	public List<Map<String, String>> selectMemberReviewList(int mno) {
 		return memberDAO.selectMemberReviewList(mno);
 	}
+
+	@Override
+	public List<Map<String, Object>> selectmemberReply(int mno) {
+		return memberDAO.selectmemberReply(mno);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectInstructorMemberOX() {
+		return memberDAO.selectInstructorMemberOX();
+	}
+
+	@Override
+	public Map<String, String> selectOneInstruct(int mno) {
+		return memberDAO.selectOneInstruct(mno);
+	}
+
+	@Override
+	public void updateInstructorApply(int ino) {
+		memberDAO.updateInstructorApply(ino);
+	}
 	
 }

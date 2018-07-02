@@ -399,5 +399,27 @@ public class MemberDAOImpl implements MemberDAO {
 	public List<Map<String, Object>> selectGradeList() {
 		return sqlSession.selectList("member.selectGradeList");
 	}
+
+	@Override
+	public List<Map<String, Object>> selectmemberReply(int mno) {
+		return sqlSession.selectList("member.selectmemberReply",mno);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectInstructorMemberOX() {
+		return sqlSession.selectList("member.selectInstructorMemberOX");
+	}
+
+	@Override
+	public Map<String, String> selectOneInstruct(int mno) {
+		return sqlSession.selectOne("member.selectOneInstruct", mno);
+	}
+
+	@Override
+	public void updateInstructorApply(int ino) {
+		sqlSession.update("member.updateInstructorApply", ino);
+		
+	}
+	
 	
 }

@@ -943,24 +943,7 @@
 	</select>
 	<resultMap type="map" id="grade"></resultMap>
 	<!-- 김회진 mapper 끝 -->
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
- 
- 
- 
- 
+
  	<insert id="insertMailCertification">
  		INSERT INTO CERTIFICATION VALUES(#{tomail}, #{ranstr})
  	</insert>
@@ -1161,4 +1144,44 @@
 		where c.tmno = #{mno}
 		order by c.sno
 	</select>
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+ 
+ 
+ 
+ 
+		
+	<!-- 장익순 작업 .... 시작 -->
+	<select id="selectmemberReply" resultType="Map">
+		select * from 
+		reply r left join board b on r.bno = b.bno
+		where r.mno = #{mno}
+	</select>
+	
+	<select id="selectInstructorMemberOX" resultType="map">
+		select * from 
+		member m left join instructor i
+		on m.mno = i.mno 
+		where I.STATE is not null
+		order by APPLICATIONDATE
+	</select>
+	<select id="selectOneInstruct" resultType="map">
+		select * from instructor where mno = #{mno}
+	</select>
+	<update id="updateInstructorApply">
+		update instructor set okdate = sysdate and state = 'O' where ino = #{ino} 
+	</update>
+	<!-- 장익순 작업 .... 끝 -->
+	
+
 </mapper>

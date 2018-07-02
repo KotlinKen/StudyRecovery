@@ -23,6 +23,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -1561,9 +1562,9 @@ public class MemberController {
 				mav.addObject("loc", "/");
 				mav.addObject("msg", "이미 입장되어 있습니다. 확인 부탁 드립니다.");
 				mav.setViewName("common/msg");
+			int result = memberService.adminInnerCheck(link);
 			}*/
 				System.out.println("???");
-				int result = memberService.adminInnerCheck(link);
 				service = memberService.serviceagree();
 				information = memberService.informationagree();
 				mav.addObject("service", service);
@@ -2049,12 +2050,57 @@ public class MemberController {
 		Member m = memberService.selectOneMember(mid);
 		List<Map<String,String>> reviewList = memberService.selectMemberReviewList(m.getMno());
 		
-		System.out.println(m);
-		System.out.println(reviewList);
+		
+		Map <String,Object> map = new HashMap<>();
+		map.put("eval", "exp");
+		map.put("mno", m.getMno());
+		
+		Map<String, Object> list = memberService.searchEvaluation(map);
+		List<Map<String,Object>> gradeList = memberService.selectGradeList();
+		//경험치 및 포인트 등급 보여주기
+		List<Map<String,Object>> replyList = memberService.selectmemberReply(m.getMno());
+		Map<String,String> instruct = memberService.selectOneInstruct(m.getMno());
+		//평가 관리 페이지로 이동
+		mav.addObject("instruct", instruct); 
+		mav.addObject("eval", "exp"); 
+		mav.addObject("list", list); 
+		mav.addObject("gradeList", gradeList); 
+		mav.addObject("gradeMin", gradeList.get(0)); 
+		mav.addObject("gradeMax", gradeList.get(gradeList.size()-1)); 
+		mav.addObject("replyList",replyList);
 		mav.addObject("m",m);
 		mav.addObject("reviewList", reviewList);
 		return mav;
 	}
+	
+	
+	//회원 가져와볼까
+	
+		@RequestMapping(value="/member/member/loadInstructor.do", method=RequestMethod.GET)
+		@ResponseBody
+		public ModelAndView selectMemberPageCount() {
+			
+			ModelAndView mav = new ModelAndView("jsonView");
+			
+			List<Map<String, Object>> list = null;
+			int total = 0;
+			list = memberService.selectInstructorMemberOX();
+			total = memberService.selectCntInstructorMember();
+			
+			
+			mav.addObject("list", list);
+			mav.addObject("total",total);
+			return mav;
+		}
+		
+	@RequestMapping(value="/member/applyInstructAgree.do")
+	public ModelAndView applyInstructAgree(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino) {
+		ModelAndView mav = new ModelAndView();
+		memberService.updateInstructorApply(ino);
+		
+		return mav;
+	}
+	
 	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)
 	@ResponseBody
