@@ -363,5 +363,10 @@ public class MemberDAOImpl implements MemberDAO {
 		System.out.println(link);
 		return sqlSession.selectOne("member.selectInnerAdmin" ,link);
 	}
+
+	@Override
+	public List<Map<String, String>> selectMemberReviewList(int mno) {
+		return sqlSession.selectList("member.selectMemberReviewList", mno);
+	}
 	
 }

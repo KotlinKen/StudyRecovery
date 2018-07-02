@@ -362,5 +362,10 @@ public class MemberServiceImpl implements MemberService {
 	public int selectInnerAdmin(Map<String, String> link) {
 		return memberDAO.selectInnerAdmin(link);
 	}
+
+	@Override
+	public List<Map<String, String>> selectMemberReviewList(int mno) {
+		return memberDAO.selectMemberReviewList(mno);
+	}
 	
 }

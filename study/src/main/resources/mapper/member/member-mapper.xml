@@ -1029,4 +1029,12 @@
 	<select id="selectInnerAdmin" resultType="_int" >
 		SELECT states from INNERCHECK where iname = #{urlname}
 	</select>
+	<select id="selectMemberReviewList" resultType="Map">
+		select * from 
+   	 	review c 
+	    left JOIN  STUDY s on C.SNO = S.SNO
+	    left JOIN SUBJECT u on S.SUBNO = U.SUBNO
+		where c.tmno = #{mno}
+		order by c.sno
+	</select>
 </mapper>

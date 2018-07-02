@@ -147,4 +147,6 @@ public interface MemberDAO {
 
 	int selectInnerAdmin(Map<String, String> link);
 
+	List<Map<String, String>> selectMemberReviewList(int mno);
+
 }

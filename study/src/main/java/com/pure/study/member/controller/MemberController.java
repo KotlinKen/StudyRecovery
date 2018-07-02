@@ -966,7 +966,7 @@ public class MemberController {
 			}
 		}
 		//System.out.println(list);
-		
+		 
 		mav.addObject("list", list);
 		
 		return mav;
@@ -1957,8 +1957,12 @@ public class MemberController {
 		ModelAndView mav = new ModelAndView();
 		System.out.println(mid);
 		Member m = memberService.selectOneMember(mid);
-		System.out.println(m);
+		List<Map<String,String>> reviewList = memberService.selectMemberReviewList(m.getMno());
 		
+		System.out.println(m);
+		System.out.println(reviewList);
+		mav.addObject("m",m);
+		mav.addObject("reviewList", reviewList);
 		return mav;
 	}
 	/* 관리자 접속 여부 확인 
