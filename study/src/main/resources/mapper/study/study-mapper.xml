@@ -216,4 +216,31 @@
   
   </select>
   
+  <delete id="deleteStudyArr">
+   delete from study where sno in 
+  	<foreach item="sno" index="i" collection="study_arr" open="(" separator="," close=")">
+	#{sno}  	
+  	</foreach>
+  </delete>
+  
+  <select id="selectStudyListBySno" resultMap="mapForStudy">
+     SELECT SDATE,
+            EDATE,
+             FREQ,
+             SUBSTR(S.TIME,0,INSTR(TIME,':')-1) AS STIME,
+             SUBSTR(S.TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
+      <if test="key=='study'">
+      FROM STUDY S
+      </if>
+      <if test="key=='crew'">
+      FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
+      </if>
+      WHERE S.MNO = #{mno}
+  </select>
+  
+  
+  <select id="selectStudyByMnoTypeStudy" resultType="study">
+  	select * from study where sno=#{sno}
+  </select>
+  
 </mapper>

@@ -1,5 +1,6 @@
 package com.pure.study.study.model.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -185,6 +186,26 @@ public class StudyDAOImpl implements StudyDAO {
 	public List<Map<String, Object>> selectOwnStudyList(int mno) {
 		// TODO Auto-generated method stub
 		return sqlSession.selectList("study.selectOwnStudyList", mno);
+	}
+
+	@Override
+	public int deleteStudyArr(List<Integer> study_arr) {
+		// TODO Auto-generated method stub
+		Map<String,Object> map = new HashMap<>();
+		map.put("study_arr", study_arr);
+		return sqlSession.delete("study.deleteStudyArr", map);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectStudyListBySno(Map<String, Object> key) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectList("study.selectStudyListBySno",key);
+	}
+
+	@Override
+	public Study selectStudyByMnoTypeStudy(String sno) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("study.selectStudyByMnoTypeStudy",sno);
 	}
 
 

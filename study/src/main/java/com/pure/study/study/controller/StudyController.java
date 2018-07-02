@@ -653,6 +653,22 @@ public class StudyController {
 		return mav;
 	}
 	
+	//선택한 스터디들 삭제 
+	@RequestMapping("/study/deleteStudysAdmin")
+	@ResponseBody
+	public int deleteStudys(@RequestParam(value="study_arr[]") List<Integer> study_arr) {
+		int result=0;
+		
+		for(int a : study_arr) {
+			System.out.println(a);
+		}
+		
+		result = studyService.deleteStudyArr(study_arr);
+		
+		
+		
+		return result;
+	}
 	
 	
 	

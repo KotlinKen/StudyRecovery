@@ -132,7 +132,10 @@ $(function(){
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 <c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()==study.MNO}">
 	<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
+	<c:if test="${study.STATUS ne '모집 마감'&&study.STATUS ne '스터디 종료' }">
 	<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
+	</c:if>
+	
 </c:if>	
 
 <input type="hidden" id="isWish" value="${isWish }" />

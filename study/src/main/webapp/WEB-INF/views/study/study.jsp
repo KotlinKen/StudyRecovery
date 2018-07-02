@@ -10,7 +10,19 @@
 p.noMore{
 	display:none;
 }
-
+div#study-list{
+	position:relative;
+	padding-left: 30px;
+	padding-right: 30px;
+	margin-top:50px;
+	text-align: center;
+}
+div.studyone{
+	display: inline-block;
+	width: 330px;
+	height: 600px;
+	margin-right: 50px;
+}
 </style>
 <script>
 $(function(){
@@ -302,6 +314,11 @@ $(function(){
 		  }//if문 끝
 		
 	}
+	
+	
+	$("a#reFilter").click(function(){
+		
+	});
 });
 
 
@@ -337,6 +354,7 @@ $(function(){
 			</select>
 			<input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" maxlength="50" />
 			<input type="button" id="filterSearch" value="필터 검색" />
+			<a href="#" id="reFilter">검색 조건 초기화</a>
 			
 		</div>
 			
