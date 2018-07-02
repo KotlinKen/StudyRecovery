@@ -241,9 +241,6 @@
       </div>
       <!-- 이메일 변경 팝업창 끝 -->
          
-<<<<<<< HEAD
-<script>
-=======
          <script>
             $(function(){
             	var len = 2000;
@@ -354,7 +351,6 @@
             var upload = document.getElementsByName('upFile')[0];
             upload.onchange = function (e) {
             	  e.preventDefault();
->>>>>>> branch 'KimHoiJin' of https://github.com/KotlinKen/StudyRecovery.git
 
 
 
