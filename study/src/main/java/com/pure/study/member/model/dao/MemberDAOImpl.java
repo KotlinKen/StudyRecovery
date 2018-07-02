@@ -398,7 +398,7 @@ public class MemberDAOImpl implements MemberDAO {
 
 	@Override
 	public int updateNpoint(Map<String, Object> map) {
-		return sqlSession.update("member.updateNpoint");
+		return sqlSession.update("member.updateNpoint", map);
 	}
 
 	@Override

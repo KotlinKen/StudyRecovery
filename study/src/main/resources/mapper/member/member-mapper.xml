@@ -43,7 +43,7 @@
 	
 	
 	<!-- 회원 mno로 검색(률민오빠 요청) -->
-	<select id="selectOneMemberMno" parameterType="string" resultMap="memberMap">
+	<select id="selectOneMemberMno" resultMap="memberMap">
 		select * from member where mno=#{mno}
 	</select>
 	
