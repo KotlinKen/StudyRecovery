@@ -752,9 +752,9 @@
 				}
 				html += "</table>";
 				
-				var removehtml = "<br />";
+				var removehtml = "";
 				<%if(("lecture").equals(type)){%>
-					removehtml += "<h5>강의 신청을 수락 완료한 회원</h5>";
+					removehtml += "<h6>강의를 듣는 회원</h6>";
 				<%} else{%>
 					removehtml += "<h5>스터디 신청을 수락 완료한 회원</h5>";
 				<%}%>
@@ -831,17 +831,21 @@
 				
 				if(data.applyList.length==0){
 					<%if(("lecture").equals(type)){%>
-						$("h5#modalLabel").html("강의 신청 현황("+data.studyName+")");
+						$("h5#modalLabel").html(data.studyName);
 					<%} else{%>
 						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+")");
 					<%}%>
 					
-					$("#div-reviewView").html("신청한 회원이 없습니다.");
+					<%if(("lecture").equals(type)){%>
+					<%} else{%>
+						$("#div-reviewView").html("신청한 회원이 없습니다.");
+					<%}%>
+					
 					if(data.crewList.length>0){
 						$("#div-crew").html(removehtml);
 					}else{
 						<%if(("lecture").equals(type)){%>
-							$("#div-crew").html("<br/><h5>강의 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+							$("#div-crew").html("<br/><h6>강의를 듣는 회원</h6><hr/><br/> 팀원이 없습니다.");
 						<%} else{%>
 							$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
 						<%}%>
@@ -852,7 +856,7 @@
 						$("#div-crew").html(removehtml);
 					}else{
 						<%if(("lecture").equals(type)){%>
-							$("#div-crew").html("<br/><h5>강의 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
+							$("#div-crew").html("<br/><h6>강의를 듣는 회원</h6><hr/><br/> 팀원이 없습니다.");
 						<%} else{%>
 							$("#div-crew").html("<br/><h5>스터디 신청을 수락 완료한 회원</h5><hr/><br/> 팀원이 없습니다.");
 						<%}%>
@@ -910,7 +914,7 @@
 					var html = "";
 					//console.log(data);
 					<%if(("lecture").equals(type)){%>
-						html += "<h5>강의 신청을 수락 완료한 회원</h5>";
+						html += "<h6>강의를 듣는 회원</h6>";
 					<%} else{%>
 						html += "<h5>스터디 신청을 수락 완료한 회원</h5>";
 					<%}%>

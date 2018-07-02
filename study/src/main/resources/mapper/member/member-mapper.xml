@@ -933,10 +933,12 @@
 	
 	<select id="searchEvaluation" resultMap="evaluation">
 		<if test="eval == 'exp'">
-			select e.expname as "expname", e.exp as "tblExp", (select exp from member where mno=#{mno}) as "exp"  from exp e where e.exp <![CDATA[ > ]]> (select exp from member where mno=#{mno}) and e.exp <![CDATA[ <= ]]> (select exp from member where mno=#{mno})+1000
+			select e.expname as "expname", e.exp as "tblExp", (select exp from member where mno=#{mno}) as "exp"  from exp e where (e.exp <![CDATA[ > ]]> (select exp from member where mno=#{mno}) and e.exp <![CDATA[ <= ]]> (select exp from member where mno=#{mno})+1000) or e.exp<![CDATA[ >=]]>(select max(exp) from exp )
 		</if>
 		<if test="eval == 'point'">
-			select g.status as "status", (select point from member where mno=#{mno}) as "point" from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=#{mno}) and g.point <![CDATA[ > ]]> (select point from member where mno=#{mno})-5000 
+			select g.status as "status",g.point, (select point from member where mno=#{mno}) as "point" from grade g 
+			where (g.point <![CDATA[ <= ]]> (select point from member where mno=#{mno}) and g.point <![CDATA[ > ]]> (select point from member where mno=#{mno})-5000)
+			
 		</if>
 		<if test="eval == 'npoint'">
 			select npoint from member where mno=#{mno}
@@ -950,24 +952,7 @@
 	<resultMap type="map" id="grade"></resultMap>
 	
 	<!-- 김회진 mapper 끝 -->
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
- 
- 
- 
- 
+
  	<insert id="insertMailCertification">
  		INSERT INTO CERTIFICATION VALUES(#{tomail}, #{ranstr})
  	</insert>
@@ -1160,4 +1145,52 @@
 	<select id="selectInnerAdmin" resultType="_int" >
 		SELECT states from INNERCHECK where iname = #{urlname}
 	</select>
+	<select id="selectMemberReviewList" resultType="Map">
+		select * from 
+   	 	review c 
+	    left JOIN  STUDY s on C.SNO = S.SNO
+	    left JOIN SUBJECT u on S.SUBNO = U.SUBNO
+		where c.tmno = #{mno}
+		order by c.sno
+	</select>
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+ 
+ 
+ 
+ 
+		
+	<!-- 장익순 작업 .... 시작 -->
+	<select id="selectmemberReply" resultType="Map">
+		select * from 
+		reply r left join board b on r.bno = b.bno
+		where r.mno = #{mno}
+	</select>
+	
+	<select id="selectInstructorMemberOX" resultType="map">
+		select * from 
+		member m left join instructor i
+		on m.mno = i.mno 
+		where I.STATE is not null
+		order by APPLICATIONDATE
+	</select>
+	<select id="selectOneInstruct" resultType="map">
+		select * from instructor where mno = #{mno}
+	</select>
+	<update id="updateInstructorApply">
+		update instructor set okdate = sysdate and state = 'O' where ino = #{ino} 
+	</update>
+	<!-- 장익순 작업 .... 끝 -->
+	
+
 </mapper>

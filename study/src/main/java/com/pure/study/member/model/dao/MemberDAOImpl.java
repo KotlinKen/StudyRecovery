@@ -365,6 +365,10 @@ public class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
+
+	public List<Map<String, String>> selectMemberReviewList(int mno) {
+		return sqlSession.selectList("member.selectMemberReviewList", mno);
+	}
 	public int selectCntEmail(String newEmail) {
 		Map<String,String> map = new HashMap<>();
 		map.put("newEmail", newEmail);
@@ -406,6 +410,25 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.selectOne("member.selectOneMemberMno",mno);
 	}
 
+	public List<Map<String, Object>> selectmemberReply(int mno) {
+		return sqlSession.selectList("member.selectmemberReply",mno);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectInstructorMemberOX() {
+		return sqlSession.selectList("member.selectInstructorMemberOX");
+	}
+
+	@Override
+	public Map<String, String> selectOneInstruct(int mno) {
+		return sqlSession.selectOne("member.selectOneInstruct", mno);
+	}
+
+	@Override
+	public void updateInstructorApply(int ino) {
+		sqlSession.update("member.updateInstructorApply", ino);
+		
+	}
 	
 	
 }
