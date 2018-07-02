@@ -42,6 +42,7 @@ import com.pure.study.member.model.vo.Member;
 import com.pure.study.member.model.vo.Review;
 import com.pure.study.rest.RestMemberService;
 import com.pure.study.study.model.service.StudyService;
+import com.pure.study.study.model.vo.Study;
 
 @SessionAttributes({ "memberLoggedIn" })
 @Controller
@@ -66,6 +67,7 @@ public class MemberController {
 	
 	@Autowired
 	private RestMemberService rs;
+	
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -1196,10 +1198,10 @@ public class MemberController {
 	//신청 현황 수락 버튼
 	@RequestMapping(value="/member/applyButton.do")
 	@ResponseBody 
-	public ModelAndView applyButton( @RequestParam("sno") String sno
+	public ModelAndView applyButton(@RequestParam("sno") String sno
 									, @RequestParam("mno")String mno
 									, @RequestParam("confirm") String confirm
-									) { 
+									){ 
 		ModelAndView mav = new ModelAndView("jsonView"); 
 		Map<String, String> map = new HashMap<>();
 		map.put("studyNo", sno); 
@@ -1224,6 +1226,38 @@ public class MemberController {
 			mav.setViewName("common/msg"); 
 		}
 		
+	   Map<String, Object> key = new HashMap<>();
+       key.put("mno", mno);
+       key.put("key", "crew");
+       
+       //수락하려는 회원이 이미 포함되어있는 크루 검사. 
+	   List<Map<String, Object>> list = studyService.selectStudyListBySno(key);
+	   Study study = studyService.selectStudyByMnoTypeStudy(sno);
+		
+	   
+	   try {
+           String[] freqs = study.getFreq().split(",");
+           int cnt = checkDate(study, list, freqs);
+
+           if (cnt == 0) {
+        	   result = memberService.insertCrew(map);
+           } else {
+        	   //중복된게 있어서 회원을 팀원으로 수락 불가. 
+        	   mav.addObject("msg","이미 참여한 스터디나 강의가 있는 회원입니다.");
+        	   ///어디로 이동해야할까여..ㅋㅋ
+   			   mav.setViewName("common/msg");
+           }
+           resultDel = memberService.deleteApply(map);
+        } catch (NullPointerException e) {
+       
+        }
+
+
+		if(result<0 && resultDel<0) {
+			mav.addObject("msg","다시 시도해주세요");
+			mav.setViewName("common/msg");
+		}
+		
 		map.remove("mno");
 		
 		int crewNumPerPage = memberService.selectMyStudyListCnt(map); 
@@ -1237,6 +1271,54 @@ public class MemberController {
 		
 		return mav; 
 	}
+	
+	
+	public int checkDate(Study study, List<Map<String, Object>> list, String[] freqs) {
+	      int cnt = 0;
+
+	      if (!list.isEmpty()) {
+	         // 시간 뽑기
+	         // 등록 될 시간들.
+	         long lectureSdate = study.getSdate().getTime();
+	         long lectureEdate = study.getEdate().getTime();
+
+	         // 뽑아올 시간들.
+	         String[] times = study.getTime().split("~");
+	         int sHour = Integer.parseInt(times[0].split(":")[0]);
+	         int eHour = Integer.parseInt(times[1].split(":")[0]);
+
+	         for (int i = 0; i < list.size(); i++) {
+	            Date sdate = (Date) list.get(i).get("SDATE");
+	            Date edate = (Date) list.get(i).get("EDATE");
+
+	            // 등록된 날짜들에 포함되지 않는 경우
+	            if (lectureEdate < sdate.getTime() || lectureSdate > edate.getTime()) {
+	               System.out.println("날짜가 안겹쳐서 들어감");
+	            }
+	            // 포함되는 경우
+	            else if (lectureSdate >= sdate.getTime() || lectureEdate <= edate.getTime()) {
+	               // 요일을 검사해보자...
+	               for (int j = 0; j < freqs.length; j++) {
+	                  if (list.get(i).containsValue(freqs[j])) {
+	                     // 등록이 가능한 경우.
+	                     if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
+	                           || eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
+	                        System.out.println("시간이 안겹쳐서 들어감");
+	                     }
+	                     // 불가능한 경우.
+	                     else {
+	                        cnt++;
+	                     }
+	                  } else {
+	                     System.out.println("요일이 안겹쳐서 들어감");
+	                  }
+	               }
+	            }
+	         }
+	      }
+
+	      return cnt;
+	   }
 	
 	//평가 목록 페이지
 	@RequestMapping(value="/member/searchMyPageEvaluation.do")

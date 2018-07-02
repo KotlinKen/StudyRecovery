@@ -43,6 +43,28 @@ function validate(){
 		return false;	
 	}
 	
+	/*               시작 시간 마감 시간 유효성 검사             */
+	// 시작 시간
+	var startTime = $("#starttime");
+	var startTimeVal = startTime.val();
+	var startTimeArray = startTimeVal.split(":");
+	var start = Number(startTimeArray[0]);		
+	
+	// 마감 시간
+	var endTime = $("#endtime");
+	var endTimeVal = $("#endtime").val();
+	var endTimeArray = endTimeVal.split(":");
+	var end = Number(endTimeArray[0]);	
+	
+	// 시작시간이 마감시간보다 클 경우.
+	if( start > end ){
+		alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
+		startTime.val("6:00");
+		endTime.val("7:00");
+		return false;
+	}
+	/*               시작 시간 마감 시간 유효성 검사             */
+	
 	// time만들기.
 	var startTime = $("#startTime option:checked").val();
 	var endTime = $("#endTime option:checked").val();	
@@ -53,10 +75,47 @@ function validate(){
 }
 
 $(document).ready(function(){
-	$('#summernote').summernote({
-		focus: true,
-		height: 500// 페이지가 열릴때 포커스를 지정함
-	});
+	//에디터 속성값 주고 열기
+	$(document).ready(function() {
+	    $('#summernote').summernote({
+	      focus: true,
+	      height: 500, // 페이지가 열릴때 포커스를 지정함
+	      callbacks:{
+	    	  onImageUpload:function(files){
+		   	  	  console.log("onImageUpload");
+		   		  uploadImage(files[0],this);
+	      	}
+	      },
+	      lang:'ko-KR'
+	    });
+	    
+	  });
+	 
+	 //사진 업로드 함수
+	 function uploadImage(file,el){
+	     console.log("파일 업로드 함수 호출");
+	 	  var data=new FormData();
+	 	  data.append('file',file);
+	 	  $.ajax({
+	 		  data:data,
+	 		  type:"POST",
+	 		  processData:false,
+	 		  contentType:false,
+	 		  dataType:'json',
+	 		  url:"uploadImage.do",
+	 		  cache:false,
+	 		  enctype:'multipart/form-data',
+	 		  success:function(data){ 
+	 			  
+	 		  	  var file=$("<img>").attr("src",
+	 		  			  "${pageContext.request.contextPath }/resources/upload/board/"+data.url);
+	 			  $(el).summernote('insertNode',file[0]);
+	 		  },error:function(data){
+	 			  console.log("error:"+data);
+	 		  }
+	 	 });
+	 	  
+	   }
 	
 	$(".day").attr("disabled", true);
 	$("#sub").hide();
@@ -232,7 +291,7 @@ $(function(){
 		}		
 	});
 	
-	// 유효성 검사 - 시간
+	/* // 유효성 검사 - 시간
 	$(".time").on("change", function(){
 		// 시작 시간
 		var startTime = $("#startTime");
@@ -252,7 +311,7 @@ $(function(){
 			startTime.val("6:00");
 			endTime.val("24:00");
 		}
-	});
+	}); */
 });
 </script>
 
@@ -278,7 +337,7 @@ $(function(){
 	<!-- 지역 end -->	
 	
 	<label for="title">스터디 제목 : </label>
-	<input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
+	<input type="text" name="title" id="title" placeholder="제목" class="form-control" maxlength="100" required /><br />
 	<label for="content">스터디 내용 : </label>
 	<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required></textarea>
 	<br />
@@ -344,7 +403,7 @@ $(function(){
 	<input type="hidden" name="time" id="time" />
 	<br />
 	
-	<label for="price">일회 사용회비 : </label><input type="number" name="price" id="price" class="form-control" min="0" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
+	<label for="price">강의비 : </label><input type="number" name="price" id="price" class="form-control" min="0" step="1000" max="10000000" placeholder="강의비  240000원" />
 	<br />
 	
 	<label for="recruit">모집 인원 : </label>
@@ -356,7 +415,7 @@ $(function(){
 	<br /> 
 	
 	<label for="etc">기타 : </label>
-	<textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea>
+	<textarea name="etc" id="etc" cols="30" rows="10" class="form-control" maxlength="1000"></textarea>
 	<br /> 
 	
 	<div class="input-group mb-3 fileWrapper" style="padding:0px">
