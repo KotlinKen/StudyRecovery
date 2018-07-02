@@ -2096,8 +2096,12 @@ public class MemberController {
 	@RequestMapping(value="/member/applyInstructAgree.do")
 	public ModelAndView applyInstructAgree(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino) {
 		ModelAndView mav = new ModelAndView();
-		memberService.updateInstructorApply(ino);
-		
+		int result = memberService.updateInstructorApply(ino);
+		if(result <0) {
+			
+		}else {
+		}
+		mav.setViewName("redirect:/");
 		return mav;
 	}
 	

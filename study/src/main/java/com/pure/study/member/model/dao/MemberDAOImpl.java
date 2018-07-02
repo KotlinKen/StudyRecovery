@@ -416,8 +416,12 @@ public class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
-	public void updateInstructorApply(int ino) {
-		sqlSession.update("member.updateInstructorApply", ino);
+	public int updateInstructorApply(int ino) {
+		System.out.println(ino);
+	/*	Map<String,Integer> map = new HashMap<>();
+		map.put("ino", ino);
+		System.out.println(map);*/
+		return sqlSession.update("member.updateInstructorApply", ino);
 		
 	}
 	

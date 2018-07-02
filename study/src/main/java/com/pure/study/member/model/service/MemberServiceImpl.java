@@ -413,8 +413,8 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void updateInstructorApply(int ino) {
-		memberDAO.updateInstructorApply(ino);
+	public int updateInstructorApply(int ino) {
+		return memberDAO.updateInstructorApply(ino);
 	}
 	
 }
