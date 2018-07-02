@@ -933,10 +933,12 @@
 	
 	<select id="searchEvaluation" resultMap="evaluation">
 		<if test="eval == 'exp'">
-			select e.expname as "expname", e.exp as "tblExp", (select exp from member where mno=#{mno}) as "exp"  from exp e where e.exp <![CDATA[ > ]]> (select exp from member where mno=#{mno}) and e.exp <![CDATA[ <= ]]> (select exp from member where mno=#{mno})+1000
+			select e.expname as "expname", e.exp as "tblExp", (select exp from member where mno=#{mno}) as "exp"  from exp e where (e.exp <![CDATA[ > ]]> (select exp from member where mno=#{mno}) and e.exp <![CDATA[ <= ]]> (select exp from member where mno=#{mno})+1000) or e.exp<![CDATA[ >=]]>(select max(exp) from exp )
 		</if>
 		<if test="eval == 'point'">
-			select g.status as "status", (select point from member where mno=#{mno}) as "point" from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=#{mno}) and g.point <![CDATA[ > ]]> (select point from member where mno=#{mno})-5000 
+			select g.status as "status",g.point, (select point from member where mno=#{mno}) as "point" from grade g 
+			where (g.point <![CDATA[ <= ]]> (select point from member where mno=#{mno}) and g.point <![CDATA[ > ]]> (select point from member where mno=#{mno})-5000)
+			
 		</if>
 		<if test="eval == 'npoint'">
 			select npoint from member where mno=#{mno}

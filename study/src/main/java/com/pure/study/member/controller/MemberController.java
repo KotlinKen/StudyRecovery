@@ -1254,6 +1254,9 @@ public class MemberController {
 		
 		System.out.println(list);
 		System.out.println(gradeList.get(0));
+		
+		
+		
 		//평가 관리 페이지로 이동
 		mav.addObject("eval", eval); 
 		mav.addObject("list", list); 
