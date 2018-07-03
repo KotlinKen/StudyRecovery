@@ -18,7 +18,7 @@
                             #{price}, 
                             NULL, 
                             #{recruit}, 
-                            '모집 중', 
+                            '모집 중',
                             #{time}, 
                             'lecture',                         
                             #{ldate}, 
@@ -320,6 +320,11 @@
    
    <delete id="lectureWishCancel">
       DELETE FROM WISH WHERE MNO = #{mno} AND SNO = #{sno}
+   </delete>
+   
+   <delete id="lectureCancel">
+		DELETE FROM CREW 
+		WHERE MNO = #{mno} AND SNO = #{sno}
    </delete>
    
 	<!-- 김률민 추가 -->

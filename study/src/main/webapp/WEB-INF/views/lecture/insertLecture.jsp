@@ -253,8 +253,7 @@ $(function(){
          startTime.val("6:00");
          endTime.val("24:00");
       }
-   });
-   
+   });   
 
    $("div.fileWrapper div.custom-file input:file").on('change',function(){
        var ext = $(this).val().split(".").pop().toLowerCase();

@@ -61,5 +61,7 @@ public interface LectureService {
 
 	List<Map<String, Object>> restTypeLister(Map<String, String> queryMap);
 
+	int lectureCancel(Map<String, Integer> map);
+
 
 }
