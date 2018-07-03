@@ -324,72 +324,6 @@ $(function(){
     <label>목 </label><input type="checkbox" class="day" name="freqs" value="목" />
     <label>금 </label><input type="checkbox" class="day" name="freqs" value="금" />
     <label>토 </label><input type="checkbox" class="day" name="freqs" value="토" />
-<<<<<<< HEAD
-       
-   <label for="starttime">스터디 시간</label>
-   <select name="startTime" id="startTime" class="time">
-      <c:forEach var="i" begin="6" end="23">
-         <option value="${i }:00">${i }:00</option>      
-      </c:forEach>
-   </select>
-   <select name="endTime" id="endTime" class="time">
-      <c:forEach var="j" begin="7" end="24">
-         <c:if test="${j < 24}">
-            <option value="${j }:00">${j }:00</option>   
-         </c:if>
-          <c:if test="${j == 24 }">
-            <option value="${j }:00" selected>${j }:00</option>       
-          </c:if>
-      </c:forEach>
-   </select>
-   
-   <input type="hidden" name="time" id="time" />
-   <br />
-   
-   <label for="price">일회 사용회비 : </label><input type="number" name="price" id="price" class="form-control" min="0" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
-   <br />
-   
-   <label for="recruit">모집 인원 : </label>
-   <select name="recruit" id="recruit">
-      <c:forEach var="i" begin="2" end="10">
-         <option value="${i }">${i }명</option>
-      </c:forEach>
-   </select>
-   <br /> 
-   
-   <label for="etc">기타 : </label>
-   <textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea>
-   <br /> 
-   
-   <div class="input-group mb-3 fileWrapper" style="padding:0px">
-        <div class="input-group-prepend" style="padding:0px">
-          <span class="input-group-text">첨부파일</span>
-        </div>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" name="upFile">
-          <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-        </div>
-        <button type="button" class="addFile">+</button>
-        <button type="button" class="removeFile">-</button>
-   </div>
-   
-   
-   <input type="reset" value="취소하기" />
-   <input type="submit" value="등록"/>
-   </form>
-      
-   <div class="input-group mb-3 forCopy" style="padding:0px">
-        <div class="input-group-prepend" style="padding:0px">
-          <span class="input-group-text">첨부파일</span>
-        </div>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" name="upFile">
-          <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-        </div>
-        <button type="button" class="addFile">+</button>
-        <button type="button" class="removeFile">-</button>
-   </div>
-=======
 	    
 	<label for="starttime">스터디 시간</label>
 	<select name="startTime" id="startTime" class="time">
@@ -455,6 +389,5 @@ $(function(){
 		  <button type="button" class="addFile">+</button>
 		  <button type="button" class="removeFile">-</button>
 	</div>
->>>>>>> branch 'KimYongJung' of https://github.com/KotlinKen/StudyRecovery.git
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
