@@ -27,10 +27,15 @@ public class BoardServiceImpl implements BoardService {
 	public int selectCount() {
 		return boardDAO.selectCount();
 	}
+	
+	@Override
+	public int selectCount(Map<String, String> queryMap) {
+		return boardDAO.selectCount(queryMap);
+	}
 
 	@Override
 /*	@Transactional(rollbackFor = {RuntimeException.class})*/
-	public int insertBoard(Board board, List<Attachment> attachList) {
+	public int insertBoard(Board board) {
 		int result = 0;
 		
 		try {
@@ -67,6 +72,7 @@ public class BoardServiceImpl implements BoardService {
 	public int updateBoard(Map<String, String> queryMap) {
 		return boardDAO.updateBoard(queryMap);
 	}
+
 
 	
 	

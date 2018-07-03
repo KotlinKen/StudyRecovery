@@ -22,35 +22,55 @@
 	
 	
 	<select id="boardCount" resultType="_int">
-		SELECT COUNT(*) TOTALCOUNT FROM BOARD
-	</select>
-	
-	
-	<select id="boardList" resultMap="boardMap">
-		SELECT B.*, M.MNAME, TO_CHAR(B.REGDATE , 'YYYY-MM-DD') REG FROM BOARD B, MEMBER M 
+		SELECT COUNT(*) TOTALCOUNT FROM BOARD B, MEMBER M 
 		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
 			<if test="type != null and type != '' ">
-			AND type = #{type}		
+			AND TYPE = #{type}		
+			</if>
+			<if test="searchType != null and searchType != '' ">
+				<if test="searchKeyword != null and searchKeyword != '' ">
+				AND ${searchType} like '%'||#{searchKeyword}||'%'		
+				</if>
+			</if>
+			AND STATUS ='Y' AND B.MNO = M.MNO
+		</trim>
+	</select>
+	
+
+	<select id="boardList" resultMap="boardMap">
+		SELECT B.*, M.MNAME, TO_CHAR(B.REGDATE , 'YYYY-MM-DD') REG, (SELECT COUNT(*)AS CNT FROM REPLY R WHERE R.BNO= B.BNO) CNT 
+		FROM BOARD B, MEMBER M 
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="type != null and type != '' ">
+			AND TYPE = #{type}		
+			</if>
+			<if test="searchType != null and searchType != '' ">
+				<if test="searchKeyword != null and searchKeyword != '' ">
+				AND ${searchType} like '%'||#{searchKeyword}||'%'		
+				</if>
 			</if>
 			AND STATUS ='Y' AND B.MNO = M.MNO
 		</trim>
 		ORDER BY BNO DESC
 	</select>
-	<select id="selectOneAttach" resultMap="boardMap">
-		SELECT A.*, B.* FROM BOARD B, ATTACHMENT A WHERE B.BOARDNO = A.BOARDNO AND A.BOARDNO =  #{boardNo}
-	</select>
 	
 	<select id="selectOne" resultMap="boardMap">
-		SELECT * FROM BOARD WHERE BNO = #{bno}
+		SELECT B.*, M.MNAME, TO_CHAR(B.REGDATE , 'YYYY-MM-DD') REG FROM BOARD B, MEMBER M  WHERE BNO = #{bno} AND B.MNO = M.MNO
 	</select>
-		<update id="updatePwd">
-		update member set pwd=#{pwd} where mid=#{mid}
-	</update>
 	
 	<update id="boardUpdate">
-		UPDATE BOARD SET FORK = 1 WHERE BNO = #{BNO}
+	  	UPDATE BOARD
+	    <trim prefix="SET" suffixOverrides=",">
+	      <if test="title != null"> TITLE=#{title},</if>
+	      <if test="content != null"> CONTENT=#{content},</if>
+	      <if test="upfile != null"> UPFILE=#{upfile},</if>
+	      <if test="type != null"> TYPE=#{type}</if>
+	      <if test="reply != null"> REPLY=#{reply}</if>
+	      <if test="fork != null"> FORK=#{fork}</if>
+	      <if test="status != null"> STATUS=#{status}</if>
+	    </trim>
+	  	WHERE BNO = #{bno}
 	</update>
-	
 	<resultMap type="map" id="boardMap">
 		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String" />
 	</resultMap>

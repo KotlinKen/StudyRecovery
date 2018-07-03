@@ -138,24 +138,10 @@
 	  <script>
 	    var ctx = document.getElementById("myChart");
 	    var ctx2 = document.getElementById("myChart2");
-	    var myChart = new Chart(ctx, {
-	        type: 'line',
-	        data: {
-	            datasets: [{
-	                data: [15, 125, 30, 40, 50, 260]
-	            }],
-	            labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-	        },
-	        options: {
-	            scales: {
-	                xAxes: [{
-	                    ticks: {
-	                        min: 'January'
-	                    }
-	                }]
-	            }
-	        }
-	    });
+	    
+
+	    
+
 	    
 	    var myChart = new Chart(ctx2, {
 	      type: 'line',
@@ -183,5 +169,73 @@
 	        }
 	      }
 	    });
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+$(function(){	    
+	    
+	    $.ajax({
+			url:"${rootPath}/rest/admin/replyDateStatisticsList",
+			dataType:"json",
+			success:function(data){
+				console.log(data);
+				
+				
+		var dataList = [];
+		var ctList = [];
+		for(index in data.list){
+			
+			var dt = data.list[index];
+			var dts = dt.RDATE;
+			var ct = dt.CNT;
+			if(dts !='전체'){
+			dataList.push(dts);
+			ctList.push(ct);
+			}
+		}				
+
+		
+		console.log(dataList);
+		console.log(ctList);
+				
+		
+			    var myChart = new Chart(ctx, {
+			        type: 'line',
+			        data: {
+			            datasets: [{
+			                data: ctList
+			            }],
+			            labels: dataList,
+			        },
+			        options: {
+			            scales: {
+			                xAxes: [{
+			                    ticks: {
+			                        min: 'January'
+			                    }
+			                }]
+			            }
+			        }
+			    });
+				
+				
+				
+			},error:function(){
+				console.log("tes");				
+				
+			}
+		});
+	    
+});
+	    
+	    
+	    
+	    
+	    
 	  </script>
 <jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />

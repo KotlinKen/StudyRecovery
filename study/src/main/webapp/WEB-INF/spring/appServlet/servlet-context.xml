@@ -61,7 +61,13 @@
 			<!-- 강의 -->
 			<mapping path="/lecture/insertLecture.do"/>
 			<mapping path="/lecture/deleteLecture.do"/>
-			<mapping path="/lecture/applyLecture.do"/>			
+			<mapping path="/lecture/applyLecture.do"/>	
+			
+			<!-- 마이 페이지 -->
+			<mapping path="/member/memberView.do"/>
+			<mapping path="/member/searchMyPageKwd.do"/>
+			<mapping path="/member/instructorApply.do"/>
+			<mapping path="/member/searchMyPageEvaluation.do"/>
 			
 			<beans:bean class="com.pure.study.common.interceptor.LoginCheckInterceptor" id="loginCheck"/>
 		</interceptor>
@@ -74,5 +80,16 @@
 			<beans:bean class="com.pure.study.common.interceptor.AdminCheckInterceptor" id="adminCheck"/>
 		</interceptor>
 	</interceptors>
-		
+	
+	<interceptors>
+		<interceptor>
+			<mapping path="/board/boardModify"/>
+			<mapping path="/board/boardModifyEnd"/>
+			<mapping path="/board/boardWrite"/>
+			<mapping path="/board/boardWriteEnd"/>
+			<mapping path="/board/replyWrite"/>
+			<!-- <exclude-mapping path="/admin/adminLogin"/> -->
+			<beans:bean class="com.pure.study.common.interceptor.BoardCheckInterceptor" id="boardCheck"/>
+		</interceptor>
+	</interceptors>
 </beans:beans>

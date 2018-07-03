@@ -1,7 +1,7 @@
 <jsp:include page ="/WEB-INF/views/common/header.jsp"><jsp:param value="" name="pageTitle"/></jsp:include>
 
 <script>
-var msg = ${msg != null ? msg : null};
+var msg = "${msg != null ? msg : null}";
 
 if( msg != null )
 	alert(msg);

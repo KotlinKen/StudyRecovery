@@ -14,6 +14,11 @@ public class ReplyDAOImpl implements ReplyDAO{
 	SqlSessionTemplate sqlSession;
 	
 	@Override
+	public int replyCount() {
+		return sqlSession.selectOne("reply.replyCount"); 
+	}
+	
+	@Override
 	public int replyCount(Map<String, String> queryMap) {
 		return sqlSession.selectOne("reply.replyCount", queryMap); 
 	}
@@ -26,5 +31,25 @@ public class ReplyDAOImpl implements ReplyDAO{
 	@Override
 	public int replyWrite(Map<String, String> queryMap) {
 		return sqlSession.insert("reply.replyWrite", queryMap);
+	}
+
+	@Override
+	public int replyDelete(Map<String, String> queryMap) {
+		return sqlSession.delete("reply.replyDelete", queryMap);
+	}
+
+	@Override
+	public Map<String, String> replyOne(Map<String, String> queryMap) {
+		return sqlSession.selectOne("reply.replyOne", queryMap);
+	}
+
+	@Override
+	public int replyModify(Map<String, String> queryMap) {
+		return sqlSession.insert("reply.replyModify", queryMap);
+	}
+
+	@Override
+	public List<Map<String, String>> replyDateStatisticsList(Map<String, String> queryMap) {
+		return sqlSession.selectList("reply.replyDateStatisticsList", queryMap);
 	}
 }

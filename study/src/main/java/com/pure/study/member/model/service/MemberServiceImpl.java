@@ -1,5 +1,6 @@
 package com.pure.study.member.model.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -304,17 +305,17 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	public int changNPOINTPLUS(Map<String, String> expMap) {
-		return memberDAO.changPOINTPLUS(expMap);
+		return memberDAO.changNPOINTPLUS(expMap);
 	}
 
 	@Override
 	public Map<String, String> getNPoint(Map<String, String> expMap) {
-		return memberDAO.getPoint(expMap);
+		return memberDAO.getNPoint(expMap);
 	}
 
 	@Override
 	public int changNPOINTMINUS(Map<String, String> expMap) {
-		return memberDAO.changPOINTMINUS(expMap);
+		return memberDAO.changNPOINTMINUS(expMap);
 	}
 	
 	@Override
@@ -350,6 +351,78 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int deleteApply(Map<String, String> map) {
 		return memberDAO.deleteApply(map);
+	}
+
+	@Override
+	public int selectCntEmail(String newEmail) {
+		return memberDAO.selectCntEmail(newEmail);
+	}
+
+	@Override
+	public int deleteCrew(Map<String, String> map) {
+		return memberDAO.deleteCrew(map);
+	}
+
+	@Override
+	public int insertApply(Map<String, String> map) {
+		return memberDAO.insertApply(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> giveReviewList(Map<String, Object> listMap) {
+		return memberDAO.giveReviewList(listMap);
+	}
+
+	@Override
+	public Map<String, Object> searchEvaluation(Map<String, Object> map) {
+		return memberDAO.searchEvaluation(map);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectGradeList() {
+		return memberDAO.selectGradeList();
+	}
+
+	public int adminInnerCheck(Map<String, String> urlname) {
+		return memberDAO.adminInnerCheck(urlname);
+	}
+
+	@Override
+	public int selectInnerAdmin(Map<String, String> link) {
+		return memberDAO.selectInnerAdmin(link);
+	}
+
+	@Override
+	public int updateNpoint(Map<String, Object> map) {
+		return memberDAO.updateNpoint(map);
+	}
+
+	@Override
+	public Member selectOneMemberMno(int mno) {
+		return memberDAO.selectOneMemberMno(mno);
+	}
+	public List<Map<String, String>> selectMemberReviewList(int mno) {
+		return memberDAO.selectMemberReviewList(mno);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectmemberReply(int mno) {
+		return memberDAO.selectmemberReply(mno);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectInstructorMemberOX() {
+		return memberDAO.selectInstructorMemberOX();
+	}
+
+	@Override
+	public Map<String, String> selectOneInstruct(int mno) {
+		return memberDAO.selectOneInstruct(mno);
+	}
+
+	@Override
+	public void updateInstructorApply(int ino) {
+		memberDAO.updateInstructorApply(ino);
 	}
 	
 }

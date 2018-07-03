@@ -1,15 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="BOARD" name="pageTitle" /></jsp:include>
+<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="광고작성" name="pageTitle" /></jsp:include>
 
 <form action="${rootPath}/admin/adverstingWriteEnd"  method="post" enctype="multipart/form-data" onsubmit="return validate();">
 	<div class="form-row">
 		<div class="form-group col-md-2">
-			<label for="position">배너위치</label> <select id="position" name="position" required class="form-control">
-				<option value="TOP" selected>TOP</option>
+			<label for="position">배너위치</label>
+			<select id="position" name="position" required class="form-control">
+				<option value="TOP" rm-data="test" selected >TOP</option>
 				<option value="BANNER">베너</option>
 				<option value="POPUP">팝업</option>
 				<option value="WINGRIGHT">오른쪽 윙</option> 
-				<option>윙 3</option>
 			</select>
 		</div>
 	</div>
@@ -22,7 +22,7 @@
 	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="content">광고 내용을 간략히 적어주세요.</label>
-			<textarea class="form-control summernote" name="content" id="summernote" rows="3" class=""></textarea>
+			<textarea class="form-control" name="content" id="summernote" rows="3" class=""></textarea>
 		</div>
 	</div>
 
@@ -35,24 +35,23 @@
 		</div>
 	</div>
 
-
-
 	<div class="form-row">
 		<div class="form-group col-md-6">
-			<label for="img1">메인이미지</label> <input type="hidden" name="advImg" value="${adversting.ADVIMG }" />
+			<label for="img1">이미지 <span class="sizeAlert"></span></label> 
+			<input type="hidden" name="advImg" value="${adversting.ADVIMG }" />
 			<div class="upfile_name">
 				<input type="file" class="form-control" id="img1" name="img">
 				<div class="upfile_cover">${adversting.ADVIMG }</div>
 				<button type="button" class="upfile_button">파일업로드</button>
+				<div class="imgSize"></div>
 			</div>
 		</div>
 	</div>
 	<div class="form-row">
 		<div class="form-group col-md-6">
 			<label for="img1">섬네일</label>
-			<div class="form-control thumnail">
+			<div class="form-control thumnail" style="display:none;">
 			</div>
-			<div class="imgSize">권장 사이즈 1110 x 80</div>
 		</div>
 	</div>
 	<div class="form-row">
@@ -90,10 +89,19 @@
 	  </div>
 </form>
 
-<input type="file" id="test2" />
-
 
 <script>
+$("#position").on("change", function(){
+	var values = $(this).val();
+	var text = "";
+	switch(values){
+		case "TOP" : text = "1110 x 80"; break;
+		case "BANNER" : text = "350 x 500"; break;
+		case "POPUP" : text = "350 x 500"; break;
+		case "WINGRIGHT" : text = "100 x 100"; break;
+	}
+	$(".sizeAlert").text(text);
+});
 
 function validate(){
 	console.log("test");
@@ -129,12 +137,15 @@ function validate(){
 
 $(function(){
 	var startDate = new Date();
+	var startDateISO = startDate.toISOString().substring(0, 10);
 	var endDate = new Date();
 	endDate.setMonth(endDate.getMonth()+1);
+	endDateISO = endDate.toISOString().substring(0, 10);
 	// 시작날짜 오늘 부터로 초기값 설정
-	$("[name=startAd]").val( startDate.toISOString().substring(0, 10));
+	$("[name=startAd]").val(startDateISO);
+	$("[name=startAd]").attr("min", startDateISO);
 	// 종료 시간 기본 한달로 초기값 설정
-	$("[name=endAd]").val(endDate.toISOString().substring(0, 10));
+	$("[name=endAd]").val(endDateISO);
 });
 
 
@@ -205,47 +216,22 @@ $(".upfile_name").on("change", function(){
 	});
 	
 	
-	$(document).ready(function() {
-		
 
-		
-	    $('#summernote').summernote({
-	      height: 300,
-	      minHeight: null,
-	      maxHeight: null,
-	      focus: true,
-	      callbacks: {
-	        onImageUpload: function(files, editor, welEditable) {
-	          for (var i = files.length - 1; i >= 0; i--) {
-	            sendFile(files[i], this);
-	          }
-	        }
-	      }
-	    });
-	  });
-
-
-	
-	
-	
-	function sendFile(file, object){
-		
-		var form_data = new FormData();
-		form_data.append('file', file);
-		$.ajax({
-			data : form_data,
-			type : "POST",
-			url : "${rootPath}/adv/adverstingUpload",
-			cache : false,
-			contentType : false,
-			processData : false, 
-			success : function(url){
-				console.log(url);
-				$(object).summernote('editor.insertImage', url);
-			}
-			
-		});
-	}
+//summernote settings
+$(document).ready(function() {
+    $('#summernote').summernote({
+      focus: true,
+      height: 500, // 페이지가 열릴때 포커스를 지정함
+      callbacks:{
+    	  onImageUpload:function(files){
+	   	  	  console.log("onImageUpload");
+	   		  uploadImage(files[0],this);
+      	}
+      },
+      lang:'ko-KR'
+    });
+    
+  });
 
 	$(document).ready(function() {
 	      $('#title').keyup(function(e){
@@ -256,7 +242,29 @@ $(".upfile_name").on("change", function(){
 	      });
 	      $('#title').keyup();
 	});
-	
+	//summernote upFile
+	function uploadImage(file,el){
+	    console.log("파일 업로드 함수 호출");
+		  var data=new FormData();
+		  data.append('file',file);
+		  $.ajax({
+			  data:data,
+			  type:"POST",
+			  processData:false,
+			  contentType:false,
+			  dataType:'json',
+			  url:"${rootPath}/admin/uploadImage",
+			  cache:false,
+			  enctype:'multipart/form-data',
+			  success:function(data){ 
+			  	  console.log("data : "+data.imageUrl);
+			  	  var file=$("<img>").attr("src", "${rootPath }/resources/upload/admin/"+data.imageUrl);
+				  $(el).summernote('insertNode', file[0]);
+			  },error:function(data){
+				  console.log("error:"+data);
+			  }
+		 });
+	}
 	
 </script>
 <jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />

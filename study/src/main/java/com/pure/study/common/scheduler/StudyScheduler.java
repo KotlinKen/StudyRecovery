@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.pure.study.member.model.service.MemberService;
 import com.pure.study.study.model.service.StudyService;
+import com.pure.study.study.model.vo.Study;
 
 @Component
 public class StudyScheduler {
@@ -17,17 +19,14 @@ public class StudyScheduler {
 	
 	@Autowired
 	StudyService studyService;
-
 	
-	
-	@Scheduled(cron = "0 0/30  * * * ? ")
+	@Scheduled(cron = "0 0/60  * * * ? ")
 	public void execute() {
 		//체크
 		
 		//업데이트
 		
 		//성공실패 체크
-		
 		
 		
 		List<Map<String, Object>> map = studyService.selectStudyList(1, 5);

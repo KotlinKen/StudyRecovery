@@ -38,7 +38,9 @@ body {background: rgb(230, 230, 230)}
 <div id="inindivik1"></div>
 <div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><h2>STUDY GROUPT</h2></a></div>
 <div id="indivik">
-		<div id="inindivik3"><input type="hidden" name="check" id="check" value="21" /></div>
+		<div id="inindivik3"><input type="hidden" name="check" id="check" value="21" /></div> 
+		<span><b>전체 동의</b><input type="checkbox" class="agree" id="checkAll"  /></span>	 <br />
+		<hr />
 		<span><b>서비스 이용약관 동의 (필수) </b><input type="checkbox" class="agree" id="agree1" value="0" name="agree1" /></span>		
 		<p class="jumbotron jumbotron-fluid">
 			<c:forEach var ="v" items="${service }">
@@ -53,7 +55,7 @@ body {background: rgb(230, 230, 230)}
 			</c:forEach>
 		</p>
 		<button type="button" id="buttona" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
-		<button type="submit" id="buttonb" class="btn btn-outline-success" onclick="getPost(01);">다음</button> 
+		<button type="button" id="buttonb" class="btn btn-outline-success" onclick="getPost(01);">다음</button> 
 		<br /><br />
 		<span>강사를 희망 하신다면 여기 <a href="#" onclick="getPost(02);" >강사 신청하기</a>를 누르세요</span>
 	<br /><br />
@@ -77,34 +79,42 @@ body {background: rgb(230, 230, 230)}
 			$("#agree2").val(1);
 		}
 	}); 
- 	function validate() {
- 	      //체크박스 체크여부 확인 [하나]
-        var chk1=document.getElementById("agree1");
-        var chk2=document.getElementById("agree2");
-       
-        if(!chk1.checked){
-            alert('동의해야 진행할 수  있습니다.');
-            return false;
-        }
-     
-        if(!chk2.checked) {
-            alert('동의해야 진행할 수  있습니다.');
-            return false;
-        }
-  		return true;	
-  	}
+	$("#checkAll").click(function () {
+		var checkAll = $("#checkAll").prop("checked");
+		if(checkAll ==true){
+			var check = document.getElementsByClassName("agree");
+			for(var i = 0; i<check.length;i++ ){
+				if(check[i].checked == false){
+					check[i].checked = true;
+					$("#agree1").val(1);
+					$("#agree2").val(1);
+				}
+			} 
+		$("#buttonb").focus();
+		}else{
+			var check = document.getElementsByClassName("agree");
+			for(var i = 0; i<check.length;i++ ){
+				if(check[i].checked == true){
+					check[i].checked = false;
+					$("#agree1").val(0);
+					$("#agree2").val(0);
+				}
+			} 
+		}
+		
+	});
  	
  	function getPost(mode){
  		var chk1=document.getElementById("agree1");
         var chk2=document.getElementById("agree2");
        
         if(!chk1.checked){
-            alert('동의해야 진행할 수  있습니다.');
-            return false;
+            alert('서비스 이용에 동의해야 진행할 수  있습니다.');
+            return;
         }
         if(!chk2.checked) {
-            alert('동의해야 진행할 수  있습니다.');
-            return false;
+            alert('개인정보 수짐에 동의해야 진행할 수  있습니다.');
+            return;
         }
 	 	var theForm = document.frmSubmit;
 	 	if(mode == "01"){

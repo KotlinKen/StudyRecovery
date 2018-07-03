@@ -1,5 +1,6 @@
 package com.pure.study.member.model.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -141,5 +142,35 @@ public interface MemberDAO {
 	int insertCrew(Map<String, String> map);
 
 	int deleteApply(Map<String, String> map);
+
+	int selectCntEmail(String newEmail);
+
+	int deleteCrew(Map<String, String> map);
+
+	int insertApply(Map<String, String> map);
+
+	List<Map<String, Object>> giveReviewList(Map<String, Object> listMap);
+
+	Map<String, Object> searchEvaluation(Map<String, Object> map);
+
+	List<Map<String, Object>> selectGradeList();
+
+	int adminInnerCheck(Map<String, String> urlname);
+
+	int selectInnerAdmin(Map<String, String> link);
+
+	int updateNpoint(Map<String, Object> map);
+
+	Member selectOneMemberMno(int mno);
+
+	List<Map<String, String>> selectMemberReviewList(int mno);
+
+	List<Map<String, Object>> selectmemberReply(int mno);
+
+	List<Map<String, Object>> selectInstructorMemberOX();
+
+	Map<String, String> selectOneInstruct(int mno);
+
+	void updateInstructorApply(int ino);
 
 }

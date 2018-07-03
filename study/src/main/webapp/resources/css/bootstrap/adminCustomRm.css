@@ -9,6 +9,7 @@
 .navbar-nav li .profile{margin-right:20px;}
 .navbar-nav li a, .navbar-nav li sapn{display:flex;}
 .navbar-dark .navbar-nav li .sign{margin-right:30px; color:#333;}
+.navbar-dark .navbar-nav li .sign:hover{margin-right:30px; color:red;}
 
 
 
@@ -36,7 +37,7 @@
 	  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
 	}
 }
-[role="main"]{padding-top:73px;}
+[role="main"]{padding-top:73px; padding-bottom:50px;}
 
 .profile {
 	display:inline-block;
@@ -60,4 +61,13 @@
 
 .bg-dark{background:#fff !important;}
 .text-muted{color:#fff !important;}
-.table-sm th, .table-sm td{padding:0.6rem; vertical-align:middle; text-align:center;}
+.table-sm th{background:#fff;}
+.table-sm th, .table-sm td{padding: 1em 0.3rem; vertical-align:middle; text-align:center;}
+.currentPage{background:#0056e9; color:#fff;}
+
+select{-webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    }
+
+#position option{padding:10px;}

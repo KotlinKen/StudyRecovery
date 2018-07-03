@@ -8,7 +8,6 @@ $(function() {
 			"background-color" : "#f6f8fa"
 		});
 		
-		console.log("test");
 	});
 	
 	
@@ -22,7 +21,6 @@ $(function() {
 	
 	
 	$("#position").change(function(){
-		console.log($(this).val());
 		if($(this).val() == "POPUP"){
 			$(".backColorRow").hide();
 		}else{
@@ -36,10 +34,6 @@ $(function() {
 		$endAd = $("#endAd");
 		$startAdTemp = $startAd.val();
 		if($startAd.val() != null && $startAd.val() != "" ){
-			console.log($startAd.val());
-			console.log($endAd.val());
-			//console.log($(this));
-			
 			if($(this)[0] == $startAd[0]){
 				$endAd.attr("min", $startAd.val());
 				
@@ -76,3 +70,11 @@ $(function() {
 	});
 	
 });
+
+
+//천단위
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+

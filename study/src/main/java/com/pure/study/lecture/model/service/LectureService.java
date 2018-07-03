@@ -59,5 +59,7 @@ public interface LectureService {
 
 	Lecture selectLectureByMnoTypeLecture(int sno);
 
+	List<Map<String, Object>> restTypeLister(Map<String, String> queryMap);
+
 
 }
