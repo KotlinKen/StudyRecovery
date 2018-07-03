@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="lecture">
    <resultMap type="map" id="map">
-      <result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String"/>
+      <result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
    </resultMap>
    
    <insert id="insertLecture">
@@ -115,7 +115,7 @@
       SELECT COUNT(*) FROM STUDY WHERE TYPE = 'lecture'
    </select>
    
-   <select id="selectLectureOne" resultType="map">
+   <select id="selectLectureOne" resultMap="map">
       SELECT SNO,
             A.MNO AS MNO,
              (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,

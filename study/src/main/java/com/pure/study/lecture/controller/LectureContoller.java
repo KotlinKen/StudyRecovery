@@ -105,8 +105,17 @@ public class LectureContoller {
 					String renamedFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + rndNum + "."
 							+ ext;
 
-					if (l != last)
+					if (l != last) {						
+						try {
+							f.transferTo(new File(saveDirectory + "/" + renamedFileName));
+						} catch (IllegalStateException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
 						img += renamedFileName + ",";
+					}
 
 					if (l == last) {
 						img += renamedFileName;
