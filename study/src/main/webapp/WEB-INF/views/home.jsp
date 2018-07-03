@@ -248,12 +248,19 @@ $(function(){
 	$.ajax({
 		url:"${rootPath}/rest/home/restTypeLister",
 		dataType:"json",
-		data : {type : "lecture", status : "모집 중", rownum : "9", order :"SDATE", desc:"desc" },
+		data : {type : "lecture", status : "마감 임박", rownum : "9", order :"SDATE", desc:"desc" },
 		success:function(data){
 			console.log(data);
 			var rmHtml = "";
         	for(index in data.list){
-        		var upfile = (data.list[index].UPFILE);
+        		var upfiles = data.list[index].UPFILE;
+        		if(upfiles != null){
+        			var upfile = upfiles.split(",");
+        			console.log("업파일"+upfile[0]);
+        		
+        		
+        		
+        		
         		console.log("teststetsetetetse"+upfile);
         		var study = data.list[index]; 
         		rmHtml += "<li class='col-md-4'>";
@@ -261,7 +268,7 @@ $(function(){
        			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"'>";
    				rmHtml += "<div class='photoSection'>";
     				/* rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/board/20180701_160109479_94.jpg)'></div>"; */ 
-   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile+")'></div>";
+   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[0]+")'></div>";
    				rmHtml += "</div>";
 				rmHtml += "<div class='inforSection'>";
   				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 20)+"</h4>";
@@ -287,6 +294,7 @@ $(function(){
    				rmHtml += "</a>"
         		rmHtml += "</div>"
         		rmHtml += "</li>"
+        		}
         	}
 			$(".lectures ul").html(rmHtml);
 		},error:function(){
