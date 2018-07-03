@@ -236,36 +236,47 @@ $(function(){
 	
 	
 	
+	$.ajax({
+		url : "${rootPath}/rest/home/restTypeLister",
+		dataType:"json",
+		data : {type : "lecture", status : "모집 중", rownum : "10", order :"SDATE", desc:"desc" },
+		success : function(data){
+		}
+	})
+	
 	
 	$.ajax({
-		url:"${rootPath}/rest/lecture/3",
+		url:"${rootPath}/rest/home/restTypeLister",
 		dataType:"json",
+		data : {type : "lecture", status : "모집 중", rownum : "9", order :"SDATE", desc:"desc" },
 		success:function(data){
 			console.log(data);
 			var rmHtml = "";
         	for(index in data.list){
-        		console.log(data.list[index].TNAME);
+        		var upfile = (data.list[index].UPFILE);
+        		console.log("teststetsetetetse"+upfile);
         		var study = data.list[index]; 
         		rmHtml += "<li class='col-md-4'>";
         		rmHtml += "<div class='pixel'>";
        			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"'>";
    				rmHtml += "<div class='photoSection'>";
-    				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/board/20180701_160109479_94.jpg)'></div>"; 
-   				/* rmHtml += 	"<div style='background-image:url("+study.UPFILE+")'></div>"; 업파일 업을 경우*/
+    				/* rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/board/20180701_160109479_94.jpg)'></div>"; */ 
+   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile+")'></div>";
    				rmHtml += "</div>";
 				rmHtml += "<div class='inforSection'>";
   				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 20)+"</h4>";
-  				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/study/20180625_215620103_62.gif' /></div>";
+/*   				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/study/20180625_215620103_62.gif' /></div>"; */
+  				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/member/"+study.MPROFILE+"' /></div>";
   				
    				rmHtml += "</div>";
 				rmHtml += "<div class='metaSection'>";
-  				/* rmHtml += 	"<p>"+(study.CONTENT).substring(0, 10)+"</p>"; */
-  				rmHtml += 	"<p>"+ "내용이 없네 정말.."+"</p>";
+  				rmHtml += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 20)+"</p>";
+  				/* rmHtml += 	"<p>"+ "내용이 없네 정말.."+"</p>"; */
    				rmHtml += "</div>";
 				rmHtml += "<div class='localSection'>";
-  				rmHtml += 	"<div class='study'>"+study.SUBNAME+"</div>";
-  				rmHtml += 	"<div class='local'>"+study.LNAME+"</div>";
-  				rmHtml += 	"<div class='level'>"+study.DNAME+"</div>";
+  				rmHtml += 	"<div class='study'>"+study.SUBJECTNAME+"</div>";
+  				rmHtml += 	"<div class='local'>"+study.LOCAL+"</div>";
+  				rmHtml += 	"<div class='level'>"+study.DIFFICULTNAME+"</div>";
   				
   				if(study.STATUS =='강의 종료'){
   					rmHtml += 	"<div class='time' style='background:#000; color:#fff;'>"+study.STATUS+"</div>";
@@ -321,5 +332,4 @@ font-family: 'Noto Sans KR', sans-serif;
 	padding-left:40px;
 }
 </style>
-
 <jsp:include page ="/WEB-INF/views/common/footer.jsp" />
