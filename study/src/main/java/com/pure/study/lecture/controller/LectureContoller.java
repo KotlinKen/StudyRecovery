@@ -92,7 +92,7 @@ public class LectureContoller {
 			int last = upFiles.length;
 
 			String img = "";
-			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/lecture");
 
 			/****** MultipartFile을 이용한 파일 업로드 처리로직 시작 ******/
 			for (MultipartFile f : upFiles) {
