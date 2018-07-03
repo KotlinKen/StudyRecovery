@@ -171,6 +171,8 @@ public interface MemberService {
 
 	Map<String, String> selectOneInstruct(int mno);
 
-	void updateInstructorApply(int ino);
+	int updateInstructorApply(int ino);
+
+	int updateInstructorCancel(int ino);
 
 }

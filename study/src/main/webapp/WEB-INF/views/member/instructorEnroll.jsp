@@ -1,3 +1,4 @@
+
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -211,7 +212,7 @@ textarea {
 					document.getElementById("pwdok").innerHTML = "";
 					return;
 				}
-				if (p1.val().search(/[!@#$%^&*()?_+~]/g) == -1) {
+				if (p1.val().search(/[-＃＆　!@#$%^&*()?_+~]/g) == -1) {
 					document.getElementById("pwd").innerHTML = "특수문자 1개 이상 입니다.";
 					document.getElementById("pwdok").innerHTML = "";
 					return;
@@ -369,7 +370,7 @@ textarea {
 					 $("#name").val("");
 					return;
 				}
-				if (name.val().search(/[!@#$%^&*()?_+~]/g)  != -1) {
+				if (name.val().search(/[-＃＆　!@#$%^&*()?_+~]/g)  != -1) {
 					 document.getElementById("nameerr").innerHTML = "이름은 한글로 2글자 이상 입니다. 외국인도 한글로 적어 주세요";
 					 document.getElementById("nameok").innerHTML = "";
 					 $("#name").val("");
@@ -407,7 +408,7 @@ textarea {
 					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
 					return;
 				}
-				if(phone.search(/[!@#$%^&*()?_+~]/g) != -1){
+				if(phone.search(/[-＃＆　!@#$%^&*()?_+~]/g) != -1){
 					$("#phone").val(phone.substr(0,phone.length-1));
 					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
 					return;
@@ -443,7 +444,7 @@ textarea {
 					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
 					return;
 				}
-				if(phone.search(/[!@#$%^&*()?_+~]/g) != -1){
+				if(phone.search(/[-＃＆　!@#$%^&*()?_+~]/g) != -1){
 					$("#phone").val(phone.substr(0,phone.length-1));
 					document.getElementById("phoneerr").innerHTML = "숫자 만 사용 할 수 없습니다";
 					return;
@@ -500,7 +501,7 @@ textarea {
 				$(".guide.ok").hide();
 				return;
 			}
-			if (userId.val().search(/[!@#$%^&*()?_~]/g) >= 0) {
+			if (userId.val().search(/[-＃＆　!@#$%^&*()?_~]/g) >= 0) {
 				$(".guide.error").html("아이디는 특수문자를 사용할 수 없습니다");
 				$(".guide.error").show();
 				$(".guide.ok").hide();
@@ -562,7 +563,7 @@ textarea {
 				userId.focus();
 				return false;
 			}
-			if (userId.val().search(/[!@#$%^&*()?_~]/g) >= 0) {
+			if (userId.val().search(/[-＃＆　!@#$%^&*()?_~]/g) >= 0) {
 				alert("아이디는 특수문자를 사용할 수 없습니다");
 				userId.focus();
 				return false;
@@ -603,7 +604,7 @@ textarea {
 				return false;
 			}
 		
-			if (password.val().search(/[!@#$%^&*()?_+~]/g) == -1) {
+			if (password.val().search(/[-＃＆　!@#$%^&*()?_+~]/g) == -1) {
 				alert(password.val()+"패스워드는 특수문자를 사용해야 합니다.");
 				password.focus();
 				return false;
@@ -636,7 +637,7 @@ textarea {
 				name.focus();
 				return false;
 			}
-			if (name.val().search(/[!@#$%^&*()?_~]/g) != -1) {
+			if (name.val().search(/[-＃＆　!@#$%^&*()?_~]/g) != -1) {
 				alert("이름에 특수 문자를 입력할 수 없습니다.");
 				name.focus();
 				return false;
@@ -658,7 +659,7 @@ textarea {
 			}
 			/* phone */
 			var phone = $("#phone");
-			if (phone.val().search(/[a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|!@#$%^&*()?_~]/g) != -1) {
+			if (phone.val().search(/[a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|-＃＆　!@#$%^&*()?_~]/g) != -1) {
 				alert("전화번호는 숫자만 가능합니다.");
 				phone.focus();
 				return false;

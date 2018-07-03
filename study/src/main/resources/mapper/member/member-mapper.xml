@@ -1202,7 +1202,10 @@
 		select * from instructor where mno = #{mno}
 	</select>
 	<update id="updateInstructorApply">
-		update instructor set okdate = sysdate and state = 'O' where ino = #{ino} 
+		update instructor set okdate = sysdate , state = 'O' , outdate = null  where ino = #{ino} 
+	</update>
+	<update id="updateInstructorCancel">
+		update instructor set outdate = sysdate , state = 'X' where ino = #{ino} 
 	</update>
 	<!-- 장익순 작업 .... 끝 -->
 	
