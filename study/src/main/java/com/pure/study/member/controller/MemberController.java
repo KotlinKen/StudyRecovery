@@ -1,6 +1,8 @@
 package com.pure.study.member.controller;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -12,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2118,6 +2122,72 @@ public class MemberController {
 		return mav;
 	}
 	
+	@RequestMapping("/member/boardDownload.do")
+	public void fileDownload(@RequestParam String oName,
+							 HttpServletRequest request,
+							 HttpServletResponse response) {
+		System.out.println("와???????");
+		System.out.println("파일다운로드페이지["+oName+"]");
+		//logger.debug("파일다운로드페이지["+oName+"]");
+		
+		BufferedInputStream bis = null;
+		ServletOutputStream sos = null;
+		String saveDirectory = request.getSession()
+									  .getServletContext()
+									  .getRealPath("/resources/upload/instructor");
+		System.out.println("saveDirectory : "+saveDirectory);
+		File savedFile = new File(saveDirectory+"/"+oName);
+		System.out.println("savedFile : "+savedFile );
+		try {
+			bis = new BufferedInputStream(new FileInputStream(savedFile));
+			System.out.println("bis : "+bis);
+			sos = response.getOutputStream();
+			
+			
+			System.out.println("savedFile = "+savedFile);
+			//응답세팅
+			response.setContentType("application/octet-stream; charset=utf-8");
+			
+			//한글파일명 처리
+			String resFilename = "";
+			boolean isMSIE = request.getHeader("user-agent")
+									.indexOf("MSIE") != -1 ||
+							 request.getHeader("user-agent")
+							 		.indexOf("Trident") != -1;
+			if(isMSIE) {
+				//ie는 utf-8인코딩을 명시적으로 해줌.
+				resFilename = URLEncoder.encode(oName, "utf-8");
+				resFilename = resFilename.replaceAll("\\+", "%20");
+			}
+			else {
+				resFilename = new String(oName.getBytes("utf-8"),"ISO-8859-1");
+			}
+			logger.debug("resFilename="+resFilename);
+			response.addHeader("Content-Disposition", 
+					"attachment; filename=\""+resFilename+"\"");
+			
+			
+			//쓰기
+			int read = 0;
+			while((read=bis.read())!=-1) {
+				sos.write(read);
+			}
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				sos.close();
+				bis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+
 	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)
 	@ResponseBody

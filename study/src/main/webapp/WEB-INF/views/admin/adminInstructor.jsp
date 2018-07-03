@@ -2,6 +2,7 @@
 <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="INSTRUCTOR" name="pageTitle" /></jsp:include>
 <div class="studyList">
 	<div class="table-responsive" id="table1">
+	<h3>강사 신청 리스트</h3>
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
@@ -24,6 +25,7 @@
 	<br />
 	<br />
 	<div class="table-responsive" id="table2">
+	<h3>강사 리스트</h3>
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
