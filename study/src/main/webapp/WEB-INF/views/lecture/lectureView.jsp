@@ -6,135 +6,135 @@
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
-<script>   
-   //참여신청 버튼 클릭 이벤트
-   function lectureApply(){
-      // 결제 도전!
-      var IMP = window.IMP;
-      IMP.init("imp25308825"); // 아임포트에 등록된 내 아이디.      
-      var msg = "";
-      
-      var sno = ${lecture.SNO};
-      var mno = ${memberLoggedIn.getMno()};   
-      var price = 100;
-      
-      //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
-      //이미 신청을 했으면 return;하게 만들어야 함. 
-      //임시로 confirm. 계획은 부트스트랩 모달창에 주요 정보 나열 후 확인버튼누르면 아작스 실행.      
-      if(confirm("신청하시겠습니까")) {
-          $.ajax({
-            url:"findLecture.do",
-            data:{
-                  sno : sno,
-                  mno : mno
-            },
-            success:function(data){
-              //강의를 등록할 수 있는 경우.
-              
-              if(confirm("결제 하시겠습니까?")){
-               if( data == "" ){
-                   IMP.request_pay({
-                     pg : 'inicis', // version 1.1.0부터 지원.
-                     pay_method : 'card',
-                     merchant_uid : 'merchant_' + new Date().getTime(),
-                     name : '스터디 강의 신청',
-                     amount : 100,
-                     m_redirect_url : 'https://www.yourdomain.com/payments/complete'
-                 }, function(rsp) {
-                     if ( rsp.success ) {                       
-                         $.ajax({
-                            url : "applyLecture.do",
-                            data: {
-                               sno : sno,
-                               mno : mno
-                            },
-                            success:function(data){
-                               var pno = rsp.imp_uid.replace("imp_", "");
-                               
-                               location.href = "successPay.do?mno=" + mno + 
-                                                     "&sno=" + sno + 
-                                                     "&pno=" + pno + 
-                                                     "&price=" + price;
-                            }
-                         });
-                          msg = '결제가 완료되었습니다.';                                 
-                     } else {
-                        var pno = rsp.imp_uid.replace("imp_", "");
-                        
-                        location.href = "failedPay.do?mno=" + mno + 
-                                           "&sno=" + sno + 
-                                           "&pno=" + pno + 
-                                           "&price=" + price;
-                        
-                         msg = '결제에 실패하였습니다.';
-                         msg += '에러내용 : ' + rsp.error_msg;
-                     }
-                       alert(msg); 
-                 });
-               }
-            }
-              // 없는 경우.
-               else{
-                  alert(data);
-               }
-            }
-         }).done();         
-      }
-   }
-   
-   //찜하기 버튼 클릭 이벤트
-   function lectureWish(){
-      var sno = ${lecture.SNO};
-      var mno = ${memberLoggedIn.getMno()};
-      
-      $.ajax({
-         url : "lectureWish.do",
-         data : {
-            sno : sno,
-            mno : mno
-         },
-         success : function(){
-            alert("찜해쑝");
-            location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
-         }
-      });
-   }
-   
-   function lectureWishCancel(){
-      var sno = ${lecture.SNO};
-      var mno = ${memberLoggedIn.getMno()};
-      
-      $.ajax({
-         url : "lectureWishCancel.do",
-         data : {
-            sno : sno,
-            mno : mno
-         },
-         success : function(){
-            alert("찜취소해쑝");
-            location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
-         }
-      });
-   }
-   
-   $(function(){   
-      $("#updateLecture").click(function(){
-         var sno = ${lecture.SNO};
-         
-         $.ajax({          
-            url : "updateLecture.do",
-            data : {sno : sno},
-            dataType : "html",
-            success: function( data ){
-                $(".modal-body").html(data);
-            }
-         });    
-      });
-   });
-   // 삭제버튼
-   function deleteLecture(){
-      location.href="${pageContext.request.contextPath}/lecture/deleteLecture.do?sno=" + ${lecture.SNO};
-   }
+<script>	
+	//참여신청 버튼 클릭 이벤트
+	function lectureApply(){
+		// 결제 도전!
+		var IMP = window.IMP;
+		IMP.init("imp25308825"); // 아임포트에 등록된 내 아이디.		
+		var msg = "";
+		
+		var sno = ${lecture.SNO};
+		var mno = ${memberLoggedIn.getMno()};	
+		var price = 100;
+		
+	   //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
+	   //이미 신청을 했으면 return;하게 만들어야 함. 
+	   //임시로 confirm. 계획은 부트스트랩 모달창에 주요 정보 나열 후 확인버튼누르면 아작스 실행.	   
+	   if(confirm("신청하시겠습니까")) {
+		    $.ajax({
+	         url:"findLecture.do",
+	         data:{
+	        	    sno : sno,
+	        	 	mno : mno
+	         },
+	         success:function(data){
+	        	//강의를 등록할 수 있는 경우.
+	        	
+	        	if(confirm("결제 하시겠습니까?")){
+	         	if( data == "" ){
+	         		 IMP.request_pay({
+	     			    pg : 'inicis', // version 1.1.0부터 지원.
+	     			    pay_method : 'card',
+	     			    merchant_uid : 'merchant_' + new Date().getTime(),
+	     			    name : '스터디 강의 신청',
+	     			    amount : 100,
+	     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
+	     			}, function(rsp) {
+	     			    if ( rsp.success ) {	    			    	
+	     			        $.ajax({
+	     			        	url : "applyLecture.do",
+	     			        	data: {
+	     			        		sno : sno,
+	     			        		mno : mno
+	     			        	},
+	     			        	success:function(data){
+	     			        		var pno = rsp.imp_uid.replace("imp_", "");
+	     			        		
+	     			        		location.href = "successPay.do?mno=" + mno + 
+	     			        									 "&sno=" + sno + 
+	     			        									 "&pno=" + pno + 
+	     			        									 "&price=" + price;
+	     			        	}
+	     			        });
+   			        		msg = '결제가 완료되었습니다.';	     	     			        
+	     			    } else {
+	     			    	var pno = rsp.imp_uid.replace("imp_", "");
+	     			    	
+	     			    	location.href = "failedPay.do?mno=" + mno + 
+														 "&sno=" + sno + 
+														 "&pno=" + pno + 
+														 "&price=" + price;
+	     			    	
+	     			        msg = '결제에 실패하였습니다.';
+	     			        msg += '에러내용 : ' + rsp.error_msg;
+	     			    }
+	   			        alert(msg); 
+	     			});
+	         	}
+	         }
+	        	// 없는 경우.
+	         	else{
+	         		alert(data);
+	         	}
+	         }
+	      }).done(); 		  
+	   }
+	}
+	
+	//찜하기 버튼 클릭 이벤트
+	function lectureWish(){
+		var sno = ${lecture.SNO};
+		var mno = ${memberLoggedIn.getMno()};
+		
+		$.ajax({
+			url : "lectureWish.do",
+			data : {
+				sno : sno,
+				mno : mno
+			},
+			success : function(){
+				alert("찜해쑝");
+				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+			}
+		});
+	}
+	
+	function lectureWishCancel(){
+		var sno = ${lecture.SNO};
+		var mno = ${memberLoggedIn.getMno()};
+		
+		$.ajax({
+			url : "lectureWishCancel.do",
+			data : {
+				sno : sno,
+				mno : mno
+			},
+			success : function(){
+				alert("찜취소해쑝");
+				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+			}
+		});
+	}
+	
+	$(function(){   
+		$("#updateLecture").click(function(){
+			var sno = ${lecture.SNO};
+			
+			$.ajax({			 
+				url : "updateLecture.do",
+				data : {sno : sno},
+				dataType : "html",
+				success: function( data ){
+				 	$(".modal-body").html(data);
+				}
+			});    
+	   });
+	});
+	// 삭제버튼
+	function deleteLecture(){
+		location.href="${pageContext.request.contextPath}/lecture/deleteLecture.do?sno=" + ${lecture.SNO};
+	}
 </script>
 
 <div id="lecture-detail">

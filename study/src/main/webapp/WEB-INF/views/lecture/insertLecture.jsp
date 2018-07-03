@@ -139,121 +139,121 @@ $(function(){
       $(this).next(".custom-file-label").html(fileName);
    });
 
-	
-	//첨부파일 + 버튼 클릭시 첨부파일창이 밑에 더 생긴다.
-	$("form[name=lectureFrm]").on("click","button.addFile",function(){
-		console.log("adddd");
-		if($("div.fileWrapper").length<10){
-			$("div.fileWrapper:last").after($("div.forCopy").clone().removeClass("forCopy").addClass("fileWrapper"));
-		}			
-	});
-	
-	//첨부파일 - 버튼 클릭시  해당 첨부파일 영역이 사라진다.
-	$("form[name=lectureFrm]").on("click","button.removeFile",function(){
-		console.log($("div.fileWrapper:eq(0)"));
-		if( $(this).parent("div.fileWrapper")[0]!==$("div.fileWrapper:eq(0)")[0]){ //맨첫번째 첨부파일은 삭제이벤트 발생안함.
-			$(this).parent("div.fileWrapper").remove();
-		}
-	});	
-	
-	// 날짜를 조정해보자... 유효성 검사 포함.
-	// 유효성 검사 - 마감일
-	$("#ldate").on("change", function(){		
-		var ldate = $(this);
-		var ldateVal = ldate.val();
-		var lArray = ldateVal.split("-");
-		var deadline = new Date(lArray[0], lArray[1], lArray[2]).getTime();
-		
-		var sdate = $("#sdate");		
-		var edate = $("#edate");
-		sdate.val("");
-		edate.val("");
-		
-		$("input[class=day]").prop("checked", false);
-		$("input[class=day]").attr("disabled", true);
-		
-		sdate.attr("min", $(this).val());
-		edate.attr("min", $(this).val());		
-	});
-	
-	// 유효성 검사 - 강의기간
-	$("input[class=changeDate]").on("change", function(){
-		$("input[class=day]").prop("checked", false);
-		$("input[class=day]").attr("disabled", true);
-		
-		// 시작하는 날
-		var sdate = $("#sdate");
-		var sdateVal = sdate.val();
-		var sday = new Date(sdateVal).getDay();
-		var startArray = sdateVal.split("-");
-		var start_date = new Date(startArray[0], startArray[1], startArray[2]).getTime();
-		
-		// 끝나는 날
-		var edate = $("#edate");
-		var edateVal = edate.val();
-		var endArray = edateVal.split("-");
-		var end_date = new Date(endArray[0], endArray[1], endArray[2]).getTime();	
-		
-		// 신청 마감일
-		var ldateVal = $("#ldate").val();
-		
-		if( ldateVal == "" ){
-			alert("마감일 먼저 설정해주세요.");
-			sdate.val("");
-			edate.val("");
-		}			
-		
-		// 날짜 차이
-		var difference = (end_date-start_date)/1000/24/60/60;			
-		
-		// 알고리즘
-		if( sdateVal != "" && edateVal != "" ){
-			if( difference >= 0 && difference < 7 ){			
-				$("input[class=day]").attr("disabled", true);
-			 	for( var i = 0; i < difference+1; i++ ){
-			 		if( sday + i < 7)			
-			 			$("input[class=day]").eq(sday+i).attr("disabled", false);		 		
-			 		else
-			 			$("input[class=day]").eq(sday+i-7).attr("disabled", false);	
-			 	}
-			}
-			else if( difference > 7 )
-				$(".day").attr("disabled", false);
-			// 강의 끝나는 날이 시작하는 날보다 빠를 경우 초기화.
-			else if( difference < 0 ){
-				alert("강의가 끝나는 날이 시작하는 날보다 빠를 수 없습니다.");
-				sdate.val("");
-				edate.val("");
-			}
-			else
-				$(".day").attr("disabled", false);	
-		}
-		else{
-			$(".day").attr("disabled", true);	
-		}		
-	});
-	
-	// 유효성 검사 - 시간
-	$(".time").on("change", function(){
-		// 시작 시간
-		var startTime = $("#startTime");
-		var startTimeVal = startTime.val();
-		var startTimeArray = startTimeVal.split(":");
-		var start = Number(startTimeArray[0]);		
-		
-		// 마감 시간
-		var endTime = $("#endTime");
-		var endTimeVal = $("#endTime").val();
-		var endTimeArray = endTimeVal.split(":");
-		var end = Number(endTimeArray[0]);	
-		
-		// 시작시간이 마감시간보다 클 경우!
-		if( start > end ){
-			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
-			startTime.val("6:00");
-			endTime.val("24:00");
-		}
-	});
+   
+   //첨부파일 + 버튼 클릭시 첨부파일창이 밑에 더 생긴다.
+   $("form[name=lectureFrm]").on("click","button.addFile",function(){
+      console.log("adddd");
+      if($("div.fileWrapper").length<10){
+         $("div.fileWrapper:last").after($("div.forCopy").clone().removeClass("forCopy").addClass("fileWrapper"));
+      }         
+   });
+   
+   //첨부파일 - 버튼 클릭시  해당 첨부파일 영역이 사라진다.
+   $("form[name=lectureFrm]").on("click","button.removeFile",function(){
+      console.log($("div.fileWrapper:eq(0)"));
+      if( $(this).parent("div.fileWrapper")[0]!==$("div.fileWrapper:eq(0)")[0]){ //맨첫번째 첨부파일은 삭제이벤트 발생안함.
+         $(this).parent("div.fileWrapper").remove();
+      }
+   });   
+   
+   // 날짜를 조정해보자... 유효성 검사 포함.
+   // 유효성 검사 - 마감일
+   $("#ldate").on("change", function(){      
+      var ldate = $(this);
+      var ldateVal = ldate.val();
+      var lArray = ldateVal.split("-");
+      var deadline = new Date(lArray[0], lArray[1], lArray[2]).getTime();
+      
+      var sdate = $("#sdate");      
+      var edate = $("#edate");
+      sdate.val("");
+      edate.val("");
+      
+      $("input[class=day]").prop("checked", false);
+      $("input[class=day]").attr("disabled", true);
+      
+      sdate.attr("min", $(this).val());
+      edate.attr("min", $(this).val());      
+   });
+   
+   // 유효성 검사 - 강의기간
+   $("input[class=changeDate]").on("change", function(){
+      $("input[class=day]").prop("checked", false);
+      $("input[class=day]").attr("disabled", true);
+      
+      // 시작하는 날
+      var sdate = $("#sdate");
+      var sdateVal = sdate.val();
+      var sday = new Date(sdateVal).getDay();
+      var startArray = sdateVal.split("-");
+      var start_date = new Date(startArray[0], startArray[1], startArray[2]).getTime();
+      
+      // 끝나는 날
+      var edate = $("#edate");
+      var edateVal = edate.val();
+      var endArray = edateVal.split("-");
+      var end_date = new Date(endArray[0], endArray[1], endArray[2]).getTime();   
+      
+      // 신청 마감일
+      var ldateVal = $("#ldate").val();
+      
+      if( ldateVal == "" ){
+         alert("마감일 먼저 설정해주세요.");
+         sdate.val("");
+         edate.val("");
+      }         
+      
+      // 날짜 차이
+      var difference = (end_date-start_date)/1000/24/60/60;         
+      
+      // 알고리즘
+      if( sdateVal != "" && edateVal != "" ){
+         if( difference >= 0 && difference < 7 ){         
+            $("input[class=day]").attr("disabled", true);
+             for( var i = 0; i < difference+1; i++ ){
+                if( sday + i < 7)         
+                   $("input[class=day]").eq(sday+i).attr("disabled", false);             
+                else
+                   $("input[class=day]").eq(sday+i-7).attr("disabled", false);   
+             }
+         }
+         else if( difference > 7 )
+            $(".day").attr("disabled", false);
+         // 강의 끝나는 날이 시작하는 날보다 빠를 경우 초기화.
+         else if( difference < 0 ){
+            alert("강의가 끝나는 날이 시작하는 날보다 빠를 수 없습니다.");
+            sdate.val("");
+            edate.val("");
+         }
+         else
+            $(".day").attr("disabled", false);   
+      }
+      else{
+         $(".day").attr("disabled", true);   
+      }      
+   });
+   
+   // 유효성 검사 - 시간
+   $(".time").on("change", function(){
+      // 시작 시간
+      var startTime = $("#startTime");
+      var startTimeVal = startTime.val();
+      var startTimeArray = startTimeVal.split(":");
+      var start = Number(startTimeArray[0]);      
+      
+      // 마감 시간
+      var endTime = $("#endTime");
+      var endTimeVal = $("#endTime").val();
+      var endTimeArray = endTimeVal.split(":");
+      var end = Number(endTimeArray[0]);   
+      
+      // 시작시간이 마감시간보다 클 경우!
+      if( start > end ){
+         alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
+         startTime.val("6:00");
+         endTime.val("24:00");
+      }
+   });
 });
 </script>
 
