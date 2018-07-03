@@ -54,7 +54,16 @@
 	<hr>
 </div>
 <section class="lecturelist-section">
+<div class="container">
+	<ul class="nav lectureCategory">
+		<li class="nav-item"><a class="nav-link">마감 임박</a></li>
+		<li class="nav-item"><a class="nav-link">모집 중</a></li>
+		<li class="nav-item"><a class="nav-link">진행 중</a></li>
+		<li class="nav-item"><a class="nav-link">강의 종료</a></li>
+	</ul>
+</div>
 <div id="container" class="section-content container rm_study_list lectures pixler">
+
 	<div class="content">
 		<div class="clearfix titlebar">
 			<div class="float-left titlebox">
@@ -62,9 +71,9 @@
 			</div>
 			<a href="${rootPath }/lecture/lectureList.do" class="btn float-right btn_all">전체보기</a>
 		</div>
-		
-		<ul class="list">
-		</ul>
+
+			<ul class="list">
+			</ul>
 	</div>
 </div>
 </section>
@@ -164,26 +173,12 @@
 
 <script>
 $(function(){
+	
+	lectureListCategory('study', "모집 중", 6, "SDATE", 'desc');
 	$('.carousel').carousel();
 	
 	
 
-	
-	
-	
-	$.ajax({
-		url:"${rootPath}/rest/counter",
-		dataType:"json",
-		success:function(data){
-        	$(".studyCounter").html(numberWithCommas(data.study+35102));
-        	$(".lectureCounter").html(numberWithCommas(data.lecture+1320));
-        	$(".memberCounter").html(numberWithCommas(data.member+3912912));
-		},error:function(){
-			
-		}
-	});
-	
-	
 	
 	
 	$.ajax({
@@ -236,6 +231,22 @@ $(function(){
 	});
 	
 	
+	$.ajax({
+		url:"${rootPath}/rest/counter",
+		dataType:"json",
+		success:function(data){
+        	$(".studyCounter").html(numberWithCommas(data.study+35102));
+        	$(".lectureCounter").html(numberWithCommas(data.lecture+1320));
+        	$(".memberCounter").html(numberWithCommas(data.member+3912912));
+		},error:function(){
+			
+		}
+	});
+	
+	
+
+	
+	
 	
 	$.ajax({
 		url : "${rootPath}/rest/home/restTypeLister",
@@ -246,10 +257,12 @@ $(function(){
 	})
 	
 	
+	
+	
 	$.ajax({
 		url:"${rootPath}/rest/home/restTypeLister",
 		dataType:"json",
-		data : {type : "lecture", status : "마감 임박", rownum : "9", order :"SDATE", desc:"desc" },
+		data : {type : "lecture", status : "마감 임박", rownum : "6", order :"SDATE", desc:"desc" },
 		success:function(data){
 			console.log(data);
 			var rmHtml = "";
@@ -299,6 +312,76 @@ $(function(){
 		}
 	});
 })
+
+$(".lectureCategory li a").click(function(){
+	var status = $(this).text();
+	lectureListCategory('lecture', status, 6, "SDATE", 'desc');
+});
+
+
+function lectureListCategory(type, status, rownum, order, desc){
+	$.ajax({
+		url:"${rootPath}/rest/home/restTypeLister",
+		dataType:"json",
+		data : {type : type, status : status , rownum : rownum , order : order, desc: desc },
+		success:function(data){
+			var rmHtml = "";
+        	for(index in data.list){
+        		var upfiles = data.list[index].UPFILE;
+        		if(upfiles != null){
+        			var upfile = upfiles.split(",");
+        		
+        		console.log("teststetsetetetse"+upfile);
+        		var study = data.list[index]; 
+        		rmHtml += "<li class='col-md-4'>";
+        		rmHtml += "<div class='pixel'>";
+       			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"'>";
+   				rmHtml += "<div class='photoSection'>";
+    				/* rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/board/20180701_160109479_94.jpg)'></div>"; */ 
+   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[upfile.length-1]+")'></div>";
+   				rmHtml += "</div>";
+				rmHtml += "<div class='inforSection'>";
+  				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 20)+"</h4>";
+/*   				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/study/20180625_215620103_62.gif' /></div>"; */
+  				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/member/"+study.MPROFILE+"' /></div>";
+  				
+   				rmHtml += "</div>";
+				rmHtml += "<div class='metaSection'>";
+  				rmHtml += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 20)+"</p>";
+  				/* rmHtml += 	"<p>"+ "내용이 없네 정말.."+"</p>"; */
+   				rmHtml += "</div>";
+				rmHtml += "<div class='localSection'>";
+  				rmHtml += 	"<div class='study'>"+study.SUBJECTNAME+"</div>";
+  				rmHtml += 	"<div class='local'>"+study.LOCAL+"</div>";
+  				rmHtml += 	"<div class='level'>"+study.DIFFICULTNAME+"</div>";
+  				
+  				if(study.STATUS =='강의 종료'){
+  					rmHtml += 	"<div class='time' style='background:#000; color:#fff;'>"+study.STATUS+"</div>";
+  				}else{
+  					rmHtml += 	"<div class='time'>"+study.STATUS+"</div>";
+  				}
+   				rmHtml += "</div>";
+   				rmHtml += "</a>"
+        		rmHtml += "</div>"
+        		rmHtml += "</li>"
+        		}
+        	}
+        	if(type =='lecture'){
+				$(".lectures ul").html(rmHtml);
+        	}else{
+				$(".studies ul").html(rmHtml);
+        	}
+        	
+		},error:function(){
+			
+		}
+	});
+	
+}
+
+
+
+
 </script>
 <style>
 .pixler .inforSection::before{
