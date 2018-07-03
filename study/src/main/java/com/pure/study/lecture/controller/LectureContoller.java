@@ -203,7 +203,7 @@ public class LectureContoller {
 			int wish = ls.lectureWish(map);
 			int insert = ls.preinsertApply(map);
 			
-			mav.addObject("pre", wish);
+			mav.addObject("wish", wish);
 			mav.addObject("insert", insert);
 		}
 

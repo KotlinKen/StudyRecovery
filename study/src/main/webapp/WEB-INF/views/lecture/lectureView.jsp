@@ -209,7 +209,7 @@
       <!-- 참여 -->
       <c:if test="${insert eq 0}">
          <button type="button" onclick="lectureApply();" value="0">참여 신청하기</button>
-         
+
          <!-- 찜 -->
          <c:if test="${wish eq 0}">
             <button type="button" onclick="lectureWish();">찜하기</button>
