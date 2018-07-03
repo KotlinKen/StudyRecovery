@@ -5,12 +5,12 @@ import java.util.Map;
 
 public interface SchedulerDAO {
 	
-	List<Map<String, Object>> studyFinishLeader();
+	List<Map<String, String>> studyFinishLeader();
 
-	int addExpLeader(List<Map<String, Object>> leaderMno);
+	int addExpLeader(Map<String, String> m);
 
-	List<Map<String, Object>> studyFinishMember();
+	List<Map<String, String>> studyFinishMember();
 
-	int addExpMember(List<Map<String, Object>> memberMno);
+	int addExpMember(Map<String, String> m);
 
 }

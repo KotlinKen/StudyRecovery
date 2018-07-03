@@ -68,6 +68,10 @@
 			<mapping path="/member/searchMyPageKwd.do"/>
 			<mapping path="/member/instructorApply.do"/>
 			<mapping path="/member/searchMyPageEvaluation.do"/>
+			<mapping path="/member/applyButton.do"/>
+			<mapping path="/member/applyListView.do"/>
+			<mapping path="/member/reviewFinish.do"/>
+			<mapping path="/member/reviewEnroll.do"/>
 			
 			<beans:bean class="com.pure.study.common.interceptor.LoginCheckInterceptor" id="loginCheck"/>
 		</interceptor>

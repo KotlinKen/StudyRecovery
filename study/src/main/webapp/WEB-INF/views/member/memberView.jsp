@@ -104,7 +104,7 @@
          		<td>
          			<c:if test="${!(memberLoggedIn.mprofile eq 'no')}">
                   <div id="imgChange" style="width:100px;">
-                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" style="width:100px;" /> 
+                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" onerror="this.src=''" style="width:100px;" /> 
                   </div>
                   </c:if>
                   <c:if test="${memberLoggedIn.mprofile eq 'no'}">

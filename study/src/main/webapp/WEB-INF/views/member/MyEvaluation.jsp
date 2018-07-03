@@ -65,6 +65,9 @@
 				</span>
 				</c:forEach>
 		</c:if>
+		<c:if test="${eval eq 'npoint' }">
+			<h5>당신의 평가 점수는 ${list.NPOINT }입니다.</h5>
+		</c:if>
 	</div>
 	<br />
 	<br />

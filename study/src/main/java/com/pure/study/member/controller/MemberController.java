@@ -28,7 +28,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -39,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.pure.study.common.crontab.dao.SchedulerDAO;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.exception.MemberException;
 import com.pure.study.member.model.service.MemberService;
@@ -72,6 +72,10 @@ public class MemberController {
 	
 	@Autowired
 	private RestMemberService rs;
+	
+
+	@Autowired
+	private SchedulerDAO schedulerDAO;
 	
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -383,7 +387,7 @@ public class MemberController {
 				rmMap.put("log", "login");
 				rs.addMember(rmMap);
 				/*김률민 추가 */
-				
+								
 				if(admin==null) {
 					mav.setViewName("redirect:"+prev);
 				}else {
@@ -1063,7 +1067,6 @@ public class MemberController {
 		}
 	
 	//insert all을 통해 평가 내용을 등록한다.
-	
 	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST, produces = "application/text; charset=utf8")
 	@ResponseBody public ModelAndView reviewEnroll(@RequestParam(value="tmno") String[] tmno 
 												, @RequestParam("sno") String[] sno 

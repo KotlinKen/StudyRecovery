@@ -6,25 +6,22 @@
 		select distinct s.sno as "sno", s.mno "mno" from study s join crew c on s.sno=c.sno where to_char(edate,'yyyy/mm/dd')=to_char(sysdate,'yyyy/mm/dd')
 	</select>
 	<resultMap type="map" id="leader"></resultMap>
-	<update id="addExpLeader">
-		update member m set m.exp=m.exp+200 where mno in (0
+	<update id="addExpLeader" parameterType="map" >
+		update member m set m.exp=m.exp+200 where m.mno in (#{mno})
+		<!-- (0
 		<foreach collection="mno" item="item"  open="," separator=",">
 				#{item}
 		</foreach>
-		)
+		) -->
 	</update>
 	
 	<select id="studyFinishMember" resultMap="member">
-		select s.sno, s.mno, c.mno from study s join crew c on s.sno=c.sno  where to_char(edate,'yyyy/mm/dd')=to_char(sysdate,'yyyy/mm/dd')
+		select s.sno as "sno", c.mno as "mno" from study s join crew c on s.sno=c.sno  where to_char(edate,'yyyy/mm/dd')=to_char(sysdate,'yyyy/mm/dd')
 	</select>
 	<resultMap type="map" id="member"></resultMap>
 	
-	<update id="addExpMember">
-		update member m set m.exp=m.exp+100 where mno in (0
-		<foreach collection="mno" item="item"  open="," separator=",">
-				#{item}
-		</foreach>
-		)
+	<update id="addExpMember" parameterType="map" >
+		update member m set m.exp=m.exp+100 where m.mno in (#{mno})
 	</update>
 	
 </mapper>

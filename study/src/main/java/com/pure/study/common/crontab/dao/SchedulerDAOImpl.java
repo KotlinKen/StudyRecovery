@@ -15,23 +15,24 @@ public class SchedulerDAOImpl implements SchedulerDAO {
 	SqlSessionTemplate sqlSession;
 
 	@Override
-	public List<Map<String, Object>> studyFinishLeader() {
+	public List<Map<String, String>> studyFinishLeader() {
 		return sqlSession.selectList("scheduler.studyFinishLeader");
 	}
 
 	@Override
-	public int addExpLeader(List<Map<String, Object>> leaderMno) {
-		return sqlSession.update("scheduler.addExpLeader");
+	public int addExpLeader(Map<String, String> leaderMno) {
+		return sqlSession.update("scheduler.addExpLeader", leaderMno);
 	}
 
 	@Override
-	public List<Map<String, Object>> studyFinishMember() {
+	public List<Map<String, String>> studyFinishMember() {
 		return sqlSession.selectList("scheduler.studyFinishMember");
 	}
 
 	@Override
-	public int addExpMember(List<Map<String, Object>> memberMno) {
-		return sqlSession.update("scheduler.addExpMember");
+	public int addExpMember(Map<String, String> memberMno) {
+		return sqlSession.update("scheduler.addExpMember", memberMno);
 	}
+
 
 }
