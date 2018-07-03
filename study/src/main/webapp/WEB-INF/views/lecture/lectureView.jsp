@@ -30,7 +30,7 @@
 	         },
 	         success:function(data){
 	        	//강의를 등록할 수 있는 경우.
-	         	if( data == 0 ){
+	         	if( data == "" ){
 	         		 IMP.request_pay({
 	     			    pg : 'inicis', // version 1.1.0부터 지원.
 	     			    pay_method : 'card',
@@ -39,8 +39,7 @@
 	     			    amount : 100,
 	     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
 	     			}, function(rsp) {
-	     			    if ( rsp.success ) {		     			    	
-	     			    	
+	     			    if ( rsp.success ) {	    			    	
 	     			        $.ajax({
 	     			        	url : "applyLecture.do",
 	     			        	data: {
@@ -73,7 +72,7 @@
 	         	}
 	        	// 없는 경우.
 	         	else{
-	         		alert("이미 신청하신 강의입니다.");
+	         		alert(data);
 	         	}
 	         }
 	      }); 		  
@@ -143,7 +142,8 @@
 	</c:if>
 
 	<span>LEVEL : ${lecture.DNAME }</span> <span>${lecture.LNAME }-${lecture.TNAME }</span>
-	<span>${lecture.TITLE }</span> <span>스터디 소개 : ${lecture.CONTENT }</span>
+	<span>${lecture.TITLE }</span> <br />
+	<span>스터디 소개 : ${lecture.CONTENT }</span> 
 
 	<div id="detail">
 		<span>지역 : ${lecture.LNAME } ${lecture.TNAME }</span> 
@@ -203,13 +203,22 @@
 	<br />
 
 	<c:if test="${memberLoggedIn.getMno() ne null && memberLoggedIn.getMno() ne lecture.MNO  }">
-		<button type="button" onclick="lectureApply();">참여 신청하기</button>
-		
-		<c:if test="${pre eq 0}">
-			<button type="button" onclick="lectureWish();">찜하기</button>
+		<!-- 참여 -->
+		<c:if test="${insert eq 0}">
+			<button type="button" onclick="lectureApply();" value="0">참여 신청하기</button>
 		</c:if>
-		<c:if test="${pre ne 0 }">
-			<button type="button" onclick="lectureWishCancel();">찜 취소</button>
+		<c:if test="${insert ne 0}">
+			<button type="button" onclick="lectureApplyCancel();" value="1">강의 신청 취소</button>
+		</c:if>
+		
+		<!-- 찜 -->
+		<c:if test="${insert eq 0 }">
+			<c:if test="${wish eq 0}">
+				<button type="button" onclick="lectureWish();">찜하기</button>
+			</c:if>
+			<c:if test="${wish ne 0 }">
+				<button type="button" onclick="lectureWishCancel();">찜 취소</button>
+			</c:if>
 		</c:if>
 	</c:if>
 </div>

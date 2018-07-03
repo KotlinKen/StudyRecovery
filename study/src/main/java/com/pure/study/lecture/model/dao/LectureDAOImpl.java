@@ -133,12 +133,22 @@ public class LectureDAOImpl implements LectureDAO {
 	}
 
 	@Override
-	public List<Map<String, Object>> selectLectureListByMno(int mno) {
-		return session.selectList("lecture.selectLectureListByMno", mno);
+	public List<Map<String, Object>> selectLectureListByMno(Map<String, Object> key) {
+		return session.selectList("lecture.selectLectureListByMno", key);
 	}
 
 	@Override
 	public int confirmInstructor(int mno) {
 		return session.selectOne("lecture.confirmInstructor", mno);
+	}
+
+	@Override
+	public int deleteLectures(Map<String, Object> map) {
+		return session.delete("lecture.deleteLectures", map);
+	}
+
+	@Override
+	public Lecture selectLectureByMnoTypeLecture(int sno) {
+		return session.selectOne("lecture.selectLectureByMnoTypeLecture", sno);
 	}
 }

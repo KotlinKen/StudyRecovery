@@ -130,13 +130,23 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public List<Map<String, Object>> selectLectureListByMno(int mno) {
-		return ld.selectLectureListByMno(mno);
+	public List<Map<String, Object>> selectLectureListByMno(Map<String, Object> key) {
+		return ld.selectLectureListByMno(key);
 	}
 
 	@Override
 	public int confirmInstructor(int mno) {
 		return ld.confirmInstructor(mno);
+	}
+
+	@Override
+	public int deleteLectures(Map<String, Object> map) {
+		return ld.deleteLectures(map);
+	}
+
+	@Override
+	public Lecture selectLectureByMnoTypeLecture(int sno) {
+		return ld.selectLectureByMnoTypeLecture(sno);
 	}
 
 

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="lecture">	
 	<resultMap type="map" id="map">
-		<result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String"/>
 	</resultMap>
 
 	
@@ -52,7 +52,7 @@
 	</insert>
 	
 	<insert id="applyLecture">
-		INSERT INTO APPLY VALUES( SEQ_APPLY.NEXTVAL, #{mno}, #{sno}, DEFAULT)
+		INSERT INTO CREW VALUES( SEQ_CREW.NEXTVAL, #{mno}, #{sno})
 	</insert>
 	
 	<insert id="insertPay">
@@ -94,6 +94,7 @@
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		       CONTENT,
 		       TITLE,
 		       UPFILE,
 		       TIME,
@@ -131,6 +132,8 @@
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		       FREQ,
+		       CONTENT,
 		       RECRUIT,
 		        TITLE,
 		        UPFILE,
@@ -148,6 +151,10 @@
 		      FROM STUDY S 
 		WHERE TYPE = 'lecture' AND SNO = #{sno}) A
 		ORDER BY SNO DESC
+	</select>
+	
+	<select id="selectLectureByMnoTypeLecture" resultType="lecture">
+		SELECT * FROM STUDY WHERE SNO = #{sno}
 	</select>
 	
 	<select id="selectTotalLectureCountBySearch" resultType="_int">
@@ -229,21 +236,35 @@
 	</select>
 	
 	<select id="preinsertApply" resultType="_int">
-		SELECT COUNT(*) FROM APPLY WHERE SNO = #{sno} AND MNO = #{mno}
+		SELECT COUNT(*) FROM CREW WHERE SNO = #{sno} AND MNO = #{mno}
 	</select>
 	
 	<select id="selectLectureListByMno" resultMap="map">
 		SELECT SDATE,
 			   EDATE,
 		       FREQ,
-		       SUBSTR(TIME,0,INSTR(TIME,':')-1) AS STIME,
-		       SUBSTR(TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
-		FROM STUDY WHERE MNO = #{mno}
+		       SUBSTR(S.TIME,0,INSTR(TIME,':')-1) AS STIME,
+		       SUBSTR(S.TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
+		<if test="key=='study'">
+		FROM STUDY S
+		</if>
+		<if test="key=='crew'">
+		FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
+		</if>
+		WHERE S.MNO = #{mno}
 	</select>
 	
 	<delete id="deleteLecture">
 		DELETE FROM STUDY WHERE SNO = #{sno} and STATUS = '모집 중'
 	</delete>
+	
+	<delete id="deleteLectures">
+		delete from study where sno in 
+		
+		<foreach item="sno" index="i" collection="lectures" open="(" separator="," close=")">
+			#{sno}     
+		</foreach>
+    </delete>
 	
 	<select id="selectByDeadline" resultMap="map">
 	 select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
