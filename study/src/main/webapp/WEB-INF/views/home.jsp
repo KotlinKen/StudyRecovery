@@ -37,6 +37,10 @@
 
 
 <section class="studylist-section">
+
+<div class="container">
+
+</div>
 <div id="container" class="section-content container rm_study_list studies pixler">
 	<div class="content">
 		<div class="clearfix titlebar">
@@ -45,8 +49,17 @@
 			</div>
 			<a href="${rootPath }/study/studyList.do" class="btn float-right btn_all">전체보기</a>
 		</div>
-		<ul class="list">
-		</ul>
+
+			<ul class="nav studiesCategory">
+				<li class="nav-item"><a class="nav-link">전체 보기</a></li>
+				<li class="nav-item"><a class="nav-link">마감 임박</a></li>
+				<li class="nav-item"><a class="nav-link">모집 중</a></li>
+				<li class="nav-item"><a class="nav-link">진행 중</a></li>
+				<li class="nav-item"><a class="nav-link">강의 종료</a></li>
+			</ul>
+
+			<ul class="list">
+			</ul>
 	</div>
 </div>
 </section>
@@ -174,7 +187,7 @@
 <script>
 $(function(){
 	
-	lectureListCategory('study', "모집 중", 6, "SDATE", 'desc');
+	lectureListCategory('study', "", 6, "SDATE", 'desc');
 	$('.carousel').carousel();
 	
 	
@@ -224,7 +237,7 @@ $(function(){
 	        		rmHtml += "</li>"
         		//}
         	}
-			$(".studies ul").html(rmHtml);
+			//$(".studies ul").html(rmHtml);
 		},error:function(){
 			
 		}
@@ -306,7 +319,7 @@ $(function(){
         		rmHtml += "</li>"
         		}
         	}
-			$(".lectures ul").html(rmHtml);
+			$(".lectures .list").html(rmHtml);
 		},error:function(){
 			
 		}
@@ -314,12 +327,20 @@ $(function(){
 })
 
 $(".lectureCategory li a").click(function(){
-	var status = $(this).text();
+	if($(this).text() == "전체 보기"){status = "";}else{status=$(this).text();}
+	
+	$(this).addClass("active");
 	lectureListCategory('lecture', status, 6, "SDATE", 'desc');
+});
+$(".studiesCategory li a").click(function(){
+	if($(this).text() == "전체 보기"){status = "";}else{status=$(this).text();}
+	$(this).addClass("active");
+	lectureListCategory('study', status, 6, "SDATE", 'desc');
 });
 
 
 function lectureListCategory(type, status, rownum, order, desc){
+
 	$.ajax({
 		url:"${rootPath}/rest/home/restTypeLister",
 		dataType:"json",
@@ -338,7 +359,7 @@ function lectureListCategory(type, status, rownum, order, desc){
        			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"'>";
    				rmHtml += "<div class='photoSection'>";
     				/* rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/board/20180701_160109479_94.jpg)'></div>"; */ 
-   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[upfile.length-1]+")'></div>";
+   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+")'></div>";
    				rmHtml += "</div>";
 				rmHtml += "<div class='inforSection'>";
   				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 20)+"</h4>";
@@ -367,9 +388,9 @@ function lectureListCategory(type, status, rownum, order, desc){
         		}
         	}
         	if(type =='lecture'){
-				$(".lectures ul").html(rmHtml);
+				$(".lectures .list").html(rmHtml);
         	}else{
-				$(".studies ul").html(rmHtml);
+				$(".studies .list").html(rmHtml);
         	}
         	
 		},error:function(){
