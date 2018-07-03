@@ -96,7 +96,6 @@ public class LectureContoller {
 			/****** MultipartFile을 이용한 파일 업로드 처리로직 시작 ******/
 			for (MultipartFile f : upFiles) {
 				if (!f.isEmpty()) {
-					System.out.println("if = " + f);
 					// 파일명 재생성
 					String originalFileName = f.getOriginalFilename();
 					String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
@@ -191,14 +190,18 @@ public class LectureContoller {
 	public ModelAndView lectureView(@RequestParam int sno,
 			@RequestParam(required = false, defaultValue = "0") int mno) {
 		ModelAndView mav = new ModelAndView();
+		
+		
 		Map<String, Integer> map = new HashMap<>();
 		map.put("sno", sno);
 
-		// 이미 찜이 들어가 있는지 확인하려고~
+		// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
 		if (mno > 0) {
 			map.put("mno", mno);
-			int pre = ls.lectureWish(map);
-			mav.addObject("pre", pre);
+			int wish = ls.lectureWish(map);
+			int insert = ls.preinsertApply(map);
+			mav.addObject("pre", wish);
+			mav.addObject("insert", insert);
 		}
 
 		Map<String, String> lecture = ls.selectLectureOne(sno);
@@ -260,30 +263,16 @@ public class LectureContoller {
 				String[] freqs = lecture.getFreqs().split(",");
 				int cnt = checkDate(lecture, list, freqs);
 
-				if (cnt == 0) {
-					Map<String, Integer> apply = new HashMap<>();
-
-					apply.put("sno", sno);
-					apply.put("mno", mno);
-
-					result = ls.applyLecture(apply);
-				} else {
+				if (cnt != 0) 
 					msg = "날짜나 요일, 시간이 겹치는 강의 또는 스터디가 존재합니다.";
-				}
+				
 			} catch (NullPointerException e) {
-				Map<String, Integer> apply = new HashMap<>();
-
-				apply.put("sno", sno);
-				apply.put("mno", mno);
-
-				result = ls.applyLecture(apply);
+				msg = "";
 			}
 
 		} else {
 			msg = "이미 신청한 강의입니다.";
 		}
-
-		System.out.println(msg);
 
 		return msg;
 	}
@@ -460,8 +449,8 @@ public class LectureContoller {
 
 	@RequestMapping("/lecture/lectureWish.do")
 	public String lectureWish(@RequestParam int sno, @RequestParam int mno) {
-		Map<String, Integer> map = new HashMap<>();
 		ModelAndView mav = new ModelAndView();
+		Map<String, Integer> map = new HashMap<>();
 
 		map.put("sno", sno);
 		map.put("mno", mno);
