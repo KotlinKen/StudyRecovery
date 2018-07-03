@@ -62,6 +62,7 @@
 			</div>
 			<a href="${rootPath }/lecture/lectureList.do" class="btn float-right btn_all">전체보기</a>
 		</div>
+		
 		<ul class="list">
 		</ul>
 	</div>
@@ -256,10 +257,6 @@ $(function(){
         		var upfiles = data.list[index].UPFILE;
         		if(upfiles != null){
         			var upfile = upfiles.split(",");
-        			console.log("업파일"+upfile[0]);
-        		
-        		
-        		
         		
         		console.log("teststetsetetetse"+upfile);
         		var study = data.list[index]; 
@@ -268,7 +265,7 @@ $(function(){
        			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"'>";
    				rmHtml += "<div class='photoSection'>";
     				/* rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/board/20180701_160109479_94.jpg)'></div>"; */ 
-   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[0]+")'></div>";
+   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[upfile.length-1]+")'></div>";
    				rmHtml += "</div>";
 				rmHtml += "<div class='inforSection'>";
   				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 20)+"</h4>";
