@@ -488,80 +488,80 @@ public class MemberController {
 	// ****************(방법1)비밀번호 변경 페이지 보내주기*********************
 
 	// 이메일로 비밀번호 변경 페이지를 보내준다.
-	@RequestMapping(value = "/member/mailSending.do", method = RequestMethod.POST)
-	public ModelAndView mailSending(HttpServletRequest request, @RequestParam String mid, @RequestParam String email) {
-		ModelAndView mav = new ModelAndView();
-		String msg = "";
-		String loc = "/";
+		@RequestMapping(value = "/member/mailSending.do", method = RequestMethod.POST)
+		public ModelAndView mailSending(HttpServletRequest request, @RequestParam String mid, @RequestParam String email) {
+			ModelAndView mav = new ModelAndView();
+			String msg = "";
+			String loc = "/";
 
-		// 1. 페이지의 인증키를 생성한다.
-		String tempPwd = "";
-		int tempSize = 8;
-		char[] temp = new char[tempSize];
+			// 1. 페이지의 인증키를 생성한다.
+			String tempPwd = "";
+			int tempSize = 8;
+			char[] temp = new char[tempSize];
 
-		// 48~57- 숫자, 65~90- 대문자, 97~122- 소문자
-		for (int i = 0; i < tempSize; i++) {
-			int rnd = (int) (Math.random() * 122) + 48;
-			if (rnd > 48 && rnd < 57 || rnd > 65 && rnd < 90 || rnd > 97 && rnd < 122) {
-				temp[i] = (char) rnd;
-				tempPwd += temp[i];
+			// 48~57- 숫자, 65~90- 대문자, 97~122- 소문자
+			for (int i = 0; i < tempSize; i++) {
+				int rnd = (int) (Math.random() * 122) + 48;
+				if (rnd > 48 && rnd < 57 || rnd > 65 && rnd < 90 || rnd > 97 && rnd < 122) {
+					temp[i] = (char) rnd;
+					tempPwd += temp[i];
+				} else {
+					i--;
+				}
+			}
+
+			// 2. 입력한 아이디와 이메일이 일치하는지 확인
+			Member equalM = new Member();
+			equalM.setMid(mid);
+			equalM.setEmail(email);
+			int resultEqual = memberService.selectCntMember(equalM);
+
+			// 3. 입력한 아이디와 이메일이 일치하면 이메일로 비밀번호 변경 페이지를 전송함.
+			if (resultEqual > 0) {
+
+				try {
+					MimeMessage message = mailSender.createMimeMessage();
+					MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+
+					msg = "비밀번호 변경을 메일로 발송하였습니다.";
+
+					messageHelper.setFrom("kimemail2018@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
+					messageHelper.setTo(email); // 받는사람 이메일
+					messageHelper.setSubject("스터디 그룹 임시 비밀번호 발송"); // 메일제목은 생략이 가능하다
+
+					// 4. 인증키를 암호화 한다.
+					Member changeM = new Member();
+					String encodedPassword = bcryptPasswordEncoder.encode(tempPwd);
+					changeM.setPwd(encodedPassword);
+					changeM.setMid(mid);
+
+					// 4.1 암호화 한 인증키를 디비에 넣어준다.(임시 비밀번호처럼 )
+					int result = memberService.updatePwd(changeM);
+
+					// 4.2 메일 내용에 form을 이용하여 비밀번호를 변경하고자 하는 아이디와 인증키(페이지의 유효성?을 위해)를 보내준다.
+					messageHelper.setText(new StringBuffer().append(
+							"<form action='http://localhost:9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
+							.append("<input type='hidden' name='mid' value='" + mid + "'/>")
+							.append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
+							.append("<button type='submit'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
+
+					mailSender.send(message);
+				} catch (Exception e) {
+					e.getStackTrace();
+				}
+
 			} else {
-				i--;
-			}
-		}
-
-		// 2. 입력한 아이디와 이메일이 일치하는지 확인
-		Member equalM = new Member();
-		equalM.setMid(mid);
-		equalM.setEmail(email);
-		int resultEqual = memberService.selectCntMember(equalM);
-
-		// 3. 입력한 아이디와 이메일이 일치하면 이메일로 비밀번호 변경 페이지를 전송함.
-		if (resultEqual > 0) {
-
-			try {
-				MimeMessage message = mailSender.createMimeMessage();
-				MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
-
-				msg = "비밀번호 변경을 메일로 발송하였습니다.";
-
-				messageHelper.setFrom("kimemail2018@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
-				messageHelper.setTo(email); // 받는사람 이메일
-				messageHelper.setSubject("스터디 그룹 임시 비밀번호 발송"); // 메일제목은 생략이 가능하다
-
-				// 4. 인증키를 암호화 한다.
-				Member changeM = new Member();
-				String encodedPassword = bcryptPasswordEncoder.encode(tempPwd);
-				changeM.setPwd(encodedPassword);
-				changeM.setMid(mid);
-
-				// 4.1 암호화 한 인증키를 디비에 넣어준다.(임시 비밀번호처럼 )
-				int result = memberService.updatePwd(changeM);
-
-				// 4.2 메일 내용에 form을 이용하여 비밀번호를 변경하고자 하는 아이디와 인증키(페이지의 유효성?을 위해)를 보내준다.
-				messageHelper.setText(new StringBuffer().append(
-						"<form action='http://localhost:9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
-						.append("<input type='hidden' name='mid' value='" + mid + "'/>")
-						.append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
-						.append("<button type='submit'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
-
-				mailSender.send(message);
-			} catch (Exception e) {
-				e.getStackTrace();
+				msg = "일치하는 회원 정보가 없습니다.";
 			}
 
-		} else {
-			msg = "일치하는 회원 정보가 없습니다.";
-			loc = "/member/memberFindPage.do?findType=비밀번호";
+			mav.addObject("loc", loc);
+			mav.addObject("msg", msg);
+
+			mav.setViewName("common/msg");
+
+			return mav;
 		}
-
-		mav.addObject("loc", loc);
-		mav.addObject("msg", msg);
-
-		mav.setViewName("common/msg");
-
-		return mav;
-	}
+		
 	// 5. 암호화 한 인증키를 이동시켜준다.
 	@RequestMapping(value = "/member/memberPwd.do", method = RequestMethod.POST)
 	public ModelAndView pwd(String mid, String key) {
