@@ -71,14 +71,23 @@
 	<if test="kno!=0">
 	and k.kno=#{kno}
 	</if>
-	<if test="dno!=0">
+	<if test="dno!=null and dno!=0">
 	and s.dno=#{dno}
 	</if>
 	<if test="leadername!=null and leadername !='' ">
 	and  m.mname like '%'||#{leadername}||'%'
 	</if>
+	<if test="title!=null and title!= '' ">
+	and s.title like '%'||#{title}||'%'
+	</if>
+	<if test="month!=null and month!=0">
+	and to_char(s.sdate ,'mm') = #{month}
+	</if>
+	<if test="year!=null and year!=0">
+	and to_char(s.sdate ,'yyyy') like '%'||#{year}||'%'
+	</if>
     order by s.regdate desc
-  
+ 
   </select>
   <select id="selectStudyAdd" resultMap="mapForStudy">
   	select  s.sno,s.mno,sb.subno,k.kno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
@@ -124,12 +133,22 @@
 	<if test="kno!=0">
 	and k.kno=#{kno}
 	</if>
-	<if test="dno!=0">
+	<if test="dno!=null and dno!=0">
 	and s.dno=#{dno}
 	</if>
 	<if test="leadername!=null and leadername !='' ">
 	and  m.mname like '%'||#{leadername}||'%'  
 	</if>
+	<if test="title!=null and title!= '' ">
+	and s.title like '%'||#{title}||'%'
+	</if>
+	<if test="month!=null and month!=0">
+	and to_char(s.sdate ,'mm') = #{month}
+	</if>
+	<if test="year!=null and year!=0">
+	and to_char(s.sdate ,'yyyy') like '%'||#{year}||'%'
+	</if>
+    order by s.regdate desc
   </select>
   
   
@@ -242,5 +261,39 @@
   <select id="selectStudyByMnoTypeStudy" resultType="study">
   	select * from study where sno=#{sno}
   </select>
+  
+  <select id="selectStudyAdminSearchList" resultMap="mapForStudy">
+  	  select s.sno,s.mno, m.mname mname, m.mprofile, m.mid, k.kindname kname, k.kno,sb.subno,sb.subjectname subname, l.lno,l.local lname,t.tno,t.townname tname,
+	  		d.dno,d.DIFFICULTNAME dname,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,to_char(s.ldate,'yyyy-mm-dd') ldate,
+	  		to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate 
+	  from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno 
+	  			   join subject sb on s.subno=sb.subno join kind k on sb.kno=k.kno join member m on s.mno=m.mno
+	  where s.type='study' 
+    <if test="lno!=0">
+	and l.lno =#{lno}
+	</if>
+	<if test="tno!=0">
+	and s.tno=#{tno}
+	</if>
+	<if test="subno!=0">
+	and sb.subno=#{subno}
+	</if>
+	<if test="kno!=0">
+	and k.kno=#{kno}
+	</if>
+	<if test="leadername!=null and leadername !='' ">
+	and  m.mname like '%'||#{leadername}||'%'
+	</if>
+	<if test="title!=null and title!= '' ">
+	and s.title like '%'||#{title}||'%'
+	</if>
+	<if test="month!=0">
+	and to_char(s.sdate ,'mm') like '%'||#{month}||'%'
+	</if>
+	<if test="year!=0">
+	and to_char(s.sdate ,'yyyy') like '%'||#{year}||'%'
+	</if>
+    order by s.regdate desc
+   </select>
   
 </mapper>

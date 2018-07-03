@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -668,6 +670,39 @@ public class StudyController {
 		
 		
 		return result;
+	}
+	
+	
+	
+	@RequestMapping(value="/study/AdminStudySearch/{cPage}/{count}", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView selectStudyPageCount(@PathVariable(value="count", required=false) int count, @PathVariable(value="cPage", required=false) int cPage,
+			@RequestParam(value="lno",defaultValue="0") int lno, @RequestParam(value="tno",defaultValue="0") int tno,
+			@RequestParam(value="kno",defaultValue="0") int kno, @RequestParam(value="subno",defaultValue="0") int subno,
+			@RequestParam(value="leadername") String leadername,@RequestParam(value="title") String title,
+			@RequestParam(value="year",defaultValue="0") String year,@RequestParam(value="month",defaultValue="0") String month) {
+		
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		Map<String,Object> terms=new HashMap<>();
+		terms.put("lno", lno);
+		terms.put("tno", tno);
+		terms.put("subno", subno);
+		terms.put("kno", kno);
+		terms.put("leadername", leadername);
+		terms.put("cPage", cPage);
+		terms.put("numPerPage", count);
+		terms.put("year", year);
+		terms.put("month", month);
+		
+		List<Map<String, Object>> list = studyService.selectStudyForSearch(terms);
+		int total = studyService.studySearchTotalCount(terms);
+		
+		mav.addObject("list", list);
+		mav.addObject("numPerPage", count);
+		mav.addObject("cPage",cPage);
+		mav.addObject("total",total);
+		return mav;
 	}
 	
 	

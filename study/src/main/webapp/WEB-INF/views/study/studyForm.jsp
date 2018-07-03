@@ -389,26 +389,17 @@ $(function(){
 		}		
 	});
 	
-	/* $(".time").on("change", function(){
-		// 시작 시간
-		var startTime = $("#starttime");
-		var startTimeVal = startTime.val();
-		var startTimeArray = startTimeVal.split(":");
-		var start = Number(startTimeArray[0]);		
-		
-		// 마감 시간
-		var endTime = $("#endtime");
-		var endTimeVal = $("#endtime").val();
-		var endTimeArray = endTimeVal.split(":");
-		var end = Number(endTimeArray[0]);	
-		
-		// 시작시간이 마감시간보다 클 경우.
-		if( start > end ){
-			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
-			startTime.val("6:00");
-			endTime.val("7:00");
-		}
-	}); */
+	$("div.fileWrapper div.custom-file input:file").on('change',function(){
+	      var ext = $(this).val().split(".").pop().toLowerCase();
+	      console.log("ext="+ext);
+	       if (ext.length > 0) {
+	          if ($.inArray(ext, [ "gif", "png", "jpg",
+	                "jpeg" ]) == -1) {
+	             alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
+	             return false;
+	          }
+	       }
+	 });
 	
 });
 
