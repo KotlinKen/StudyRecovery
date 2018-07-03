@@ -65,8 +65,8 @@ function validate(){
 	// 유효성 검사 - 지역,도시
 	var local = $("#local").val();
 	var town = $("#town").val();
-	
-	if( local=="" || town=="세부 지역을 선택하세요"){
+	console.log("local="+local+";;");
+	if( local=="선택하세요" || town=="세부 지역을 선택하세요"){
 		alert("지역을 선택해주세요");
 		return false;	
 	}
@@ -125,9 +125,17 @@ function validate(){
 	$("#time").val(startTime + "~" + endTime);	
 	
 	
+	var ext = $("div.fileWrapper div.custom-file input:file").val().split(".").pop().toLowerCase();
+	console.log("ext="+ext);
+    if (ext.length > 0) {
+       if ($.inArray(ext, [ "gif", "png", "jpg",
+             "jpeg" ]) == -1) {
+          alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
+          return false;
+       }
+    }
 	
-	
-	return true;
+	return false;
 }
 
 $(document).ready(function(){
@@ -457,7 +465,7 @@ $(function(){
 		
 		<input type="hidden" name="time" id="time"/>
 		<label for="price">일회 사용회비 : </label>
-		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" />
+		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" value="0" />
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>
@@ -476,7 +484,7 @@ $(function(){
 			    <span class="input-group-text">첨부파일</span>
 			  </div>
 			  <div class="custom-file">
-			    <input type="file" class="custom-file-input" name="upFile">
+			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" >
 			    <label class="custom-file-label">파일을 선택하세요</label>
 			  </div>
 			  <button type="button" class="addFile">+</button>

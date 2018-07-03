@@ -383,7 +383,7 @@ $(function(){
     <label>금 </label><input type="checkbox" class="day" name="freqs" value="금" />
     <label>토 </label><input type="checkbox" class="day" name="freqs" value="토" />
 	    
-	<label for="starttime">스터디 시간</label>
+	<label for="startTime">스터디 시간</label>
 	<select name="startTime" id="startTime" class="time">
 		<c:forEach var="i" begin="6" end="23">
 			<option value="${i }:00">${i }:00</option>		

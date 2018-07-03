@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="lecture">
+<mapper namespace="lecture">	
 	<resultMap type="map" id="map">
 		<result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
 	</resultMap>
+
 	
 	<insert id="insertLecture">
 		<if test="upfile.equals('')">		
@@ -114,7 +115,7 @@
 		SELECT COUNT(*) FROM STUDY WHERE TYPE = 'lecture'
 	</select>
 	
-	<select id="selectLectureOne" resultType="map">
+	<select id="selectLectureOne" resultMap="map">
 		SELECT SNO,
 			   A.MNO AS MNO,
 		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
@@ -135,7 +136,8 @@
 		        UPFILE,
 		        TIME,
 		        NVL(PRICE, 0) AS PRICE,
-		        STATUS,        
+		        STATUS,
+		        CONTENT,        
 		        TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
 		        TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
 		        TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
@@ -248,7 +250,7 @@
   		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
  		  m.mprofile,l.local local,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
  	 from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
- 	 where   s.type='lecture' and s.status in ('모집중','마감임박')
+ 	 where   s.type='lecture' and s.status in ('모집 중','마감 임박')
   	 order by s.ldate
 	
 	</select>
@@ -256,7 +258,7 @@
 	<select id="lectureDeadlineCount" resultType="_int">
 	  select  count(*) cnt
 	  from 	  study s 
-	  where   s.type='lecture' and s.status in ('모집중','마감임박')
+	  where   s.type='lecture' and s.status in ('모집 중','마감 임박')
 	  order by s.ldate	
 	</select>
 	
@@ -268,7 +270,7 @@
 	  from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' and s.status in ('모집중','마감임박','진행중')
+	        where s.type='lecture' and s.status in ('모집 중','마감 임박','진행 중')
 	        group by s.sno 
 	      ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
 	  order by cnt desc, s.REGDATE
@@ -279,7 +281,7 @@
 	 from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' and s.status in ('모집중','마감임박','진행중')
+	        where s.type='lecture' and s.status in ('모집 중','마감 임박','진행 중')
 	        group by s.sno 
 	        order by cnt desc
 	       )	
