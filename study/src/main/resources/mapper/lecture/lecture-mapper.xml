@@ -253,7 +253,7 @@
    </select>
    
    <delete id="deleteLecture">
-      DELETE FROM STUDY WHERE SNO = #{sno} and STATUS = '모집 중'
+      DELETE FROM STUDY WHERE SNO = #{sno} AND STATUS NOT '강의 종료' AND TYPE = 'LECTURE'
    </delete>
    
    <delete id="deleteLectures">
