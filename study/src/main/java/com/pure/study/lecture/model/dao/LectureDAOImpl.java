@@ -156,4 +156,9 @@ public class LectureDAOImpl implements LectureDAO {
 	public List<Map<String, Object>> restTypeLister(Map<String, String> queryMap) {
 		return session.selectList("lecture.restTypeLister", queryMap);
 	}
+
+	@Override
+	public int lectureCancel(Map<String, Integer> map) {
+		return session.delete("lecture.lectureCancel", map);
+	}
 }
