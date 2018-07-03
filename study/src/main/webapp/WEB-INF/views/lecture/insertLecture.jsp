@@ -254,7 +254,20 @@ $(function(){
          endTime.val("24:00");
       }
    });
+   
+
+   $("div.fileWrapper div.custom-file input:file").on('change',function(){
+       var ext = $(this).val().split(".").pop().toLowerCase();
+       console.log("ext="+ext);
+        if (ext.length > 0) {
+           if ($.inArray(ext, [ "gif", "png", "jpg", "jpeg" ]) == -1) {
+              alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
+              return false;
+           }
+        }
+    });
 });
+
 </script>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp"/>
