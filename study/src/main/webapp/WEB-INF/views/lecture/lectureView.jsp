@@ -32,50 +32,50 @@
 	        	//강의를 등록할 수 있는 경우.
 	        	
 	        	if(confirm("결제 하시겠습니까?")){
-	         	if( data == "" ){
-	         		 IMP.request_pay({
-	     			    pg : 'inicis', // version 1.1.0부터 지원.
-	     			    pay_method : 'card',
-	     			    merchant_uid : 'merchant_' + new Date().getTime(),
-	     			    name : '스터디 강의 신청',
-	     			    amount : 100,
-	     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
-	     			}, function(rsp) {
-	     			    if ( rsp.success ) {	    			    	
-	     			        $.ajax({
-	     			        	url : "applyLecture.do",
-	     			        	data: {
-	     			        		sno : sno,
-	     			        		mno : mno
-	     			        	},
-	     			        	success:function(data){
-	     			        		var pno = rsp.imp_uid.replace("imp_", "");
-	     			        		
-	     			        		location.href = "successPay.do?mno=" + mno + 
-	     			        									 "&sno=" + sno + 
-	     			        									 "&pno=" + pno + 
-	     			        									 "&price=" + price;
-	     			        	}
-	     			        });
-   			        		msg = '결제가 완료되었습니다.';	     	     			        
-	     			    } else {
-	     			    	var pno = rsp.imp_uid.replace("imp_", "");
-	     			    	
-	     			    	location.href = "failedPay.do?mno=" + mno + 
-														 "&sno=" + sno + 
-														 "&pno=" + pno + 
-														 "&price=" + price;
-	     			    	
-	     			        msg = '결제에 실패하였습니다.';
-	     			        msg += '에러내용 : ' + rsp.error_msg;
-	     			    }
-	   			        alert(msg); 
-	     			});
-	         	}
-	         }
+		         	if( data == "" ){
+		         		 IMP.request_pay({
+		     			    pg : 'inicis', // version 1.1.0부터 지원.
+		     			    pay_method : 'card',
+		     			    merchant_uid : 'merchant_' + new Date().getTime(),
+		     			    name : '스터디 강의 신청',
+		     			    amount : 100,
+		     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
+		     			}, function(rsp) {
+		     			    if ( rsp.success ) {	    			    	
+		     			        $.ajax({
+		     			        	url : "applyLecture.do",
+		     			        	data: {
+		     			        		sno : sno,
+		     			        		mno : mno
+		     			        	},
+		     			        	success:function(data){
+		     			        		var pno = rsp.imp_uid.replace("imp_", "");
+		     			        		
+		     			        		location.href = "successPay.do?mno=" + mno + 
+		     			        									 "&sno=" + sno + 
+		     			        									 "&pno=" + pno + 
+		     			        									 "&price=" + price;
+		     			        	}
+		     			        });
+	   			        		msg = '결제가 완료되었습니다.';	     	     			        
+		     			    } else {
+		     			    	var pno = rsp.imp_uid.replace("imp_", "");
+		     			    	
+		     			    	location.href = "failedPay.do?mno=" + mno + 
+															 "&sno=" + sno + 
+															 "&pno=" + pno + 
+															 "&price=" + price;
+		     			    	
+		     			        msg = '결제에 실패하였습니다.';
+		     			        msg += '에러내용 : ' + rsp.error_msg;
+		     			    }
+		   			        alert(msg); 
+		     			});
+		         	}
+		         }
 	        	// 없는 경우.
 	         	else{
-	         		alert(data);
+	         		alert("결제를 취소하셨습니다.");
 	         	}
 	         }
 	      }).done(); 		  
@@ -209,19 +209,19 @@
       <!-- 참여 -->
       <c:if test="${insert eq 0}">
          <button type="button" onclick="lectureApply();" value="0">참여 신청하기</button>
-      </c:if>
-      <c:if test="${insert ne 0}">
-         <button type="button" onclick="lectureApplyCancel();" value="1">강의 신청 취소</button>
-      </c:if>
-      
-      <!-- 찜 -->
-      <c:if test="${insert eq 0 }">
+         
+         <!-- 찜 -->
          <c:if test="${wish eq 0}">
             <button type="button" onclick="lectureWish();">찜하기</button>
          </c:if>
          <c:if test="${wish ne 0 }">
             <button type="button" onclick="lectureWishCancel();">찜 취소</button>
          </c:if>
+      </c:if>
+      
+      <!-- 신청 취소 -->
+      <c:if test="${insert ne 0 }">
+        	강의 취소 준비.
       </c:if>
    </c:if>
 </div>

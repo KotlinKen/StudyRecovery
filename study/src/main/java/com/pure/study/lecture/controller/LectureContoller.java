@@ -199,8 +199,10 @@ public class LectureContoller {
 		// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
 		if (mno > 0) {
 			map.put("mno", mno);
+			
 			int wish = ls.lectureWish(map);
 			int insert = ls.preinsertApply(map);
+			
 			mav.addObject("pre", wish);
 			mav.addObject("insert", insert);
 		}
@@ -613,7 +615,7 @@ public class LectureContoller {
 	
 		try { 
 			//1. 파일업로드처리
-			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/lecture");
 				if(!f.isEmpty()) {
 					//파일명재생성
 					String originalFileName = f.getOriginalFilename();
