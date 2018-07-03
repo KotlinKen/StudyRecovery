@@ -67,7 +67,7 @@ public class LectureContoller {
 
 		int result = 0;
 		String msg = "";
-		String loc = "/lecture/lectureList";
+		String loc = "/lecture/lectureList.do";
 
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
