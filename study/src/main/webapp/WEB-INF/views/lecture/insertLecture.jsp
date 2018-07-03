@@ -246,7 +246,7 @@ $(function(){
 		var endTimeArray = endTimeVal.split(":");
 		var end = Number(endTimeArray[0]);	
 		
-		// 시작시간이 마감시간보다 클 경우.
+		// 시작시간이 마감시간보다 클 경우!
 		if( start > end ){
 			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
 			startTime.val("6:00");
