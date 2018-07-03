@@ -235,7 +235,7 @@
       <if test="key=='crew'">
       FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
       </if>
-      WHERE S.MNO = #{mno}
+      WHERE C.MNO = #{mno}
   </select>
   
   

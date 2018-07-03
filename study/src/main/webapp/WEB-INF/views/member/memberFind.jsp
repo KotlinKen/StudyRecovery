@@ -22,16 +22,19 @@
 		</c:if>
 		<c:if test="${pwd==null and findType eq '비밀번호' }">
 			비밀번호 찾기
-			<!-- 다시 써야함.(이메일에 임시 비밀번호 발송해야함.) -->
-			<form action="${pageContext.request.contextPath }/member/mailSending.do" method="post">
+			<form action="${pageContext.request.contextPath }/member/mailSending.do" method="post" onsubmit="return confirm();">
 				<input type="text" name="mid" id="mid" placeholder="아이디" />
 				<input type="email" name="email" id="email" placeholder="이메일" />
 				<input type="hidden" name="findType" value="비밀번호" />
-				<input type="submit" value="찾기" />
+				<input type="submit" id="pwdSearch" value="찾기" />
 			</form>
 			
 		</c:if>
-		
-		
+		<script>
+		function confirm(){
+				alert("잠시만 기다려주세요.");
+				return true;
+		} 
+		</script>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 	

@@ -552,6 +552,7 @@ public class MemberController {
 
 		} else {
 			msg = "일치하는 회원 정보가 없습니다.";
+			loc = "/member/memberFindPage.do?findType=비밀번호";
 		}
 
 		mav.addObject("loc", loc);
@@ -561,7 +562,6 @@ public class MemberController {
 
 		return mav;
 	}
-
 	// 5. 암호화 한 인증키를 이동시켜준다.
 	@RequestMapping(value = "/member/memberPwd.do", method = RequestMethod.POST)
 	public ModelAndView pwd(String mid, String key) {
@@ -577,7 +577,7 @@ public class MemberController {
 		} else {
 			System.out.println("값은 있지만 비번이 서로 매치가 안됨");// 유효성
 			mav.addObject("loc", "/");
-			mav.addObject("msg", "잘못된 접근입니다.");
+			mav.addObject("msg", "이미 비밀번호를 변경하셨습니다.");
 			mav.setViewName("common/msg");
 
 		}
@@ -606,7 +606,7 @@ public class MemberController {
 		Member m = memberService.selectOneMember(mid);
 
 		if (m == null) {
-			msg = "잘못된 접근입니다.";
+			msg = "이미 비밀번호를 변경하셨습니다.";
 			System.out.println("mid 잘못 가져옴");
 		} else {
 			// 인증키와 디비값 비교
@@ -622,7 +622,7 @@ public class MemberController {
 
 			} else {
 				System.out.println("값은 있지만 비번이 서로 매치가 안됨");// 유효성
-				msg = "잘못된 접근입니다.";
+				msg = "이미 비밀번호를 변경하셨습니다.";
 			}
 
 		}
@@ -1221,10 +1221,10 @@ public class MemberController {
 		   Map<String, Object> key = new HashMap<>();
 	       key.put("mno", mno);
 	       key.put("key", "crew");
-	       
 	       //수락하려는 회원이 이미 포함되어있는 크루 검사. 
 		   List<Map<String, Object>> list = studyService.selectStudyListBySno(key);
 		   Study study = studyService.selectStudyByMnoTypeStudy(sno);
+		   System.out.println("agree에 들어오나요"+list);
 			
 			   try {
 				   String[] freqs = study.getFreq().split(",");
@@ -1287,6 +1287,11 @@ public class MemberController {
 	            java.util.Date sdate = (java.util.Date) list.get(i).get("SDATE");
 	            java.util.Date edate = (java.util.Date) list.get(i).get("EDATE");
 	            
+	            System.out.println("sdate="+sdate);
+	            System.out.println("edate="+edate);
+	            System.out.println("sHour="+sHour);
+	            System.out.println("eHour="+eHour);
+	            
 	            // 등록된 날짜들에 포함되지 않는 경우
 	            if (lectureEdate < sdate.getTime() || lectureSdate > edate.getTime()) {
 	               System.out.println("날짜가 안겹쳐서 들어감");
@@ -1296,7 +1301,9 @@ public class MemberController {
 	               // 요일을 검사해보자...
 	               for (int j = 0; j < freqs.length; j++) {
 	                  if (list.get(i).containsValue(freqs[j])) {
+	                	  System.out.println("요일겹치기..");
 	                     // 등록이 가능한 경우.
+	                
 	                     if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
 	                           || eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
 	                        System.out.println("시간이 안겹쳐서 들어감");

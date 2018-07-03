@@ -242,7 +242,7 @@
       <!-- 이메일 변경 팝업창 끝 -->
          
          <script>
-            $(function(){
+/*             $(function(){
             	var len = 2000;
             	$("#length").html($("textarea[name=cover]").val().length+"/"+len);
                $("#newPwdCheck").on("keyup",function(){
@@ -267,7 +267,7 @@
                //이메일 변경
                $("[type=button]#emailUpdate").click(function(){
                   var newEmail = $("#newEmail").val().trim();
-                  	//console.log("확인");
+                  
                   if($("#newEmail").val().trim()==""){
                 	  alert("새로 변경할 이메일을 입력해주세요.");
                   }
@@ -351,7 +351,7 @@
             var upload = document.getElementsByName('upFile')[0];
             upload.onchange = function (e) {
             	  e.preventDefault();
-
+            }
 
 
 $("input[name=mname]").on("keyup", function() {
@@ -365,7 +365,7 @@ $("input[name=mname]").on("keyup", function() {
 		$("p#pmname").attr("style", "display:none;");
 	}
 });
-
+ */
 	$(function() {
 		var len = 2000;
 		$("#length").html($("textarea[name=cover]").val().length + "/" + len);
@@ -391,7 +391,7 @@ $("input[name=mname]").on("keyup", function() {
 		//이메일 변경
 		$("[type=button]#emailUpdate").click(function() {
 			var newEmail = $("#newEmail").val().trim();
-			//console.log("확인");
+			
 			if ($("#newEmail").val().trim() == "") {
 				alert("새로 변경할 이메일을 입력해주세요.");
 			}
@@ -472,11 +472,11 @@ $("input[name=mname]").on("keyup", function() {
 			img.src = event.target.result;
 			img.width = 200;
 			$("#imgChange").html(img);
-		};
+		}
 		reader.readAsDataURL(file);
 
 		return false;
-	};
+	}
 	function pwdDuplicateCheck() {
 		var newPwd = $("#newPwd").val().trim();
 		var reg = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/;
@@ -534,6 +534,7 @@ $("input[name=mname]").on("keyup", function() {
 		return true;
 	}
 	function emailSendKey(newEmail) {
+		alert("이메일로 인증번호를 발송하였습니다.");
 		$.ajax({
 			url : "newEmailKey.do",
 			data : {
@@ -541,9 +542,7 @@ $("input[name=mname]").on("keyup", function() {
 			},
 			dataType : "json",
 			success : function(data) {
-				//console.log(data);
 				if (data.isUsable == true) {
-					//console.log(data.tempPwd);
 					$("#keyCheck").val(data.tempPwd);
 				} else {
 
@@ -565,7 +564,7 @@ $("input[name=mname]").on("keyup", function() {
 				},
 				dataType : "json",
 				success : function(data) {
-
+					
 					if (data.isDulpl == false) {//이메일이 중복일 경우
 						$("input#send").val("duplication");
 						alert("이메일이 중복됩니다.");
@@ -582,7 +581,7 @@ $("input[name=mname]").on("keyup", function() {
 
 		}
 	}
-}
+
             
 </script>
    
