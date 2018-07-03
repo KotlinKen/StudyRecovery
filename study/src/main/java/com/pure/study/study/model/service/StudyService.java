@@ -61,5 +61,13 @@ public interface StudyService {
 
 	int selectApplyCount(int sno);
 
+	List<Map<String, Object>> selectOwnStudyList(int mno);
+
+	int deleteStudyArr(List<Integer> study_arr);
+
+	List<Map<String, Object>> selectStudyListBySno(Map<String, Object> key);
+
+	Study selectStudyByMnoTypeStudy(String sno);
+
 
 }

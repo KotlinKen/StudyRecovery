@@ -1,10 +1,5 @@
 package com.pure.study.board.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,17 +15,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.pure.study.board.model.excption.BoardException;
 import com.pure.study.board.model.service.ReplyService;
-import com.pure.study.board.model.vo.Attachment;
 import com.pure.study.board.model.vo.Board;
+import com.pure.study.member.model.service.MemberService;
+
 
 
 @Controller
 public class ReplyController {
+	
+	@Autowired
+	private MemberService memberService;
 
 	@Autowired
 	ReplyService replyService;
@@ -65,6 +62,7 @@ public class ReplyController {
 	@RequestMapping("/{location}/replyWrite")
 	public ModelAndView replyWrite(Board board, HttpServletRequest request,
 									@RequestParam Map<String, String> queryMap,
+									@RequestParam Map<String, Object> queryMapObject,
 									@RequestParam(value="bno", required=true, defaultValue="") int bno,
 									@RequestParam(value="parentno", required=false, defaultValue="0") String parentNo,
 									@RequestParam(value="lev", required=false, defaultValue="1") String lev,
@@ -86,9 +84,14 @@ public class ReplyController {
 		
 			int result = replyService.replyWrite(queryMap);
 			
+			if(result > 0 ) {
+				queryMapObject.put("npoint", 100);
+				memberService.updateNpoint(queryMapObject);
+			}
 			
 			String loc = "/";
 			String msg = "";
+			
 			
 			if(result>0) {
 				msg = "리플 등록 성공";

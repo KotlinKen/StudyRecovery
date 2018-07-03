@@ -30,7 +30,7 @@
 	         },
 	         success:function(data){
 	        	//강의를 등록할 수 있는 경우.
-	         	if( data == 0 ){
+	         	if( data == "" ){
 	         		 IMP.request_pay({
 	     			    pg : 'inicis', // version 1.1.0부터 지원.
 	     			    pay_method : 'card',
@@ -73,7 +73,7 @@
 	         	}
 	        	// 없는 경우.
 	         	else{
-	         		alert("이미 신청하신 강의입니다.");
+	         		alert(data);
 	         	}
 	         }
 	      }); 		  

@@ -362,8 +362,8 @@ public class BoardController {
 									   @RequestParam(value="bno", required=true, defaultValue="") String bno,
 									   @RequestParam(value="rno", required=true, defaultValue="") String rno,
 									   @RequestParam(value="mno", required=true, defaultValue="") String mno,
-									   @RequestParam (required=false) Map<String, String> queryMapString,
-									   @RequestParam (required=false) Map<String, Object> queryMapObject) {
+									   @RequestParam(required=false) Map<String, String> queryMapString,
+									   @RequestParam(required=false) Map<String, Object> queryMapObject) {
 										
 		ModelAndView mav = new ModelAndView("jsonView");
 		
@@ -376,6 +376,8 @@ public class BoardController {
 		System.out.println(bno);
 		System.out.println(rno);
 		System.out.println(mno);
+		System.out.println(queryMapString);
+		System.out.println(queryMapObject);
 		
 		int mNumber = 0; 
 		try {
@@ -389,12 +391,15 @@ public class BoardController {
 		}
 		
 		Member member = memberService.selectOneMemberMno(mNumber);
+		System.out.println(mNumber);
 		
 		if(member != null) {
 			member.setPoint(1000);
 			queryMapObject.put("mno", mno);
 			queryMapObject.put("npoint", 1000);
 			int result = memberService.updateNpoint(queryMapObject);
+			System.out.println(result);
+			System.out.println("여기까지");
 			
 			if(result > 0 ) {
 				System.out.println(result+"결과 결과 결과");
@@ -404,6 +409,9 @@ public class BoardController {
 				queryMapString.put("fork", rno);
 				int updateResult = boardService.updateBoard(queryMapString);
 				queryMapString.put("result", String.valueOf(updateResult));
+				
+				mav.addObject("queryMapString",queryMapString);
+				
 			}else {
 				queryMapString.put("result", result+"멤버 점수 업데이트에 실패하였습니다.");
 				mav.addObject("loc", "/");

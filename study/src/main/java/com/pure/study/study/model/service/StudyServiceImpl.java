@@ -173,6 +173,30 @@ public class StudyServiceImpl implements StudyService {
 		return studyDAO.selectApplyCount(sno);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectOwnStudyList(int mno) {
+		// TODO Auto-generated method stub
+		return studyDAO.selectOwnStudyList(mno);
+	}
+
+	@Override
+	public int deleteStudyArr(List<Integer> study_arr) {
+		// TODO Auto-generated method stub
+		return studyDAO.deleteStudyArr(study_arr);
+	}
+
+	@Override
+	public List<Map<String, Object>> selectStudyListBySno(Map<String, Object> key) {
+		// TODO Auto-generated method stub
+		return studyDAO.selectStudyListBySno(key);
+	}
+
+	@Override
+	public Study selectStudyByMnoTypeStudy(String sno) {
+		// TODO Auto-generated method stub
+		return studyDAO.selectStudyByMnoTypeStudy(sno);
+	}
+
 	
 
 

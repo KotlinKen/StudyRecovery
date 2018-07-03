@@ -14,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,6 +61,9 @@ public class LectureContoller {
 			@RequestParam(value = "freqs") String[] freqs, @RequestParam(value = "upFile") MultipartFile[] upFiles,
 			HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
+		Map<String, Object> key = new HashMap<>();
+		key.put("mno", lecture.getMno());
+		key.put("key", "study");
 
 		int result = 0;
 		String msg = "";
@@ -77,48 +82,8 @@ public class LectureContoller {
 		lecture.setFreqs(freq);
 
 		// 같은 날짜, 요일, 시간에 있는지를 검사해봅시다..
-		int cnt = 0;
-		List<Map<String, Object>> list = ls.selectLectureListByMno(lecture.getMno());
-
-		// 시간 뽑기
-		// 등록 될 시간들.
-		long lectureSdate = lecture.getSdate().getTime();
-		long lectureEdate = lecture.getEdate().getTime();
-
-		// 뽑아올 시간들.
-		String[] times = lecture.getTime().split("~");
-		int sHour = Integer.parseInt(times[0].split(":")[0]);
-		int eHour = Integer.parseInt(times[1].split(":")[0]);
-
-		for (int i = 0; i < list.size(); i++) {
-			Date sdate = (Date) list.get(i).get("SDATE");
-			Date edate = (Date) list.get(i).get("EDATE");
-
-			// 등록된 날짜들에 포함되지 않는 경우
-			if (lectureEdate < sdate.getTime() || lectureSdate > edate.getTime()) {
-				System.out.println("날짜가 안겹쳐서 들어감");
-			}
-			// 포함되는 경우
-			else if (lectureSdate >= sdate.getTime() || lectureEdate <= edate.getTime()) {
-				// 요일을 검사해보자...
-				for (int j = 0; j < freqs.length; j++) {
-					/* if (list.get(i).get("FREQ").toString().contains(freq)) { */
-					if (list.get(i).containsValue(freqs[j])) {
-						// 등록이 가능한 경우.
-						if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
-								|| eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
-							System.out.println("시간이 안겹쳐서 들어감");
-						}
-						// 불가능한 경우.
-						else {
-							cnt++;
-						}
-					} else {
-						System.out.println("요일이 안겹쳐서 들어감");					
-					}
-				}
-			}
-		}
+		List<Map<String, Object>> list = ls.selectLectureListByMno(key);
+		int cnt = checkDate(lecture, list, freqs);
 
 		if (cnt == 0) {
 			// 1.파일업로드처리
@@ -199,16 +164,16 @@ public class LectureContoller {
 
 	@RequestMapping("/lecture/lectureList.do")
 	public ModelAndView lectureList(@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage,
-				@RequestParam(required=false, defaultValue="0") int mno) {
+			@RequestParam(required = false, defaultValue = "0") int mno) {
 		ModelAndView mav = new ModelAndView();
 
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
 		List<Map<String, String>> diffList = ls.selectDiff();
-		
+
 		int check = 0;
-		
-		if( mno > 0 )
+
+		if (mno > 0)
 			check = ls.confirmInstructor(mno);
 
 		mav.addObject("locList", locList);
@@ -216,7 +181,7 @@ public class LectureContoller {
 		mav.addObject("diffList", diffList);
 		mav.addObject("cPage", cPage);
 		mav.addObject("check", check);
-		
+
 		mav.setViewName("lecture/lectureList");
 
 		return mav;
@@ -255,18 +220,72 @@ public class LectureContoller {
 		return mav;
 	}
 
-	@RequestMapping("/lecture/findLecture.do")
+	@RequestMapping("/lecture/deleteLectures")
 	@ResponseBody
-	public int findLecture(@RequestParam int sno, @RequestParam int mno) {
-		int result = 0;
-		Map<String, Integer> map = new HashMap<>();
+	public int deleteLectures(@RequestParam(value = "lectures[]") List<Integer> lectures) {
+		Map<String, Object> map = new HashMap<>();
 
-		map.put("sno", sno);
-		map.put("mno", mno);
+		map.put("lectures", lectures);
 
-		result = ls.preinsertApply(map);
+		int result = ls.deleteLectures(map);
 
 		return result;
+	}
+
+	@RequestMapping(value="/lecture/findLecture.do", produces="text/plain;charset=UTF-8")
+	@ResponseBody
+	public String findLecture(@RequestParam int sno, @RequestParam int mno) {
+		int result = 0;
+		String msg = "";
+
+		Map<String, Integer> preCheck = new HashMap<>();
+
+		preCheck.put("sno", sno);
+		preCheck.put("mno", mno);
+
+		// 이미 강의가 들어가 있는지 확인.
+		result = ls.preinsertApply(preCheck);
+
+		if (result == 0) {
+			Map<String, Object> key = new HashMap<>();
+
+			key.put("mno", mno);
+			key.put("key", "crew");
+
+			// mno로 crew쪽 맵 뽑아오기.
+			List<Map<String, Object>> list = ls.selectLectureListByMno(key);
+			Lecture lecture = ls.selectLectureByMnoTypeLecture(sno);
+
+			try {
+				String[] freqs = lecture.getFreqs().split(",");
+				int cnt = checkDate(lecture, list, freqs);
+
+				if (cnt == 0) {
+					Map<String, Integer> apply = new HashMap<>();
+
+					apply.put("sno", sno);
+					apply.put("mno", mno);
+
+					result = ls.applyLecture(apply);
+				} else {
+					msg = "날짜나 요일, 시간이 겹치는 강의 또는 스터디가 존재합니다.";
+				}
+			} catch (NullPointerException e) {
+				Map<String, Integer> apply = new HashMap<>();
+
+				apply.put("sno", sno);
+				apply.put("mno", mno);
+
+				result = ls.applyLecture(apply);
+			}
+
+		} else {
+			msg = "이미 신청한 강의입니다.";
+		}
+
+		System.out.println(msg);
+
+		return msg;
 	}
 
 	@RequestMapping("/lecture/applyLecture.do")
@@ -335,7 +354,7 @@ public class LectureContoller {
 		terms.put("kno", kno);
 		terms.put("dno", dno);
 		terms.put("leadername", leadername);
-		terms.put("cPage", cPage + 1);
+		terms.put("cPage", cPage);
 		terms.put("numPerPage", numPerPage);
 
 		// 검색 조건에 따른 총 스터기 갯수
@@ -345,7 +364,7 @@ public class LectureContoller {
 		List<Map<String, Object>> lectureList = ls.selectLectureListBySearch(terms);
 		mav.addObject("list", lectureList);
 		mav.addObject("total", total);
-		mav.addObject("cPage", cPage);
+		mav.addObject("cPage", cPage+1);
 
 		return mav;
 	}
@@ -526,4 +545,108 @@ public class LectureContoller {
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
+
+
+	// 관리자 강의페이지 - 률멘 방식
+	@RequestMapping(value = "/lecture/all/{cPage}/{count}", method = RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView selectLecturePageCount(@PathVariable(value = "count", required = false) int count,
+			@PathVariable(value = "cPage", required = false) int cPage) {
+
+		ModelAndView mav = new ModelAndView("jsonView");
+		List<Map<String, Object>> list = ls.selectLectureList(cPage, count);
+		int total = ls.selectTotalLectureCount();
+
+		mav.addObject("list", list);
+		mav.addObject("numPerPage", count);
+		mav.addObject("cPage", cPage);
+		mav.addObject("total", total);
+		return mav;
+	}
+
+	public int checkDate(Lecture lecture, List<Map<String, Object>> list, String[] freqs) {
+		int cnt = 0;
+
+		if (!list.isEmpty()) {
+			// 시간 뽑기
+			// 등록 될 시간들.
+			long lectureSdate = lecture.getSdate().getTime();
+			long lectureEdate = lecture.getEdate().getTime();
+
+			// 뽑아올 시간들.
+			String[] times = lecture.getTime().split("~");
+			int sHour = Integer.parseInt(times[0].split(":")[0]);
+			int eHour = Integer.parseInt(times[1].split(":")[0]);
+
+			for (int i = 0; i < list.size(); i++) {
+				Date sdate = (Date) list.get(i).get("SDATE");
+				Date edate = (Date) list.get(i).get("EDATE");
+
+				// 등록된 날짜들에 포함되지 않는 경우
+				if (lectureEdate < sdate.getTime() || lectureSdate > edate.getTime()) {
+					System.out.println("날짜가 안겹쳐서 들어감");
+				}
+				// 포함되는 경우
+				else if (lectureSdate >= sdate.getTime() || lectureEdate <= edate.getTime()) {
+					// 요일을 검사해보자...
+					for (int j = 0; j < freqs.length; j++) {
+						if (list.get(i).containsValue(freqs[j])) {
+							// 등록이 가능한 경우.
+							if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
+									|| eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
+								System.out.println("시간이 안겹쳐서 들어감");
+							}
+							// 불가능한 경우.
+							else {
+								cnt++;
+							}
+						} else {
+							System.out.println("요일이 안겹쳐서 들어감");
+						}
+					}
+				}
+			}
+		}
+
+		return cnt;
+	}
+
+	
+	@ResponseBody
+	@RequestMapping("/lecture/uploadImage.do")
+	public Map<String,String> uploadImage(@RequestParam("file") MultipartFile f,HttpServletRequest request) {
+
+		String renamedFileName="";
+		String saveDirectory="";
+		Map<String,String> map=new HashMap<>();
+	
+		try { 
+			//1. 파일업로드처리
+			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+				if(!f.isEmpty()) {
+					//파일명재생성
+					String originalFileName = f.getOriginalFilename();
+					String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+					int rndNum = (int)(Math.random()*1000); //0~9999
+					renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+				
+					try {
+						f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제저장하는코드. 
+					} catch (IllegalStateException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				
+				}
+			
+			}catch(Exception e) {
+				throw new RuntimeException("이미지등록오류");
+			}
+		
+		map.put("url", renamedFileName);
+		return map;
+	}
+
 }

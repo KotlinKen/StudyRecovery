@@ -51,7 +51,7 @@
 	</insert>
 	
 	<insert id="applyLecture">
-		INSERT INTO APPLY VALUES( SEQ_APPLY.NEXTVAL, #{mno}, #{sno}, DEFAULT)
+		INSERT INTO CREW VALUES( SEQ_CREW.NEXTVAL, #{mno}, #{sno})
 	</insert>
 	
 	<insert id="insertPay">
@@ -93,6 +93,7 @@
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		       CONTENT,
 		       TITLE,
 		       UPFILE,
 		       TIME,
@@ -130,6 +131,8 @@
 		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
 		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
 		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+		       FREQ,
+		       CONTENT,
 		       RECRUIT,
 		        TITLE,
 		        UPFILE,
@@ -146,6 +149,10 @@
 		      FROM STUDY S 
 		WHERE TYPE = 'lecture' AND SNO = #{sno}) A
 		ORDER BY SNO DESC
+	</select>
+	
+	<select id="selectLectureByMnoTypeLecture" resultType="lecture">
+		SELECT * FROM STUDY WHERE SNO = #{sno}
 	</select>
 	
 	<select id="selectTotalLectureCountBySearch" resultType="_int">
@@ -173,7 +180,7 @@
 			AND A.SUBNO = #{subno}
 		</if>
 		<if test="leadername!=null and leadername !='' ">
-			AND A.MNAME = #{leadername}
+			AND A.MNAME = '%'||#{leadername}||'%'
 		</if>
 		ORDER BY SNO DESC
 	</select>
@@ -221,34 +228,48 @@
 			AND A.SUBNO = #{subno}
 		</if>
 		<if test="leadername!=null and leadername !='' ">
-			AND A.MNAME = #{leadername}
+			AND A.MNAME = '%'||#{leadername}||'%'
 		</if>
 		ORDER BY SNO DESC
 	</select>
 	
 	<select id="preinsertApply" resultType="_int">
-		SELECT COUNT(*) FROM APPLY WHERE SNO = #{sno} AND MNO = #{mno}
+		SELECT COUNT(*) FROM CREW WHERE SNO = #{sno} AND MNO = #{mno}
 	</select>
 	
 	<select id="selectLectureListByMno" resultMap="map">
 		SELECT SDATE,
 			   EDATE,
 		       FREQ,
-		       SUBSTR(TIME,0,INSTR(TIME,':')-1) AS STIME,
-		       SUBSTR(TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
-		FROM STUDY WHERE MNO = #{mno}
+		       SUBSTR(S.TIME,0,INSTR(TIME,':')-1) AS STIME,
+		       SUBSTR(S.TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
+		<if test="key=='study'">
+		FROM STUDY S
+		</if>
+		<if test="key=='crew'">
+		FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
+		</if>
+		WHERE S.MNO = #{mno}
 	</select>
 	
 	<delete id="deleteLecture">
 		DELETE FROM STUDY WHERE SNO = #{sno} and STATUS = '모집 중'
 	</delete>
 	
+	<delete id="deleteLectures">
+		delete from study where sno in 
+		
+		<foreach item="sno" index="i" collection="lectures" open="(" separator="," close=")">
+			#{sno}     
+		</foreach>
+    </delete>
+	
 	<select id="selectByDeadline" resultMap="map">
 	 select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
   		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
- 		  m.profile,l.local local,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
+ 		  m.mprofile,l.local local,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
  	 from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
- 	 where   s.type='lecture' and s.ldate>=sysdate
+ 	 where   s.type='lecture' and s.status in ('모집중','마감임박')
   	 order by s.ldate
 	
 	</select>
@@ -256,7 +277,7 @@
 	<select id="lectureDeadlineCount" resultType="_int">
 	  select  count(*) cnt
 	  from 	  study s 
-	  where   s.type='lecture' and s.ldate>=sysdate
+	  where   s.type='lecture' and s.status in ('모집중','마감임박')
 	  order by s.ldate	
 	</select>
 	
@@ -264,11 +285,11 @@
 	  select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
 	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
 	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME dname,local, 
-	 		mid, mname, profile,cover
+	 		mid, mname, mprofile,cover
 	  from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' 
+	        where s.type='lecture' and s.status in ('모집중','마감임박','진행중')
 	        group by s.sno 
 	      ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
 	  order by cnt desc, s.REGDATE
@@ -279,7 +300,7 @@
 	 from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' 
+	        where s.type='lecture' and s.status in ('모집중','마감임박','진행중')
 	        group by s.sno 
 	        order by cnt desc
 	       )	

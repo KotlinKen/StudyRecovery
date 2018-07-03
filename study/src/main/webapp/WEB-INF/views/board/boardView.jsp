@@ -340,11 +340,19 @@ function fn_fork(mno, bno, rno){
 	        type : "POST",
 	        data : {"mno" : mno, "bno" : bno, "rno" : rno },
 	        dataType : "json",
-	        success : function(response) {
-	            console.log(response);
+	        success : function(res) {
+	        	console.log(res);
+	        	if(res.queryMapString.result > 0){
+	        		alert("글이 채택되었습니다.");
+        			location.href = "${rootPath}/board/boardView?bno="+bno;
+	        		console.log(res);
+	        	}else{
+	        		console.log(res);
+	        	}
 	        },
-	        error : function() {
+	        error : function(data) {
 	            alert("opps.....");
+	            console.log(data);
 	        }
 	     });
 	}

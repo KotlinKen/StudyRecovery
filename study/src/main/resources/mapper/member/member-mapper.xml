@@ -43,7 +43,7 @@
 	
 	
 	<!-- 회원 mno로 검색(률민오빠 요청) -->
-	<select id="selectOneMemberMno" parameterType="string" resultMap="memberMap">
+	<select id="selectOneMemberMno" resultMap="memberMap">
 		select * from member where mno=#{mno}
 	</select>
 	
@@ -232,6 +232,7 @@
 		<if test="searchKwd=='freq'">
 		or 1=0 )
 		</if>
+		order by s.regdate desc
 	</select>
 	<!-- 마이페이지 팀장의 스터디 목록 수 -->
 	<select id="selectLeaderListCnt" parameterType="map" resultType="_int">
@@ -411,6 +412,7 @@
 		<if test="searchKwd=='freq'">
 		or 1=0 )
 		</if>
+		order by s.regdate desc
 	</select>
 	<!-- 마이페이지 팀원의 스터디 목록 수 -->
 	<select id="selectMyStudyListCnt" parameterType="map" resultType="_int">
@@ -481,6 +483,7 @@
 		<if test="searchKwd=='freq'">
 		or 1=0 )
 		</if>
+		
 	</select>
 	<!-- 마이페이지 팀원의 스터디 resultMap -->
 	<resultMap type="map" id="mystudyList">
@@ -933,18 +936,29 @@
 	
 	<select id="searchEvaluation" resultMap="evaluation">
 		<if test="eval == 'exp'">
-			select e.expname as "expname", e.exp as "tblExp", (select exp from member where mno=#{mno}) as "exp"  from exp e where (e.exp <![CDATA[ > ]]> (select exp from member where mno=#{mno}) and e.exp <![CDATA[ <= ]]> (select exp from member where mno=#{mno})+1000) or e.exp<![CDATA[ >=]]>(select max(exp) from exp )
+			select "expname", "tblExp","exp" from(
+			select rownum as "rnum" , expname as "expname", exp as "tblExp", (select exp from member where mno=#{mno}) as "exp"
+			from(
+			select *
+			from exp 
+			order by exp desc) )
+			where "rnum"=(select count(*) from member m left join exp ee on m.exp <![CDATA[ < ]]> ee.exp where mno=#{mno})
 		</if>
 		<if test="eval == 'point'">
-			select g.status as "status",g.point, (select point from member where mno=#{mno}) as "point" from grade g 
-			where (g.point <![CDATA[ <= ]]> (select point from member where mno=#{mno}) and g.point <![CDATA[ > ]]> (select point from member where mno=#{mno})-5000)
-			
+			select "status", "point" from(
+			select rownum as "rnum", status as "status", (select point from member where mno=#{mno}) as "point"
+			from(
+			select *
+			from grade
+			order by point desc))
+			where "rnum"=(select count(*) from member m left join grade g on m.point <![CDATA[ < ]]> g.point where mno=#{mno})
 		</if>
 		<if test="eval == 'npoint'">
 			select npoint from member where mno=#{mno}
 		</if>
 		
 	</select>
+	
 	<resultMap type="map" id="evaluation"></resultMap>
 	<select id="selectGradeList" resultMap="grade">
 		select * from grade order by point

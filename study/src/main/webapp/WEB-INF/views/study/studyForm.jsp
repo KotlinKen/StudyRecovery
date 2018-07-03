@@ -6,8 +6,6 @@
  	<jsp:param value="" name="pageTitle"/>
 </jsp:include>	 
 
-
-
 <style>
 div.forCopy{
 	display:none;
@@ -47,7 +45,6 @@ $(document).ready(function() {
  		  enctype:'multipart/form-data',
  		  success:function(data){ 
  			  
- 		  	  console.log("dddd : "+data.url);
  		  	  var file=$("<img>").attr("src",
  		  			  "${pageContext.request.contextPath }/resources/upload/study/"+data.url);
  			  $(el).summernote('insertNode',file[0]);
@@ -97,6 +94,30 @@ function validate(){
 		return false;	
 	}
 	
+	
+		/*               시작 시간 마감 시간 유효성 검사             */
+		// 시작 시간
+		var startTime = $("#starttime");
+		var startTimeVal = startTime.val();
+		var startTimeArray = startTimeVal.split(":");
+		var start = Number(startTimeArray[0]);		
+		
+		// 마감 시간
+		var endTime = $("#endtime");
+		var endTimeVal = $("#endtime").val();
+		var endTimeArray = endTimeVal.split(":");
+		var end = Number(endTimeArray[0]);	
+		
+		// 시작시간이 마감시간보다 클 경우.
+		if( start > end ){
+			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
+			startTime.val("6:00");
+			endTime.val("7:00");
+			return false;
+		}
+		/*               시작 시간 마감 시간 유효성 검사             */
+	
+	
 	// time만들기.
 	var startTime = $("#starttime option:checked").val();
 	var endTime = $("#endtime option:checked").val();	
@@ -110,7 +131,6 @@ function validate(){
 }
 
 $(document).ready(function(){
-	$(".day").attr("disabled", true);
 	
 	
 	$(".day").attr("disabled", true);
@@ -152,13 +172,10 @@ $(function(){
 		success:function(data){
 			var html="<option>선택하세요</option>";
 			for(var index in data){
-				//console.log(data[index]);
 				html +="<option value='"+data[index].LNO+"'>"+data[index].LOCAL+"</option><br/>";
 			}
 			$("select#local").html(html); 
 			
-			
-		},error:function(){
 			
 		}
 	}); 
@@ -364,7 +381,7 @@ $(function(){
 		}		
 	});
 	
-	$(".time").on("change", function(){
+	/* $(".time").on("change", function(){
 		// 시작 시간
 		var startTime = $("#starttime");
 		var startTimeVal = startTime.val();
@@ -383,7 +400,7 @@ $(function(){
 			startTime.val("6:00");
 			endTime.val("7:00");
 		}
-	});
+	}); */
 	
 });
 
@@ -397,7 +414,7 @@ $(function(){
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
-		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
+		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required ></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
@@ -428,14 +445,19 @@ $(function(){
 		
 		<select name="endtime" id="endtime" class="time">
 			<c:forEach var="j" begin="7" end="24">
-				<option value="${j }:00">${j }:00</option>			
-			</c:forEach>
+			<c:if test="${j < 24}">
+				<option value="${j }:00">${j }:00</option>	
+			</c:if>
+			 <c:if test="${j == 24 }">
+				<option value="${j }:00" selected>${j }:00</option>		 
+			 </c:if>
+		</c:forEach>
 		</select>
 		<br />
 		
 		<input type="hidden" name="time" id="time"/>
 		<label for="price">일회 사용회비 : </label>
-		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" max="100000" />
+		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" />
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>

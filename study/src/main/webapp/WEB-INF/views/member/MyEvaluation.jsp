@@ -57,7 +57,7 @@
 		</c:if>
 		<c:if test="${eval eq 'point' }">
 				<div class="slidecontainer">
-				  <input type="range" min="${gradeMin.POINT }" max="${gradeMax.POINT }" value="${list.point[0] }" class="slider" id="myRange" disabled>
+				  <input type="range" min="${gradeMin.POINT }" max="${gradeMax.POINT }" value="${list.point }" class="slider" id="myRange" disabled>
 				</div>
 				<c:forEach var="g" items="${gradeList }" varStatus="vs">
 				<span style="position:absolute; left: ${((50*(vs.index))/2)*0.77+5}%;">
@@ -74,13 +74,14 @@
 	<%
 		Map<String, Object> map = (Map<String, Object>)request.getAttribute("list");
 		double a =0;
-		if(map!=null){
-			if(map.containsKey("tblExp")){
-				int tblExp = ((BigDecimal)map.get("tblExp")).intValue();
-				int exp = ((BigDecimal)map.get("exp")).intValue();
-				a = ((double)exp/tblExp)*100;
-			}			
-		}
+		if(map.containsKey("tblExp")){
+			int tblExp = ((BigDecimal)map.get("tblExp")).intValue();
+			int exp = ((BigDecimal)map.get("exp")).intValue();
+			int b = (tblExp-1000);
+			a = (((double)exp-b)/(tblExp-b))*100;
+			System.out.println(exp);
+			System.out.println(tblExp);
+		}		
 		
 	%>
 	<script>
