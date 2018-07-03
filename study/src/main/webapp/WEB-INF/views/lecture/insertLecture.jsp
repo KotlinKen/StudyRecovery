@@ -45,14 +45,14 @@ function validate(){
 	
 	/*               시작 시간 마감 시간 유효성 검사             */
 	// 시작 시간
-	var startTime = $("#starttime");
+	var startTime = $("#startTime");
 	var startTimeVal = startTime.val();
 	var startTimeArray = startTimeVal.split(":");
 	var start = Number(startTimeArray[0]);		
 	
 	// 마감 시간
-	var endTime = $("#endtime");
-	var endTimeVal = $("#endtime").val();
+	var endTime = $("#endTime");
+	var endTimeVal = $("#endTime").val();
 	var endTimeArray = endTimeVal.split(":");
 	var end = Number(endTimeArray[0]);	
 	
