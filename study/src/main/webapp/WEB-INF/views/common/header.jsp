@@ -265,7 +265,7 @@ function deleteCookie(cookieName){
  
 function getCookie(cookieName) {
     cookieName = cookieName + '=';
-    var cookieData = document.cookie + ';path=/';
+    var cookieData = document.cookie;
     var start = cookieData.indexOf(cookieName);
     var cookieValue = '';
     if(start != -1){

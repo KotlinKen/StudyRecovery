@@ -22,9 +22,23 @@
 	<label for="lecture">lecture</label>
 	<br />
 	<input type="radio" name="applyDate" id="present" value="present" ${(applyDate eq 'present') or (applyDate == null)?'checked':'' }/>
-	<label for="present">현재 신청 중인 스터디</label>
+	<label for="present">
+		<c:if test="${type eq 'lecture' }">
+			현재 신청 중인 강의
+		</c:if>
+		<c:if test="${type eq 'study' }">
+			현재 신청 중인 스터디
+		</c:if>
+	</label>
 	<input type="radio" name="applyDate" id="last" value="last"  ${applyDate eq 'last'?'checked':'' } />
-	<label for="last">신청이 지난 스터디</label>
+	<label for="last">
+		<c:if test="${type eq 'lecture' }">
+			신청이 지난 강의
+		</c:if>
+		<c:if test="${type eq 'study' }">
+			신청이 지난 스터디
+		</c:if>
+	</label>
 	<br />
 	<select id="searchKwd">
 		<option value="title" ${searchKwd eq 'title'?'selected':'' }>강의/스터디명</option>

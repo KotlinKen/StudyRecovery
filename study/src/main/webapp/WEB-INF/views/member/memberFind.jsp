@@ -25,7 +25,6 @@
 			<form action="${pageContext.request.contextPath }/member/mailSending.do" method="post" onsubmit="return confirm();">
 				<input type="text" name="mid" id="mid" placeholder="아이디" />
 				<input type="email" name="email" id="email" placeholder="이메일" />
-				<input type="hidden" name="findType" value="비밀번호" />
 				<input type="submit" id="pwdSearch" value="찾기" />
 			</form>
 			

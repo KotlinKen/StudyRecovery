@@ -9,6 +9,13 @@
 	ul#ul-page > li:nth-child(2){
 		background: #ffffff;
 	}
+	td{
+		max-width: 150;
+		word-break:break-all;
+		text-overflow:ellipsis; 
+		overflow:hidden;
+		white-space:nowrap;
+	}
 </style>
 
 <div class="page">
@@ -713,12 +720,13 @@
 			dataType: "json",
 			success: function(data){
 				////console.log(data);
+				var recruit = data.recruit;
 				var html ="<table>";
 				html += "<tr>";
 				html += "<td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td>";
 				html += "</tr>";
 				for(var i in data.applyList){
-					////console.log(data.applyList[i]);
+					//console.log(data.applyList[i]);
 					html += "<tr id='amno"+data.applyList[i].mno+"'>";
 					html += "<td>";
 					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png'  style='width:100px;'/>";
@@ -748,7 +756,7 @@
 					html += "</td>";
 					html += "</tr>";	
 					
-					$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+")");
+					$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+") 모집인원 : "+data.crewCnt+"/"+recruit);
 				}
 				html += "</table>";
 				
@@ -833,10 +841,13 @@
 					<%if(("lecture").equals(type)){%>
 						$("h5#modalLabel").html(data.studyName);
 					<%} else{%>
-						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+")");
+						
+						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+") 모집인원 : "+data.crewCnt+"/"+recruit);
 					<%}%>
 					
 					<%if(("lecture").equals(type)){%>
+						//여기가 강의 신청 현황의 값이 없을 경우
+						$("#div-reviewView").html("신청한 회원이 없습니다.");						
 					<%} else{%>
 						$("#div-reviewView").html("신청한 회원이 없습니다.");
 					<%}%>
@@ -875,15 +886,23 @@
 				}
 				
 				$("button[name=agree]").on("click",function(){
-					$(this).attr("style","color: red;");
-					$("#disagreeq"+this.id.split("q")[1]).attr("style","color: black;");
-					//console.log(this.id.split("q")[1]);
-					var mno = this.id.split("q")[1];
-					var sno = data.studyNo;
-					$("#div-reviewView").html(html);
-					$("tr#amno"+mno).remove();
-					
-					applyButton(sno, mno, "agree");
+					console.log(recruit);
+					//모집 인원이 회원으로 수락한 인원보다 크면 수락해준다.
+					if(data.crewCnt<recruit){
+						$(this).attr("style","color: red;");
+						$("#disagreeq"+this.id.split("q")[1]).attr("style","color: black;");
+						//console.log(this.id.split("q")[1]);
+						var mno = this.id.split("q")[1];
+						var sno = data.studyNo;
+						$("#div-reviewView").html(html);
+						$("tr#amno"+mno).remove();
+						
+						applyButton(sno, mno, "agree");
+					}
+					//모집 인원이 회원으로 수락한 인원보다 같거나 작으면 알림을 준다.
+					else{
+						alert("모집 인원이 꽉 찼습니다. ("+recruit+" 명)");
+					}
 				});
 				$(".cancel").on("click", function(){
 					var type = $(this).val().split(",")[0];
