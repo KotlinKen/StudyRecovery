@@ -5,8 +5,8 @@
 		value="MEMBER" name="pageTitle" /></jsp:include>
 <div class="studyList">
 	<%@ page import="java.util.*, java.math.*"%>
-	<link type="text/css" rel="stylesheet"
-		href="${rootPath}/resources/css/member/member.css" />
+	<link type="text/css" rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
+	<script src="${rootPath}/resources/js/member/enroll.js"></script>
 	<style>
 .container {
 	width: 60%;
@@ -57,28 +57,28 @@ table {
 	<!-- 장익순 버튼 설정 끝 -->
 	<jsp:include page="/WEB-INF/views/common/admin_footer.jsp" />
 	<!-- 개인 정보  -->
-	<div class="container">
-		<table class="table table-striped table-sm">
-			<thead>
-				<tr>
-					<th>회원 번호</th>
-					<td>${m.mno }</td>
-				</tr>
-				<tr>
-					<th>아이디</th>
-					<td>${m.mid }</td>
-				</tr>
-				<tr>
-					<th>이름</th>
-					<td>${m.mname }</td>
-				</tr>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-	</div>
-	<!-- 개인정보 끝 -->
 
+		<div class="container">
+			<table class="table table-striped table-sm">
+				<thead>
+					<tr>
+						<th>회원 번호</th>
+						<td>${m.mno }</td>
+					</tr>
+					<tr>
+						<th>아이디</th>
+						<td>${m.mid }</td>
+					</tr>
+					<tr>
+						<th>이름</th>
+						<td>${m.mname }</td>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	<!-- 개인정보 끝 -->
 	<!-- 경험치 시작 -->
 	<div id="div-eval" class="container">
 		<c:if test="${eval eq 'exp' }">
@@ -264,24 +264,101 @@ table {
 		else{
 			location.href="${pageContext.request.contextPath}/member/applyInstructCancel.do?ino="+${instruct.INO };
 		}
-		
 	}
 	function fileDownload(oName) {
 		oName=encodeURIComponent(oName);
 		console.log(oName);
 		location.href="${pageContext.request.contextPath}/member/boardDownload.do?oName="+oName;
-		
-		
 	}
 	
 </script>
 
-	</c:if>
+</c:if>
+	
+<c:if test="${size=='10'}">
 	<div class="container">
-		<button type="button" onclick="fn_goback();"
-			class="btn btn-outline-primary">돌아가기</button>
-	</div>
-	<br /> <br /> <br /> <br /> <br /> <br />
+		<form
+			action="${pageContext.request.contextPath}/member/"
+			method="post" name='mainForm' id='mainForm'
+			onsubmit="return adminValidate();">
+			<div id="id-password-div-ik">
+				<br />
+				<div id="userId-container">
+					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)"  maxlength="15" required autocomplete="off" value="${m.mno }" />
+				</div>
+				
+				<br />
+				
+			</div>
+			
+			<div id="name-phone-email-gender-div-ik">
+			
+			<!-- 이름 -->
+			<div>
+				<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off" value="${m.mname }"  />
+				<span id="nameerr" class="name"></span> 
+				<span id="nameok" class="name"></span> <br /> 
+			</div>
+			
+			<!-- 전화번호 -->
+			<div>
+				<input type="text" name="phone" id="phone" maxlength="11"  placeholder="전화번호(필수)" required required autocomplete="off" value="${m.phone }"  /> <br /> 
+				<span id="phoneerr" class="phone"></span> 
+			</div>
+			<br />
+			<!-- 이메일 -->
+			<input type="email" name="email" id="email" placeholder="이메일(필수)"  maxlength="15" required  autocomplete="off" value="${m.email }"  /> 
+			 
+			 
+			<br />
+			<!-- 생일 -->
+			<input type="date" id="birth" name="birth" required value="${m.birth }"/><br />
+			
+			<!-- 성별 -->
+			
+			</div>
+			
+			<div class="blank-ik"></div>
+			
+			<div id="choos-ik">
+			<br />
+			<input type="file" name="upFile" id="upFile" accept="image/*" value="${m.mprofile }" /> 
+			<div id="div-img-ik"></div>
+			<div>
+			<br />
+			<textarea rows="10" cols="50" name="cover" placeholder="당신을 소개 하세요 모두가 알 수 있도록...(선택)" maxlength="1000" ></textarea>
+			</div>
+			<br />
+			
+			당신이 무엇을 좋아하는지 궁금합니다.(선택) : <br />
+				<c:forEach var="v" items="${category }">
+				<span class="category">
+					<input type="checkbox" class="form-check-input" value="${v.KINDNAME }"
+						name="favor" id="${v.KINDNAME }" />
+					<label for="${v.KINDNAME }" class="form-check-input">${v.KINDNAME }</label>
+				</span>
+				</c:forEach>
+			
+			
+			<br />
+			<%-- <button type="button"
+				onclick="location.href='${pageContext.request.contextPath}'">취소</button> --%>
+			<input type="submit" id="submit" value="수정하기" class="btn btn-outline-primary"/>
+			<br />
+			<br />
+			</div>
+		</form>
+		</div>
+</c:if>	
+	
+	
+	
+	
+<div class="container">
+	<button type="button" onclick="fn_goback();"
+		class="btn btn-outline-primary">돌아가기</button>
+</div>
+<br /> <br /> <br /> <br /> <br /> <br />
 	<%
 		Map<String, Object> map = (Map<String, Object>) request.getAttribute("list");
 		double a = 0;

@@ -229,6 +229,7 @@ body {
 	</div>
 	<div id="enroll-container">
 		<br />
+		<h3>강사 신청</h3>
 		<form action="instructorApplyEnd.do" method="post" name='mainForm'
 			id='mainForm' onsubmit="return validate();"
 			enctype="multipart/form-data">
@@ -238,9 +239,22 @@ body {
 			
 			<br /> 
 			<!-- 파일 올리기 -->
-			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br /><br />
-			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
+			<div  class="card border-secondary mb-3" style="max-width: 38rem;">
+			<div class="card-header">
+			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br />
+			</div>
+			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
+			</div>
 			<br />
+			<div  class="card border-secondary mb-3" style="max-width: 38rem;">
+			<div class="card-header">
+			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
+			</div>
+			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
+			</div>
+			<br />
+			
+			
 			<!-- 카테고리 설정 -->
 			<div class="form-check-inline form-check">
 				<label for="kind">카테고리 : </label>
@@ -256,6 +270,8 @@ body {
 				<select name="sno" id="sub" required> <!-- ajax로 kind가져오기 -->
 					<option value="-1" >과목을 선택하세요.</option>
 				</select>
+				<br />
+				<br />
 				<br />
 			</div> 
 			<input type="submit" id="submit" value="강사 신청" class="btn btn-outline-secondary" />

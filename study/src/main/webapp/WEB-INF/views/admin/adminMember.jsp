@@ -13,9 +13,11 @@
 					<th>이름</th>
 					<th>연락처</th>
 					<th>성별</th>
-					<th>포인트</th>
-					<th>지식포인트</th>
-					<th>등록일</th>
+					<th>이메일</th>
+					<th>관심사</th>
+					<th>가입일</th>
+					<th>탈퇴일</th>
+					<th>수정/강퇴</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -29,7 +31,6 @@
 	  </ul>
 	</nav>
 </div>
-
 
 <script>
 $(function(){
@@ -80,15 +81,51 @@ function loadInstructor(cPage, pageBarSize, type){
 	    		member = data.list[index];
 	    		var upfile = (data.list[index].UPFILE);
 	    			rmHtml += "<tr>"
-	    				rmHtml += "<td>"+ member.MNO+"</td>";
-		    			rmHtml += "<td>" +member.MID +"</td>";
-		    			rmHtml += "<td>" +member.MNAME+"</td>";
-		    			rmHtml += "<td>" +member.PHONE+"</td>";
-		    			rmHtml += "<td>" +member.GENDER+"</td>";
-		    			rmHtml += "<td>" +member.POINT+"</td>";
-		    			rmHtml += "<td>" +member.NPOINT+"</td>";
-		    			rmHtml += "<td>" +member.REGDATES+"</td>";
-	    			rmHtml += "</tr>";
+	    				rmHtml += "<td>" +member.MNO+"</td>"; /* 번호  */
+		    			rmHtml += "<td>" +member.MID +"</td>";/* 아이디  */
+		    			rmHtml += "<td>" +member.MNAME+"</td>";/* 이름  */
+		    			rmHtml += "<td>" +member.PHONE+"</td>";/* 연락처  */
+		    			rmHtml += "<td>" +member.GENDER+"</td>";/* 성별  */
+		    			rmHtml += "<td>" +member.EMAIL+"</td>";/* 이메일  */
+		    			rmHtml += "<td>" +member.FAVOR+"</td>";/* 관심사  */
+		    			/* rmHtml += "<td>" +member.REGDATE+"</td>";/* 가입일  */ 
+		    			var d = new Date(member.REGDATE)
+		    			m = d.getMonth() + 1;
+		    		    if (m < 10)
+		    		        m = '0' + m
+		    		    if (d.getDate() < 10)
+		    		        day = '0' + d.getDate()
+		    		    else
+		    		        day = d.getDate();
+		    		    var formattedDate = m + "/" + day + "/" + d.getFullYear();
+		    		    var hours = (d.getHours() < 10) ? "0" + d.getHours() : d.getHours();
+		    		    var minutes = (d.getMinutes() < 10) ? "0" + d.getMinutes() : d.getMinutes();
+		    		    formattedDate = formattedDate;
+		    			
+		    		    rmHtml += "<td>" +formattedDate+"</td>";
+		    		   
+		    			
+		    		    /* rmHtml += "<td>" +member.QDATE+"</td>"; 탈퇴일 */
+						if(member.QDATE !=null){
+			    			var d = new Date(member.QDATE)
+			    			m = d.getMonth() + 1;
+			    		    if (m < 10)
+			    		        m = '0' + m
+			    		    if (d.getDate() < 10)
+			    		        day = '0' + d.getDate()
+			    		    else
+			    		        day = d.getDate();
+			    		    var formattedDate = m + "/" + day + "/" + d.getFullYear();
+			    		    var hours = (d.getHours() < 10) ? "0" + d.getHours() : d.getHours();
+			    		    var minutes = (d.getMinutes() < 10) ? "0" + d.getMinutes() : d.getMinutes();
+			    		    formattedDate = formattedDate;
+		    				rmHtml += "<td>" +formattedDate+"</td>";
+		    			}else{
+		    				console.log("?");
+	    					rmHtml += "<td>--</td>";
+		    			}
+		    			
+		    			rmHtml += "<td><button type=\"button\" class=\"btn btn-outline-primary btn-block\"onclick=\"fn_Modify('"+member.MID+"');\">수정/강퇴</button>";/* 수정/강퇴버튼 */
 	    	}
 			$(".table-responsive tbody").html(rmHtml);
 
@@ -96,8 +133,14 @@ function loadInstructor(cPage, pageBarSize, type){
 			
 		}
 	});
+	
 }
 
+</script>
+<<script type="text/javascript">
+function fn_Modify(e) {
+	location.href ="${rootPath }/member/memberSelectONEView.do?mid="+e+"&&size="+10;
+}
 </script>
 
 <jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />

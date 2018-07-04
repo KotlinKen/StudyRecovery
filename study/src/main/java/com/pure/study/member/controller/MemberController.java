@@ -2185,7 +2185,7 @@ public class MemberController {
 		return map;
 	}
 	@RequestMapping("/member/memberSelectONEView.do")
-	public ModelAndView memberSelectONEView(@RequestParam(value="mid") String mid) {
+	public ModelAndView memberSelectONEView(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
 		ModelAndView mav = new ModelAndView();
 		System.out.println(mid);
 		Member m = memberService.selectOneMember(mid);
@@ -2201,6 +2201,15 @@ public class MemberController {
 		//경험치 및 포인트 등급 보여주기
 		List<Map<String,Object>> replyList = memberService.selectmemberReply(m.getMno());
 		Map<String,String> instruct = memberService.selectOneInstruct(m.getMno());
+		System.out.println("size = "+size);
+		if(size==10) {
+			mav.addObject("size",size);
+			List<Map<String, String>> category = memberService.selectCategory();
+			
+			System.out.println(category);
+			mav.addObject("category", category);
+		}
+		
 		//평가 관리 페이지로 이동
 		mav.addObject("instruct", instruct); 
 		mav.addObject("eval", "exp"); 
