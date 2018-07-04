@@ -1,8 +1,8 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param
-		value="MEMBER" name="pageTitle" /></jsp:include>
+<%-- <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="MEMBER" name="pageTitle" /></jsp:include> --%>
+<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="INSTRUCTOR" name="pageTitle" /></jsp:include>
 <div class="studyList">
 	<%@ page import="java.util.*, java.math.*"%>
 	<link type="text/css" rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
@@ -52,10 +52,14 @@ table {
 	display: inline-block;
 }
 </style>
+
+<c:if test="${size!='10'}">
+
 	<!-- 장익순 작업 머리 버튼 설정 시작  -->
 	<jsp:include page="/WEB-INF/views/member/admin_member_button.jsp" />
 	<!-- 장익순 버튼 설정 끝 -->
-	<jsp:include page="/WEB-INF/views/common/admin_footer.jsp" />
+</c:if>
+
 	<!-- 개인 정보  -->
 
 		<div class="container">
@@ -276,79 +280,7 @@ table {
 </c:if>
 	
 <c:if test="${size=='10'}">
-	<div class="container">
-		<form
-			action="${pageContext.request.contextPath}/member/"
-			method="post" name='mainForm' id='mainForm'
-			onsubmit="return adminValidate();">
-			<div id="id-password-div-ik">
-				<br />
-				<div id="userId-container">
-					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)"  maxlength="15" required autocomplete="off" value="${m.mno }" />
-				</div>
-				
-				<br />
-				
-			</div>
-			
-			<div id="name-phone-email-gender-div-ik">
-			
-			<!-- 이름 -->
-			<div>
-				<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off" value="${m.mname }"  />
-				<span id="nameerr" class="name"></span> 
-				<span id="nameok" class="name"></span> <br /> 
-			</div>
-			
-			<!-- 전화번호 -->
-			<div>
-				<input type="text" name="phone" id="phone" maxlength="11"  placeholder="전화번호(필수)" required required autocomplete="off" value="${m.phone }"  /> <br /> 
-				<span id="phoneerr" class="phone"></span> 
-			</div>
-			<br />
-			<!-- 이메일 -->
-			<input type="email" name="email" id="email" placeholder="이메일(필수)"  maxlength="15" required  autocomplete="off" value="${m.email }"  /> 
-			 
-			 
-			<br />
-			<!-- 생일 -->
-			<input type="date" id="birth" name="birth" required value="${m.birth }"/><br />
-			
-			<!-- 성별 -->
-			
-			</div>
-			
-			<div class="blank-ik"></div>
-			
-			<div id="choos-ik">
-			<br />
-			<input type="file" name="upFile" id="upFile" accept="image/*" value="${m.mprofile }" /> 
-			<div id="div-img-ik"></div>
-			<div>
-			<br />
-			<textarea rows="10" cols="50" name="cover" placeholder="당신을 소개 하세요 모두가 알 수 있도록...(선택)" maxlength="1000" ></textarea>
-			</div>
-			<br />
-			
-			당신이 무엇을 좋아하는지 궁금합니다.(선택) : <br />
-				<c:forEach var="v" items="${category }">
-				<span class="category">
-					<input type="checkbox" class="form-check-input" value="${v.KINDNAME }"
-						name="favor" id="${v.KINDNAME }" />
-					<label for="${v.KINDNAME }" class="form-check-input">${v.KINDNAME }</label>
-				</span>
-				</c:forEach>
-			
-			
-			<br />
-			<%-- <button type="button"
-				onclick="location.href='${pageContext.request.contextPath}'">취소</button> --%>
-			<input type="submit" id="submit" value="수정하기" class="btn btn-outline-primary"/>
-			<br />
-			<br />
-			</div>
-		</form>
-		</div>
+	
 </c:if>	
 	
 	
@@ -399,6 +331,7 @@ table {
 		var url = "";
 		if(e == 0){
 			url="changPOINTPLUS.do";
+			if()
 		} 
 		if(e == 1){
 			url="changPOINTMINUS.do";
@@ -433,3 +366,5 @@ table {
 		});
 	}
 </script>
+
+	<jsp:include page="/WEB-INF/views/common/admin_footer.jsp" />

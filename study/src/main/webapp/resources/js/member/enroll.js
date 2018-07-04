@@ -512,7 +512,6 @@
 		
 			return true;
 		}
-	
 		/* 이메일 인증 번호 전송 */
 		function fn_certification() {
 			var email = $("#email").val();
@@ -533,10 +532,20 @@
 				alert("이메일 형식이 바르지 않습니다.");
 				emailaddr.focus();
 			}
+			var cc =  $("#countDown").text();
+			console.log(cc);
+			if(cc!=""){
+				if(cc<11){
+					alert("이미 보넸습니다.10초 후 다시 확인 하세요");
+					
+					return;
+				}
+			}
+			
 			var data = new FormData();
 			var em = email + "@" + emailaddr;
 			data.append("em", em);
-			alert("인증번호 전송");
+			alert("인증번호 전송중 ...");
 			$.ajax({
 				url : "certification.do",
 				data : data,
@@ -545,10 +554,17 @@
 				type : "POST",
 				dataType : "json",
 				success : function(date) {
+					var cnt = 10;
 					if(date.check==true){
 					$("#checkcertification").val(1);
+					stop();
+					reset();
+					start();
 					}else{
-					alert("인증번호 전송실패");
+					alert("인증번호 전송실패  이미 가입하셨나요?");
+					stop();
+					reset();
+					start();
 					}
 				},
 				error : function(jqxhr, textStatus, errorThrown) {
@@ -560,27 +576,6 @@
 				cache : false,
 				processData : false
 			});
-			
-			var kind = $("#kind");
-			if(kind.val() == -1){
-				kind.focus();
-				return false;
-			}
-			var sno = $("#sub");
-			if(sno.val()==-1){
-				sno.focus();
-				return false;
-			}
-			var port = $("#port");
-			if(port.val()== ""){
-				port.focus();
-				return false;
-			}
-			var self = $("#self");
-			if(self.val()== ""){
-				self.focus();
-				return false;
-			}
 		}
 		
 		/* 이메일 인증번호 확인 */
@@ -674,5 +669,48 @@
 		   var today = year + "-" + month + "-" + day;
 		   
 		   $("#birth").attr("max", today);
+		   
+		 
 		  
 		});
+		$(function () {
+			
+			$("#btn_upFile").click(function(e){
+				e.preventDefault(); 
+				$("input:file").click(); 
+			});
+		});
+		
+		
+		
+		
+		var timer,
+		 i = 0,
+		 divide = 1;
+
+
+		function start(){
+		 // setInterval()은 지정된 시간후 특정 자바스크립트 코드가 포함된 문자열을 반복하여 호출하는 메소드
+		 // 지정된 시간 increment() 함수를 의미
+
+		 timer = self.setInterval('increment()', (1000 / divide));
+		}
+
+		function increment(){
+		 // ( i / divide )??
+		 i++;
+		 document.getElementById('countDown').innerHTML = (i / divide);
+		}
+
+		function stop(){
+		 // clearInterval : setInterval을 멈출 때 사용
+		 // timer = null을 준 이유는?
+		 clearInterval(timer);
+		 timer = null;
+		}
+
+		function reset(){
+		 stop();
+		 i = 0
+		 document.getElementById('countDown').innerHTML = (i / divide);
+		}
