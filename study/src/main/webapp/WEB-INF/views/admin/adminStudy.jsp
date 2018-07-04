@@ -8,21 +8,31 @@ div.infoinfo{
 <script>
 $(function(){
 	$("button#btn-search").click(function(){
-		var filter = {lno:$("select#local option:selected").val(),tno:$("select#town option:selected").val(),
-				subno:$("select#subject option:selected").val(),kno:$("select#kind option:selected").val(),
+		console.log("test");
+		var filter = {lno:$("select#local option:selected").val(),tno:$("select#town").val(),
+				subno:$("select#subject").val(),kno:$("select#kind option:selected").val(),
 				leadername:$("input#leadername").val(),title:$("input#title").val(),
 				year:$("select#year").val(),month:$("select#month").val()};
 		
-		SearchStudy(1,5,filter);
+		
+		
+ 
+		SearchStudy(1,5,$("select#local option:selected").val(),filter);
 	});
 });
 
-function SearchStudy(cPage, pageBarSize,filter){
+function SearchStudy(cPage, pageBarSize, filter){
+	 
 	$.ajax({   
 		url:"${pageContext.request.contextPath}/study/AdminStudySearch/"+cPage+"/"+pageBarSize,
 		dataType:"json",
-		data:filter,
+		data: filter,
 		success:function(data){
+			var filter = JSON.stringify(filter);
+			var filter2 = JSONtoString(filter);
+			console.log("filter" + filter);
+			console.log("filter2" + filter2);
+			
 			console.log("검색함..");
 			console.log(data);
 			var numPerPage = data.numPerPage;
@@ -42,7 +52,7 @@ function SearchStudy(cPage, pageBarSize,filter){
 			}
 			while(!(pageNo > pageEnd || pageNo > totalPage)){
 				console.log("test");
-				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:SearchStudy('+pageNo+','+5+','+filter+')">'+pageNo+'</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:SearchStudy('+pageNo+','+5+', '+filter+')">'+pageNo+'</a></li>';
 /* 				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href=javascript:SearchStudy('+pageNo+','+5+',"'+filter+'")>'+pageNo+'</a></li>'; */
 				pageNo++;
 			}
@@ -93,17 +103,18 @@ function SearchStudy(cPage, pageBarSize,filter){
 		
 		</select>
 		<select name="tno" id="town">
-		
+			<option value="0">전체</option>
 		</select>
 		<label for="local">카테고리:</label>
 		<select name="kno" id="kind">
 		
 		</select>
 		<select name="subno" id="subject">
-		
+			<option value="0">전체</option>
 		</select>
 		<input type="text" name="title" id="title" placeholder="강의/스터디명을 입력하세요" />
 		<input type="text" name="leadername" id="leadername" placeholder="팀장/강사명을 입력하세요" />
+		<label for="">스터디 시작일 : </label>
 		<select name="year" id="year">
 			<option value="">년을 선택하세요</option>
 		<c:forEach var="i" begin="2018" end="2022">

@@ -679,7 +679,7 @@ public class StudyController {
 	public ModelAndView selectStudyPageCount(@PathVariable(value="count", required=false) int count, @PathVariable(value="cPage", required=false) int cPage,
 			@RequestParam(value="lno",defaultValue="0") int lno, @RequestParam(value="tno",defaultValue="0") int tno,
 			@RequestParam(value="kno",defaultValue="0") int kno, @RequestParam(value="subno",defaultValue="0") int subno,
-			@RequestParam(value="leadername") String leadername,@RequestParam(value="title") String title,
+			@RequestParam(value="leadername",defaultValue="") String leadername,@RequestParam(value="title",defaultValue="") String title,
 			@RequestParam(value="year",defaultValue="0") String year,@RequestParam(value="month",defaultValue="0") String month) {
 		
 		ModelAndView mav = new ModelAndView("jsonView");

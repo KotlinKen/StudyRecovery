@@ -61,6 +61,10 @@ $(document).ready(function() {
 
 <script>
 function validate(){
+	var fileName= $(this).prop("files")[0].name;
+	var upload = $("div.fileWrapper div.custom-file input:file").prop("files")[0].name;
+	console.log("upload="+upload);
+	
 	
 	// 유효성 검사 - 지역,도시
 	var local = $("#local").val();
@@ -125,17 +129,22 @@ function validate(){
 	$("#time").val(startTime + "~" + endTime);	
 	
 	
-	var ext = $("div.fileWrapper div.custom-file input:file").val().split(".").pop().toLowerCase();
-	console.log("ext="+ext);
-    if (ext.length > 0) {
-       if ($.inArray(ext, [ "gif", "png", "jpg",
-             "jpeg" ]) == -1) {
-          alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
-          return false;
-       }
-    }
-	
-	return false;
+   var file = $("div.fileWrapper div.custom-file input:file");
+   var fileVal = file.val();
+   var cnt = 0;
+
+   file.each(function(){
+      if( fileVal != "" ) 
+         cnt++;
+   });
+   
+     console.log(cnt);
+   if( cnt == 0 ){
+      alert("사진을 최소 1개이상 등록해주세요.");
+      return false;   
+   }
+
+	return true;
 }
 
 $(document).ready(function(){
@@ -399,6 +408,8 @@ $(function(){
 	             return false;
 	          }
 	       }
+	       
+	       
 	 });
 	
 });
