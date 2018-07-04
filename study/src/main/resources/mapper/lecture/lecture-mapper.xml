@@ -62,7 +62,43 @@
          INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제실패', #{price}, SYSDATE)
       </if>
    </insert>
-
+   
+   <insert id="succesPayCancel">
+   		INSERT INTO PAY VALUES( SEQ_PAY.NEXTVAL, #{sno}, #{mno}, '사용자 요청', #{msg}, #{price}, SYSDATE)
+   </insert>
+   
+   <select id="selectPay" resultType="_long">
+   		SELECT PNO 
+   		FROM PAY 
+   		WHERE SNO = #{sno} AND MNO = #{mno} AND STATUS = '결제완료' AND ROWNUM = 1 ORDER BY PDATE
+   </select>
+   
+   <select id="selectPayList" resultMap="map">
+   		SELECT P.PNO AS PNO, 
+		       S.SNO,
+		       M.MNAME AS MNAME, 
+		       S.TITLE AS TITLE, 
+		       S.REGDATE AS REGDATE,
+		       S.SDATE AS SDATE,
+		       S.FREQ AS FREQ,
+		       S.TIME AS TIME,
+		       S.PRICE AS PRICE, 
+		       (SELECT COUNT(*) AS CNT FROM CREW C WHERE C.SNO = S.SNO) CNT,
+		       S.RECRUIT AS RECRUIT, 
+		       L.LOCAL AS LOCAL, 
+		       T.TOWNNAME AS TOWNNAME, 
+		       K.KINDNAME AS KNAME,
+		       SUB.SUBJECTNAME AS SUBNAME,
+		       S.STATUS AS STATUS,
+		       P.STATUS AS PSTATUS       
+		FROM PAY P, STUDY S, MEMBER M, TOWN T, LOCAL L, KIND K, SUBJECT SUB 
+		WHERE P.SNO = S.SNO AND P.MNO = M.MNO AND S.TNO = T.TNO AND T.LNO = L.LNO AND S.SUBNO = SUB.SUBNO AND SUB.KNO = K.KNO AND S.TYPE = 'lecture'
+		
+		
+		
+		ORDER BY REGDATE
+   </select>
+   
    <select id="selectLocList" resultMap="map">
       SELECT * FROM LOCAL
    </select>
@@ -109,6 +145,10 @@
             FROM STUDY S 
       WHERE TYPE = 'lecture') A
       ORDER BY SNO DESC
+   </select>
+   
+   <select id="selectTotalPayCount" resultType="_int">
+   		SELECT COUNT(*) FROM PAY
    </select>
    
    <select id="selectTotalLectureCount" resultType="_int">

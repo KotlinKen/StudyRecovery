@@ -63,5 +63,12 @@ public interface LectureService {
 
 	int lectureCancel(Map<String, Integer> map);
 
+	long selectPay(Map<String, Integer> map);
+
+	void successPayCancel(Map<String, Object> cancelMap);
+
+	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key);
+
+	int selectTotalPayCount();
 
 }

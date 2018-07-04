@@ -63,4 +63,12 @@ public interface LectureDAO {
 
 	int lectureCancel(Map<String, Integer> map);
 
+	long selectPay(Map<String, Integer> map);
+
+	void successPayCancel(Map<String, Object> cancelMap);
+
+	int selectTotalPayCount();
+
+	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key);
+
 }

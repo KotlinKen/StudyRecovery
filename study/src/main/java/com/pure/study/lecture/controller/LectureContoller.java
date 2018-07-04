@@ -26,6 +26,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.lecture.model.vo.Lecture;
 import com.pure.study.member.model.vo.Member;
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
 
 @Controller
 public class LectureContoller {
@@ -588,12 +592,27 @@ public class LectureContoller {
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
+	
+	@RequestMapping("/lecture/selectPay.do")
+	@ResponseBody
+	public long selectPay(@RequestParam int sno, @RequestParam int mno) {
+		
+ 
+		Map<String, Integer> map = new HashMap<>();
+		
+		map.put("mno", mno);
+		map.put("sno", sno);
+		
+		long impNo = ls.selectPay(map);
+		
+		return impNo;
+	}
 
 	@RequestMapping("/lecture/lectureCancel.do")
-	public String lectureCancel(@RequestParam int mno, @RequestParam int sno) {
-		ModelAndView mav = new ModelAndView();
-
+	@ResponseBody
+	public String lectureCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam String originNo, @RequestParam int price) {
 		int result = 0;
+		String msg = "";
 
 		Map<String, Integer> map = new HashMap<>();
 
@@ -601,8 +620,29 @@ public class LectureContoller {
 		map.put("sno", sno);
 
 		result = ls.lectureCancel(map);
+		
+		String api_key = "6308212829698507";
+		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
+		
+		
+		IamportClient imp = new IamportClient(api_key, api_secret);		
+		imp.getAuth();
+		
+		IamportResponse<Payment> p = imp.cancelPaymentByImpUid(new CancelData(originNo, true));
+		
+		msg = p.getMessage(); 
+		
+		Map<String, Object> cancelMap = new HashMap<>();
+		
+		cancelMap.put("mno", mno);
+		cancelMap.put("sno", sno);
+		cancelMap.put("msg", msg);	
+		cancelMap.put("price", price);
+		
+		ls.successPayCancel(cancelMap);
 
-		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
+		
+		return msg;
 	}
 
 	// 관리자 강의페이지 - 률멘 방식
@@ -696,7 +736,6 @@ public class LectureContoller {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
 			}
 
 		} catch (Exception e) {
@@ -706,5 +745,23 @@ public class LectureContoller {
 		map.put("url", renamedFileName);
 		return map;
 	}
-
+	
+	@RequestMapping("/admin/adminPayment.do")
+	public ModelAndView adminPayment(@RequestParam(required=true, defaultValue="0") int cPage) {
+		ModelAndView mav = new ModelAndView();
+		
+		Map<String, String> key = new HashMap<>();
+		
+		int totalPayCount = ls.selectTotalPayCount();
+		int numPerPage = 10;
+		
+		
+		List<Map<String, String>> list = ls.selectPayList(cPage, numPerPage, key);	
+		
+		mav.addObject("list", list);
+		
+		mav.setViewName("/admin/adminPayment");
+		
+		return mav;
+	}
 }
