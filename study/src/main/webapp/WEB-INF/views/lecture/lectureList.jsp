@@ -305,8 +305,10 @@ p.noMore{
 		}    
    });
 </script>
-	<button type="button" id="insertLectureBtn">강의 작성</button>	
-
+<div class="container">
+	<c:if test="${check > 0 }">
+	   <button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의 작성</button>	
+	</c:if>
    <div id="lectureList-container">   
       <!-- 지역 -->
       <label for="local">지역 : </label>
@@ -374,4 +376,5 @@ p.noMore{
 	 <input type="hidden" id="numPerPage" />
 	 <input type="hidden" name="case" value="none" /> <!-- 조건없이 리스트를 가져오나, 조건있이 리스트를 가져오나 여부.-->
    </div>
+</div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

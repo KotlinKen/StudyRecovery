@@ -2,6 +2,7 @@
 <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="INSTRUCTOR" name="pageTitle" /></jsp:include>
 <div class="studyList">
 	<div class="table-responsive" id="table1">
+	<h3>강사 신청 리스트</h3>
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
@@ -13,7 +14,7 @@
 					<th>지식포인트</th>
 					<th>신청날짜</th>
 					<th>승인날짜</th>
-					<th>탈주날짜</th>
+					<th>승인취소날짜</th>
 					<th>승인 상태</th>
 				</tr>
 			</thead>
@@ -24,6 +25,7 @@
 	<br />
 	<br />
 	<div class="table-responsive" id="table2">
+	<h3>강사 리스트</h3>
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
@@ -35,7 +37,7 @@
 					<th>지식포인트</th>
 					<th>신청날짜</th>
 					<th>승인날짜</th>
-					<th>탈주날짜</th>
+					<th>승인취소날짜</th>
 					<th>승인 상태</th>
 				</tr>
 			</thead>
@@ -64,7 +66,7 @@ function loadInstructor(){
 	    	for(index in data.list){
 	    		member = data.list[index];
 	    		var upfile = (data.list[index].UPFILE);
-	    		if(member.OKDATE ==null){
+	    		if(member.STATE.trim() =='X'){
 	    			rmHtml1 += "<tr>"
     				rmHtml1 += "<td>"+member.MNO+"</td>";
 	    			rmHtml1 += "<td><a href=\"${rootPath }/member/memberSelectONEView.do?mid="+member.MID+"\">" +member.MID +"</a></td>";
@@ -129,7 +131,7 @@ function loadInstructor(){
 	    		}else{
 	    			rmHtml2 += "<tr>"
 	    				rmHtml2 += "<td>"+member.MNO+"</td>";
-		    			rmHtml2 += "<td>" +member.MID +"</td>";
+		    			rmHtml2 += "<td><a href=\"${rootPath }/member/memberSelectONEView.do?mid="+member.MID+"\">" +member.MID +"</a></td>";
 		    			rmHtml2 += "<td>" +member.MNAME+"</td>";
 		    			rmHtml2 += "<td>" +member.PHONE+"</td>";
 		    			rmHtml2 += "<td>" +member.POINT+"</td>";

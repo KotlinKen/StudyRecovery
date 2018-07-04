@@ -169,7 +169,7 @@
 				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
 				to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
-				(select g.status from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=s.mno) and g.point <![CDATA[ > ]]> (select point from member where mno=s.mno)-5000) as "grade"
+				(select status from grade where gno=(select count(*) from member mm left join grade g on mm.point <![CDATA[ < ]]> g.point where mm.mno=m.mno)) as "grade"
 		from study s join member m on m.mno=s.mno
 		where 1=1
 		<if test="studyNo != null">
@@ -345,7 +345,7 @@
 				to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 				to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
 				to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
-				(select g.status from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=c.mno) and g.point <![CDATA[ > ]]> (select point from member where mno=c.mno)-5000) as "grade"
+				(select status from grade where gno=(select count(*) from member mm left join grade g on mm.point <![CDATA[ < ]]> g.point where mm.mno=m.mno)) as "grade"
 		from crew c join study s on s.sno=c.sno
 				    join member m on m.mno=c.mno
 		where 1=1
@@ -532,7 +532,7 @@
 			to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
 			to_char(s.edate,'yyyy/mm/dd') as "edate", -- 스터디 마감
 			to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
-			(select g.status from grade g where g.point <![CDATA[ <= ]]> (select point from member where mno=a.mno) and g.point <![CDATA[ > ]]> (select point from member where mno=a.mno)-5000) as "grade"
+			(select status from grade where gno=(select count(*) from member mm left join grade g on mm.point <![CDATA[ < ]]> g.point where mm.mno=m.mno)) as "grade"
 		from apply a join study s on s.sno=a.sno
 			            join member m on m.mno=a.mno
 		where 1=1
@@ -1202,7 +1202,10 @@
 		select * from instructor where mno = #{mno}
 	</select>
 	<update id="updateInstructorApply">
-		update instructor set okdate = sysdate and state = 'O' where ino = #{ino} 
+		update instructor set okdate = sysdate , state = 'O' , outdate = null  where ino = #{ino} 
+	</update>
+	<update id="updateInstructorCancel">
+		update instructor set outdate = sysdate , state = 'X' where ino = #{ino} 
 	</update>
 	<!-- 장익순 작업 .... 끝 -->
 	

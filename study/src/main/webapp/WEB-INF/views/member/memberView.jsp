@@ -104,7 +104,7 @@
          		<td>
          			<c:if test="${!(memberLoggedIn.mprofile eq 'no')}">
                   <div id="imgChange" style="width:100px;">
-                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" style="width:100px;" /> 
+                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" onerror="this.src=''" style="width:100px;" /> 
                   </div>
                   </c:if>
                   <c:if test="${memberLoggedIn.mprofile eq 'no'}">
@@ -241,130 +241,7 @@
       </div>
       <!-- 이메일 변경 팝업창 끝 -->
          
-         <script>
-            $(function(){
-            	var len = 2000;
-            	$("#length").html($("textarea[name=cover]").val().length+"/"+len);
-               $("#newPwdCheck").on("keyup",function(){
-                  var p1 = $("#newPwd").val();
-                  var p2 = $(this).val();
-                  //console.log(p1);
-                  //console.log(p2);
-                  if(p1==p2){
-                     //console.log("일치");
-                     $(".check-no").hide();
-                     $(".check-yes").show();
-                     $("#pwd-ok").val(0);
-                  }else{
-                     //console.log("불일치");
-                     $(".check-yes").hide();
-                     $(".check-no").show();
-                     $("#pwd-ok").val(1);
-                     
-                  }
-               });
-                             
-               //이메일 변경
-               $("[type=button]#emailUpdate").click(function(){
-                  var newEmail = $("#newEmail").val().trim();
-                  	//console.log("확인");
-                  if($("#newEmail").val().trim()==""){
-                	  alert("새로 변경할 이메일을 입력해주세요.");
-                  }
-                  if($("input#send").val()=="duplication"){	//이메일이 중복되는지 체크하기
-                	  emailDuplication(newEmail);
-                  }
-                  if($("input#send").val()=="keySend"){ //조건문 바꿔야함.
-                     //console.log("확인"+$("#send").val());
-                     emailSendKey(newEmail);
-                  }
-               });
-               
-               $("#emailUpdateCheck").click(function(){
-                  var key = $("#keyCheck").val();
-                  var inputKey = $("#key").val();
-                  
-                  if(key==inputKey){
-                     //console.log("이메일 인증키 일치!");
-                     $(".check-no").hide();
-                     $(".check-yes").show();
-                     $("#email-ok").val(0);
-                  }else{
-                     //console.log("이메일 인증키 불일치!");      
-                     $(".check-yes").hide();
-                     $(".check-no").show();
-                     $("#email-ok").val(1);
-                  }
-                  
-               });
-               //텍스트 길이 제한
-               $("textarea[name=cover]").keyup(function(){
-            	  var textLength = $(this).val().length;
-            	  if(len<=2000){
-              		  $(this).val($(this).val().substr(0,len));
-              		  $("p#length").html(textLength+"/"+len);
-              		  if(textLength==2000){
-    	            	alert("최대 길이는 "+len+"자 입니다.");            		
-              		  }
-                	}
-               });
-               $("input#mid").click(function(){
-             	  alert("회원 아이디는 변경할 수 없습니다.");
-               });
-               $("input#birth").click(function(){
-             	  alert("생년월일은 변경할 수 없습니다. 관리자에게 문의해주세요. 1111-2222");
-               });
-             //이름 크기 제한
-               $("input[name=mname]").on("keyup",function(){
-            	  var textLength = $(this).val().trim().length;
-            	  if(textLength>7){
-            		
-            		  alert("7자리 이하로 입력해주세요.");
-             		  $(this).val($(this).val().substr(0,7));
-            		  
-             		} else if(textLength<=7){        			
-             		}
-               });
-             //연락처 크기 제한
-               $("input[name=phone]").keyup(function(){
-            	   var text = $(this).val().trim();
-            	  var textLength = text.length;
-            	  var reg = /^(?=.*[0-9]).{0,11}$/;
-            	  if(!reg.test(text) && textLength!=0){
-            		  alert("연락처는 11자리, 숫자만 입력해주세요.");
-            		  console.log(textLength);
-            		  if(textLength==12){
-            			  
-            		  }else{
-            		  	$(this).val("");            			  
-            		  }
-            	  } 
-            	  if(textLength>11){
-             		  $(this).val($(this).val().substr(0,11));      		
-             		}
-               });
-               
-               
-            });
-            
-            //업로드 할 이미지 보여주기
-            var upload = document.getElementsByName('upFile')[0];
-            upload.onchange = function (e) {
-            	  e.preventDefault();
-
-
-
-$("input[name=mname]").on("keyup", function() {
-	var textLength = $(this).val().trim().length;
-	if (textLength > 7) {
-		$("p#pmname").attr("style", "display:inline;");
-		alert("글자수가 제한되었습니다.");
-		$(this).val($(this).val().trim().substring(0, 7));
-
-	} else if (textLength <= 7) {
-		$("p#pmname").attr("style", "display:none;");
-	}
-});
+<script>
 
 	$(function() {
 		var len = 2000;
@@ -391,7 +268,7 @@ $("input[name=mname]").on("keyup", function() {
 		//이메일 변경
 		$("[type=button]#emailUpdate").click(function() {
 			var newEmail = $("#newEmail").val().trim();
-			//console.log("확인");
+			
 			if ($("#newEmail").val().trim() == "") {
 				alert("새로 변경할 이메일을 입력해주세요.");
 			}
@@ -472,11 +349,11 @@ $("input[name=mname]").on("keyup", function() {
 			img.src = event.target.result;
 			img.width = 200;
 			$("#imgChange").html(img);
-		};
+		}
 		reader.readAsDataURL(file);
 
 		return false;
-	};
+	}
 	function pwdDuplicateCheck() {
 		var newPwd = $("#newPwd").val().trim();
 		var reg = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/;
@@ -534,6 +411,7 @@ $("input[name=mname]").on("keyup", function() {
 		return true;
 	}
 	function emailSendKey(newEmail) {
+		alert("이메일로 인증번호를 발송하였습니다.");
 		$.ajax({
 			url : "newEmailKey.do",
 			data : {
@@ -541,9 +419,7 @@ $("input[name=mname]").on("keyup", function() {
 			},
 			dataType : "json",
 			success : function(data) {
-				//console.log(data);
 				if (data.isUsable == true) {
-					//console.log(data.tempPwd);
 					$("#keyCheck").val(data.tempPwd);
 				} else {
 
@@ -565,7 +441,7 @@ $("input[name=mname]").on("keyup", function() {
 				},
 				dataType : "json",
 				success : function(data) {
-
+					
 					if (data.isDulpl == false) {//이메일이 중복일 경우
 						$("input#send").val("duplication");
 						alert("이메일이 중복됩니다.");
@@ -582,7 +458,7 @@ $("input[name=mname]").on("keyup", function() {
 
 		}
 	}
-}
+
             
 </script>
    

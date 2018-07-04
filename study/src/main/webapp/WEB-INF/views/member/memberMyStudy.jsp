@@ -21,8 +21,8 @@
 	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
 	
 	<!-- 팀장/팀원 구분 -->
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y" ${leader eq 'y' ? "style='color:#007bff'" :'' }>팀장</a>|
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n" ${leader eq 'n' ? "style='color:#007bff'" :'' }>팀원</a>
+	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y&type=${type}" ${leader eq 'y' ? "style='color:#007bff'" :'' }>팀장</a>|
+	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n&type=${type}" ${leader eq 'n' ? "style='color:#007bff'" :'' }>팀원</a>
 	<br />
 	
 	<!-- 스터디/강의 구분 -->
@@ -705,7 +705,7 @@
 			applyLog(studyNo, "crew");
 		});
 	});
-	
+	 
 	function applyLog(studyNo, crew){
 		$.ajax({
 			url: "applyListView.do",
@@ -721,7 +721,7 @@
 					////console.log(data.applyList[i]);
 					html += "<tr id='amno"+data.applyList[i].mno+"'>";
 					html += "<td>";
-					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png'  style='width:100px;'/>";
 					html += "</td>";
 					html += "<td>";
 					html += data.applyList[i].grade;
@@ -765,7 +765,7 @@
 					//console.log(data.crewList[i]);
 					removehtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
 					removehtml += "<td>";
-					removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+					removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
 					removehtml += "</td>";
 					removehtml += "<td>";
 					removehtml += data.crewList[i].grade;
@@ -801,7 +801,7 @@
 					//console.log(data.crewList[i]);
 					crewhtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
 					crewhtml += "<td>";
-					crewhtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+					crewhtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
 					crewhtml += "</td>";
 					crewhtml += "<td>";
 					crewhtml += data.crewList[i].grade;
@@ -896,7 +896,6 @@
 					}
 				});
 				
-				
 			},
 			error: function(){
 				//console.log("ajax 처리 실패");
@@ -925,7 +924,7 @@
 						//console.log(data.crewList[i]);
 						html += "<tr class='mno"+data.crewList[i].mno+"'>";
 						html += "<td>";
-						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진' style='width:100px;'/>";
+						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
 						html += "</td>";
 						html += "<td>";
 						html += data.crewList[i].grade;
@@ -962,6 +961,8 @@
 			});
 			
 	}
+	
+	
 	
 	</script>
 		

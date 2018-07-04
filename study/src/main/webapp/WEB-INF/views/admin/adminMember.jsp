@@ -30,7 +30,9 @@
 	</nav>
 </div>
 
-
+<%
+	String rootPath = request.getContextPath();
+%>
 <script>
 $(function(){
 	loadInstructor(1, 5, "member");
@@ -79,7 +81,7 @@ function loadInstructor(cPage, pageBarSize, type){
 	    	for(index in data.list){
 	    		member = data.list[index];
 	    		var upfile = (data.list[index].UPFILE);
-	    			rmHtml += "<tr>"
+	    			rmHtml += "<tr class='linkmno' id='"+member.MNO+"'>"
 	    				rmHtml += "<td>"+ member.MNO+"</td>";
 		    			rmHtml += "<td>" +member.MID +"</td>";
 		    			rmHtml += "<td>" +member.MNAME+"</td>";
@@ -90,7 +92,12 @@ function loadInstructor(cPage, pageBarSize, type){
 		    			rmHtml += "<td>" +member.REGDATES+"</td>";
 	    			rmHtml += "</tr>";
 	    	}
+	    	
 			$(".table-responsive tbody").html(rmHtml);
+			
+			$(".linkmno").on("click",function(){
+				location.href = "<%=rootPath%>/member/adminMemberView.do?mno="+this.id;
+			});
 
 		},error:function(){
 			

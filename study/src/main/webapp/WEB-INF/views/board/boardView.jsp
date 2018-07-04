@@ -230,7 +230,7 @@ function loadData(bno, type, cPage, pageBarSize){
 							if(profile == "no" || profile == null || profile == ""){
 		    					rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/images/noprofile.jpg)' ></div></div>";
 							}else{
-			    				rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/upload/member/"+profile+")' ></div></div>";
+			    				rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/upload/member/"+profile+"), url(${rootPath }/resources/images/noprofile.jpg)' ></div></div>";
 							}
 			    			rmHtml += "<div class='replyMid'>" +reply.MID+"</div>";
 		    			rmHtml += "</div>";
