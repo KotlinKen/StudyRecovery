@@ -128,6 +128,7 @@ $(function(){
 
 
 </script>
+<div class="container">
 <div id="study-detail">
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 <c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()==study.MNO}">
@@ -237,5 +238,5 @@ $(function(){
 </div>
 
 
-</section>
+</div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>	
