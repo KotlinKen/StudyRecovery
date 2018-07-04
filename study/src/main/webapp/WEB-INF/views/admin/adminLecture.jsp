@@ -1,8 +1,38 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="LECTURE" name="pageTitle" /></jsp:include>
 
+<script>
+	
+</script>
 <div class="lectureList">
 	<div class="table-responsive">
+		<input type="text" name="title" id="title" placeholder="강의/스터디명을 입력하세요" />
+		<input type="text" name="leadername" id="leadername" placeholder="팀장/강사명을 입력하세요" />
+		
+		<select name="kno" id="category">
+			
+		</select>
+		
+		<select name="subno" id="subject">
+		
+		</select>
+		
+		<select name="lno" id="local">
+		
+		</select>
+		
+		<select name="tno" id="town">
+		
+		</select>
+		
+		<select name="year" id="year">
+		
+		</select>
+		
+		<select name="month" id="month">
+		
+		</select>
+	
 		<!-- 삭제 버튼. -->
 		<button type='button' id="deleteLecturesBtn">강의 삭제</button>
 	
@@ -19,8 +49,7 @@
 					<th>등록일</th>
 					<th>선택</th>					
 				</tr>
-			</thead>
-			
+			</thead>			
 			<tbody>
 			
 			</tbody>

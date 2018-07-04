@@ -1,326 +1,370 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="lecture">	
-	<resultMap type="map" id="map">
-		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String"/>
-	</resultMap>
+<mapper namespace="lecture">
+   <resultMap type="map" id="map">
+      <result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
+   </resultMap>
+   
+   <insert id="insertLecture">
+      <if test="upfile.equals('')">      
+         INSERT INTO STUDY VALUES(SEQ_STUDY.NEXTVAL,
+                            #{mno}, 
+                            #{subno}, 
+                            #{tno}, 
+                            #{dno}, 
+                            #{title}, 
+                            #{freqs},
+                            #{content}, 
+                            #{price}, 
+                            NULL, 
+                            #{recruit}, 
+                            '모집 중',
+                            #{time}, 
+                            'lecture',                         
+                            #{ldate}, 
+                            #{sdate}, 
+                            #{edate}, 
+                            sysdate,
+                            #{etc})
+      </if>
+      <if test="!upfile.equals('')">
+         INSERT INTO STUDY VALUES(SEQ_STUDY.NEXTVAL,
+                               #{mno}, 
+                               #{subno}, 
+                               #{tno}, 
+                               #{dno}, 
+                               #{title}, 
+                               #{freqs}, 
+                               #{content}, 
+                               #{price}, 
+                               #{upfile}, 
+                               #{recruit}, 
+                               '모집 중', 
+                               #{time}, 
+                               'lecture',                         
+                               #{ldate}, 
+                               #{sdate}, 
+                               #{edate}, 
+                               sysdate,
+                               #{etc})
+      </if>
+   </insert>
+   
+   <insert id="applyLecture">
+      INSERT INTO CREW VALUES( SEQ_CREW.NEXTVAL, #{mno}, #{sno})
+   </insert>
+   
+   <insert id="insertPay">
+      <if test="status==1">
+         INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제완료', #{price}, SYSDATE)
+      </if>
+      <if test="status==0">
+         INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제실패', #{price}, SYSDATE)
+      </if>
+   </insert>
 
-	
-	<insert id="insertLecture">
-		<if test="upfile.equals('')">		
-			INSERT INTO STUDY VALUES(SEQ_STUDY.NEXTVAL,
-									 #{mno}, 
-									 #{subno}, 
-									 #{tno}, 
-									 #{dno}, 
-									 #{title}, 
-									 #{freqs},
-									 #{content}, 
-									 #{price}, 
-									 NULL, 
-									 #{recruit}, 
-									 '모집 중', 
-									 #{time}, 
-									 'lecture', 								
-									 #{ldate}, 
-									 #{sdate}, 
-									 #{edate}, 
-									 sysdate,
-									 #{etc})
-		</if>
-		<if test="!upfile.equals('')">
-			INSERT INTO STUDY VALUES(SEQ_STUDY.NEXTVAL,
-										 #{mno}, 
-										 #{subno}, 
-										 #{tno}, 
-										 #{dno}, 
-										 #{title}, 
-										 #{freqs}, 
-										 #{content}, 
-										 #{price}, 
-										 #{upfile}, 
-										 #{recruit}, 
-										 '모집 중', 
-										 #{time}, 
-										 'lecture', 								
-										 #{ldate}, 
-										 #{sdate}, 
-										 #{edate}, 
-										 sysdate,
-										 #{etc})
-		</if>
-	</insert>
-	
-	<insert id="applyLecture">
-		INSERT INTO CREW VALUES( SEQ_CREW.NEXTVAL, #{mno}, #{sno})
-	</insert>
-	
-	<insert id="insertPay">
-		<if test="status==1">
-			INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제완료', #{price}, SYSDATE)
-		</if>
-		<if test="status==0">
-			INSERT INTO PAY VALUES( #{pno}, #{sno}, #{mno}, 'phone', '결제실패', #{price}, SYSDATE)
-		</if>
-	</insert>
-
-	<select id="selectLocList" resultMap="map">
-		SELECT * FROM LOCAL
-	</select>
-	
-	<select id="selectTownList" resultMap="map">
-		SELECT * FROM TOWN WHERE LNO = #{localNo}
-	</select>
-	
-	<select id="selectSubList" resultMap="map">
-		SELECT * FROM SUBJECT WHERE KNO = #{kindNo}
-	</select>
-	
-	<select id="selectKindList" resultMap="map">
-		SELECT * FROM KIND
-	</select>
-	
-	<select id="selectDiffList" resultMap="map">
-		SELECT * FROM DIFF
-	</select>
-	
-	<select id="selectLectureList" resultMap="map">		
-		SELECT SNO,
-		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
-		       (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
-		       (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
-		       (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
-		       (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
-		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
-		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
-		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
-		       CONTENT,
-		       TITLE,
-		       UPFILE,
-		       TIME,
-		       NVL(PRICE, 0) AS PRICE,
-		       STATUS,        
-		       TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
-		       TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
-		       TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
-		       TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
-		FROM (SELECT S.*, 
-		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
-		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
-		      FROM STUDY S 
-		WHERE TYPE = 'lecture') A
-		ORDER BY SNO DESC
-	</select>
-	
-	<select id="selectTotalLectureCount" resultType="_int">
-		SELECT COUNT(*) FROM STUDY WHERE TYPE = 'lecture'
-	</select>
-	
-	<select id="selectLectureOne" resultMap="map">
-		SELECT SNO,
-			   A.MNO AS MNO,
-		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
-		       LNO,
-		       (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
-		       TNO,
-		       (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
-		       KNO,
-		       (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
-		       SUBNO,
-		       (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
-		       DNO,
-		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
-		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
-		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
-		       FREQ,
-		       CONTENT,
-		       RECRUIT,
-		        TITLE,
-		        UPFILE,
-		        TIME,
-		        NVL(PRICE, 0) AS PRICE,
-		        STATUS,
-		        CONTENT,        
-		        TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
-		        TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
-		        TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
-		        TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
-		FROM (SELECT S.*, 
-		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
-		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
-		      FROM STUDY S 
-		WHERE TYPE = 'lecture' AND SNO = #{sno}) A
-		ORDER BY SNO DESC
-	</select>
-	
-	<select id="selectLectureByMnoTypeLecture" resultType="lecture">
-		SELECT * FROM STUDY WHERE SNO = #{sno}
-	</select>
-	
-	<select id="selectTotalLectureCountBySearch" resultType="_int">
-		SELECT COUNT(*)
-		FROM (SELECT S.*, 
+   <select id="selectLocList" resultMap="map">
+      SELECT * FROM LOCAL
+   </select>
+   
+   <select id="selectTownList" resultMap="map">
+      SELECT * FROM TOWN WHERE LNO = #{localNo}
+   </select>
+   
+   <select id="selectSubList" resultMap="map">
+      SELECT * FROM SUBJECT WHERE KNO = #{kindNo}
+   </select>
+   
+   <select id="selectKindList" resultMap="map">
+      SELECT * FROM KIND
+   </select>
+   
+   <select id="selectDiffList" resultMap="map">
+      SELECT * FROM DIFF
+   </select>
+   
+   <select id="selectLectureList" resultMap="map">      
+      SELECT SNO,
+             (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
+             (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
+             (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
+             (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
+             (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
+             (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
+             (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
+             (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+             CONTENT,
+             TITLE,
+             UPFILE,
+             TIME,
+             NVL(PRICE, 0) AS PRICE,
+             STATUS,        
+             TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
+             TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
+             TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
+             TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
+      FROM (SELECT S.*, 
+                  (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
+                  (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
+            FROM STUDY S 
+      WHERE TYPE = 'lecture') A
+      ORDER BY SNO DESC
+   </select>
+   
+   <select id="selectTotalLectureCount" resultType="_int">
+      SELECT COUNT(*) FROM STUDY WHERE TYPE = 'lecture'
+   </select>
+   
+   <select id="selectLectureOne" resultMap="map">
+      SELECT SNO,
+            A.MNO AS MNO,
+             (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
+             LNO,
+             (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
+             TNO,
+             (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
+             KNO,
+             (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
+             SUBNO,
+             (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
+             DNO,
+             (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
+             (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
+             (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+             FREQ,
+             CONTENT,
+             RECRUIT,
+              TITLE,
+              UPFILE,
+              TIME,
+              NVL(PRICE, 0) AS PRICE,
+              STATUS,        
+              TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
+              TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
+              TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
+              TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
+      FROM (SELECT S.*, 
+                  (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
+                  (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
+            FROM STUDY S 
+      WHERE TYPE = 'lecture' AND SNO = #{sno}) A
+      ORDER BY SNO DESC
+   </select>
+   
+   <select id="selectLectureByMnoTypeLecture" resultType="lecture">
+      SELECT * FROM STUDY WHERE SNO = #{sno}
+   </select>
+   
+   <select id="selectTotalLectureCountBySearch" resultType="_int">
+      SELECT COUNT(*)
+      FROM (SELECT S.*, 
             (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
             (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
             (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = S.MNO) MNAME
         FROM STUDY S 
         WHERE TYPE = 'lecture') A
         WHERE 1=1
-		<if test="lno != 0">
-			AND A.LNO = #{lno}
-		</if>
-		<if test="kno != 0">
-			AND A.KNO = #{kno}
-		</if>
-		<if test="tno != 0">
-			AND A.TNO = #{tno}
-		</if>
-		<if test="dno != 0">
-			AND A.DNO = #{dno}
-		</if>
-		<if test="subno != 0">
-			AND A.SUBNO = #{subno}
-		</if>
-		<if test="leadername!=null and leadername !='' ">
-			AND A.MNAME = '%'||#{leadername}||'%'
-		</if>
-		ORDER BY SNO DESC
-	</select>
-	
-	<select id="selectLectureListBySearch" resultMap="map">
-		SELECT SNO,
-		       (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
-		       (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
-		       (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
-		       (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
-		       (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
-		       (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
-		       (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
-		       (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
-		       RECRUIT,
-		        TITLE,
-		        UPFILE,
-		        TIME,
-		        NVL(PRICE, 0) AS PRICE,
-		        STATUS,        
-		        TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
-		        TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
-		        TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
-		        TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
-		FROM (SELECT S.*, 
-		            (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
-		            (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
-		            (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = S.MNO) MNAME
-		      FROM STUDY S 
-			  WHERE TYPE = 'lecture') A
-		WHERE 1=1 
-		<if test="lno != 0">
-			AND A.LNO = #{lno}
-		</if>
-		<if test="kno != 0">
-			AND A.KNO = #{kno}
-		</if>
-		<if test="tno != 0">
-			AND A.TNO = #{tno}
-		</if>
-		<if test="dno != 0">
-			AND A.DNO = #{dno}
-		</if>
-		<if test="subno != 0">
-			AND A.SUBNO = #{subno}
-		</if>
-		<if test="leadername!=null and leadername !='' ">
-			AND A.MNAME = '%'||#{leadername}||'%'
-		</if>
-		ORDER BY SNO DESC
-	</select>
-	
-	<select id="preinsertApply" resultType="_int">
-		SELECT COUNT(*) FROM CREW WHERE SNO = #{sno} AND MNO = #{mno}
-	</select>
-	
-	<select id="selectLectureListByMno" resultMap="map">
-		SELECT SDATE,
-			   EDATE,
-		       FREQ,
-		       SUBSTR(S.TIME,0,INSTR(TIME,':')-1) AS STIME,
-		       SUBSTR(S.TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
-		<if test="key=='study'">
-		FROM STUDY S
-		</if>
-		<if test="key=='crew'">
-		FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
-		</if>
-		WHERE S.MNO = #{mno}
-	</select>
-	
-	<delete id="deleteLecture">
-		DELETE FROM STUDY WHERE SNO = #{sno} and STATUS = '모집 중'
-	</delete>
-	
-	<delete id="deleteLectures">
-		delete from study where sno in 
-		
-		<foreach item="sno" index="i" collection="lectures" open="(" separator="," close=")">
-			#{sno}     
-		</foreach>
+      <if test="lno != 0">
+         AND A.LNO = #{lno}
+      </if>
+      <if test="kno != 0">
+         AND A.KNO = #{kno}
+      </if>
+      <if test="tno != 0">
+         AND A.TNO = #{tno}
+      </if>
+      <if test="dno != 0">
+         AND A.DNO = #{dno}
+      </if>
+      <if test="subno != 0">
+         AND A.SUBNO = #{subno}
+      </if>
+      <if test="leadername!=null and leadername !='' ">
+         AND A.MNAME = #{leadername}
+      </if>
+      ORDER BY SNO DESC
+   </select>
+   
+   <select id="selectLectureListBySearch" resultMap="map">
+      SELECT SNO,
+             (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
+             (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
+             (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
+             (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
+             (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
+             (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
+             (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
+             (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+             RECRUIT,
+              TITLE,
+              UPFILE,
+              TIME,
+              NVL(PRICE, 0) AS PRICE,
+              STATUS,        
+              TO_CHAR(LDATE,'yyyy-mm-dd') LDATE,
+              TO_CHAR(SDATE,'yyyy-mm-dd') SDATE,
+              TO_CHAR(EDATE,'yyyy-mm-dd') EDATE,
+              TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
+      FROM (SELECT S.*, 
+                  (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
+                  (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
+                  (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = S.MNO) MNAME
+            FROM STUDY S 
+           WHERE TYPE = 'lecture') A
+      WHERE 1=1 
+      <if test="lno != 0">
+         AND A.LNO = #{lno}
+      </if>
+      <if test="kno != 0">
+         AND A.KNO = #{kno}
+      </if>
+      <if test="tno != 0">
+         AND A.TNO = #{tno}
+      </if>
+      <if test="dno != 0">
+         AND A.DNO = #{dno}
+      </if>
+      <if test="subno != 0">
+         AND A.SUBNO = #{subno}
+      </if>
+      <if test="leadername!=null and leadername !=''">
+         AND A.MNAME = #{leadername}
+      </if>
+      ORDER BY SNO DESC
+   </select>
+   
+   <select id="preinsertApply" resultType="_int">
+      SELECT COUNT(*) FROM CREW WHERE SNO = #{sno} AND MNO = #{mno}
+   </select>
+   
+   <select id="selectLectureListByMno" resultMap="map">
+      SELECT SDATE,
+            EDATE,
+             FREQ,
+             SUBSTR(S.TIME,0,INSTR(TIME,':')-1) AS STIME,
+             SUBSTR(S.TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
+      <if test="key=='study'">
+      FROM STUDY S
+      </if>
+      <if test="key=='crew'">
+      FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
+      </if>
+      WHERE S.MNO = #{mno}
+   </select>
+   
+   <delete id="deleteLecture">
+      DELETE FROM STUDY WHERE SNO = #{sno} and (STATUS = '강의 종료' OR STATUS = '모집 중' OR STATUS = '마감 임박')
+   </delete>
+   
+   <delete id="deleteLectures">
+      delete from study where sno in 
+      
+      <foreach item="sno" index="i" collection="lectures" open="(" separator="," close=")">
+         #{sno}     
+      </foreach>
     </delete>
-	
-	<select id="selectByDeadline" resultMap="map">
-	 select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
-  		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
- 		  m.mprofile,l.local local,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
- 	 from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
- 	 where   s.type='lecture' and s.status in ('모집 중','마감 임박')
-  	 order by s.ldate
-	
+   
+   <select id="selectByDeadline" resultMap="map">
+    select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
+          to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
+         m.profile,l.local local,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
+     from      study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
+     where   s.type='lecture' and s.ldate>=sysdate
+      order by s.ldate
+   
+   </select>
+   
+   <select id="lectureDeadlineCount" resultType="_int">
+     select  count(*) cnt
+     from      study s 
+     where   s.type='lecture' and s.ldate>=sysdate
+     order by s.ldate   
+   </select>
+   
+   <select id="selectByApply" resultMap="map">
+     select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
+           to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
+          s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME dname,local, 
+          mid, mname, profile,cover
+     from(
+           select count(*) cnt, s.sno 
+           from apply a right outer join study s on a.sno=s.sno 
+           where s.type='lecture' 
+           group by s.sno 
+         ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
+     order by cnt desc, s.REGDATE
+   </select>
+   
+   <select id="studyByApplyCount" resultType="_int">
+    select count(*) cnt
+    from(
+           select count(*) cnt, s.sno 
+           from apply a right outer join study s on a.sno=s.sno 
+           where s.type='lecture' 
+           group by s.sno 
+           order by cnt desc
+          )   
+   </select>   
+   
+   <select id="lectureWish" resultType="_int">
+      SELECT COUNT(*) AS CNT FROM WISH WHERE SNO = #{sno} AND MNO = #{mno}
+   </select>
+   
+   <select id="confirmInstructor" resultType="_int">
+      SELECT COUNT(*) AS CNT FROM INSTRUCTOR WHERE MNO = #{mno}
+   </select>
+   
+   <insert id="addWishLecture">
+      INSERT INTO WISH VALUES(SEQ_WISH.NEXTVAL, #{mno}, #{sno}, SYSDATE)
+   </insert>
+   
+   <delete id="lectureWishCancel">
+      DELETE FROM WISH WHERE MNO = #{mno} AND SNO = #{sno}
+   </delete>
+   
+   <delete id="lectureCancel">
+		DELETE FROM CREW 
+		WHERE MNO = #{mno} AND SNO = #{sno}
+   </delete>
+   
+	<!-- 김률민 추가 -->
+	<select id="restTypeLister" resultMap="map">
+		SELECT * FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
+		<trim prefix="WHERE" prefixOverrides="AND | OR ">
+			<if test="searchType != null and searchType != '' ">
+				<if test="searchKeyword != null and searchKeyword != '' ">
+					AND ${searchType} like '%'||#{searchKeyword}||'%'
+				</if>
+			</if>
+			S.MNO = M.MNO AND S.TNO = T.TNO AND S.DNO = D.DNO AND 
+			T.LNO = L.LNO AND S.SUBNO = SUB.SUBNO AND SUB.KNO = K.KNO
+			
+			<!-- 스터디냐 강의냐 -->
+			<if test="type != null and type != '' ">
+				AND TYPE = #{type}
+			</if>
+			<if test="status != null and status !='' ">
+				AND STATUS = #{status}
+			</if>			
+			<if test="rownum != null and rownum !='' ">
+				AND ROWNUM <![CDATA[ <= ]]> #{rownum}
+			</if>
+		</trim>
+		<if test="order != null and order != '' ">
+			ORDER BY
+			<choose>
+				<when test="order eq 'SDATE'">SDATE</when>
+				<when test="order eq 'LDATE'">LDATE</when>
+				<when test="order eq 'EDATE'">EDATE</when>
+				<when test="order eq 'SATUS'">STATUS</when>
+			</choose>
+			<choose>
+				<when test="desc eq 'desc'"> DESC </when>
+				<otherwise> ASC </otherwise>
+			</choose>
+		</if>
 	</select>
-	
-	<select id="lectureDeadlineCount" resultType="_int">
-	  select  count(*) cnt
-	  from 	  study s 
-	  where   s.type='lecture' and s.status in ('모집 중','마감 임박')
-	  order by s.ldate	
-	</select>
-	
-	<select id="selectByApply" resultMap="map">
-	  select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
-	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
-	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME dname,local, 
-	 		mid, mname, mprofile,cover
-	  from(
-	        select count(*) cnt, s.sno 
-	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' and s.status in ('모집 중','마감 임박','진행 중')
-	        group by s.sno 
-	      ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
-	  order by cnt desc, s.REGDATE
-	</select>
-	
-	<select id="studyByApplyCount" resultType="_int">
-	 select count(*) cnt
-	 from(
-	        select count(*) cnt, s.sno 
-	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' and s.status in ('모집 중','마감 임박','진행 중')
-	        group by s.sno 
-	        order by cnt desc
-	       )	
-	</select>	
-	
-	<select id="lectureWish" resultType="_int">
-		SELECT COUNT(*) AS CNT FROM WISH WHERE SNO = #{sno} AND MNO = #{mno}
-	</select>
-	
-	<select id="confirmInstructor" resultType="_int">
-		SELECT COUNT(*) AS CNT FROM INSTRUCTOR WHERE MNO = #{mno}
-	</select>
-	
-	<insert id="addWishLecture">
-		INSERT INTO WISH VALUES(SEQ_WISH.NEXTVAL, #{mno}, #{sno}, SYSDATE)
-	</insert>
-	
-	<delete id="lectureWishCancel">
-		DELETE FROM WISH WHERE MNO = #{mno} AND SNO = #{sno}
-	</delete>
+<!-- 김률민 추가 -->   
+
+
 </mapper>

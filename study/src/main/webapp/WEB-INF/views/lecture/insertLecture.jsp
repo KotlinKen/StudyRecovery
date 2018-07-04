@@ -76,7 +76,7 @@ $(document).ready(function(){
    
    $("#ldate").attr("min", today);
    $("#sdate").attr("min", today);
-   $("#edate").attr("min", today);
+   $("#edate").attr("min", today);   
 });
 
 $(function(){   
@@ -141,7 +141,6 @@ $(function(){
    
    //첨부파일 + 버튼 클릭시 첨부파일창이 밑에 더 생긴다.
    $("form[name=lectureFrm]").on("click","button.addFile",function(){
-      console.log("adddd");
       if($("div.fileWrapper").length<10){
          $("div.fileWrapper:last").after($("div.forCopy").clone().removeClass("forCopy").addClass("fileWrapper"));
       }         
@@ -149,7 +148,6 @@ $(function(){
    
    //첨부파일 - 버튼 클릭시  해당 첨부파일 영역이 사라진다.
    $("form[name=lectureFrm]").on("click","button.removeFile",function(){
-      console.log($("div.fileWrapper:eq(0)"));
       if( $(this).parent("div.fileWrapper")[0]!==$("div.fileWrapper:eq(0)")[0]){ //맨첫번째 첨부파일은 삭제이벤트 발생안함.
          $(this).parent("div.fileWrapper").remove();
       }
@@ -165,6 +163,7 @@ $(function(){
       
       var sdate = $("#sdate");      
       var edate = $("#edate");
+      
       sdate.val("");
       edate.val("");
       
@@ -216,8 +215,9 @@ $(function(){
                    $("input[class=day]").eq(sday+i-7).attr("disabled", false);   
              }
          }
-         else if( difference > 7 )
+         else if( difference > 7 ){
             $(".day").attr("disabled", false);
+         }
          // 강의 끝나는 날이 시작하는 날보다 빠를 경우 초기화.
          else if( difference < 0 ){
             alert("강의가 끝나는 날이 시작하는 날보다 빠를 수 없습니다.");
@@ -252,8 +252,21 @@ $(function(){
          startTime.val("6:00");
          endTime.val("24:00");
       }
-   });
+   });   
+
+   $("div.fileWrapper div.custom-file input:file").on('change',function(){
+	   // 확장자 검사.
+       var ext = $(this).val().split(".").pop().toLowerCase();
+       
+        if (ext.length > 0) {
+           if ($.inArray(ext, [ "gif", "png", "jpg", "jpeg" ]) == -1) {
+              alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
+              return false;
+           }
+        }
+    });
 });
+
 </script>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp"/>
@@ -323,70 +336,70 @@ $(function(){
     <label>목 </label><input type="checkbox" class="day" name="freqs" value="목" />
     <label>금 </label><input type="checkbox" class="day" name="freqs" value="금" />
     <label>토 </label><input type="checkbox" class="day" name="freqs" value="토" />
-       
-   <label for="starttime">스터디 시간</label>
-   <select name="startTime" id="startTime" class="time">
-      <c:forEach var="i" begin="6" end="23">
-         <option value="${i }:00">${i }:00</option>      
-      </c:forEach>
-   </select>
-   <select name="endTime" id="endTime" class="time">
-      <c:forEach var="j" begin="7" end="24">
-         <c:if test="${j < 24}">
-            <option value="${j }:00">${j }:00</option>   
-         </c:if>
-          <c:if test="${j == 24 }">
-            <option value="${j }:00" selected>${j }:00</option>       
-          </c:if>
-      </c:forEach>
-   </select>
-   
-   <input type="hidden" name="time" id="time" />
-   <br />
-   
-   <label for="price">수강료 : </label>
-   <input type="number" name="price" id="price" class="form-control" min="1000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
-   <br />
-   
-   <label for="recruit">모집 인원 : </label>
-   <select name="recruit" id="recruit">
-      <c:forEach var="i" begin="2" end="10">
-         <option value="${i }">${i }명</option>
-      </c:forEach>
-   </select>
-   <br /> 
-   
-   <label for="etc">기타 : </label>
-   <textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea>
-   <br /> 
-   
-   <div class="input-group mb-3 fileWrapper" style="padding:0px">
-        <div class="input-group-prepend" style="padding:0px">
-          <span class="input-group-text">첨부파일</span>
-        </div>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" name="upFile">
-          <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-        </div>
-        <button type="button" class="addFile">+</button>
-        <button type="button" class="removeFile">-</button>
-   </div>
-   
-   
-   <input type="reset" value="취소하기" />
-   <input type="submit" value="등록"/>
-   </form>
-      
-   <div class="input-group mb-3 forCopy" style="padding:0px">
-        <div class="input-group-prepend" style="padding:0px">
-          <span class="input-group-text">첨부파일</span>
-        </div>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" name="upFile">
-          <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-        </div>
-        <button type="button" class="addFile">+</button>
-        <button type="button" class="removeFile">-</button>
-   </div>
+	    
+	<label for="starttime">스터디 시간</label>
+	<select name="startTime" id="startTime" class="time">
+		<c:forEach var="i" begin="6" end="23">
+			<option value="${i }:00">${i }:00</option>		
+		</c:forEach>
+	</select>
+	<select name="endTime" id="endTime" class="time">
+		<c:forEach var="j" begin="7" end="24">
+			<c:if test="${j < 24}">
+				<option value="${j }:00">${j }:00</option>	
+			</c:if>
+			 <c:if test="${j == 24 }">
+				<option value="${j }:00" selected>${j }:00</option>		 
+			 </c:if>
+		</c:forEach>
+	</select>
+	
+	<input type="hidden" name="time" id="time" />
+	<br />
+	
+	<label for="price">수강료 : </label>
+	<input type="number" name="price" id="price" class="form-control" min="1000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
+	<br />
+	
+	<label for="recruit">모집 인원 : </label>
+	<select name="recruit" id="recruit">
+		<c:forEach var="i" begin="2" end="10">
+			<option value="${i }">${i }명</option>
+		</c:forEach>
+	</select>
+	<br /> 
+	
+	<label for="etc">기타 : </label>
+	<textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea>
+	<br /> 
+	
+	<div class="input-group mb-3 fileWrapper" style="padding:0px">
+		  <div class="input-group-prepend" style="padding:0px">
+		    <span class="input-group-text">첨부파일</span>
+		  </div>
+		  <div class="custom-file">
+		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
+		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
+		  </div>
+		  <button type="button" class="addFile">+</button>
+		  <button type="button" class="removeFile">-</button>
+	</div>
+	
+	
+	<input type="reset" value="취소하기" />
+	<input type="submit" value="등록"/>
+	</form>
+		
+	<div class="input-group mb-3 forCopy" style="padding:0px">
+		  <div class="input-group-prepend" style="padding:0px">
+		    <span class="input-group-text">첨부파일</span>
+		  </div>
+		  <div class="custom-file">
+		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required>
+		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
+		  </div>
+		  <button type="button" class="addFile">+</button>
+		  <button type="button" class="removeFile">-</button>
+	</div>
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
