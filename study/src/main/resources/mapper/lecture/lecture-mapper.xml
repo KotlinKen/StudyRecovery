@@ -227,7 +227,7 @@
       <if test="subno != 0">
          AND A.SUBNO = #{subno}
       </if>
-      <if test="leadername!=null and leadername !='' ">
+      <if test="leadername!=null and leadername !=''">
          AND A.MNAME = #{leadername}
       </if>
       ORDER BY SNO DESC
@@ -253,7 +253,7 @@
    </select>
    
    <delete id="deleteLecture">
-      DELETE FROM STUDY WHERE SNO = #{sno} AND STATUS NOT '강의 종료' AND TYPE = 'LECTURE'
+      DELETE FROM STUDY WHERE SNO = #{sno} and (STATUS = '강의 종료' OR STATUS = '모집 중' OR STATUS = '마감 임박')
    </delete>
    
    <delete id="deleteLectures">
@@ -345,8 +345,7 @@
 			</if>
 			<if test="status != null and status !='' ">
 				AND STATUS = #{status}
-			</if>
-			
+			</if>			
 			<if test="rownum != null and rownum !='' ">
 				AND ROWNUM <![CDATA[ <= ]]> #{rownum}
 			</if>
@@ -365,10 +364,6 @@
 			</choose>
 		</if>
 	</select>
-<!-- 김률민 추가 -->
-	
-   
-   
-   
-   
+<!-- 김률민 추가 -->   
+
 </mapper>

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.lecture.model.vo.Lecture;
+import com.pure.study.member.model.vo.Member;
 
 @Controller
 public class LectureContoller {
@@ -36,21 +38,53 @@ public class LectureContoller {
 
 	/* 강의 등록으로 이동하는 맵핑 */
 	@RequestMapping("/lecture/insertLecture.do")
-	public ModelAndView insertLecture() {
+	public ModelAndView insertLecture(@RequestParam int mno, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 
-		// 지역리스트
-		List<Map<String, String>> locList = ls.selectLocList();
-		// 큰 분류 리스트
-		List<Map<String, String>> kindList = ls.selectKindList();
-		// 난이도
-		List<Map<String, String>> diffList = ls.selectDiff();
+		Member m = (Member) session.getAttribute("memberLoggedIn");
+		int realMNo = m.getMno();
 
-		mav.addObject("locList", locList);
-		mav.addObject("kindList", kindList);
-		mav.addObject("diffList", diffList);
+		String msg = "";
+		String loc = "";
 
-		mav.setViewName("lecture/insertLecture");
+		if (mno != realMNo) {
+			msg = "잘못된 경로로 접근했다.";
+			loc = "/lecture/lectureList.do";
+
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
+
+			mav.setViewName("/common/msg");
+		} else {
+			int confirm = 0;
+
+			if (mno > 0) {
+				confirm = ls.confirmInstructor(mno);
+			}
+
+			if (confirm > 0) {
+				// 지역리스트
+				List<Map<String, String>> locList = ls.selectLocList();
+				// 큰 분류 리스트
+				List<Map<String, String>> kindList = ls.selectKindList();
+				// 난이도
+				List<Map<String, String>> diffList = ls.selectDiff();
+
+				mav.addObject("locList", locList);
+				mav.addObject("kindList", kindList);
+				mav.addObject("diffList", diffList);
+
+				mav.setViewName("lecture/insertLecture");
+			} else {
+				msg = "강사만 강의 신청이 가능합니다.";
+				loc = "/lecture/lectureList.do";
+
+				mav.addObject("msg", msg);
+				mav.addObject("loc", loc);
+
+				mav.setViewName("/common/msg");
+			}
+		}
 
 		return mav;
 	}
@@ -61,6 +95,7 @@ public class LectureContoller {
 			@RequestParam(value = "freqs") String[] freqs, @RequestParam(value = "upFile") MultipartFile[] upFiles,
 			HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
+
 		Map<String, Object> key = new HashMap<>();
 		key.put("mno", lecture.getMno());
 		key.put("key", "study");
@@ -83,7 +118,7 @@ public class LectureContoller {
 
 		// 같은 날짜, 요일, 시간에 있는지를 검사해봅시다..
 		List<Map<String, Object>> list = ls.selectLectureListByMno(key);
-	
+
 		int cnt = checkDate(lecture, list, freqs);
 
 		if (cnt == 0) {
@@ -105,7 +140,7 @@ public class LectureContoller {
 					String renamedFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + rndNum + "."
 							+ ext;
 
-					if (l != last) {						
+					if (l != last) {
 						try {
 							f.transferTo(new File(saveDirectory + "/" + renamedFileName));
 						} catch (IllegalStateException e) {
@@ -113,7 +148,7 @@ public class LectureContoller {
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
-						
+
 						img += renamedFileName + ",";
 					}
 
@@ -172,24 +207,17 @@ public class LectureContoller {
 	}
 
 	@RequestMapping("/lecture/lectureList.do")
-	public ModelAndView lectureList(@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage,
-			@RequestParam(required = false, defaultValue = "0") int mno) {
+	public ModelAndView lectureList(@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage) {
 		ModelAndView mav = new ModelAndView();
 
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
 		List<Map<String, String>> diffList = ls.selectDiff();
 
-		int check = 0;
-
-		if (mno > 0)
-			check = ls.confirmInstructor(mno);
-
 		mav.addObject("locList", locList);
 		mav.addObject("kindList", kindList);
 		mav.addObject("diffList", diffList);
 		mav.addObject("cPage", cPage);
-		mav.addObject("check", check);
 
 		mav.setViewName("lecture/lectureList");
 
@@ -197,19 +225,20 @@ public class LectureContoller {
 	}
 
 	@RequestMapping("/lecture/lectureView.do")
-	public ModelAndView lectureView(@RequestParam int sno, @RequestParam(required = false, defaultValue = "0") int mno) {
-		ModelAndView mav = new ModelAndView();		
-		
+	public ModelAndView lectureView(@RequestParam int sno,
+			@RequestParam(required = false, defaultValue = "0") int mno) {
+		ModelAndView mav = new ModelAndView();
+
 		Map<String, Integer> map = new HashMap<>();
 		map.put("sno", sno);
 
 		// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
 		if (mno > 0) {
 			map.put("mno", mno);
-			
+
 			int wish = ls.lectureWish(map);
 			int insert = ls.preinsertApply(map);
-			
+
 			mav.addObject("wish", wish);
 			mav.addObject("insert", insert);
 		}
@@ -228,7 +257,13 @@ public class LectureContoller {
 		ModelAndView mav = new ModelAndView();
 		int result = ls.deleteLecture(sno);
 
-		mav.setViewName("/lecture/lectureList");
+		String msg = "강의를 삭제했습니다.";
+		String loc = "/lecture/lectureList.do";
+
+		mav.addObject("msg", msg);
+		mav.addObject("loc", loc);
+
+		mav.setViewName("/common/msg");
 
 		return mav;
 	}
@@ -245,7 +280,7 @@ public class LectureContoller {
 		return result;
 	}
 
-	@RequestMapping(value="/lecture/findLecture.do", produces="text/plain;charset=UTF-8")
+	@RequestMapping(value = "/lecture/findLecture.do", produces = "text/plain;charset=UTF-8")
 	@ResponseBody
 	public String findLecture(@RequestParam int sno, @RequestParam int mno) {
 		int result = 0;
@@ -273,9 +308,9 @@ public class LectureContoller {
 				String[] freqs = lecture.getFreqs().split(",");
 				int cnt = checkDate(lecture, list, freqs);
 
-				if (cnt != 0) 
+				if (cnt != 0)
 					msg = "날짜나 요일, 시간이 겹치는 강의 또는 스터디가 존재합니다.";
-				
+
 			} catch (NullPointerException e) {
 				msg = "";
 			}
@@ -363,7 +398,7 @@ public class LectureContoller {
 		List<Map<String, Object>> lectureList = ls.selectLectureListBySearch(terms);
 		mav.addObject("list", lectureList);
 		mav.addObject("total", total);
-		mav.addObject("cPage", cPage+1);
+		mav.addObject("cPage", cPage + 1);
 
 		return mav;
 	}
@@ -524,7 +559,7 @@ public class LectureContoller {
 		map.put("mno", mno);
 		map.put("price", price);
 		map.put("status", 1);
-		
+
 		ls.insertPay(map);
 
 		// 장바구니 삭제
@@ -532,7 +567,7 @@ public class LectureContoller {
 
 		cancelMap.put("mno", mno);
 		cancelMap.put("sno", sno);
-		
+
 		ls.lectureWishCancel(cancelMap);
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
@@ -553,20 +588,20 @@ public class LectureContoller {
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
-	
+
 	@RequestMapping("/lecture/lectureCancel.do")
 	public String lectureCancel(@RequestParam int mno, @RequestParam int sno) {
 		ModelAndView mav = new ModelAndView();
-		
+
 		int result = 0;
-		
+
 		Map<String, Integer> map = new HashMap<>();
-		
+
 		map.put("mno", mno);
 		map.put("sno", sno);
-		
+
 		result = ls.lectureCancel(map);
-		
+
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
 
@@ -598,7 +633,7 @@ public class LectureContoller {
 
 			// 뽑아올 시간들.
 			String[] times = lecture.getTime().split("~");
-			
+
 			int sHour = Integer.parseInt(times[0].split(":")[0]);
 			int eHour = Integer.parseInt(times[1].split(":")[0]);
 
@@ -634,40 +669,40 @@ public class LectureContoller {
 
 		return cnt;
 	}
-	
+
 	@RequestMapping("/lecture/uploadImage.do")
 	@ResponseBody
-	public Map<String,String> uploadImage(@RequestParam("file") MultipartFile f,HttpServletRequest request) {
+	public Map<String, String> uploadImage(@RequestParam("file") MultipartFile f, HttpServletRequest request) {
 
-		String renamedFileName="";
-		String saveDirectory="";
-		Map<String,String> map=new HashMap<>();
-	
-		try { 
-			//1. 파일업로드처리
+		String renamedFileName = "";
+		String saveDirectory = "";
+		Map<String, String> map = new HashMap<>();
+
+		try {
+			// 1. 파일업로드처리
 			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/lecture");
-				if(!f.isEmpty()) {
-					//파일명재생성
-					String originalFileName = f.getOriginalFilename();
-					String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
-					int rndNum = (int)(Math.random()*1000); //0~9999
-					renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
-				
-					try {
-						f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제저장하는코드. 
-					} catch (IllegalStateException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				
+			if (!f.isEmpty()) {
+				// 파일명재생성
+				String originalFileName = f.getOriginalFilename();
+				String ext = originalFileName.substring(originalFileName.lastIndexOf(".") + 1);
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+				int rndNum = (int) (Math.random() * 1000); // 0~9999
+				renamedFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + rndNum + "." + ext;
+
+				try {
+					f.transferTo(new File(saveDirectory + "/" + renamedFileName)); // 실제저장하는코드.
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			
-			}catch(Exception e) {
-				throw new RuntimeException("이미지등록오류");
+
 			}
-		
+
+		} catch (Exception e) {
+			throw new RuntimeException("이미지등록오류");
+		}
+
 		map.put("url", renamedFileName);
 		return map;
 	}

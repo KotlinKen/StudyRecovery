@@ -76,7 +76,7 @@ $(document).ready(function(){
    
    $("#ldate").attr("min", today);
    $("#sdate").attr("min", today);
-   $("#edate").attr("min", today);
+   $("#edate").attr("min", today);   
 });
 
 $(function(){   
@@ -142,7 +142,6 @@ $(function(){
    
    //첨부파일 + 버튼 클릭시 첨부파일창이 밑에 더 생긴다.
    $("form[name=lectureFrm]").on("click","button.addFile",function(){
-      console.log("adddd");
       if($("div.fileWrapper").length<10){
          $("div.fileWrapper:last").after($("div.forCopy").clone().removeClass("forCopy").addClass("fileWrapper"));
       }         
@@ -150,7 +149,6 @@ $(function(){
    
    //첨부파일 - 버튼 클릭시  해당 첨부파일 영역이 사라진다.
    $("form[name=lectureFrm]").on("click","button.removeFile",function(){
-      console.log($("div.fileWrapper:eq(0)"));
       if( $(this).parent("div.fileWrapper")[0]!==$("div.fileWrapper:eq(0)")[0]){ //맨첫번째 첨부파일은 삭제이벤트 발생안함.
          $(this).parent("div.fileWrapper").remove();
       }
@@ -166,6 +164,7 @@ $(function(){
       
       var sdate = $("#sdate");      
       var edate = $("#edate");
+      
       sdate.val("");
       edate.val("");
       
@@ -217,8 +216,9 @@ $(function(){
                    $("input[class=day]").eq(sday+i-7).attr("disabled", false);   
              }
          }
-         else if( difference > 7 )
+         else if( difference > 7 ){
             $(".day").attr("disabled", false);
+         }
          // 강의 끝나는 날이 시작하는 날보다 빠를 경우 초기화.
          else if( difference < 0 ){
             alert("강의가 끝나는 날이 시작하는 날보다 빠를 수 없습니다.");
@@ -256,8 +256,9 @@ $(function(){
    });   
 
    $("div.fileWrapper div.custom-file input:file").on('change',function(){
+	   // 확장자 검사.
        var ext = $(this).val().split(".").pop().toLowerCase();
-       console.log("ext="+ext);
+       
         if (ext.length > 0) {
            if ($.inArray(ext, [ "gif", "png", "jpg", "jpeg" ]) == -1) {
               alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
@@ -378,7 +379,7 @@ $(function(){
 		    <span class="input-group-text">첨부파일</span>
 		  </div>
 		  <div class="custom-file">
-		    <input type="file" class="custom-file-input" name="upFile">
+		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
 		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
 		  </div>
 		  <button type="button" class="addFile">+</button>
@@ -395,7 +396,7 @@ $(function(){
 		    <span class="input-group-text">첨부파일</span>
 		  </div>
 		  <div class="custom-file">
-		    <input type="file" class="custom-file-input" name="upFile">
+		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required>
 		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
 		  </div>
 		  <button type="button" class="addFile">+</button>
