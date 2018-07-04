@@ -26,7 +26,7 @@
 				<div class="form-group col-md-6">
 					<label for="img1">이미지</label>
 					<div class="upfile_name">
-						<input type="file" class="form-control" id="img1" name="upFile">
+						<input type="file" accept=".gif, .jpg, .png" class="form-control" id="img1" name="upFile">
 						<div class="upfile_cover">${adversting.ADVIMG }</div>
 						<button type="button" class="upfile_button">파일업로드</button>
 					</div>
@@ -68,6 +68,24 @@ $(function(){
 	$("[name=startAd]").val( startDate.toISOString().substring(0, 10));
 	// 종료 시간 기본 한달로 초기값 설정
 	$("[name=endAd]").val(endDate.toISOString().substring(0, 10));
+});
+$("[name=upFile]").change(function(){
+	console.log("test");
+	$file  = $(this)[0].files[0];
+	if($file != null){
+		var reader = new FileReader();
+		reader.readAsDataURL($file);
+		
+		//확장자 확인후 진행 여부
+		var chk = $(this).val().split(".").pop().toLowerCase();
+		if($.inArray(chk, ['gif','png','jpg','jpeg']) == -1){
+			alert("이미지만 등록할 수 있습니다.");
+			$(this).val("");
+			return; 
+		}
+		
+ 
+	}
 });
 
 

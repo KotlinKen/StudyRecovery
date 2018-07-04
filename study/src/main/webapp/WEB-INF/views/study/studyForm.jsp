@@ -405,6 +405,7 @@ $(function(){
 });
 
 </script>
+<div class="container">
 <div id="study-container">
 	<form action="studyFormEnd.do" name="studyFrm" method="post" onsubmit="return validate();" enctype="multipart/form-data">
 		
@@ -505,5 +506,5 @@ $(function(){
 		  <button type="button" class="removeFile">-</button>
 	</div>
 </div>
-</section>
+</div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

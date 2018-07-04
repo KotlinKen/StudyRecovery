@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="lecture">
    <resultMap type="map" id="map">
-      <result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String"/>
+      <result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
    </resultMap>
    
    <insert id="insertLecture">
@@ -18,7 +18,7 @@
                             #{price}, 
                             NULL, 
                             #{recruit}, 
-                            '모집 중', 
+                            '모집 중',
                             #{time}, 
                             'lecture',                         
                             #{ldate}, 
@@ -115,7 +115,7 @@
       SELECT COUNT(*) FROM STUDY WHERE TYPE = 'lecture'
    </select>
    
-   <select id="selectLectureOne" resultType="map">
+   <select id="selectLectureOne" resultMap="map">
       SELECT SNO,
             A.MNO AS MNO,
              (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
@@ -253,7 +253,7 @@
    </select>
    
    <delete id="deleteLecture">
-      DELETE FROM STUDY WHERE SNO = #{sno} and STATUS = '모집 중'
+      DELETE FROM STUDY WHERE SNO = #{sno} AND STATUS NOT '강의 종료' AND TYPE = 'LECTURE'
    </delete>
    
    <delete id="deleteLectures">
@@ -322,9 +322,16 @@
       DELETE FROM WISH WHERE MNO = #{mno} AND SNO = #{sno}
    </delete>
    
+   <delete id="lectureCancel">
+		DELETE FROM CREW 
+		WHERE MNO = #{mno} AND SNO = #{sno}
+   </delete>
+   
 	<!-- 김률민 추가 -->
 	<select id="restTypeLister" resultMap="map">
-		SELECT * FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
+	SELECT S.*, M.*, T.*, D.*, L.*, SUB.*, K.*, 
+	(SELECT  COUNT(*) FROM APPLY AA WHERE S.SNO = AA.SNO) APPLYCNT 
+	FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
 		<trim prefix="WHERE" prefixOverrides="AND | OR ">
 			<if test="searchType != null and searchType != '' ">
 				<if test="searchKeyword != null and searchKeyword != '' ">

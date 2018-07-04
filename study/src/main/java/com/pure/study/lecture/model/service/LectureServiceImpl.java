@@ -154,5 +154,10 @@ public class LectureServiceImpl implements LectureService {
 		return ld.restTypeLister(queryMap);
 	}
 
+	@Override
+	public int lectureCancel(Map<String, Integer> map) {
+		return ld.lectureCancel(map);
+	}
+
 
 }

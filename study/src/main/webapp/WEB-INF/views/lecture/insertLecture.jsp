@@ -139,122 +139,134 @@ $(function(){
       $(this).next(".custom-file-label").html(fileName);
    });
 
-	
-	//첨부파일 + 버튼 클릭시 첨부파일창이 밑에 더 생긴다.
-	$("form[name=lectureFrm]").on("click","button.addFile",function(){
-		console.log("adddd");
-		if($("div.fileWrapper").length<10){
-			$("div.fileWrapper:last").after($("div.forCopy").clone().removeClass("forCopy").addClass("fileWrapper"));
-		}			
-	});
-	
-	//첨부파일 - 버튼 클릭시  해당 첨부파일 영역이 사라진다.
-	$("form[name=lectureFrm]").on("click","button.removeFile",function(){
-		console.log($("div.fileWrapper:eq(0)"));
-		if( $(this).parent("div.fileWrapper")[0]!==$("div.fileWrapper:eq(0)")[0]){ //맨첫번째 첨부파일은 삭제이벤트 발생안함.
-			$(this).parent("div.fileWrapper").remove();
-		}
-	});	
-	
-	// 날짜를 조정해보자... 유효성 검사 포함.
-	// 유효성 검사 - 마감일
-	$("#ldate").on("change", function(){		
-		var ldate = $(this);
-		var ldateVal = ldate.val();
-		var lArray = ldateVal.split("-");
-		var deadline = new Date(lArray[0], lArray[1], lArray[2]).getTime();
-		
-		var sdate = $("#sdate");		
-		var edate = $("#edate");
-		sdate.val("");
-		edate.val("");
-		
-		$("input[class=day]").prop("checked", false);
-		$("input[class=day]").attr("disabled", true);
-		
-		sdate.attr("min", $(this).val());
-		edate.attr("min", $(this).val());		
-	});
-	
-	// 유효성 검사 - 강의기간
-	$("input[class=changeDate]").on("change", function(){
-		$("input[class=day]").prop("checked", false);
-		$("input[class=day]").attr("disabled", true);
-		
-		// 시작하는 날
-		var sdate = $("#sdate");
-		var sdateVal = sdate.val();
-		var sday = new Date(sdateVal).getDay();
-		var startArray = sdateVal.split("-");
-		var start_date = new Date(startArray[0], startArray[1], startArray[2]).getTime();
-		
-		// 끝나는 날
-		var edate = $("#edate");
-		var edateVal = edate.val();
-		var endArray = edateVal.split("-");
-		var end_date = new Date(endArray[0], endArray[1], endArray[2]).getTime();	
-		
-		// 신청 마감일
-		var ldateVal = $("#ldate").val();
-		
-		if( ldateVal == "" ){
-			alert("마감일 먼저 설정해주세요.");
-			sdate.val("");
-			edate.val("");
-		}			
-		
-		// 날짜 차이
-		var difference = (end_date-start_date)/1000/24/60/60;			
-		
-		// 알고리즘
-		if( sdateVal != "" && edateVal != "" ){
-			if( difference >= 0 && difference < 7 ){			
-				$("input[class=day]").attr("disabled", true);
-			 	for( var i = 0; i < difference+1; i++ ){
-			 		if( sday + i < 7)			
-			 			$("input[class=day]").eq(sday+i).attr("disabled", false);		 		
-			 		else
-			 			$("input[class=day]").eq(sday+i-7).attr("disabled", false);	
-			 	}
-			}
-			else if( difference > 7 )
-				$(".day").attr("disabled", false);
-			// 강의 끝나는 날이 시작하는 날보다 빠를 경우 초기화.
-			else if( difference < 0 ){
-				alert("강의가 끝나는 날이 시작하는 날보다 빠를 수 없습니다.");
-				sdate.val("");
-				edate.val("");
-			}
-			else
-				$(".day").attr("disabled", false);	
-		}
-		else{
-			$(".day").attr("disabled", true);	
-		}		
-	});
-	
-	// 유효성 검사 - 시간
-	$(".time").on("change", function(){
-		// 시작 시간
-		var startTime = $("#startTime");
-		var startTimeVal = startTime.val();
-		var startTimeArray = startTimeVal.split(":");
-		var start = Number(startTimeArray[0]);		
-		
-		// 마감 시간
-		var endTime = $("#endTime");
-		var endTimeVal = $("#endTime").val();
-		var endTimeArray = endTimeVal.split(":");
-		var end = Number(endTimeArray[0]);	
-		
-		// 시작시간이 마감시간보다 클 경우!
-		if( start > end ){
-			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
-			startTime.val("6:00");
-			endTime.val("24:00");
-		}
-	});
+   
+   //첨부파일 + 버튼 클릭시 첨부파일창이 밑에 더 생긴다.
+   $("form[name=lectureFrm]").on("click","button.addFile",function(){
+      console.log("adddd");
+      if($("div.fileWrapper").length<10){
+         $("div.fileWrapper:last").after($("div.forCopy").clone().removeClass("forCopy").addClass("fileWrapper"));
+      }         
+   });
+   
+   //첨부파일 - 버튼 클릭시  해당 첨부파일 영역이 사라진다.
+   $("form[name=lectureFrm]").on("click","button.removeFile",function(){
+      console.log($("div.fileWrapper:eq(0)"));
+      if( $(this).parent("div.fileWrapper")[0]!==$("div.fileWrapper:eq(0)")[0]){ //맨첫번째 첨부파일은 삭제이벤트 발생안함.
+         $(this).parent("div.fileWrapper").remove();
+      }
+   });   
+   
+   // 날짜를 조정해보자... 유효성 검사 포함.
+   // 유효성 검사 - 마감일
+   $("#ldate").on("change", function(){      
+      var ldate = $(this);
+      var ldateVal = ldate.val();
+      var lArray = ldateVal.split("-");
+      var deadline = new Date(lArray[0], lArray[1], lArray[2]).getTime();
+      
+      var sdate = $("#sdate");      
+      var edate = $("#edate");
+      sdate.val("");
+      edate.val("");
+      
+      $("input[class=day]").prop("checked", false);
+      $("input[class=day]").attr("disabled", true);
+      
+      sdate.attr("min", $(this).val());
+      edate.attr("min", $(this).val());      
+   });
+   
+   // 유효성 검사 - 강의기간
+   $("input[class=changeDate]").on("change", function(){
+      $("input[class=day]").prop("checked", false);
+      $("input[class=day]").attr("disabled", true);
+      
+      // 시작하는 날
+      var sdate = $("#sdate");
+      var sdateVal = sdate.val();
+      var sday = new Date(sdateVal).getDay();
+      var startArray = sdateVal.split("-");
+      var start_date = new Date(startArray[0], startArray[1], startArray[2]).getTime();
+      
+      // 끝나는 날
+      var edate = $("#edate");
+      var edateVal = edate.val();
+      var endArray = edateVal.split("-");
+      var end_date = new Date(endArray[0], endArray[1], endArray[2]).getTime();   
+      
+      // 신청 마감일
+      var ldateVal = $("#ldate").val();
+      
+      if( ldateVal == "" ){
+         alert("마감일 먼저 설정해주세요.");
+         sdate.val("");
+         edate.val("");
+      }         
+      
+      // 날짜 차이
+      var difference = (end_date-start_date)/1000/24/60/60;         
+      
+      // 알고리즘
+      if( sdateVal != "" && edateVal != "" ){
+         if( difference >= 0 && difference < 7 ){         
+            $("input[class=day]").attr("disabled", true);
+             for( var i = 0; i < difference+1; i++ ){
+                if( sday + i < 7)         
+                   $("input[class=day]").eq(sday+i).attr("disabled", false);             
+                else
+                   $("input[class=day]").eq(sday+i-7).attr("disabled", false);   
+             }
+         }
+         else if( difference > 7 )
+            $(".day").attr("disabled", false);
+         // 강의 끝나는 날이 시작하는 날보다 빠를 경우 초기화.
+         else if( difference < 0 ){
+            alert("강의가 끝나는 날이 시작하는 날보다 빠를 수 없습니다.");
+            sdate.val("");
+            edate.val("");
+         }
+         else
+            $(".day").attr("disabled", false);   
+      }
+      else{
+         $(".day").attr("disabled", true);   
+      }      
+   });
+   
+   // 유효성 검사 - 시간
+   $(".time").on("change", function(){
+      // 시작 시간
+      var startTime = $("#startTime");
+      var startTimeVal = startTime.val();
+      var startTimeArray = startTimeVal.split(":");
+      var start = Number(startTimeArray[0]);      
+      
+      // 마감 시간
+      var endTime = $("#endTime");
+      var endTimeVal = $("#endTime").val();
+      var endTimeArray = endTimeVal.split(":");
+      var end = Number(endTimeArray[0]);   
+      
+      // 시작시간이 마감시간보다 클 경우!
+      if( start > end ){
+         alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
+         startTime.val("6:00");
+         endTime.val("24:00");
+      }
+   });   
+
+   $("div.fileWrapper div.custom-file input:file").on('change',function(){
+       var ext = $(this).val().split(".").pop().toLowerCase();
+       console.log("ext="+ext);
+        if (ext.length > 0) {
+           if ($.inArray(ext, [ "gif", "png", "jpg", "jpeg" ]) == -1) {
+              alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
+              return false;
+           }
+        }
+    });
 });
+
 </script>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp"/>
@@ -324,72 +336,6 @@ $(function(){
     <label>목 </label><input type="checkbox" class="day" name="freqs" value="목" />
     <label>금 </label><input type="checkbox" class="day" name="freqs" value="금" />
     <label>토 </label><input type="checkbox" class="day" name="freqs" value="토" />
-<<<<<<< HEAD
-       
-   <label for="starttime">스터디 시간</label>
-   <select name="startTime" id="startTime" class="time">
-      <c:forEach var="i" begin="6" end="23">
-         <option value="${i }:00">${i }:00</option>      
-      </c:forEach>
-   </select>
-   <select name="endTime" id="endTime" class="time">
-      <c:forEach var="j" begin="7" end="24">
-         <c:if test="${j < 24}">
-            <option value="${j }:00">${j }:00</option>   
-         </c:if>
-          <c:if test="${j == 24 }">
-            <option value="${j }:00" selected>${j }:00</option>       
-          </c:if>
-      </c:forEach>
-   </select>
-   
-   <input type="hidden" name="time" id="time" />
-   <br />
-   
-   <label for="price">일회 사용회비 : </label><input type="number" name="price" id="price" class="form-control" min="0" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원" />
-   <br />
-   
-   <label for="recruit">모집 인원 : </label>
-   <select name="recruit" id="recruit">
-      <c:forEach var="i" begin="2" end="10">
-         <option value="${i }">${i }명</option>
-      </c:forEach>
-   </select>
-   <br /> 
-   
-   <label for="etc">기타 : </label>
-   <textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea>
-   <br /> 
-   
-   <div class="input-group mb-3 fileWrapper" style="padding:0px">
-        <div class="input-group-prepend" style="padding:0px">
-          <span class="input-group-text">첨부파일</span>
-        </div>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" name="upFile">
-          <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-        </div>
-        <button type="button" class="addFile">+</button>
-        <button type="button" class="removeFile">-</button>
-   </div>
-   
-   
-   <input type="reset" value="취소하기" />
-   <input type="submit" value="등록"/>
-   </form>
-      
-   <div class="input-group mb-3 forCopy" style="padding:0px">
-        <div class="input-group-prepend" style="padding:0px">
-          <span class="input-group-text">첨부파일</span>
-        </div>
-        <div class="custom-file">
-          <input type="file" class="custom-file-input" name="upFile">
-          <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-        </div>
-        <button type="button" class="addFile">+</button>
-        <button type="button" class="removeFile">-</button>
-   </div>
-=======
 	    
 	<label for="starttime">스터디 시간</label>
 	<select name="startTime" id="startTime" class="time">
@@ -455,6 +401,5 @@ $(function(){
 		  <button type="button" class="addFile">+</button>
 		  <button type="button" class="removeFile">-</button>
 	</div>
->>>>>>> branch 'KimYongJung' of https://github.com/KotlinKen/StudyRecovery.git
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

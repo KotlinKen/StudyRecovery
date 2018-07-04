@@ -64,10 +64,10 @@ public class LectureContoller {
 		Map<String, Object> key = new HashMap<>();
 		key.put("mno", lecture.getMno());
 		key.put("key", "study");
-		System.out.println("---------------------------------"+lecture);
+
 		int result = 0;
 		String msg = "";
-		String loc = "/lecture/lectureList";
+		String loc = "/lecture/lectureList.do";
 
 		List<Map<String, String>> locList = ls.selectLocList();
 		List<Map<String, String>> kindList = ls.selectKindList();
@@ -92,7 +92,7 @@ public class LectureContoller {
 			int last = upFiles.length;
 
 			String img = "";
-			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+			String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/lecture");
 
 			/****** MultipartFile을 이용한 파일 업로드 처리로직 시작 ******/
 			for (MultipartFile f : upFiles) {
@@ -105,8 +105,17 @@ public class LectureContoller {
 					String renamedFileName = sdf.format(new Date(System.currentTimeMillis())) + "_" + rndNum + "."
 							+ ext;
 
-					if (l != last)
+					if (l != last) {						
+						try {
+							f.transferTo(new File(saveDirectory + "/" + renamedFileName));
+						} catch (IllegalStateException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
 						img += renamedFileName + ",";
+					}
 
 					if (l == last) {
 						img += renamedFileName;
@@ -188,10 +197,8 @@ public class LectureContoller {
 	}
 
 	@RequestMapping("/lecture/lectureView.do")
-	public ModelAndView lectureView(@RequestParam int sno,
-			@RequestParam(required = false, defaultValue = "0") int mno) {
-		ModelAndView mav = new ModelAndView();
-		
+	public ModelAndView lectureView(@RequestParam int sno, @RequestParam(required = false, defaultValue = "0") int mno) {
+		ModelAndView mav = new ModelAndView();		
 		
 		Map<String, Integer> map = new HashMap<>();
 		map.put("sno", sno);
@@ -199,9 +206,11 @@ public class LectureContoller {
 		// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
 		if (mno > 0) {
 			map.put("mno", mno);
+			
 			int wish = ls.lectureWish(map);
 			int insert = ls.preinsertApply(map);
-			mav.addObject("pre", wish);
+			
+			mav.addObject("wish", wish);
 			mav.addObject("insert", insert);
 		}
 
@@ -507,6 +516,7 @@ public class LectureContoller {
 	@RequestMapping("/lecture/successPay.do")
 	public String seccessPay(@RequestParam int mno, @RequestParam int sno, @RequestParam(required = true) long pno,
 			@RequestParam int price) {
+		// 결제 테이블에 넣기.
 		Map<String, Object> map = new HashMap<>();
 
 		map.put("pno", pno);
@@ -514,8 +524,16 @@ public class LectureContoller {
 		map.put("mno", mno);
 		map.put("price", price);
 		map.put("status", 1);
+		
+		ls.insertPay(map);
 
-		int result = ls.insertPay(map);
+		// 장바구니 삭제
+		Map<String, Integer> cancelMap = new HashMap<>();
+
+		cancelMap.put("mno", mno);
+		cancelMap.put("sno", sno);
+		
+		ls.lectureWishCancel(cancelMap);
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
@@ -535,7 +553,22 @@ public class LectureContoller {
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
-
+	
+	@RequestMapping("/lecture/lectureCancel.do")
+	public String lectureCancel(@RequestParam int mno, @RequestParam int sno) {
+		ModelAndView mav = new ModelAndView();
+		
+		int result = 0;
+		
+		Map<String, Integer> map = new HashMap<>();
+		
+		map.put("mno", mno);
+		map.put("sno", sno);
+		
+		result = ls.lectureCancel(map);
+		
+		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
+	}
 
 	// 관리자 강의페이지 - 률멘 방식
 	@RequestMapping(value = "/lecture/all/{cPage}/{count}", method = RequestMethod.GET)
@@ -601,10 +634,9 @@ public class LectureContoller {
 
 		return cnt;
 	}
-
 	
-	@ResponseBody
 	@RequestMapping("/lecture/uploadImage.do")
+	@ResponseBody
 	public Map<String,String> uploadImage(@RequestParam("file") MultipartFile f,HttpServletRequest request) {
 
 		String renamedFileName="";
@@ -613,7 +645,7 @@ public class LectureContoller {
 	
 		try { 
 			//1. 파일업로드처리
-			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
+			saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/lecture");
 				if(!f.isEmpty()) {
 					//파일명재생성
 					String originalFileName = f.getOriginalFilename();

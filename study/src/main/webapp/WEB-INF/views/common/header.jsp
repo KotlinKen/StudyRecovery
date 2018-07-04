@@ -81,7 +81,6 @@ var type = "POPUP";
 			}
 		}
 	});
-	
 	$(".adverstingPopup .adverstingPopupCloseBtn").on("click", function(){
 		$(this).parent().css("display", "none");
 		$.ajax({
