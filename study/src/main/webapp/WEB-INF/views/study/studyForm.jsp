@@ -424,7 +424,7 @@ $(function(){
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
-		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required ></textarea>
+		<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required ></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
@@ -467,7 +467,7 @@ $(function(){
 		
 		<input type="hidden" name="time" id="time"/>
 		<label for="price">일회 사용회비 : </label>
-		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" value="0" />
+		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" value="0" required />
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>
@@ -486,7 +486,7 @@ $(function(){
 			    <span class="input-group-text">첨부파일</span>
 			  </div>
 			  <div class="custom-file">
-			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" >
+			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
 			    <label class="custom-file-label">파일을 선택하세요</label>
 			  </div>
 			  <button type="button" class="addFile">+</button>
@@ -507,7 +507,7 @@ $(function(){
 		  </div>
 		  
 		  <div class="custom-file">
-		    <input type="file" class="custom-file-input" name="upFile">
+		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required>
 		    <label class="custom-file-label" >파일을 선택하세요</label>
 		  </div>
 		  

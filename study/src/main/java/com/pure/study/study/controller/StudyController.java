@@ -410,11 +410,17 @@ public class StudyController {
 		
 		//신청인원 100명 제한 검사
 		int cntMax = studyService.selectApplyCount(sno);
+		int deleteWish=0;
 		if(cntMax<100) {
 			//먼저 이미 신청했는지 검사한다.
 			int cnt = studyService.preinsertApply(map);
-			if(cnt == 0 )
-		         result = studyService.insertApplyStudy(map);
+			if(cnt == 0 ) {
+				 result = studyService.insertApplyStudy(map);
+				 
+				 //참여신청을 하면, 찜목록에서 삭제됨. 
+				 if(result>0) deleteWish=studyService.deleteWish(map);
+			}
+		        
 		}else {
 			result=-1;
 		}

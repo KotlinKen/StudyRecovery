@@ -208,5 +208,11 @@ public class StudyDAOImpl implements StudyDAO {
 		return sqlSession.selectOne("study.selectStudyByMnoTypeStudy",sno);
 	}
 
+	@Override
+	public int deleteWish(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("study.deleteWish", map);
+	}
+
 
 }

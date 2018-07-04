@@ -6,32 +6,25 @@ div.infoinfo{
 }
 </style>
 <script>
-$(function(){
-	$("button#btn-search").click(function(){
-		console.log("test");
-		var filter = {lno:$("select#local option:selected").val(),tno:$("select#town").val(),
-				subno:$("select#subject").val(),kno:$("select#kind option:selected").val(),
-				leadername:$("input#leadername").val(),title:$("input#title").val(),
-				year:$("select#year").val(),month:$("select#month").val()};
-		
-		
-		
- 
-		SearchStudy(1,5,$("select#local option:selected").val(),filter);
-	});
-});
 
-function SearchStudy(cPage, pageBarSize, filter){
-	 
+$(function(){
+	
+	$("button#btn-search").click(function(){
+		SearchStudy(1,5);
+	});
+	
+});
+function SearchStudy(cPage, pageBarSize){
+	var filter = {lno:$("select#local option:selected").val(),tno:$("select#town").val(),
+			subno:$("select#subject").val(),kno:$("select#kind option:selected").val(),
+			leadername:$("input#leadername").val(),title:$("input#title").val(),
+			year:$("select#year").val(),month:$("select#month").val()};
+	//제이슨 오브젝트로 만듦 
 	$.ajax({   
 		url:"${pageContext.request.contextPath}/study/AdminStudySearch/"+cPage+"/"+pageBarSize,
 		dataType:"json",
 		data: filter,
 		success:function(data){
-			var filter = JSON.stringify(filter);
-			var filter2 = JSONtoString(filter);
-			console.log("filter" + filter);
-			console.log("filter2" + filter2);
 			
 			console.log("검색함..");
 			console.log(data);
@@ -48,11 +41,11 @@ function SearchStudy(cPage, pageBarSize, filter){
 			if(pageNo == 1 ){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>';
 			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:SearchStudy('+(pageNo-1)+','+5+','+filter+')">Previous</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:SearchStudy('+(pageNo-1)+','+5+')">Previous</a></li>';
 			}
 			while(!(pageNo > pageEnd || pageNo > totalPage)){
 				console.log("test");
-				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:SearchStudy('+pageNo+','+5+', '+filter+')">'+pageNo+'</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:SearchStudy('+pageNo+','+5+')">'+pageNo+'</a></li>';
 /* 				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href=javascript:SearchStudy('+pageNo+','+5+',"'+filter+'")>'+pageNo+'</a></li>'; */
 				pageNo++;
 			}
@@ -61,7 +54,7 @@ function SearchStudy(cPage, pageBarSize, filter){
 			if(pageNo > totalPage){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
 			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:SearchStudy('+pageNo+','+5+','+filter+')">Next</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:SearchStudy('+pageNo+','+5+')">Next</a></li>';
 			}
 			
 			//페이지 버튼 생성
@@ -93,6 +86,8 @@ function SearchStudy(cPage, pageBarSize, filter){
 	});
 	
 }
+
+
 
 </script>
 <div class="studyList">

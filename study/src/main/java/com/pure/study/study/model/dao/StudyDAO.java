@@ -69,6 +69,8 @@ public interface StudyDAO {
 
 	Study selectStudyByMnoTypeStudy(String sno);
 
+	int deleteWish(Map<String, Integer> map);
+
 	
 
 }

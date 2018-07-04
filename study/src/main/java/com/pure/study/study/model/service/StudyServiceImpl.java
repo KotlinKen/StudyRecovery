@@ -197,6 +197,12 @@ public class StudyServiceImpl implements StudyService {
 		return studyDAO.selectStudyByMnoTypeStudy(sno);
 	}
 
+	@Override
+	public int deleteWish(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.deleteWish(map);
+	}
+
 	
 
 
