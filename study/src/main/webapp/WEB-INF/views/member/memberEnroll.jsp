@@ -104,7 +104,7 @@
 			<div id="choos-ik">
 			<br />
 			<button type="button" class="btn btn-outline-secondary" id="btn_upFile">당신은 이쁜 사람입니다. 자신감을 가지세요(선택)</button> <input type="file" name="upFile" id="upFile" accept="image/*" /> 
-			<input type='hidden' name='mprofile' id="mprofile" value='no'> <br /><br />
+			<input type='hidden' name='mprofile' id="mprofile" value='noprofile.jpg'> <br /><br />
 			<div id="div-img-ik"></div>
 			<div>
 			<br />

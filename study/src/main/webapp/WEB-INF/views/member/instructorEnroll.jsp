@@ -92,7 +92,7 @@
 
 			<!-- 사진 올리기 -->
 			프로필사진(필수) : <input type="file" name="upFile" id="upFile" accept="image/*" /> 
-			<input type='hidden' name='mprofile' id="mprofile" value='no' />
+			<input type='hidden' name='mprofile' id="mprofile" value='noprofile.jpg' />
 			<div id="div-img-ik"></div>
 			<br />
 			<br />
