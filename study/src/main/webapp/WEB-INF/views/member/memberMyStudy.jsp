@@ -705,7 +705,7 @@
 			applyLog(studyNo, "crew");
 		});
 	});
-	
+	 
 	function applyLog(studyNo, crew){
 		$.ajax({
 			url: "applyListView.do",
