@@ -1362,6 +1362,23 @@ public class MemberController {
 	}
 	
 	
+	///////////////////////////////////////
+	//admin설정 시작
+	//
+	@RequestMapping(value = "/member/adminMemberView.do")
+	public ModelAndView adminMemberView(@RequestParam(value = "mno", defaultValue = "0") int mno) {
+		
+		ModelAndView mav = new ModelAndView();
+		
+		Member m = memberService.selectOneMemberMno(mno);
+		List<Map<String, String>> favor = memberService.selectKind();
+		
+		
+		mav.addObject("member", m);
+		mav.addObject("favor", favor);
+		mav.setViewName("admin/adminMemberView");
+		return mav;
+	}
 
 	/* 로그인 및 마이페이지(김회진) 끝 **********************************************/
 	/*************************************
