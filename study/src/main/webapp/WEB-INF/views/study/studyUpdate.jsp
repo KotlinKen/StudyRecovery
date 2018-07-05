@@ -407,9 +407,9 @@ function validate(){
 	return true;
 }
 
-$(document).ready(function(){
+/* $(document).ready(function(){
 	$(".day").attr("disabled", true);
-});
+}); */
 
 
 </script>

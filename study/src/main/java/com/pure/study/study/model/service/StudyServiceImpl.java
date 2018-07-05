@@ -121,27 +121,27 @@ public class StudyServiceImpl implements StudyService {
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectByDeadline(Map<String,Object> terms) {
 		// TODO Auto-generated method stub
-		return studyDAO.selectByDeadline(cPage,numPerPage);
+		return studyDAO.selectByDeadline(terms);
 	}
 
 	@Override
-	public int studyDeadlineCount() {
+	public int studyDeadlineCount(Map<String,Object> terms) {
 		// TODO Auto-generated method stub
-		return studyDAO.studyDeadlineCount();
+		return studyDAO.studyDeadlineCount(terms);
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByApply(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectByApply(Map<String,Object> terms) {
 		// TODO Auto-generated method stub
-		return studyDAO.selectByApply(cPage,numPerPage);
+		return studyDAO.selectByApply(terms);
 	}
 
 	@Override
-	public int studyByApplyCount() {
+	public int studyByApplyCount(Map<String,Object> terms) {
 		// TODO Auto-generated method stub
-		return studyDAO.studyByApplyCount();
+		return studyDAO.studyByApplyCount(terms);
 	}
 
 	@Override
@@ -195,6 +195,12 @@ public class StudyServiceImpl implements StudyService {
 	public Study selectStudyByMnoTypeStudy(String sno) {
 		// TODO Auto-generated method stub
 		return studyDAO.selectStudyByMnoTypeStudy(sno);
+	}
+
+	@Override
+	public int deleteWish(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.deleteWish(map);
 	}
 
 	

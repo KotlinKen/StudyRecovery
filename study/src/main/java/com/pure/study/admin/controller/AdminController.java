@@ -68,7 +68,11 @@ public class AdminController {
 		return mav;
 	}
 	
-
-	
+	/*결제 관리페이지*/
+	@RequestMapping("/admin/adminPayment.do")
+	public ModelAndView adminPayment() {
+		ModelAndView mav = new ModelAndView();
+		return mav;
+	}
 	
 }

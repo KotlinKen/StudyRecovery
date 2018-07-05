@@ -4,8 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp"/>
-<script src="${pageContext.request.contextPath }/resources/js/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
 <style>
 p.noMore{
 	display:none;
@@ -13,6 +11,12 @@ p.noMore{
 </style>
 <script>
    $(document).ready(function(){
+	   $("#insertLectureBtn").click(function(){
+			var mno = ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
+			
+			location.href = "${pageContext.request.contextPath}/lecture/insertLecture.do?mno=" + mno;
+		});
+	   
        $("#town").hide(); 
        $("#sub").hide(); 
        
@@ -24,8 +28,7 @@ p.noMore{
 	       var mno=${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 	       
 	       location.href="${pageContext.request.contextPath}/lecture/lectureView.do?sno=" + sno +"&mno=" + mno;
-	    });
-       
+	    });       
        
       // TOWN선택
       $("#local").on("change", function(){
@@ -364,6 +367,7 @@ p.noMore{
       <div id="lecture-container">
          
       </div>
+      
       <p id="noMore">더이상 강의가 존재하지 않습니다.</p>
       
        <!-- 페이징시 필요한 값 저장 -->	
