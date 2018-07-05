@@ -91,7 +91,7 @@ function loadPay(cPage, pageBarSize, key){
 	});
 }
 
-function lectureAdminCancel(sno, mno, originNo, price){
+function lectureCancel(sno, mno, originNo, price){
 	if(confirm("결제를 취소하시겠습니까?")){
 		$.ajax({
 			url : "${rootPath}/lecture/lectureCancel.do",
