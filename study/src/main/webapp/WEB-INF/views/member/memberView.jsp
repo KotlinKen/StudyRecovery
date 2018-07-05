@@ -111,8 +111,10 @@
                      <p>프로필 사진이 없습니다.</p>
                   </c:if>
                   <br />
-                  <input type="file" name="upFile" />
+                  <input type="file" name="upFile" style="position: relative; top: 0; left: 0; z-index: 100;" />
                   <input type="hidden" name="preMprofile" value="${memberLoggedIn.mprofile }" />
+                  
+                  <span id="phototitle" style="position: relative; top: 0; left: -205px; z-index: 1000; border: 0px solid white; background: #ffffff;">${memberLoggedIn.mprofile}</span>
          		</td>
          	</tr>
          	<tr>

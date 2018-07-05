@@ -153,9 +153,18 @@
 				m.regdate as "mregdate", -- 팀원 회원으로서 가입일
 				m.qdate as "qdate", -- 팀원 회원으로서 탈퇴일
 				(select mm.mname||'('||mm.mid||')' from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
-				(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
-				(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
-				(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+				sub.subjectname as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+				k.kindname as "kindname", -- 카테고리 이름
+				sub.subjectname as "subject", -- 과목 이름
+                k.kno as "kno", -- 카테고리 번호
+                sub.subno as "subno" , -- 과목 번호
+                l.local as "local", -- 지역 이름
+                t.townname as "town", -- 구 이름
+				l.local||'/'||t.townname as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+                l.lno as "lno", -- 지역번호
+                t.lno as "tno", -- 구 번호
+				d.difficultname  as "diff", -- 스터디 난이도 번호 => 난이도 이름
+                d.dno as "dno", -- 난이도 번호
 				s.title as "title", -- 스터디 제목
 				s.freq as "freq", -- 스터디 주기
 				s.content as "content", -- 스터디 내용
@@ -171,6 +180,11 @@
 				to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
 				(select status from grade where gno=(select count(*) from member mm left join grade g on mm.point <![CDATA[ < ]]> g.point where mm.mno=m.mno)) as "grade"
 		from study s join member m on m.mno=s.mno
+                    left join subject sub on sub.subno=s.subno
+                    left join kind k on k.kno=sub.subno
+                    left join town t on t.tno=s.tno
+                    left join local l on t.lno=l.lno
+                    left join diff d on d.dno=s.dno
 		where 1=1
 		<if test="studyNo != null">
 		and s.sno=#{studyNo}
@@ -190,14 +204,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.sdate) 
@@ -238,6 +258,11 @@
 	<select id="selectLeaderListCnt" parameterType="map" resultType="_int">
 		select count(*) 
 		from study s join member m on m.mno=s.mno
+                    left join subject sub on sub.subno=s.subno
+                    left join kind k on k.kno=sub.subno
+                    left join town t on t.tno=s.tno
+                    left join local l on t.lno=l.lno
+                    left join diff d on d.dno=s.dno
 		where 1=1
 		<if test="studyNo != null">
 		and s.sno=#{studyNo}
@@ -257,14 +282,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.sdate) 
@@ -329,9 +360,18 @@
 				m.regdate as "mregdate", -- 팀원 회원으로서 가입일
 				m.qdate as "qdate", -- 팀원 회원으로서 탈퇴일
 				(select mm.mname||'('||mm.mid||')' from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
-				(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
-				(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
-				(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+				sub.subjectname as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+				k.kindname as "kindname", -- 카테고리 이름
+				sub.subjectname as "subject", -- 과목 이름
+                k.kno as "kno", -- 카테고리 번호
+                sub.subno as "subno" , -- 과목 번호
+                l.local as "local", -- 지역 이름
+                t.townname as "town", -- 구 이름
+				l.local||'/'||t.townname as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+                l.lno as "lno", -- 지역번호
+                t.lno as "tno", -- 구 번호
+				d.difficultname  as "diff", -- 스터디 난이도 번호 => 난이도 이름
+                d.dno as "dno", -- 난이도 번호
 				s.title as "title", -- 스터디 제목
 				s.freq as "freq", -- 스터디 주기
 				s.content as "content", -- 스터디 내용
@@ -348,6 +388,11 @@
 				(select status from grade where gno=(select count(*) from member mm left join grade g on mm.point <![CDATA[ < ]]> g.point where mm.mno=m.mno)) as "grade"
 		from crew c join study s on s.sno=c.sno
 				    join member m on m.mno=c.mno
+                   left join subject sub on sub.subno=s.subno
+                   left join kind k on k.kno=sub.subno
+                   left join town t on t.tno=s.tno
+                   left join local l on t.lno=l.lno
+                   left join diff d on d.dno=s.dno
 		where 1=1
 		<!-- <if test="forCrewList == null">
 		and s.status in ('진행 중', '강의 종료','스터디 종료')		
@@ -370,14 +415,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.sdate) 
@@ -418,7 +469,12 @@
 	<select id="selectMyStudyListCnt" parameterType="map" resultType="_int">
 		select count(*) 
 		from crew c join study s on s.sno=c.sno
-					join member m on m.mno=c.mno
+				    join member m on m.mno=c.mno
+                    left join subject sub on sub.subno=s.subno
+                    left join kind k on k.kno=sub.subno
+                    left join town t on t.tno=s.tno
+                    left join local l on t.lno=l.lno
+                    left join diff d on d.dno=s.dno
 		where 1=1
 		<!-- <if test="forCrewList == null">
 		and s.status in ('진행 중', '강의 종료','스터디 종료')		
@@ -441,14 +497,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.sdate) 
@@ -515,9 +577,18 @@
 			m.regdate as "mregdate", -- 신청한 회원의 가입일
 			m.qdate as "qdate", -- 신청한 회원의 탈퇴일
 			(select mm.mname from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
-			(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
-			(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
-			(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+			sub.subjectname as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+			k.kindname as "kindname", -- 카테고리 이름
+			sub.subjectname as "subject", -- 과목 이름
+            k.kno as "kno", -- 카테고리 번호
+            sub.subno as "subno" , -- 과목 번호
+            l.local as "local", -- 지역 이름
+            t.townname as "town", -- 구 이름
+			l.local||'/'||t.townname as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+            l.lno as "lno", -- 지역번호
+            t.lno as "tno", -- 구 번호
+			d.difficultname  as "diff", -- 스터디 난이도 번호 => 난이도 이름
+            d.dno as "dno", -- 난이도 번호
 			s.title as "title", -- 스터디 제목
 			s.freq as "freq", -- 스터디 주기
 			s.content as "content", -- 스터디 내용
@@ -534,7 +605,12 @@
 			to_char(s.regdate,'yyyy/mm/dd') as "sregdate", -- 스터디 등록일
 			(select status from grade where gno=(select count(*) from member mm left join grade g on mm.point <![CDATA[ < ]]> g.point where mm.mno=m.mno)) as "grade"
 		from apply a join study s on s.sno=a.sno
-			            join member m on m.mno=a.mno
+		            join member m on m.mno=a.mno
+		            left join subject sub on sub.subno=s.subno
+                    left join kind k on k.kno=sub.subno
+                    left join town t on t.tno=s.tno
+                    left join local l on t.lno=l.lno
+                    left join diff d on d.dno=s.dno
 		where 1=1
 		<if test="mno != null">
 		and a.mno=#{mno}
@@ -554,14 +630,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.ldate) 
@@ -609,6 +691,11 @@
 		select count(*) 
 		from apply a join study s on s.sno=a.sno
 				    join member m on m.mno=a.mno
+				    left join subject sub on sub.subno=s.subno
+                    left join kind k on k.kno=sub.subno
+                    left join town t on t.tno=s.tno
+                    left join local l on t.lno=l.lno
+                    left join diff d on d.dno=s.dno
 		where 1=1
 		<if test="mno != null">
 		and a.mno=#{mno}
@@ -628,14 +715,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.ldate) 
@@ -708,9 +801,18 @@
 				m.regdate as "mregdate", -- 찜한 회원 회원으로서 가입일
 				m.qdate as "qdate", -- 찜한 회원 회원으로서 탈퇴일
 				(select mm.mname||'('||mm.mid||')' from member mm where mm.mno=s.mno) as "captain", -- 스터디 팀장의 회원 번호 => 스터디 팀장의 회원 이름
-				(select ss.subjectname from subject ss where ss.subno=s.subno ) as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
-				(select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
-				(select dd.difficultname from diff dd where dd.dno=s.dno ) as "diff", -- 스터디 난이도 번호 => 난이도 이름
+				sub.subjectname as "subject", -- 스터디 과목 번호 => 스터디 과목 이름
+				k.kindname as "kindname", -- 카테고리 이름
+				sub.subjectname as "subject", -- 과목 이름
+                k.kno as "kno", -- 카테고리 번호
+                sub.subno as "subno" , -- 과목 번호
+                l.local as "local", -- 지역 이름
+                t.townname as "town", -- 구 이름
+				l.local||'/'||t.townname as "place", -- 스터디할 장소 도시 번호 => 스터디 장소
+                l.lno as "lno", -- 지역번호
+                t.lno as "tno", -- 구 번호
+				d.difficultname  as "diff", -- 스터디 난이도 번호 => 난이도 이름
+                d.dno as "dno", -- 난이도 번호
 				s.title as "title", -- 스터디 제목
 				s.freq as "freq", -- 스터디 주기
 				s.content as "content", -- 스터디 내용
@@ -727,6 +829,11 @@
 				to_char(s.regdate,'yyyy/mm/dd') as "sregdate" -- 스터디 등록일
 		from wish w join member m on w.mno=m.mno
 				    join study s on w.sno=s.sno
+				    left join subject sub on sub.subno=s.subno
+                    left join kind k on k.kno=sub.subno
+                    left join town t on t.tno=s.tno
+                    left join local l on t.lno=l.lno
+                    left join diff d on d.dno=s.dno
 		where w.mno=#{mno}		
 		<if test="type== 'study'">
 		and s.type='study'
@@ -740,14 +847,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.ldate) 
@@ -794,6 +907,11 @@
 		select count(*) 
 		from wish w join member m on w.mno=m.mno
 				    join study s on w.sno=s.sno
+				    left join subject sub on sub.subno=s.subno
+                    left join kind k on k.kno=sub.subno
+                    left join town t on t.tno=s.tno
+                    left join local l on t.lno=l.lno
+                    left join diff d on d.dno=s.dno
 		where w.mno=#{mno}
 		<if test="type== 'study'">
 		and s.type='study'
@@ -807,14 +925,20 @@
 		<if test="kwd != null and searchKwd== 'captain'">
 		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
 		</if>
-		<if test="kwd != null and searchKwd== 'subject'">
-		and (select ss.subjectname from subject ss where ss.subno=s.subno ) like '%'||#{kwd}||'%'
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
 		</if>
-		<if test="kwd != null and searchKwd== 'place'">
-		and (select ll.local||'/'||tt.townname from town tt join local ll on ll.lno=tt.lno where tt.tno=s.tno) like '%'||#{kwd}||'%'
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
 		</if>
-		<if test="kwd != null and searchKwd== 'diff'">
-		and (select dd.difficultname from diff dd where dd.dno=s.dno ) like '%'||#{kwd}||'%'
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="dno != 0 and dno!=null">
+		and d.dno=${dno}
 		</if>
 		<if test="kwd != null and searchKwd== 'term'  ">
 		and #{kwd} = extract( year from s.ldate) 

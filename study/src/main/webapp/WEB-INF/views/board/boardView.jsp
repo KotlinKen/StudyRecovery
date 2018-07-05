@@ -12,21 +12,41 @@
 <input type="hidden" name="type" value="일반"/>
 <div class="form-row">
 	<div class="form-group col-md-6">
+		 <div style="font-size:2rem">${board.TITLE }</div>
+	</div>
+</div>
+<div class="form-row">
+	<div class="form-group col-md-8">
 		 <div> 작성자 :  ${board.MNAME }</div>
 	</div>
-	<div class="form-group col-md-6">
+	<div class="form-group col-md-4 text-right">
 		 <div> 작성일 :  ${board.REGDATE }</div>
 	</div>
 </div>
-<div class="form-row">
-	<div class="form-group col-md-6">
-		 <div> 제목 :  ${board.TITLE }</div>
-	</div>
-</div>
+
 
 <div class="form-row">
 	<div class="form-group col-md-12">
-		<div class="form-control" style="padding:30px; min-height:500px;">${board.CONTENT}</div> 
+		<div class="form-control" style="padding:30px; min-height:500px; ">${board.CONTENT}</div> 
+	</div>
+</div>
+<div class="form-row">
+	<div class="form-group col-md-12">
+	
+		
+		<c:set var ="upfiles" value="${fn:split(board.UPFILE, ',')}" />
+		
+		<c:if test="${fn:length(upfiles) > 0 }">
+		<div class="form-control" style="padding:30px; ">
+		<c:forEach var="upfile" items="${upfiles}" varStatus="up">
+			
+			
+				<div>첨부파일 : <a href="${rootPath }/board/boardDownload?name=${upfile }">${upfile }</a></div>
+			
+			
+		</c:forEach>
+		</div>
+		</c:if> 
 	</div>
 </div>
 
@@ -173,7 +193,7 @@ $(document).ready(function() {
 
 
 $(function(){
-	loadData( ${board.BNO }, 1, 1, 5);
+	loadData( "${board.BNO }", 1, 1, 5);
 });
 
 function loadData(bno, type, cPage, pageBarSize){

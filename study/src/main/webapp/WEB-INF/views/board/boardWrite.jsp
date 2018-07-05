@@ -26,7 +26,7 @@
 				<div class="form-group col-md-6">
 					<label for="img1">이미지</label>
 					<div class="upfile_name">
-						<input type="file" accept=".gif, .jpg, .png" class="form-control" id="img1" name="upFile">
+						<input type="file" class="form-control" id="img1" name="upFile">
 						<div class="upfile_cover">${adversting.ADVIMG }</div>
 						<button type="button" class="upfile_button">파일업로드</button>
 					</div>
@@ -70,8 +70,7 @@ $(function(){
 	$("[name=endAd]").val(endDate.toISOString().substring(0, 10));
 });
 $("[name=upFile]").change(function(){
-	console.log("test");
-	$file  = $(this)[0].files[0];
+/* 	$file  = $(this)[0].files[0];
 	if($file != null){
 		var reader = new FileReader();
 		reader.readAsDataURL($file);
@@ -83,15 +82,13 @@ $("[name=upFile]").change(function(){
 			$(this).val("");
 			return; 
 		}
-		
- 
-	}
+	} */
 });
 
 
 //이미지 섬네일보기 
 $("[name=img]").change(function(){
-	var img = $(".thumnail");
+/* 	var img = $(".thumnail");
 	$file  = $(this)[0].files[0];
 	if($file != null){
 		var reader = new FileReader();
@@ -108,7 +105,7 @@ $("[name=img]").change(function(){
 		reader.onload = function(){
 			img.html("<img src='"+reader.result+"' width='100%' />");
 		}
-	}
+	} */
 });
 
 
@@ -136,7 +133,7 @@ $(".input_fields_wrap").on("change",".upfile_name",  function(){
 			$(".imgSize").text("* 추가한 이미지 사이즈 " + this.width+"px * "+this.height+"px");
 		}		
 		
-		var name = $(this).find("input")[0].files[0].name.substring(1, 45);
+		var name = $(this).find("input")[0].files[0].name.substring(0, 45);
 		$(this).find(".upfile_cover").text(name.length >= 43 ? name+"..." : name);
 		
 	}

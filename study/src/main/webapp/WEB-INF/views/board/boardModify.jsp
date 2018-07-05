@@ -98,7 +98,7 @@ function boardValidation(){
 
 //이미지 섬네일보기 
 $("[name=img]").change(function(){
-	var img = $(".thumnail");
+/* 	var img = $(".thumnail");
 	$file  = $(this)[0].files[0];
 	if($file != null){
 		var reader = new FileReader();
@@ -115,7 +115,7 @@ $("[name=img]").change(function(){
 		reader.onload = function(){
 			img.html("<img src='"+reader.result+"' width='100%' />");
 		}
-	}
+	} */
 });
 
 
@@ -138,7 +138,7 @@ $(".input_fields_wrap").on("change", ".upfile_name",  function(){
 		var img = new Image();
 		img.src=_URL.createObjectURL(file);
  
-		var name = $(this).find("input")[0].files[0].name.substring(1, 45);
+		var name = $(this).find("input")[0].files[0].name.substring(0, 45);
 		$(this).find(".upfile_cover").text(name.length >= 43 ? name+"..." : name);
 		$(this).find(".upfile_cover").removeClass("oldFileName");
 	}

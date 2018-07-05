@@ -31,6 +31,7 @@ import com.pure.study.adversting.model.service.AdverstingService;
 import com.pure.study.adversting.model.vo.Adversting;
 import com.pure.study.board.model.service.BoardService;
 import com.pure.study.board.model.service.ReplyService;
+import com.pure.study.common.websocket.EchoHandler;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Member;
@@ -61,6 +62,9 @@ public class RestController {
 	
 	@Autowired
 	private RestMemberService rs;
+	
+	@Autowired
+	private EchoHandler echoHandler;
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -365,6 +369,19 @@ public class RestController {
 		List<Map<String, Object>> list = lectureService.restTypeLister(queryMap);
 		ModelAndView mav = new ModelAndView("jsonView");
 		mav.addObject("list", list);
+		return mav;
+	}
+	
+	
+	@RequestMapping(value="/rest/chat", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView chat(HttpServletRequest request,
+			@PathVariable(value="location", required=false) String location, 
+			@RequestParam Map<String, String> queryMap) {
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("common/chat");
+		
 		return mav;
 	}
 	
