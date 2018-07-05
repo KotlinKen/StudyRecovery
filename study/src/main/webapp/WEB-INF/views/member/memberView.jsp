@@ -40,26 +40,7 @@
 		left: 760px;
 		display: inline;
 	}
-	.btncss{
-		width: auto;
-		height: auto;
-		font-size: 17px;
-		border-radius: 15px;
-		padding-left: 15px;
-		padding-right: 15px;
-		padding-top: 7px;
-		padding-bottom: 7px;
-		background: #ffffff;
-		border-style: solid;
-	}
-	.btncss:hover{
-		background: #0056e9;
-		color: white;
-	}
-	#submit:hover{
-		background: #0056e9;
-		color: white;
-	}
+	
 	
 </style>
 <div class="page">

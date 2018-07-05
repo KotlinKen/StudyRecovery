@@ -1298,24 +1298,24 @@ public class MemberController {
 		   Study study = studyService.selectStudyByMnoTypeStudy(sno);
 		   System.out.println("agree에 들어오나요"+list);
 			
-			   try {
-				   String[] freqs = study.getFreq().split(",");
-				   int cnt = checkDate(study, list, freqs);
-				   
-				   if (cnt == 0) {
-					   result = memberService.insertCrew(map);
-				   } else {
-					   //중복된게 있어서 회원을 팀원으로 수락 불가. 
-					   mav.addObject("msg","이미 참여한 스터디나 강의가 있는 회원입니다.");
-					   ///어디로 이동해야할까여..ㅋㅋ
-					   mav.setViewName("common/msg");
-				   }
-				   resultDel = memberService.deleteApply(map);
-			   } catch (NullPointerException e) {
-				   
-			   }
-			   
-
+		   try {
+               String[] freqs = study.getFreq().split(",");
+               int cnt = checkDate(study, list, freqs);
+               
+               if (cnt == 0) {
+                  System.out.println("###########중복이 없음##########");
+                  result = memberService.insertCrew(map);
+               } else {
+                  //중복된게 있어서 회원을 팀원으로 수락 불가. 
+                  System.out.println("&&&&&&&&&&&중복이 있음&&&&&&&&&&&");
+                  mav.addObject("msg","이미 참여한 스터디나 강의가 있는 회원입니다.");
+                  result=-1;
+                  
+               }
+               resultDel = memberService.deleteApply(map);
+            } catch (NullPointerException e) {
+               
+            }
 					
 		}else if("cancel".equals(confirm)){
 			result = memberService.insertApply(map);
@@ -1323,9 +1323,8 @@ public class MemberController {
 			
 		}
 		
-		if(result<=0 || resultDel<=0) {
-			mav.addObject("msg","다시 시도해주세요"); 
-			mav.setViewName("common/msg"); 
+		if(result==0 || resultDel==0) {
+			mav.addObject("msg","다시 시도해주세요");
 		}
 		
 		map.remove("mno");
