@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<script src="${rootPath}/resources/js/member/enroll.js"></script>
 
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="${findType } 찾기" name="pageTitle"/>
