@@ -83,6 +83,7 @@ public class MemberController {
 	/********************************** 회원가입(장익순) 시작 */
 	@RequestMapping(value = "/member/memberAgreement.do")
 	public ModelAndView memberAgreement() {
+		logger.info("회원동의홈페이지");
 		if (logger.isDebugEnabled()) {
 			logger.debug("회원동의홈페이지");
 		}
@@ -147,10 +148,12 @@ public class MemberController {
 			int ran = (int) (Math.random() * 10);
 			ranstr += ran;
 		}
-		System.out.println(tomail);
+		/* 멤버 이메일 확인 */
+		System.out.println("tomail"+tomail);
 		try {
 			int result = memberService.memberCheckEmail(tomail);
 			if(result >0) {
+				System.out.println("이미 가입?");
 				map.put("check", false);
 				return map;
 			}
@@ -158,28 +161,38 @@ public class MemberController {
 		} catch (Exception e) {
 		}
 		
-		
-		
 
 		try {
+			/* 이메일 insert /update 구분  */
 			String encoded = bcryptPasswordEncoder.encode(ranstr);
 			content += ranstr;
+			
+			
+			
+			
+			System.out.println("1 :");
 			int checkemail = memberService.checkEmail(tomail);
+			System.out.println("2 :");
+
 			if (checkemail == 0) {
 				memberService.insertMailCertification(tomail, encoded);
+				System.out.println("3 :");
 			} else {
 				memberService.uploadMailCertification(tomail, encoded);
 			}
-			System.out.println("인증번호 : "+content);
+			System.out.println("4 :");
 			MimeMessage message = mailSender.createMimeMessage();
+			System.out.println("5 :");
 			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+			System.out.println("6 :");
 			messageHelper.setFrom(setfrom); // 보내는사람 생략하거나 하면 정상작동을 안함
 			messageHelper.setTo(tomail); // 받는사람 이메일
 			messageHelper.setSubject(title); // 메일제목은 생략이 가능하다
 			messageHelper.setText(content); // 메일 내용
-
+			System.out.println("7 :");
 			mailSender.send(message);
 		} catch (Exception e) {
+			System.out.println("혹시 에러?");
 			map.put("check", false);
 			return map;
 		}
