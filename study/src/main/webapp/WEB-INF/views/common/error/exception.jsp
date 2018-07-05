@@ -14,9 +14,9 @@
 .errorCode{}
 </style>
 <div class="errorWrap">
-	<div class="errorCode">1234</div>
-	<div class="errorName">이름</div>
-	<div class="errorContent">내용</div>
+	<div class="errorCode"><c:out value="${requestScope['javax.servlet.error.status_code']}"/></div>
+	<div class="errorName"><c:out value="${requestScope['javax.servlet.error.exception_type']}"/></div>
+	<div class="errorContent"><c:out value="${requestScope['javax.servlet.error.message']}"/></div>
 	<div class="">
 		<a href="${rootPath }">
 			시작페이지로 돌아가기
