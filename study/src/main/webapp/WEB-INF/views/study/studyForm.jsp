@@ -140,7 +140,7 @@ function validate(){
       return false;   
    }
 
-	return false;
+	return true;
 }
 
 $(document).ready(function(){

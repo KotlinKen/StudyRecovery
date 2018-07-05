@@ -124,10 +124,11 @@ $(function(){
 	//필터 조건 정하고 검색 버튼을 누른 이벤트
 	$("input#filterSearch").on("click",function(){
 		
-		if($("input[name=case]").val()!='deadline'&&$("input[name=case]").val()!='pop'){
-			$("input[name=case]").val('search');
+		if($("input[name=case]").val()=='none'){
+			console.log("caser값은요"+$("input[name=case]").val());
+		    $("input[name=case]").val('search');
 		}
-		
+		console.log("caser값은요"+$("input[name=case]").val());
 		var filter={lno:$("select#local option:selected").val(),tno:$("select#town option:selected").val(),
 				subno:$("select#subject option:selected").val(),kno:$("select#kind option:selected").val(),
 				dno:$("select#diff option:selected").val(),leadername:$("input#leadername").val(),
@@ -169,7 +170,13 @@ $(function(){
 	});
 	
 	$("button#sort-deadline").click(function(){
-		$("input#case").val("deadline");
+		if($("input[name=case]").val()=="deadline"){
+			$("input[name=case]").val("none");
+		}else{
+			$("input[name=case]").val("deadline");
+		}
+		
+		
 		
 		/* $.ajax({
 			url:"selectByDeadline.do",
@@ -202,7 +209,12 @@ $(function(){
 	
 	//인기순 정렬(신청자순)
 	$("button#sort-pop").click(function(){
-		$("input#case").val("pop");
+		if($("input[name=case]").val()=="pop"){
+			$("input[name=case]").val("none");
+		}else{
+			$("input[name=case]").val("pop");
+		}
+		
 		
 		/* $.ajax({
 			url:"selectByApply.do",

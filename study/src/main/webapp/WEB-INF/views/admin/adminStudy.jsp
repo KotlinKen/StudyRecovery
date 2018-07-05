@@ -18,7 +18,7 @@ function SearchStudy(cPage, pageBarSize){
 	var filter = {lno:$("select#local option:selected").val(),tno:$("select#town").val(),
 			subno:$("select#subject").val(),kno:$("select#kind option:selected").val(),
 			leadername:$("input#leadername").val(),title:$("input#title").val(),
-			year:$("select#year").val(),month:$("select#month").val()};
+			year:$("select#year").val(),month:$("select#month").val(),status:$("select#status").val()};
 	//제이슨 오브젝트로 만듦 
 	$.ajax({   
 		url:"${pageContext.request.contextPath}/study/AdminStudySearch/"+cPage+"/"+pageBarSize,
@@ -92,7 +92,6 @@ function SearchStudy(cPage, pageBarSize){
 </script>
 <div class="studyList">
 	<div class="table-responsive">
-		<button type='button' id="btn-delete">스터디 삭제</button>
 		<label for="local">지역:</label>
 		<select name="lno" id="local">
 		
@@ -122,8 +121,18 @@ function SearchStudy(cPage, pageBarSize){
 			<option value="${i>10?'':'0' }${i}">${i }월</option>
 		</c:forEach>
 		</select>
-		<button type="button" id="btn-search">검색</button>
+		<label for="status">스터디 상태 :</label>
+		<select name="status" id="status">
+			<option value="전체">전체</option>
+			<option value="모집 중">모집중</option>
+			<option value="마감 임박">마감 임박</option>
+			<option value="모집 마감">모집 마감</option>
+			<option value="진행 중">진행 중</option>
+			<option value="스터디 종료">스터디 종료</option>
+		</select>
 		
+		<button type="button" id="btn-search">검색</button><br />
+		<button type='button' id="btn-delete">스터디 삭제</button>
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
@@ -309,7 +318,7 @@ function loadStudy(cPage, pageBarSize, type){
 			if(pageNo > totalPage){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
 			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadStudy('+pageNo+','+5+','+',\'study\')">Next</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadStudy('+pageNo+','+5+',\'study\')">Next</a></li>';
 			}
 			
 			//페이지 버튼 생성

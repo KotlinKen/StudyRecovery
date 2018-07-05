@@ -281,12 +281,12 @@ public class StudyController {
 	public ModelAndView selectStudyForSearch(@RequestParam(value="lno") int lno,@RequestParam(value="tno", defaultValue="0") int tno, @RequestParam(value="subno",defaultValue="0") int subno,
 			@RequestParam(value="kno") int kno,@RequestParam(value="dno") int dno,@RequestParam(value="leadername") String leadername
 			,@RequestParam(value="cPage", required=false, defaultValue="1") int cPage,
-			@RequestParam(value="searchCase") String searchCase,@RequestParam(value="status",defaultValue="") String status) {
+			@RequestParam(value="searchCase") String searchCase) {
 		
 		if(leadername.trim().length()<1) leadername=null;
 		
 		ModelAndView mav= new ModelAndView("jsonView");
-		
+		System.out.println("searchCase="+searchCase);
 		/* 쿼리에 넘길 조건들 Map*/
 		Map<String,Object> terms=new HashMap<>();
 		terms.put("lno", lno);
@@ -298,18 +298,20 @@ public class StudyController {
 		terms.put("cPage", cPage);
 		terms.put("numPerPage", numPerPage);
 		terms.put("searchCase", searchCase);
-		terms.put("status", status);
+
 		System.out.println("map="+terms);
 		
 		int total=0;
 		List<Map<String,Object>> studyList=null;
-		if(searchCase=="deadline") {
+		if(searchCase.equals("deadline")) {
 			total = studyService.studyDeadlineCount(terms); 
 			studyList=studyService.selectByDeadline(terms);
-		}else if(searchCase=="search") {
+		}else if(searchCase.equals("search")) {
+			System.out.println("서치에용ㅇ");
 			total = studyService.studySearchTotalCount(terms);
 			studyList = studyService.selectStudyForSearch(terms);
 		}else {//신청자순
+			System.out.println("신청자순이에용");
 			total = studyService.studyByApplyCount(terms);
 			studyList = studyService.selectByApply(terms);
 		}
@@ -333,8 +335,7 @@ public class StudyController {
 	public ModelAndView selectSearchStudyAdd(@RequestParam(value="lno") int lno,@RequestParam(value="tno", defaultValue="null") int tno, @RequestParam(value="subno") int subno,
 			@RequestParam(value="kno") int kno,@RequestParam(value="dno") int dno,@RequestParam(value="leadername") String leadername
 			,@RequestParam(value="cPage", required=false) int cPage,
-			@RequestParam(value="searchCase") String searchCase, 
-			@RequestParam(value="status", defaultValue="") String status){
+			@RequestParam(value="searchCase") String searchCase){
 		
 		ModelAndView mav = new ModelAndView("jsonView");
 		
@@ -351,14 +352,13 @@ public class StudyController {
 		terms.put("cPage", cPage);
 		terms.put("numPerPage", numPerPage);
 		terms.put("searchCase", searchCase);
-		terms.put("status", status);
 		
 		
 		
 		List<Map<String,Object>> studyList=null;
-		if(searchCase=="deadline") {
+		if(searchCase.equals("deadline")) {
 			studyList=studyService.selectByDeadline(terms);
-		}else if(searchCase=="search") {
+		}else if(searchCase.equals("search")) {
 			studyList = studyService.selectStudyForSearch(terms);
 		}else {//신청자순
 			studyList = studyService.selectByApply(terms);
@@ -714,7 +714,7 @@ public class StudyController {
 			@RequestParam(value="lno",defaultValue="0") int lno, @RequestParam(value="tno",defaultValue="0") int tno,
 			@RequestParam(value="kno",defaultValue="0") int kno, @RequestParam(value="subno",defaultValue="0") int subno,
 			@RequestParam(value="leadername",defaultValue="") String leadername,@RequestParam(value="title",defaultValue="") String title,
-			@RequestParam(value="year",defaultValue="0") String year,@RequestParam(value="month",defaultValue="0") String month) {
+			@RequestParam(value="year",defaultValue="0") String year,@RequestParam(value="month",defaultValue="0") String month,@RequestParam(value="status") String status) {
 		
 		ModelAndView mav = new ModelAndView("jsonView");
 		
@@ -728,6 +728,7 @@ public class StudyController {
 		terms.put("numPerPage", count);
 		terms.put("year", year);
 		terms.put("month", month);
+		terms.put("status", status);
 		
 		List<Map<String, Object>> list = studyService.selectStudyForSearch(terms);
 		int total = studyService.studySearchTotalCount(terms);
