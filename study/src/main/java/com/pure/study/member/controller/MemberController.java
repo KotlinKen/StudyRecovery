@@ -964,15 +964,35 @@ public class MemberController {
 													, @RequestParam(value="type", defaultValue="study") String type
 													, @RequestParam(value="applyDate",required=false, defaultValue="present")String applyDate 
 													, @RequestParam(value="myPage",required=false,defaultValue="study") String myPage 
-													, @RequestParam(value="leader",	defaultValue="y") String leader 
+													, @RequestParam(value="leader",	required=false, defaultValue="y") String leader 
+													, @RequestParam(value="lno", required=false, defaultValue="0") String lno 
+													, @RequestParam(value="tno",required=false,defaultValue="0") String tno 
+													, @RequestParam(value="kno",required=false,defaultValue="0") String kno 
+													, @RequestParam(value="subno",	required=false, defaultValue="0") String subno 
+													, @RequestParam(value="dno",required=false,defaultValue="0") String dno 
 													, @ModelAttribute("memberLoggedIn") Member m
 													) { 
 		ModelAndView mav = new ModelAndView();
 	
 		int numPerPage = 5;
-		
+//		System.out.println(lno);
+//		System.out.println(tno);
+//		System.out.println(kno);
+//		System.out.println(subno);
+//		System.out.println(dno);
 		Map<String,String> map = new HashMap<>(); 
 		
+		lno = lno.split(",")[0];
+		tno = tno.split(",")[0];
+		kno = kno.split(",")[0];
+		subno = subno.split(",")[0];
+		dno = dno.split(",")[0];
+		
+		map.put("lno", lno); 
+		map.put("tno", tno); 
+		map.put("kno", kno); 
+		map.put("subno", subno); 
+		map.put("dno", dno); 
 		map.put("mno", String.valueOf(m.getMno())); //리스트를 검색한 회원 고유번호
 		map.put("myPage", myPage); //스터디, 신청, 찜 구분
 		map.put("leader", leader); //팀장,팀원 구분
@@ -1003,6 +1023,17 @@ public class MemberController {
 		List<Map<String,String>> list = null; 
 		int count = 0; 
 		
+		//지역 리스트
+		List<Map<String,Object>> localList=studyService.selectLocal();
+		
+		//카테고리 리스트
+		List<Map<String,Object>> kindList=studyService.selectKind();
+		
+		//난이도 리스트
+		List<Map<String,Object>> diffList=studyService.selectLv();
+		
+		System.out.println(map);
+		
 		if("study".equals(myPage)) { //팀원일 때, 내 스터디 
 			if ("n".equals(leader)) { 
 				list = memberService.selectMyStudyList(map, numPerPage, cPage); 
@@ -1027,6 +1058,14 @@ public class MemberController {
 		mav.setViewName("member/memberWish"); 
 		}
 		
+		mav.addObject("lno",lno);//지역 리스트
+		mav.addObject("kno",kno);//지역 리스트
+		mav.addObject("tno",tno);//지역 리스트
+		mav.addObject("subno",subno);//지역 리스트
+		mav.addObject("dno",dno);//지역 리스트
+		mav.addObject("localList",localList);//지역 리스트
+		mav.addObject("kindList",kindList);//카테고리 리스트(과목)
+		mav.addObject("diffList",diffList);//난이도 리스트
 		mav.addObject("myPage", myPage); // study, apply, wish
 		mav.addObject("leader", leader); //팀장인지 팀원인지 구분
 		mav.addObject("type", type); // 스터디, 강의 구분
