@@ -4,6 +4,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page import = 'com.pure.study.member.model.vo.Member, java.util.List, java.util.Map' %>
+<script src="${rootPath }/resources/js/jquery-3.3.1.js"></script>
+<script src="${rootPath}/resources/js/member/enroll.js"></script>
 <link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
 <style>
    span.check-no{
@@ -63,8 +65,7 @@
          	<tr>
          		<th>회원 이름</th>
          		<td>
-         			<input type="text" name="mname" id="mname" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
-         			
+         			<input type="text" name="mname" id="name" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
          		</td>
          	</tr>
          	<tr>

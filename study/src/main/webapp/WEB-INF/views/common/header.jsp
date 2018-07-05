@@ -238,7 +238,6 @@ $(document).ready(function(){
      
     $("#idSaveCheck").change(function(){ // 체크박스에 변화가 있다면,
         if($("#idSaveCheck").is(":checked")){ // ID 저장하기 체크했을 때,
-        	deleteCookie("key");
             setCookie("key", $("#userId").val(), 7); // 7일 동안 쿠키 보관
         }else{ // ID 저장하기 체크 해제 시,
             deleteCookie("key");
@@ -269,7 +268,7 @@ function deleteCookie(cookieName){
  
 function getCookie(cookieName) {
     cookieName = cookieName + '=';
-    var cookieData = document.cookie;
+    var cookieData = document.cookie + ';path=/';
     var start = cookieData.indexOf(cookieName);
     var cookieValue = '';
     if(start != -1){
