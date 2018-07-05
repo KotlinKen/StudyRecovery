@@ -5,7 +5,9 @@
 <div class="container">
 	<form action="${rootPath}/board/boardWriteEnd"  method="post" enctype="multipart/form-data">
 		<input type="hidden" name="mno" value="${memberLoggedIn.mno}"/>
-		<input type="hidden" name="type" value="일반"/>
+		<input type="hidden" name="type" value="${param.type }"/>
+		
+		
 		<div class="form-row">
 			<div class="form-group col-md-12">
 				 <input type="text" class="form-control" id="title" name="title" id="title" placeholder="제목을 입력해주세요" autocomplete="off">
@@ -69,11 +71,26 @@ $(function(){
 	// 종료 시간 기본 한달로 초기값 설정
 	$("[name=endAd]").val(endDate.toISOString().substring(0, 10));
 });
+$("[name=upFile]").change(function(){
+/* 	$file  = $(this)[0].files[0];
+	if($file != null){
+		var reader = new FileReader();
+		reader.readAsDataURL($file);
+		
+		//확장자 확인후 진행 여부
+		var chk = $(this).val().split(".").pop().toLowerCase();
+		if($.inArray(chk, ['gif','png','jpg','jpeg']) == -1){
+			alert("이미지만 등록할 수 있습니다.");
+			$(this).val("");
+			return; 
+		}
+	} */
+});
 
 
 //이미지 섬네일보기 
 $("[name=img]").change(function(){
-	var img = $(".thumnail");
+/* 	var img = $(".thumnail");
 	$file  = $(this)[0].files[0];
 	if($file != null){
 		var reader = new FileReader();
@@ -90,7 +107,7 @@ $("[name=img]").change(function(){
 		reader.onload = function(){
 			img.html("<img src='"+reader.result+"' width='100%' />");
 		}
-	}
+	} */
 });
 
 
@@ -118,7 +135,7 @@ $(".input_fields_wrap").on("change",".upfile_name",  function(){
 			$(".imgSize").text("* 추가한 이미지 사이즈 " + this.width+"px * "+this.height+"px");
 		}		
 		
-		var name = $(this).find("input")[0].files[0].name.substring(1, 45);
+		var name = $(this).find("input")[0].files[0].name.substring(0, 45);
 		$(this).find(".upfile_cover").text(name.length >= 43 ? name+"..." : name);
 		
 	}

@@ -12,21 +12,39 @@
 <input type="hidden" name="type" value="일반"/>
 <div class="form-row">
 	<div class="form-group col-md-6">
+		 <div style="font-size:2rem">${board.TITLE }</div>
+	</div>
+</div>
+<div class="form-row">
+	<div class="form-group col-md-8">
 		 <div> 작성자 :  ${board.MNAME }</div>
 	</div>
-	<div class="form-group col-md-6">
+	<div class="form-group col-md-4 text-right">
 		 <div> 작성일 :  ${board.REGDATE }</div>
 	</div>
 </div>
-<div class="form-row">
-	<div class="form-group col-md-6">
-		 <div> 제목 :  ${board.TITLE }</div>
-	</div>
-</div>
+
 
 <div class="form-row">
 	<div class="form-group col-md-12">
-		<div class="form-control" style="padding:30px; min-height:500px;">${board.CONTENT}</div> 
+		<div class="form-control" style="padding:30px; min-height:500px; ">${board.CONTENT}</div> 
+	</div>
+</div>
+<div class="form-row">
+	<div class="form-group col-md-12">
+	
+		
+		<c:set var ="upfiles" value="${fn:split(board.UPFILE, ',')}" />
+		
+		<c:if test="${fn:length(upfiles) > 0 && upfiles[0] != ''}">
+		<div class="form-control" style="padding:30px; ">
+		<c:forEach var="upfile" items="${upfiles}" begin="0" varStatus="upf">
+ 
+				<div>첨부파일 : <a href="${rootPath }/board/boardDownload?name=${upfile }">${upfile }</a></div>
+ 
+		</c:forEach>
+		</div>
+		</c:if> 
 	</div>
 </div>
 
@@ -118,11 +136,19 @@
 function fn_commentCheck(){
 	$comment = $("#comment");
 	
+	var count = $comment.val().length;
+	var maxCount = 199;
+	
 	if($comment.val().trim() == ""){
 		alert("코멘트를 입력해 주세요.");
 		$comment.focus();
 		return false;
 	}
+
+    if(count > maxCount) {
+    	$comment.val($comment.val().substring(0, 199));
+    }
+	
 	
 }
 
@@ -173,7 +199,7 @@ $(document).ready(function() {
 
 
 $(function(){
-	loadData( ${board.BNO }, 1, 1, 5);
+	loadData( "${board.BNO }", 1, 1, 5);
 });
 
 function loadData(bno, type, cPage, pageBarSize){
@@ -230,7 +256,7 @@ function loadData(bno, type, cPage, pageBarSize){
 							if(profile == "no" || profile == null || profile == ""){
 		    					rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/images/noprofile.jpg)' ></div></div>";
 							}else{
-			    				rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/upload/member/"+profile+")' ></div></div>";
+			    				rmHtml += "<div class='felxerJustify'><div class='replyPic backCover text-center' style='background-image:url(${rootPath }/resources/upload/member/"+profile+"), url(${rootPath }/resources/images/noprofile.jpg)' ></div></div>";
 							}
 			    			rmHtml += "<div class='replyMid'>" +reply.MID+"</div>";
 		    			rmHtml += "</div>";
@@ -325,7 +351,27 @@ function replyModifyEnd(mno, rno){
 	console.log($rno);
 	$rno.val(rno);
 	
-	$rh.find("#textAreaforReplyHandler").val($(".newContent").val());
+	
+	
+	$comment = $(".newContent")
+	
+	var count = $comment.val().length;
+	var maxCount = 199;
+	
+	if($comment.val().trim() == ""){
+		alert("코멘트를 입력해 주세요.");
+		$comment.focus();
+		return false;
+	}
+
+    if(count > maxCount) {
+    	$comment.val($comment.val().substring(0, 199));
+    }
+	
+	
+	
+	
+	$rh.find("#textAreaforReplyHandler").val($comment.val());
 	$rh.submit();
 }
 
@@ -366,7 +412,7 @@ function fn_fork(mno, bno, rno){
 	.felxerJustify{justify-content: center; display:flex;}
 	.replyPic{width:60px; height:60px; border-radius:30px; }
 	.replyMid{}
-	.replyContent{flex-grow:10;   border: 1px solid #ededed;}
+	.replyContent{flex-grow:10;border: 1px solid #ededed; flex-basis: 400px;}
 	.oldContent{padding:10px;}
 	.newContent{width:100%; height:100%; padding:10px;}
 	.newContentBtn{align-self:center; flex-basis:90px; margin-left:10px; border:none; }

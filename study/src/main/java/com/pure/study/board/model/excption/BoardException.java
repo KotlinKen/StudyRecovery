@@ -1,5 +1,6 @@
 package com.pure.study.board.model.excption;
 
+@SuppressWarnings("serial")
 public class BoardException extends RuntimeException {
 
 	public BoardException() {
@@ -9,7 +10,7 @@ public class BoardException extends RuntimeException {
 
 	public BoardException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
+		System.out.println(message);
 	}
 
 

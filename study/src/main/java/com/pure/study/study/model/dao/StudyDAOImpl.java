@@ -129,27 +129,27 @@ public class StudyDAOImpl implements StudyDAO {
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage) {
-		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
-		return sqlSession.selectList("study.selectByDeadline",null,rowBounds);
+	public List<Map<String, Object>> selectByDeadline(Map<String,Object> terms) {
+		RowBounds rowBounds = new RowBounds(((int)terms.get("cPage")-1)*(int)terms.get("numPerPage"), (int)terms.get("numPerPage"));
+		return sqlSession.selectList("study.selectByDeadline",terms,rowBounds);
 	}
 
 	@Override
-	public int studyDeadlineCount() {
+	public int studyDeadlineCount(Map<String,Object> terms) {
 		// TODO Auto-generated method stub
-		return sqlSession.selectOne("study.studyDeadlineCount");
+		return sqlSession.selectOne("study.studyDeadlineCount",terms);
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByApply(int cPage, int numPerPage) {
-		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
-		return sqlSession.selectList("study.selectByApply",null,rowBounds);
+	public List<Map<String, Object>> selectByApply(Map<String,Object> terms) {
+		RowBounds rowBounds = new RowBounds(((int)terms.get("cPage")-1)*(int)terms.get("numPerPage"), (int)terms.get("numPerPage"));
+		return sqlSession.selectList("study.selectByApply",terms,rowBounds);
 	}
 
 	@Override
-	public int studyByApplyCount() {
+	public int studyByApplyCount(Map<String,Object> terms) {
 		// TODO Auto-generated method stub
-		return sqlSession.selectOne("study.studyByApplyCount");
+		return sqlSession.selectOne("study.studyByApplyCount",terms);
 	}
 
 	@Override
@@ -207,6 +207,14 @@ public class StudyDAOImpl implements StudyDAO {
 		// TODO Auto-generated method stub
 		return sqlSession.selectOne("study.selectStudyByMnoTypeStudy",sno);
 	}
+
+	@Override
+	public int deleteWish(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("study.deleteWish", map);
+	}
+
+
 
 
 }

@@ -1,6 +1,8 @@
 package com.pure.study.member.controller;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -13,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +28,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.pure.study.common.crontab.dao.SchedulerDAO;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.exception.MemberException;
 import com.pure.study.member.model.service.MemberService;
@@ -69,12 +73,17 @@ public class MemberController {
 	@Autowired
 	private RestMemberService rs;
 	
+
+	@Autowired
+	private SchedulerDAO schedulerDAO;
+	
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	/********************************** 회원가입(장익순) 시작 */
 	@RequestMapping(value = "/member/memberAgreement.do")
 	public ModelAndView memberAgreement() {
+		logger.info("회원동의홈페이지");
 		if (logger.isDebugEnabled()) {
 			logger.debug("회원동의홈페이지");
 		}
@@ -130,7 +139,7 @@ public class MemberController {
 	@ResponseBody
 	public Map<String, Object> mailCertification(HttpServletRequest request, @RequestParam(value = "em") String em) {
 		Map<String, Object> map = new HashMap<>();
-		String setfrom = "kimemail2018@gmail.com";
+		String setfrom = "kimemail201807@gmail.com";
 		String tomail = em; // 받는 사람 이메일
 		String title = "( 스터디 그룹트 ) 회원가입 인증번호 내역"; // 제목
 		String content = "회원님 \n인증번호는  "; // 내용
@@ -139,10 +148,12 @@ public class MemberController {
 			int ran = (int) (Math.random() * 10);
 			ranstr += ran;
 		}
-		System.out.println(tomail);
+		/* 멤버 이메일 확인 */
+		System.out.println("tomail"+tomail);
 		try {
 			int result = memberService.memberCheckEmail(tomail);
 			if(result >0) {
+				System.out.println("이미 가입?");
 				map.put("check", false);
 				return map;
 			}
@@ -150,27 +161,38 @@ public class MemberController {
 		} catch (Exception e) {
 		}
 		
-		
-		
 
 		try {
+			/* 이메일 insert /update 구분  */
 			String encoded = bcryptPasswordEncoder.encode(ranstr);
 			content += ranstr;
+			
+			
+			
+			
+			System.out.println("1 :");
 			int checkemail = memberService.checkEmail(tomail);
+			System.out.println("2 :");
+
 			if (checkemail == 0) {
 				memberService.insertMailCertification(tomail, encoded);
+				System.out.println("3 :");
 			} else {
 				memberService.uploadMailCertification(tomail, encoded);
 			}
+			System.out.println("4 :");
 			MimeMessage message = mailSender.createMimeMessage();
+			System.out.println("5 :");
 			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+			System.out.println("6 :");
 			messageHelper.setFrom(setfrom); // 보내는사람 생략하거나 하면 정상작동을 안함
 			messageHelper.setTo(tomail); // 받는사람 이메일
 			messageHelper.setSubject(title); // 메일제목은 생략이 가능하다
 			messageHelper.setText(content); // 메일 내용
-
+			System.out.println("7 :");
 			mailSender.send(message);
 		} catch (Exception e) {
+			System.out.println("혹시 에러?");
 			map.put("check", false);
 			return map;
 		}
@@ -341,11 +363,11 @@ public class MemberController {
 	public ModelAndView memberLogin(HttpServletRequest request, @RequestParam(value = "userId") String userId,
 			@RequestParam(value = "pwd") String pwd, @RequestParam(value = "admin", required = false) String admin) {
 		ModelAndView mav = new ModelAndView();
-
+		
 		/*김률민 추가 로그인시 이전 페이지로 바로 갈수 있게 처리*/
 		String referer = request.getHeader("Referer");
 		String root = request.getRequestURL().toString().replaceAll(request.getRequestURI(), "");
-		String prev = referer.replaceAll(root, "").replaceAll("/study", "");
+		String prev = referer.replaceAll(root, "").replaceFirst("/study", "");
 		Member m = memberService.selectOneMember(userId);
 
 		String msg = "";
@@ -379,9 +401,13 @@ public class MemberController {
 				rmMap.put("log", "login");
 				rs.addMember(rmMap);
 				/*김률민 추가 */
-				
+								
 				if(admin==null) {
-					mav.setViewName("redirect:"+prev);
+					if(prev.contains("memberSuccess")) {
+						mav.setViewName("redirect:/");
+					}else {
+						mav.setViewName("redirect:"+prev);
+					}
 				}else {
 					mav.setViewName("redirect:/admin/adminMain"); 
 				}
@@ -488,150 +514,150 @@ public class MemberController {
 	// ****************(방법1)비밀번호 변경 페이지 보내주기*********************
 
 	// 이메일로 비밀번호 변경 페이지를 보내준다.
-	@RequestMapping(value = "/member/mailSending.do", method = RequestMethod.POST)
-	public ModelAndView mailSending(HttpServletRequest request, @RequestParam String mid, @RequestParam String email) {
-		ModelAndView mav = new ModelAndView();
-		String msg = "";
-		String loc = "/";
+			@RequestMapping(value = "/member/mailSending.do", method = RequestMethod.POST)
+			public ModelAndView mailSending(HttpServletRequest request, @RequestParam String mid, @RequestParam String email) {
+				ModelAndView mav = new ModelAndView();
+				String msg = "";
+				String loc = "/";
 
-		// 1. 페이지의 인증키를 생성한다.
-		String tempPwd = "";
-		int tempSize = 8;
-		char[] temp = new char[tempSize];
+				// 1. 페이지의 인증키를 생성한다.
+				String tempPwd = "";
+				int tempSize = 8;
+				char[] temp = new char[tempSize];
 
-		// 48~57- 숫자, 65~90- 대문자, 97~122- 소문자
-		for (int i = 0; i < tempSize; i++) {
-			int rnd = (int) (Math.random() * 122) + 48;
-			if (rnd > 48 && rnd < 57 || rnd > 65 && rnd < 90 || rnd > 97 && rnd < 122) {
-				temp[i] = (char) rnd;
-				tempPwd += temp[i];
-			} else {
-				i--;
+				// 48~57- 숫자, 65~90- 대문자, 97~122- 소문자
+				for (int i = 0; i < tempSize; i++) {
+					int rnd = (int) (Math.random() * 122) + 48;
+					if (rnd > 48 && rnd < 57 || rnd > 65 && rnd < 90 || rnd > 97 && rnd < 122) {
+						temp[i] = (char) rnd;
+						tempPwd += temp[i];
+					} else {
+						i--;
+					}
+				}
+
+				// 2. 입력한 아이디와 이메일이 일치하는지 확인
+				Member equalM = new Member();
+				equalM.setMid(mid);
+				equalM.setEmail(email);
+				int resultEqual = memberService.selectCntMember(equalM);
+
+				// 3. 입력한 아이디와 이메일이 일치하면 이메일로 비밀번호 변경 페이지를 전송함.
+				if (resultEqual > 0) {
+
+					try {
+						MimeMessage message = mailSender.createMimeMessage();
+						MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+
+						msg = "비밀번호 변경을 메일로 발송하였습니다.";
+
+						messageHelper.setFrom("kimemail2018@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
+						messageHelper.setTo(email); // 받는사람 이메일
+						messageHelper.setSubject("스터디 그룹 임시 비밀번호 발송"); // 메일제목은 생략이 가능하다
+
+						// 4. 인증키를 암호화 한다.
+						Member changeM = new Member();
+						String encodedPassword = bcryptPasswordEncoder.encode(tempPwd);
+						changeM.setPwd(encodedPassword);
+						changeM.setMid(mid);
+
+						// 4.1 암호화 한 인증키를 디비에 넣어준다.(임시 비밀번호처럼 )
+						int result = memberService.updatePwd(changeM);
+
+						// 4.2 메일 내용에 form을 이용하여 비밀번호를 변경하고자 하는 아이디와 인증키(페이지의 유효성?을 위해)를 보내준다.
+						messageHelper.setText(new StringBuffer().append(
+								"<form action='http://localhost:9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
+								.append("<input type='hidden' name='mid' value='" + mid + "'/>")
+								.append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
+								.append("<button type='submit'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
+
+						mailSender.send(message);
+					} catch (Exception e) {
+						e.getStackTrace();
+					}
+
+				} else {
+					msg = "일치하는 회원 정보가 없습니다.";
+				}
+
+				mav.addObject("loc", loc);
+				mav.addObject("msg", msg);
+
+				mav.setViewName("common/msg");
+
+				return mav;
 			}
-		}
+			
+		// 5. 암호화 한 인증키를 이동시켜준다.
+		@RequestMapping(value = "/member/memberPwd.do", method = RequestMethod.POST)
+		public ModelAndView pwd(String mid, String key) {
+			ModelAndView mav = new ModelAndView();
 
-		// 2. 입력한 아이디와 이메일이 일치하는지 확인
-		Member equalM = new Member();
-		equalM.setMid(mid);
-		equalM.setEmail(email);
-		int resultEqual = memberService.selectCntMember(equalM);
+			// System.out.println("이동 중인 값 : "+ key);
 
-		// 3. 입력한 아이디와 이메일이 일치하면 이메일로 비밀번호 변경 페이지를 전송함.
-		if (resultEqual > 0) {
+			// 인코딩 된 키 값과 디비에 있는 값(임시 비밀번호)을 비교하고 맞으면 비밀번호를 바꿔준다.
+			Member m = memberService.selectOneMember(mid);
 
-			try {
-				MimeMessage message = mailSender.createMimeMessage();
-				MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
-
-				msg = "비밀번호 변경을 메일로 발송하였습니다.";
-
-				messageHelper.setFrom("kimemail2018@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
-				messageHelper.setTo(email); // 받는사람 이메일
-				messageHelper.setSubject("스터디 그룹 임시 비밀번호 발송"); // 메일제목은 생략이 가능하다
-
-				// 4. 인증키를 암호화 한다.
-				Member changeM = new Member();
-				String encodedPassword = bcryptPasswordEncoder.encode(tempPwd);
-				changeM.setPwd(encodedPassword);
-				changeM.setMid(mid);
-
-				// 4.1 암호화 한 인증키를 디비에 넣어준다.(임시 비밀번호처럼 )
-				int result = memberService.updatePwd(changeM);
-
-				// 4.2 메일 내용에 form을 이용하여 비밀번호를 변경하고자 하는 아이디와 인증키(페이지의 유효성?을 위해)를 보내준다.
-				messageHelper.setText(new StringBuffer().append(
-						"<form action='http://localhost:9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
-						.append("<input type='hidden' name='mid' value='" + mid + "'/>")
-						.append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
-						.append("<button type='submit'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
-
-				mailSender.send(message);
-			} catch (Exception e) {
-				e.getStackTrace();
-			}
-
-		} else {
-			msg = "일치하는 회원 정보가 없습니다.";
-		}
-
-		mav.addObject("loc", loc);
-		mav.addObject("msg", msg);
-
-		mav.setViewName("common/msg");
-
-		return mav;
-	}
-
-	// 5. 암호화 한 인증키를 이동시켜준다.
-	@RequestMapping(value = "/member/memberPwd.do", method = RequestMethod.POST)
-	public ModelAndView pwd(String mid, String key) {
-		ModelAndView mav = new ModelAndView();
-
-		// System.out.println("이동 중인 값 : "+ key);
-
-		// 인코딩 된 키 값과 디비에 있는 값(임시 비밀번호)을 비교하고 맞으면 비밀번호를 바꿔준다.
-		Member m = memberService.selectOneMember(mid);
-
-		if (key.equals(m.getPwd())) {
-			mav.setViewName("member/memberUpdatePwd");
-		} else {
-			System.out.println("값은 있지만 비번이 서로 매치가 안됨");// 유효성
-			mav.addObject("loc", "/");
-			mav.addObject("msg", "잘못된 접근입니다.");
-			mav.setViewName("common/msg");
-
-		}
-
-		mav.addObject("mid", mid);
-		mav.addObject("key", key);
-
-		return mav;
-
-		/*
-		 * mav.addObject("mid", mid); mav.addObject("key", key);
-		 * mav.setViewName("member/memberUpdatePwd");
-		 * 
-		 * return mav;
-		 */
-	}
-
-	// 6. 디비의 임시 비밀번호와 페이지 이동을 통한 인증키 비교(페이지 유효성 검사)
-	@RequestMapping(value = "/member/memberUpdatePwd.do", method = RequestMethod.POST)
-	public String updatePwd(@RequestParam("pwd") String pwd, @RequestParam("key") String key,
-			@RequestParam("mid") String mid, Model model) {
-		String loc = "/";
-		String msg = "";
-
-		// 인코딩 된 키 값과 디비에 있는 값(임시 비밀번호)을 비교하고 맞으면 비밀번호를 바꿔준다.
-		Member m = memberService.selectOneMember(mid);
-
-		if (m == null) {
-			msg = "잘못된 접근입니다.";
-			System.out.println("mid 잘못 가져옴");
-		} else {
-			// 인증키와 디비값 비교
 			if (key.equals(m.getPwd())) {
-				msg = "비밀번호 변경!";
-				Member changeM = new Member();
-				String encodedPassword = bcryptPasswordEncoder.encode(pwd);
-				changeM.setPwd(encodedPassword);
-				changeM.setMid(mid);
-
-				// 사용자가 입력한 비밀번호로 디비값 변경
-				int result = memberService.updatePwd(changeM);
-
+				mav.setViewName("member/memberUpdatePwd");
 			} else {
 				System.out.println("값은 있지만 비번이 서로 매치가 안됨");// 유효성
-				msg = "잘못된 접근입니다.";
+				mav.addObject("loc", "/");
+				mav.addObject("msg", "이미 비밀번호를 변경하셨습니다.");
+				mav.setViewName("common/msg");
+
 			}
 
+			mav.addObject("mid", mid);
+			mav.addObject("key", key);
+
+			return mav;
+
+			/*
+			 * mav.addObject("mid", mid); mav.addObject("key", key);
+			 * mav.setViewName("member/memberUpdatePwd");
+			 * 
+			 * return mav;
+			 */
 		}
 
-		model.addAttribute("loc", loc);
-		model.addAttribute("msg", msg);
+		// 6. 디비의 임시 비밀번호와 페이지 이동을 통한 인증키 비교(페이지 유효성 검사)
+		@RequestMapping(value = "/member/memberUpdatePwd.do", method = RequestMethod.POST)
+		public String updatePwd(@RequestParam("pwd") String pwd, @RequestParam("key") String key,
+				@RequestParam("mid") String mid, Model model) {
+			String loc = "/";
+			String msg = "";
 
-		return "common/msg";
-	}
+			// 인코딩 된 키 값과 디비에 있는 값(임시 비밀번호)을 비교하고 맞으면 비밀번호를 바꿔준다.
+			Member m = memberService.selectOneMember(mid);
+
+			if (m == null) {
+				msg = "이미 비밀번호를 변경하셨습니다.";
+				System.out.println("mid 잘못 가져옴");
+			} else {
+				// 인증키와 디비값 비교
+				if (key.equals(m.getPwd())) {
+					msg = "비밀번호 변경!";
+					Member changeM = new Member();
+					String encodedPassword = bcryptPasswordEncoder.encode(pwd);
+					changeM.setPwd(encodedPassword);
+					changeM.setMid(mid);
+
+					// 사용자가 입력한 비밀번호로 디비값 변경
+					int result = memberService.updatePwd(changeM);
+
+				} else {
+					System.out.println("값은 있지만 비번이 서로 매치가 안됨");// 유효성
+					msg = "이미 비밀번호를 변경하셨습니다.";
+				}
+
+			}
+
+			model.addAttribute("loc", loc);
+			model.addAttribute("msg", msg);
+
+			return "common/msg";
+		}
 
 	/*
 	 * // *********************(방법2)임시 비밀번호 메일로 보내기*********************
@@ -905,9 +931,9 @@ public class MemberController {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
 
-			messageHelper.setFrom("kimemail2018@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
+			messageHelper.setFrom("kimemail201807@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
 			messageHelper.setTo(newEmail); // 받는사람 이메일
-			messageHelper.setSubject("스터디 그룹 이메일 인증번호 발송"); // 메일제목은 생략이 가능하다
+			messageHelper.setSubject("스터디 그룹 이메일 인증 비밀번호 변경"); // 메일제목은 생략이 가능하다
 			messageHelper.setText("이메일 인증 번호는 [" + tempPwd + "] 입니다.");
 
 			mailSender.send(message);
@@ -951,15 +977,35 @@ public class MemberController {
 													, @RequestParam(value="type", defaultValue="study") String type
 													, @RequestParam(value="applyDate",required=false, defaultValue="present")String applyDate 
 													, @RequestParam(value="myPage",required=false,defaultValue="study") String myPage 
-													, @RequestParam(value="leader",	defaultValue="y") String leader 
+													, @RequestParam(value="leader",	required=false, defaultValue="y") String leader 
+													, @RequestParam(value="lno", required=false, defaultValue="0") String lno 
+													, @RequestParam(value="tno",required=false,defaultValue="0") String tno 
+													, @RequestParam(value="kno",required=false,defaultValue="0") String kno 
+													, @RequestParam(value="subno",	required=false, defaultValue="0") String subno 
+													, @RequestParam(value="dno",required=false,defaultValue="0") String dno 
 													, @ModelAttribute("memberLoggedIn") Member m
 													) { 
 		ModelAndView mav = new ModelAndView();
 	
 		int numPerPage = 5;
-		
+//		System.out.println(lno);
+//		System.out.println(tno);
+//		System.out.println(kno);
+//		System.out.println(subno);
+//		System.out.println(dno);
 		Map<String,String> map = new HashMap<>(); 
 		
+		lno = lno.split(",")[0];
+		tno = tno.split(",")[0];
+		kno = kno.split(",")[0];
+		subno = subno.split(",")[0];
+		dno = dno.split(",")[0];
+		
+		map.put("lno", lno); 
+		map.put("tno", tno); 
+		map.put("kno", kno); 
+		map.put("subno", subno); 
+		map.put("dno", dno); 
 		map.put("mno", String.valueOf(m.getMno())); //리스트를 검색한 회원 고유번호
 		map.put("myPage", myPage); //스터디, 신청, 찜 구분
 		map.put("leader", leader); //팀장,팀원 구분
@@ -990,6 +1036,17 @@ public class MemberController {
 		List<Map<String,String>> list = null; 
 		int count = 0; 
 		
+		//지역 리스트
+		List<Map<String,Object>> localList=studyService.selectLocal();
+		
+		//카테고리 리스트
+		List<Map<String,Object>> kindList=studyService.selectKind();
+		
+		//난이도 리스트
+		List<Map<String,Object>> diffList=studyService.selectLv();
+		
+		System.out.println(map);
+		
 		if("study".equals(myPage)) { //팀원일 때, 내 스터디 
 			if ("n".equals(leader)) { 
 				list = memberService.selectMyStudyList(map, numPerPage, cPage); 
@@ -1014,6 +1071,14 @@ public class MemberController {
 		mav.setViewName("member/memberWish"); 
 		}
 		
+		mav.addObject("lno",lno);//지역 리스트
+		mav.addObject("kno",kno);//지역 리스트
+		mav.addObject("tno",tno);//지역 리스트
+		mav.addObject("subno",subno);//지역 리스트
+		mav.addObject("dno",dno);//지역 리스트
+		mav.addObject("localList",localList);//지역 리스트
+		mav.addObject("kindList",kindList);//카테고리 리스트(과목)
+		mav.addObject("diffList",diffList);//난이도 리스트
 		mav.addObject("myPage", myPage); // study, apply, wish
 		mav.addObject("leader", leader); //팀장인지 팀원인지 구분
 		mav.addObject("type", type); // 스터디, 강의 구분
@@ -1059,7 +1124,6 @@ public class MemberController {
 		}
 	
 	//insert all을 통해 평가 내용을 등록한다.
-	
 	@RequestMapping(value="/member/reviewEnroll.do", method= RequestMethod.POST, produces = "application/text; charset=utf8")
 	@ResponseBody public ModelAndView reviewEnroll(@RequestParam(value="tmno") String[] tmno 
 												, @RequestParam("sno") String[] sno 
@@ -1191,10 +1255,18 @@ public class MemberController {
 		String studyName = 	memberService.selectStudyName(studyNo); 
 		System.out.println(studyName);
 		
+		//해당 스터디의 모집 인원
+		Study s = studyService.selectStudyByMnoTypeStudy(studyNo);
+		String recruit =s.getRecruit();
+		
+		int crewCnt = crewList.size();
+				
 		mav.addObject("applyList", list); 
 		mav.addObject("crewList", crewList);
 		mav.addObject("studyName", studyName); 
 		mav.addObject("studyNo", studyNo);
+		mav.addObject("crewCnt", crewCnt);
+		mav.addObject("recruit", recruit);
 		
 		return mav; 
 	} 
@@ -1221,10 +1293,10 @@ public class MemberController {
 		   Map<String, Object> key = new HashMap<>();
 	       key.put("mno", mno);
 	       key.put("key", "crew");
-	       
 	       //수락하려는 회원이 이미 포함되어있는 크루 검사. 
 		   List<Map<String, Object>> list = studyService.selectStudyListBySno(key);
 		   Study study = studyService.selectStudyByMnoTypeStudy(sno);
+		   System.out.println("agree에 들어오나요"+list);
 			
 			   try {
 				   String[] freqs = study.getFreq().split(",");
@@ -1287,6 +1359,11 @@ public class MemberController {
 	            java.util.Date sdate = (java.util.Date) list.get(i).get("SDATE");
 	            java.util.Date edate = (java.util.Date) list.get(i).get("EDATE");
 	            
+	            System.out.println("sdate="+sdate);
+	            System.out.println("edate="+edate);
+	            System.out.println("sHour="+sHour);
+	            System.out.println("eHour="+eHour);
+	            
 	            // 등록된 날짜들에 포함되지 않는 경우
 	            if (lectureEdate < sdate.getTime() || lectureSdate > edate.getTime()) {
 	               System.out.println("날짜가 안겹쳐서 들어감");
@@ -1296,7 +1373,9 @@ public class MemberController {
 	               // 요일을 검사해보자...
 	               for (int j = 0; j < freqs.length; j++) {
 	                  if (list.get(i).containsValue(freqs[j])) {
+	                	  System.out.println("요일겹치기..");
 	                     // 등록이 가능한 경우.
+	                
 	                     if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
 	                           || eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
 	                        System.out.println("시간이 안겹쳐서 들어감");
@@ -1348,6 +1427,23 @@ public class MemberController {
 	}
 	
 	
+	///////////////////////////////////////
+	//admin설정 시작
+	//
+	@RequestMapping(value = "/member/adminMemberView.do")
+	public ModelAndView adminMemberView(@RequestParam(value = "mno", defaultValue = "0") int mno) {
+		
+		ModelAndView mav = new ModelAndView();
+		
+		Member m = memberService.selectOneMemberMno(mno);
+		List<Map<String, String>> favor = memberService.selectKind();
+		
+		
+		mav.addObject("member", m);
+		mav.addObject("favor", favor);
+		mav.setViewName("admin/adminMemberView");
+		return mav;
+	}
 
 	/* 로그인 및 마이페이지(김회진) 끝 **********************************************/
 	/*************************************
@@ -1842,7 +1938,7 @@ public class MemberController {
 		// onclick=\"fn_instruct();\">강사신청</a>");
 		// model.addAttribute("check", "현직 강사님이신가요? 강사님이시라면 <a href=\"#\"
 		// onclick=\"fn_instruct();\">강사신청</a>");
-		return "common/msg";
+		return "member/memberSuccess";
 	}
 	
 	/* 회원가입 -> 성공 -> 강사 신청 */
@@ -2174,7 +2270,7 @@ public class MemberController {
 		return map;
 	}
 	@RequestMapping("/member/memberSelectONEView.do")
-	public ModelAndView memberSelectONEView(@RequestParam(value="mid") String mid) {
+	public ModelAndView memberSelectONEView(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
 		ModelAndView mav = new ModelAndView();
 		System.out.println(mid);
 		Member m = memberService.selectOneMember(mid);
@@ -2190,6 +2286,15 @@ public class MemberController {
 		//경험치 및 포인트 등급 보여주기
 		List<Map<String,Object>> replyList = memberService.selectmemberReply(m.getMno());
 		Map<String,String> instruct = memberService.selectOneInstruct(m.getMno());
+		System.out.println("size = "+size);
+		if(size==10) {
+			mav.addObject("size",size);
+			List<Map<String, String>> category = memberService.selectCategory();
+			
+			System.out.println(category);
+			mav.addObject("category", category);
+		}
+		
 		//평가 관리 페이지로 이동
 		mav.addObject("instruct", instruct); 
 		mav.addObject("eval", "exp"); 
@@ -2224,13 +2329,96 @@ public class MemberController {
 		}
 		
 	@RequestMapping(value="/member/applyInstructAgree.do")
-	public ModelAndView applyInstructAgree(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino) {
+	public ModelAndView applyInstructAgree(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino , HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
-		memberService.updateInstructorApply(ino);
-		
+		int result = memberService.updateInstructorApply(ino);
+		if(result <0) {
+			
+		}else {
+		}
+		String referer = request.getHeader("Referer");
+		mav.setViewName("redirect:"+referer);
+		return mav;
+	}
+	@RequestMapping(value="/member/applyInstructCancel.do")
+	public ModelAndView applyInstructCancel(@RequestParam(value="ino",required=false , defaultValue="-1" )int ino , HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		int result = memberService.updateInstructorCancel(ino);
+		if(result <0) {
+			
+		}else {
+		}
+		String referer = request.getHeader("Referer");
+		mav.setViewName("redirect:"+referer);
 		return mav;
 	}
 	
+	@RequestMapping("/member/boardDownload.do")
+	public void fileDownload(@RequestParam String oName,
+							 HttpServletRequest request,
+							 HttpServletResponse response) {
+		System.out.println("와???????");
+		System.out.println("파일다운로드페이지["+oName+"]");
+		//logger.debug("파일다운로드페이지["+oName+"]");
+		
+		BufferedInputStream bis = null;
+		ServletOutputStream sos = null;
+		String saveDirectory = request.getSession()
+									  .getServletContext()
+									  .getRealPath("/resources/upload/instructor");
+		System.out.println("saveDirectory : "+saveDirectory);
+		File savedFile = new File(saveDirectory+"/"+oName);
+		System.out.println("savedFile : "+savedFile );
+		try {
+			bis = new BufferedInputStream(new FileInputStream(savedFile));
+			System.out.println("bis : "+bis);
+			sos = response.getOutputStream();
+			
+			
+			System.out.println("savedFile = "+savedFile);
+			//응답세팅
+			response.setContentType("application/octet-stream; charset=utf-8");
+			
+			//한글파일명 처리
+			String resFilename = "";
+			boolean isMSIE = request.getHeader("user-agent")
+									.indexOf("MSIE") != -1 ||
+							 request.getHeader("user-agent")
+							 		.indexOf("Trident") != -1;
+			if(isMSIE) {
+				//ie는 utf-8인코딩을 명시적으로 해줌.
+				resFilename = URLEncoder.encode(oName, "utf-8");
+				resFilename = resFilename.replaceAll("\\+", "%20");
+			}
+			else {
+				resFilename = new String(oName.getBytes("utf-8"),"ISO-8859-1");
+			}
+			logger.debug("resFilename="+resFilename);
+			response.addHeader("Content-Disposition", 
+					"attachment; filename=\""+resFilename+"\"");
+			
+			
+			//쓰기
+			int read = 0;
+			while((read=bis.read())!=-1) {
+				sos.write(read);
+			}
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				sos.close();
+				bis.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+
 	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)
 	@ResponseBody

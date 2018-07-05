@@ -138,7 +138,6 @@ $(function(){
       
       $(this).next(".custom-file-label").html(fileName);
    });
-
    
    //첨부파일 + 버튼 클릭시 첨부파일창이 밑에 더 생긴다.
    $("form[name=lectureFrm]").on("click","button.addFile",function(){

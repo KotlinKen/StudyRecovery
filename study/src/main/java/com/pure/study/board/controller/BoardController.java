@@ -54,7 +54,7 @@ public class BoardController {
 	@ResponseBody
 	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
 										@RequestParam (required=false) Map<String, String> queryMap,
-										@PathVariable(value="location", required=false) String location){
+										@PathVariable(value="location", required=false) String location, HttpServletRequest request){
 		ModelAndView mav = new ModelAndView();
 		
 		if(location == null || !(location.equals("admin") || location.equals("board"))){
@@ -64,13 +64,27 @@ public class BoardController {
 			return mav;
 		}
 		
-		logger.info("queryMap"+queryMap);
-		int numPerPage = 10; 
 		
 
 		if(queryMap.get("type") == null) {
 			queryMap.put("type", "일반");
 		}
+		
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
+		if(queryMap != null && queryMap.get("type") !=null) {
+			if(queryMap.get("type").equals("one")){
+				if(m!=null) {
+					System.out.println(m.getMno());
+					queryMap.put("mno", String.valueOf(m.getMno()));
+				}else {
+					queryMap.put("mno", "0");
+				}
+			}
+		}
+		logger.info("queryMap"+queryMap);
+		int numPerPage = 10; 
+		
+
 
 		
 		//1. 현재 페이지 컨텐츠 구하기
@@ -304,38 +318,29 @@ public class BoardController {
 	}
 	
 	
-	@RequestMapping("/board/boardDownload.do")
-	   public void fileDownload(@RequestParam String oName,
-	                     @RequestParam String rName,
+	@RequestMapping("/board/boardDownload")
+	   public void fileDownload(
+	                     @RequestParam String name,
 	                     HttpServletRequest request,
 	                     HttpServletResponse response) {
-	      logger.debug("파일 다운로드 페이지["+oName+", "+rName+"]");
+	      logger.debug("파일 다운로드 페이지["+name+"]");
 	      BufferedInputStream bis = null;
 	      ServletOutputStream sos = null;
 	      String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
 	      
-	      File savedFile = new File(saveDirectory+"/"+rName);
+	      File savedFile = new File(saveDirectory+"/"+name);
+	      	
 	      try {
+ 
 	         bis = new BufferedInputStream(new FileInputStream(savedFile));
 	         sos = response.getOutputStream();
+	         System.out.println(sos.toString());
 	         
 	         //응답 세팅
 	         response.setContentType("application/octet-stream; charset=utf-8");
 	         
-	         //한글 파일명 처리
-	         String resFilename = "";
-	         boolean isMSIE = request.getHeader("user-agent").indexOf("MSIE") != -1 ||
-	                     request.getHeader("user-agent").indexOf("Trident") != -1;
-	         
-	         if(isMSIE) {
-	            //ie는 utf-8 인코딩을 명시적으로 해줌.
-	            resFilename = URLEncoder.encode(oName, "utf-8");
-	            resFilename = resFilename.replaceAll("\\+", "%20");
-	         } else {
-	            resFilename = new String(oName.getBytes("utf-8"),"ISO-8859-1");
-	         }
-	         logger.debug("resFilename="+resFilename);
-	         response.addHeader("Content-Disposition", "attachment; filename=\""+resFilename+"\"");
+
+	         response.addHeader("Content-Disposition", "attachment; filename=\""+name+"\"");
 	         
 	         //쓰기
 	         int read = 0;
@@ -344,13 +349,14 @@ public class BoardController {
 	         }
 	         
 	      }catch(IOException e) {
-	         e.printStackTrace();
+	    	  throw new BoardException("지정된 파일이 삭제되었거나 없습니다.");
 	      } finally {
 	         try {
 	            sos.close();
 	            bis.close();
 	         } catch(IOException e) {
-	            e.printStackTrace();
+
+	        	 throw new BoardException("게시물 호출 에러");
 	         }
 	      }
 	   }

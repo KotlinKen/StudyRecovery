@@ -30,9 +30,8 @@
 	        	 	mno : mno
 	         },
 	         success:function(data){
-	        	//강의를 등록할 수 있는 경우.
-	        	
-	        	if(confirm("결제 하시겠습니까?")){
+	        	//강의를 등록할 수 있는 경우.    	
+	       	if(confirm("결제 하시겠습니까?")){
 		         	if( data == "" ){
 		         		 IMP.request_pay({
 		     			    pg : 'inicis', // version 1.1.0부터 지원.
@@ -74,12 +73,13 @@
 		     			});
 		         	}
 		         }
+
 	        	// 없는 경우.
 	         	else{
 	         		alert("결제를 취소하셨습니다.");
 	         	}
 	         }
-	      }).done(); 		  
+	      }); 		  
 	   }
 	}
 	

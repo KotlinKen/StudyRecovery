@@ -370,7 +370,9 @@
    
 	<!-- 김률민 추가 -->
 	<select id="restTypeLister" resultMap="map">
-		SELECT * FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
+	SELECT S.*, M.*, T.*, D.*, L.*, SUB.*, K.*, 
+	(SELECT  COUNT(*) FROM APPLY AA WHERE S.SNO = AA.SNO) APPLYCNT 
+	FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
 		<trim prefix="WHERE" prefixOverrides="AND | OR ">
 			<if test="searchType != null and searchType != '' ">
 				<if test="searchKeyword != null and searchKeyword != '' ">
@@ -406,5 +408,6 @@
 		</if>
 	</select>
 <!-- 김률민 추가 -->   
+
 
 </mapper>

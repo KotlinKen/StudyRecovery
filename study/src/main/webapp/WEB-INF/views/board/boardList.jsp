@@ -24,7 +24,7 @@
 			<a href="${rootPath }/board/boardList?type=event">이벤트</a>
 		</span>
 	</div>
-<c:if test="${param.type ne 'faq' }"> 
+	<c:if test="${param.type ne 'faq' }"> 
 	<form action="${rootPath }/board/boardList" method="get">
 	<input type="hidden" name="cPage" value="1" />
 		<div class="form-row">
@@ -53,7 +53,10 @@
 	</div>
 	<c:if test="${mber != null }">
 	<div class="rightSection">
-		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite'">
+		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=one'">
+			1:1 문의하기
+		</button>
+		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=일반'">
 			게시글 등록
 		</button>
 	</div>
@@ -78,10 +81,10 @@
 			<td class="first_col">${list.BNO}</td>
 			<td class="boardTitle">
 				
-				${pastDate <= (list.REG) ? "<span class='circle circleBlue'></span>" : "" } ${fn:substring(list.TITLE, 0, 20)}
+				${pastDate <= (list.REG) ? "<span class='circle circleBlue'></span>" : "" } ${fn:substring(list.TITLE, 0, 18)}
 			</td>
 			<td class="boartContent">
-				${fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 25) eq "" ? "내용이 없습니다." : fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 25) }
+				${fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 20) eq "" ? "내용이 없습니다." : fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 20) }
 				<c:if test="${list.CNT > 0}"><span class="replyCounter"> ${list.CNT }</span> </c:if>
 			</td>
 			<td class="boardFork text-center">

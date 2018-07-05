@@ -54,10 +54,22 @@
 		});
 	});
 	function pwdDuplicateCheck(){
+		var newPwd = $("#pwd").val().trim();
+		var reg = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/;
+		var isValid = true;
+		
 		var po = $("#pwd-ok").val();
 		if(po=="1"){
 			console.log("ok");
 			alert("비밀번호가 불일치합니다.");
+			return false;
+		}
+		if (newPwd.length<8 || newPwd.length>16) {
+			alert("암호를 8자이상 16자 이하로 설정해주세요.");
+			return false;
+		}
+		if (!reg.test(newPwd)) {
+			alert("영대소문자, 숫자, 특수문자로 비밀번호를 입력해주세요.");
 			return false;
 		}
 		

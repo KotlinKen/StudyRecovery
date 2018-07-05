@@ -27,7 +27,7 @@
 		<a href="${rootPath }/member/memberView.do" >개인정보</a>
 	</li>
 	<li class='btn-page'>
-		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=study">내 스터디</a>
+		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=study">내 스터디/강의</a>
 	</li>
 	<li class='btn-page'>
 		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=apply">스터디 신청 목록</a>

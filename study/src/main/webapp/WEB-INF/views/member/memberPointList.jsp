@@ -103,8 +103,8 @@ function fn_expInsert(mno) {
 		$("#exp"+mno).val(0); 
 	}
 	if(exp>10000){
-		exp = 1000;
-		$("#exp"+mno).val(1000); 
+		exp = 10000;
+		$("#exp"+mno).val(10000); 
 	}
 	var data = new FormData();
 	data.append("mno", mno);
@@ -219,7 +219,7 @@ function fn_npointInsert(mno) {
 	npoint = Math.floor(npoint);
 	if(npoint <0){
 		npoint = 0;
-		$("#npoint"+mno).val(-100000);
+		$("#npoint"+mno).val(0);
 	}
 	if(npoint > 100000){
 		npoint = 100000;

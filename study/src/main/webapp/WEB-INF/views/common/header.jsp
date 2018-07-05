@@ -63,7 +63,10 @@ $(function(){
 	});
 	
 });	
-	
+function popHidden(){
+	$(".adverstingPopup").hide();
+}
+
 $(function(){
 var popCookie = "${cookie.popupValue.value}";
 if(popCookie != "Y"){
@@ -73,15 +76,15 @@ var type = "POPUP";
 		data : {type : type},
 		dataType : "json",
 		success : function(data){
+			var image = "<img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG+ "' onerror='popHidden()'/>";
 			if(data.adv == null){
 				console.log('등록된 팝업이 없습니다.');
 			}else{
 				$(".adverstingPopup").draggable();
-				$(".adverstingPopup").css("display", "block").append("<img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG+ "' />");
+				$(".adverstingPopup").css("display", "block").append(image);
 			}
 		}
 	});
-	
 	$(".adverstingPopup .adverstingPopupCloseBtn").on("click", function(){
 		$(this).parent().css("display", "none");
 		$.ajax({
@@ -235,6 +238,7 @@ $(document).ready(function(){
      
     $("#idSaveCheck").change(function(){ // 체크박스에 변화가 있다면,
         if($("#idSaveCheck").is(":checked")){ // ID 저장하기 체크했을 때,
+        	deleteCookie("key");
             setCookie("key", $("#userId").val(), 7); // 7일 동안 쿠키 보관
         }else{ // ID 저장하기 체크 해제 시,
             deleteCookie("key");
@@ -244,6 +248,7 @@ $(document).ready(function(){
     // ID 저장하기를 체크한 상태에서 ID를 입력하는 경우, 이럴 때도 쿠키 저장.
     $("#userId").keyup(function(){ // ID 입력 칸에 ID를 입력할 때,
         if($("#idSaveCheck").is(":checked")){ // ID 저장하기를 체크한 상태라면,
+        	deleteCookie("key");
             setCookie("key", $("#userId").val(), 7); // 7일 동안 쿠키 보관
         }
     });
@@ -252,14 +257,14 @@ $(document).ready(function(){
 function setCookie(cookieName, value, exdays){
     var exdate = new Date();
     exdate.setDate(exdate.getDate() + exdays);
-    var cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString());
+    var cookieValue = escape(value) + ((exdays==null) ? "" : "; expires=" + exdate.toGMTString()) + ';path=/';
     document.cookie = cookieName + "=" + cookieValue;
 }
  
 function deleteCookie(cookieName){
     var expireDate = new Date();
     expireDate.setDate(expireDate.getDate() - 1);
-    document.cookie = cookieName + "= " + "; expires=" + expireDate.toGMTString();
+    document.cookie = cookieName + "= " + "; expires=" + expireDate.toGMTString() + ';path=/';
 }
  
 function getCookie(cookieName) {

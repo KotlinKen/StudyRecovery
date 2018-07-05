@@ -61,12 +61,12 @@ $(document).ready(function() {
 
 <script>
 function validate(){
-	
+
 	// 유효성 검사 - 지역,도시
 	var local = $("#local").val();
 	var town = $("#town").val();
-	
-	if( local=="" || town=="세부 지역을 선택하세요"){
+	console.log("local="+local+";;");
+	if( local=="선택하세요" || town=="세부 지역을 선택하세요"){
 		alert("지역을 선택해주세요");
 		return false;	
 	}
@@ -74,8 +74,8 @@ function validate(){
 	// 유효성 검사 - 카테고리, 세부종목
 	var kind = $("#kind").val();
 	var sub = $("#subject").val();
-	
-	if( kind=="" || sub=="세부 과목을 선택하세요"){
+	console.log(kind);
+	if( kind=="선택하세요" || sub=="세부 과목을 선택하세요"){
 		alert("강의 과목을 선택해주세요");
 		return false;
 	}
@@ -125,8 +125,21 @@ function validate(){
 	$("#time").val(startTime + "~" + endTime);	
 	
 	
-	
-	
+   var file = $("div.fileWrapper div.custom-file input:file");
+   var fileVal = file.val();
+   var cnt = 0;
+
+   file.each(function(){
+      if( fileVal != "" ) 
+         cnt++;
+   });
+   
+     console.log(cnt);
+   if( cnt == 0 ){
+      alert("사진을 최소 1개이상 등록해주세요.");
+      return false;   
+   }
+
 	return true;
 }
 
@@ -231,7 +244,7 @@ $(function(){
 		 
 		var kno= $("option:selected", this).val();
 			
-		if(kno == ""){
+		if(kno == "선택하세요"){
 			$("#subject").hide();
 			return;
 		}
@@ -381,30 +394,24 @@ $(function(){
 		}		
 	});
 	
-	/* $(".time").on("change", function(){
-		// 시작 시간
-		var startTime = $("#starttime");
-		var startTimeVal = startTime.val();
-		var startTimeArray = startTimeVal.split(":");
-		var start = Number(startTimeArray[0]);		
-		
-		// 마감 시간
-		var endTime = $("#endtime");
-		var endTimeVal = $("#endtime").val();
-		var endTimeArray = endTimeVal.split(":");
-		var end = Number(endTimeArray[0]);	
-		
-		// 시작시간이 마감시간보다 클 경우.
-		if( start > end ){
-			alert("시작하는 시간이 끝나는 시간보다 클 수 없습니다.");
-			startTime.val("6:00");
-			endTime.val("7:00");
-		}
-	}); */
+	$("div.fileWrapper div.custom-file input:file").on('change',function(){
+	      var ext = $(this).val().split(".").pop().toLowerCase();
+	      console.log("ext="+ext);
+	       if (ext.length > 0) {
+	          if ($.inArray(ext, [ "gif", "png", "jpg",
+	                "jpeg" ]) == -1) {
+	             alert("gif,png,jpg 파일만 업로드 할수 있습니다.");
+	             return false;
+	          }
+	       }
+	       
+	       
+	 });
 	
 });
 
 </script>
+<div class="container">
 <div id="study-container">
 	<form action="studyFormEnd.do" name="studyFrm" method="post" onsubmit="return validate();" enctype="multipart/form-data">
 		
@@ -414,7 +421,7 @@ $(function(){
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
-		<textarea id="summernote" name="content" id="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required ></textarea>
+		<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required ></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
@@ -457,7 +464,7 @@ $(function(){
 		
 		<input type="hidden" name="time" id="time"/>
 		<label for="price">일회 사용회비 : </label>
-		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" />
+		<input type="number" name="price" id="price" class="form-control" placeholder="협의 - 스터디 카페 대여비 - 6000" min="0" step="1000" max="100000" value="0" required />
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>
@@ -476,7 +483,7 @@ $(function(){
 			    <span class="input-group-text">첨부파일</span>
 			  </div>
 			  <div class="custom-file">
-			    <input type="file" class="custom-file-input" name="upFile">
+			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
 			    <label class="custom-file-label">파일을 선택하세요</label>
 			  </div>
 			  <button type="button" class="addFile">+</button>
@@ -497,7 +504,7 @@ $(function(){
 		  </div>
 		  
 		  <div class="custom-file">
-		    <input type="file" class="custom-file-input" name="upFile">
+		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required>
 		    <label class="custom-file-label" >파일을 선택하세요</label>
 		  </div>
 		  
@@ -505,5 +512,5 @@ $(function(){
 		  <button type="button" class="removeFile">-</button>
 	</div>
 </div>
-</section>
+</div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
