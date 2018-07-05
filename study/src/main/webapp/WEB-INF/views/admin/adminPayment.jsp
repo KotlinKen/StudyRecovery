@@ -74,13 +74,13 @@ function loadPay(cPage, pageBarSize, key){
     				
     				// 결제 취소 맹글어보기.
     				if( pay.PSTATUS == "결제완료" && ( pay.STATUS == '모집 마감' || pay.STATUS == "마감 임박" || pay.STATUS == "모집 중"))
-    					rmHtml += "<td><button type='button' onclick='lectureCancel(" + pay.SNO + "," + pay.MNO + "," + pay.PNO + "," + pay.PRICE + ")'>결제 취소</button></td>";	
+    					rmHtml += "<td><button type='button' onclick='lectureAdminCancel(" + pay.SNO + "," + pay.MNO + "," + pay.PNO + "," + pay.PRICE + ")'>결제 취소</button></td>";	
     				else if(pay.PSTATUS == "결제완료" && ( pay.STATUS == "진행 중" || pay.STATUS == "강의 종료"))
     					rmHtml += "<td>" + pay.PSTATUS + "</td>";
    					else if( pay.PSTATUS == "결제실패" )
    						rmHtml += "<td><span style='color:red;'>"+ pay.PSTATUS + "</span></td>";
 					else if( pay.PSTATUS == "결제취소" )
-	  						rmHtml += "<td>"+ pay.PSTATUS + "</td>";
+						rmHtml += "<td><span style='color:mediumseagreen;'>취소완료</span></td>";
     			rmHtml += "</tr>";
 	    	}
 			$(".table-responsive tbody").html(rmHtml);
@@ -91,14 +91,14 @@ function loadPay(cPage, pageBarSize, key){
 	});
 }
 
-function lectureCancel(sno, mno, originNo, price){
+function lectureAdminCancel(sno, mno, pno, price){
 	if(confirm("결제를 취소하시겠습니까?")){
 		$.ajax({
-			url : "${rootPath}/lecture/lectureCancel.do",
+			url : "${rootPath}/lecture/lectureAdminCancel.do",
 			data : {
 				sno : sno,
 				mno : mno,
-				originNo : originNo,
+				pno : pno,
 				price : price
 			},
 			success : function(data){
@@ -146,6 +146,5 @@ function lectureCancel(sno, mno, originNo, price){
 	    </li>
 	  </ul>
 	</nav>
-</div>   	
-   
+</div>      
 <jsp:include page="/WEB-INF/views/common/admin_footer.jsp"/>   

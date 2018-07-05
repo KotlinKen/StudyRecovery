@@ -64,8 +64,12 @@
    </insert>
    
    <insert id="succesPayCancel">
-   		INSERT INTO PAY VALUES( SEQ_PAY.NEXTVAL, #{sno}, #{mno}, '사용자 요청', #{msg}, #{price}, SYSDATE)
+   		UPDATE PAY SET STATUS = '결제취소', PDATE = SYSDATE WHERE PNO = #{pno}
    </insert>
+   
+   <update id="successAdminPayCancel">
+   		UPDATE PAY SET STATUS = '결제취소', PDATE = SYSDATE WHERE PNO = #{pno}
+   </update>
    
    <select id="selectPay" resultType="_long">
    		SELECT PNO 

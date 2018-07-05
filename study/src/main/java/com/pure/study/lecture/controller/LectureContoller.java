@@ -31,8 +31,6 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
-import retrofit2.http.Path;
-
 @Controller
 public class LectureContoller {
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -612,7 +610,7 @@ public class LectureContoller {
 
 	@RequestMapping("/lecture/lectureCancel.do")
 	@ResponseBody
-	public String lectureCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam String originNo, @RequestParam int price) {
+	public String lectureCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam long pno, @RequestParam int price) {
 		Map<String, Integer> map = new HashMap<>();
 
 		map.put("mno", mno);
@@ -621,6 +619,7 @@ public class LectureContoller {
 		int result = 0;
 		result = ls.lectureCancel(map);
 		
+		String originNo = "imp_"+ String.valueOf(pno);
 		String api_key = "6308212829698507";
 		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
 		
@@ -635,16 +634,47 @@ public class LectureContoller {
 		
 		// 아임포트에서 결제취소가 성공한 경우.
 		if( success == 1 || success == 0  ) {
-			System.out.println("!");
-			Map<String, Object> cancelMap = new HashMap<>();
+			msg = "결제취소";		
+			
+			ls.successPayCancel(pno);			
+		}
+		// 실패한 경우
+		else {
+			msg = "결제 취소가 실패했습니다. 관리자에게 문의하세요.";
+		}
+		
+		return msg;
+	}
+	
+	@RequestMapping("/lecture/lectureAdminCancel.do")
+	@ResponseBody
+	public String lectureAdminCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam long pno, @RequestParam int price) {
+		Map<String, Integer> map = new HashMap<>();
+
+		map.put("mno", mno);
+		map.put("sno", sno);
+
+		int result = 0;
+		result = ls.lectureCancel(map);
+		
+		String originNo = "imp_"+ String.valueOf(pno);
+		String api_key = "6308212829698507";
+		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
+		
+		// 토큰 얻어오기.
+		IamportClient imp = new IamportClient(api_key, api_secret);		
+		imp.getAuth();
+		
+		IamportResponse<Payment> p = imp.cancelPaymentByImpUid(new CancelData(originNo, true));
+		
+		int success = p.getCode();
+		String msg = ""; 		
+		
+		// 아임포트에서 결제취소가 성공한 경우.
+		if( success == 1 || success == 0  ) {
 			msg = "결제취소";
 			
-			cancelMap.put("mno", mno);
-			cancelMap.put("sno", sno);
-			cancelMap.put("msg", msg);	
-			cancelMap.put("price", price);
-			
-			ls.successPayCancel(cancelMap);			
+			ls.successAdminPayCancel(pno);			
 		}
 		// 실패한 경우
 		else {

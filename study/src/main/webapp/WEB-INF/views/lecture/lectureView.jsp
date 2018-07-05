@@ -133,17 +133,15 @@
 					sno : sno
 				},
 				success : function(data){
-					var originNo = "imp_" + data;
+					var pno = data;
 					var price = ${lecture.PRICE};
-					
-					console.log(originNo);
 					
 					$.ajax({
 						url : "lectureCancel.do",
 						data : {
 							sno : sno,
 							mno : mno,
-							originNo : originNo,
+							pno : pno,
 							price : price
 						},
 						success: function( data ){

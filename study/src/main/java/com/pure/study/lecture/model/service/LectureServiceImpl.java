@@ -165,8 +165,8 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public void successPayCancel(Map<String, Object> cancelMap) {
-		ld.successPayCancel(cancelMap);
+	public void successPayCancel(long pno) {
+		ld.successPayCancel(pno);
 	}
 
 	@Override
@@ -179,5 +179,9 @@ public class LectureServiceImpl implements LectureService {
 		return ld.selectPayList(cPage, numPerPage, key);
 	}
 
+	@Override
+	public void successAdminPayCancel(long pno) {
+		ld.successAdminPayCancel(pno);
+	}
 
 }
