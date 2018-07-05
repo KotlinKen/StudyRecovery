@@ -3,78 +3,67 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<script src="${pageContext.request.contextPath }/resources/js/jquery-3.3.1.js"></script>
+<script src="${rootPath }/resources/js/jquery-3.3.1.js"></script>
+<script src="${rootPath}/resources/js/member/enroll.js"></script>
+<link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
+
 <style>
-	span#check-no{
-		color: red;
-		display: none;
+	.find{
+		padding-top: 5%;
+		padding-bottom: 5%;
+		padding-left: 33%;
 	}
-	span#check-yes{
-		color: green;
-		display: none;
+	.id-pwd{
+		width: 40%;
+		height: 40%;
+		background: #ebebee;
+		position: relative;
+		top: 0;
+		left: 0;
+		z-index: 100;
+		border-radius: 5px;
 	}
-	
+	input[type=password] {
+	    width: 100%;
+	    padding: 12px 20px;
+	    margin: 8px 0;
+	    box-sizing: border-box;
+	    border: none;
+	    border-bottom: 1px solid #cccccc;
+	}
 </style>
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="비밀번호 변경" name="pageTitle"/>
 	</jsp:include>
 	<c:if test="${memberLoggedIn==null }">
-		<form action="${pageContext.request.contextPath }/member/memberUpdatePwd.do" method="post" onsubmit="return pwdDuplicateCheck();">
-			<input type="password" name="pwd" id="pwd" placeholder="비밀번호" />
-			<br />
-			<input type="password" id="pwd-check" placeholder="비밀번호 확인" />
-			<span id="check-no" >비밀번호가 불일치</span>
-			<span id="check-yes" >비밀번호가 일치</span>
-			<input type="hidden" name="key" value="${key }" />
-			<input type="hidden" name="mid" value="${mid }" />
-			<input type="hidden" id="pwd-ok" value="1" />
-			<br />
-			<button type="submit">변경</button>
+		<form class="find" action="${pageContext.request.contextPath }/member/memberUpdatePwd.do" method="post" onsubmit="return pwdDuplicateCheck();">
+			<table class="id-pwd">
+				<tr class="id-pwd">
+					<td class="id-pwd">
+						<input type="password" name="pwd" id="password_" maxlength="15" placeholder="비밀번호" required autocomplete="off"  />
+						<span id="pwd"></span>  
+						<span id="pwdok"></span>  
+					</td>
+				</tr>
+				<tr class="id-pwd">
+					<td class="id-pwd">
+						<input type="password" id="password2"  placeholder="비밀번호 확인" required autocomplete="off"  />
+						<span id="pwd2"></span> 
+						<span id="pwd2ok"></span> 
+					</td>
+				</tr>
+				<tr class="id-pwd">
+					<td class="id-pwd">
+						<input type="hidden" name="key" value="${key }" />
+						<input type="hidden" name="mid" value="${mid }" />
+						<input type="hidden" id="pwd-ok" value="1" />
+						<button type="submit" class="btncss" id="submit">변경</button>
+					</td>
+				</tr>
+			</table>
+			
 		</form>
 	</c:if>
-	<script>
-	$(function(){
-		$("#pwd-check").on("keyup",function(){
-			var p1 = $("#pwd").val();
-			var p2 = $(this).val();
-			console.log(p1);
-			console.log(p2);
-			if(p1==p2){
-				//console.log("일치");
-				$("#check-no").hide();
-				$("#check-yes").show();
-				$("#pwd-ok").val(0);
-			}else{
-				//console.log("불일치");
-				$("#check-yes").hide();
-				$("#check-no").show();
-				$("#pwd-ok").val(1);
-				
-			}
-		});
-	});
-	function pwdDuplicateCheck(){
-		var newPwd = $("#pwd").val().trim();
-		var reg = /^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9])(?=.*[0-9]).{8,16}$/;
-		var isValid = true;
-		
-		var po = $("#pwd-ok").val();
-		if(po=="1"){
-			console.log("ok");
-			alert("비밀번호가 불일치합니다.");
-			return false;
-		}
-		if (newPwd.length<8 || newPwd.length>16) {
-			alert("암호를 8자이상 16자 이하로 설정해주세요.");
-			return false;
-		}
-		if (!reg.test(newPwd)) {
-			alert("영대소문자, 숫자, 특수문자로 비밀번호를 입력해주세요.");
-			return false;
-		}
-		
-		return true;
-	}
-	</script>
+
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 	

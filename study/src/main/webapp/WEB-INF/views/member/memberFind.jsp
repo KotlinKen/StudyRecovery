@@ -4,8 +4,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <script src="${rootPath }/resources/js/jquery-3.3.1.js"></script>
-<script src="${rootPath}/resources/js/member/find.js"></script>
 <script src="${rootPath}/resources/js/member/enroll.js"></script>
+<%-- <script src="${rootPath}/resources/js/member/find.js"></script> --%>
 <!-- 테이블 css -->
 <link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
 
@@ -13,13 +13,19 @@
 	.find{
 		padding-top: 5%;
 		padding-bottom: 5%;
-		padding-left: 40%;
+		padding-left: 33%;
 	}
-	span{
+	span.name{
 		position: relative;
 		top: 0;
-		left: 30%;
+		left: 0;
 		z-index: 1000;
+	}
+	span#nameok{
+		color: green;
+	}
+	span#nameerr{
+		color: red;		
 	}
 	.id-pwd{
 		width: 40%;
@@ -62,7 +68,7 @@
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-						<input type="text" name="mname" id="mname" placeholder="회원 이름" maxlength="7" autocomplete="off"/>	
+						<input type="text" name="mname" id="name" placeholder="회원 이름" maxlength="7" autocomplete="off"/>	
 						<br /> 
 						<span id="nameerr" class="name"></span> 
 						<span id="nameok" class="name"></span>					
