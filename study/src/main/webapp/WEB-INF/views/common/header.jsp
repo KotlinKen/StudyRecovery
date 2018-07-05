@@ -63,7 +63,10 @@ $(function(){
 	});
 	
 });	
-	
+function popHidden(){
+	$(".adverstingPopup").hide();
+}
+
 $(function(){
 var popCookie = "${cookie.popupValue.value}";
 if(popCookie != "Y"){
@@ -73,11 +76,12 @@ var type = "POPUP";
 		data : {type : type},
 		dataType : "json",
 		success : function(data){
+			var image = "<img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG+ "' onerror='popHidden()'/>";
 			if(data.adv == null){
 				console.log('등록된 팝업이 없습니다.');
 			}else{
 				$(".adverstingPopup").draggable();
-				$(".adverstingPopup").css("display", "block").append("<img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG+ "' />");
+				$(".adverstingPopup").css("display", "block").append(image);
 			}
 		}
 	});
@@ -132,7 +136,7 @@ $(function(){
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item ${pageTitle}"><a class='nav-link ${fn:contains(where, "study/study") ? "actived" : ""}' href="${rootPath }/study/studyList.do">스터디</a></li>
-						<li class="nav-item"><a class='nav-link ${fn:contains(where, "lecture/lecture") ? "actived" : ""}' href="${rootPath }/lecture/lectureList.do?mno=${memberLoggedIn != null ? memberLoggedIn.getMno():'0'}">강의</a></li>
+						<li class="nav-item"><a class='nav-link ${fn:contains(where, "lecture/lecture") ? "actived" : ""}' href="${rootPath }/lecture/lectureList.do">강의</a></li>
 						<li class="nav-item"><a class='nav-link ${fn:contains(where, "board/board") ? "actived" : ""}' href="${rootPath }/board/boardList">게시판</a></li>
 					</ul>
 					<ul class="navbar-nav float-right">

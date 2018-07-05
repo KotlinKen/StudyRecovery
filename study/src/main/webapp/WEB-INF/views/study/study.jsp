@@ -123,12 +123,17 @@ $(function(){
 	
 	//필터 조건 정하고 검색 버튼을 누른 이벤트
 	$("input#filterSearch").on("click",function(){
+		
+		if($("input[name=case]").val()=='none'){
+			console.log("caser값은요"+$("input[name=case]").val());
+		    $("input[name=case]").val('search');
+		}
+		console.log("caser값은요"+$("input[name=case]").val());
 		var filter={lno:$("select#local option:selected").val(),tno:$("select#town option:selected").val(),
 				subno:$("select#subject option:selected").val(),kno:$("select#kind option:selected").val(),
-				dno:$("select#diff option:selected").val(),leadername:$("input#leadername").val()};
-		
-		$("input[name=case]").val("search"); //검색인 경우 case 설정
-		
+				dno:$("select#diff option:selected").val(),leadername:$("input#leadername").val(),
+				searchCase:$("input[name=case]").val(),	status:$("select#status").val()};
+
 		$.ajax({
 			url:"searchStudy.do",
 			data:filter,
@@ -160,15 +165,20 @@ $(function(){
 	        	//새로 cPage 1로 설정
 	        	$("input#cPageNo").val(data.cPage);
 	        	$("input#total").val(data.total);
-	        	
 			}
 		});
 	});
 	
 	$("button#sort-deadline").click(function(){
-		$("input#case").val("deadline");
+		if($("input[name=case]").val()=="deadline"){
+			$("input[name=case]").val("none");
+		}else{
+			$("input[name=case]").val("deadline");
+		}
 		
-		$.ajax({
+		
+		
+		/* $.ajax({
 			url:"selectByDeadline.do",
 			dataType:"json",
 			success:function(data){
@@ -193,15 +203,20 @@ $(function(){
 				$("input#cPageNo").val(data.cPage);
 				$("input#total").val(data.total);
 			}
-		});
+		}); */
 	});
 	
 	
 	//인기순 정렬(신청자순)
 	$("button#sort-pop").click(function(){
-		$("input#case").val("pop");
+		if($("input[name=case]").val()=="pop"){
+			$("input[name=case]").val("none");
+		}else{
+			$("input[name=case]").val("pop");
+		}
 		
-		$.ajax({
+		
+		/* $.ajax({
 			url:"selectByApply.do",
 			dataType:"json",
 			success:function(data){
@@ -226,7 +241,7 @@ $(function(){
 				$("input#cPageNo").val(data.cPage);
 				$("input#total").val(data.total);
 			}
-		});
+		}); */
 	});
 	
 	
@@ -261,18 +276,16 @@ $(function(){
 	    if(listCase=="none"){
 	    	urlPath="studyListAdd.do";
 	    	
-	    }else if(listCase=="search"){
+	    }else{
 	    	urlPath="searchStudyAdd.do";
 	    	dataForList={lno:$("select#local option:selected").val(),tno:$("select#town option:selected").val(),
-						subno:$("select#subject option:selected").val(),kno:$("select#kind option:selected").val(),
-						dno:$("select#diff option:selected").val(),leadername:$("input#leadername").val(),cPage:cPage};
-	    	
-	    }else if(listCase=="deadline"){
-			urlPath="studyDeadlinAdd.do";	    	
-	    }else{
-	    	urlPath="studyApplyAdd.do";
-	    	
+					subno:$("select#subject option:selected").val(),kno:$("select#kind option:selected").val(),
+					dno:$("select#diff option:selected").val(),leadername:$("input#leadername").val(),cPage:cPage,
+					searchCase:$("input[name=case]").val(),	status:$("select#status").val()};
+						
+			console.log(dataForList);			
 	    }
+		
 		console.log("cPage="+cPage);
 		var isPage=Math.floor(total/numPerPage)+1;
 		console.log("isPage="+isPage);
@@ -316,7 +329,24 @@ $(function(){
 	}
 	
 	
+	//검색 필터 조건 초기화 하기
 	$("a#reFilter").click(function(){
+		$("#town").hide();
+		$("#subject").hide();
+		
+		
+		
+		$("#local option:eq(0)").prop("selected", true);
+		$("#kind option:eq(0)").prop("selected", true);
+		$("#diff option:eq(0)").prop("selected", true);
+		
+		$('#leadername').val("");
+		
+		$("input[name=case]").val("none");
+		
+		console.log("검색 조건 초기화");
+		
+		
 		
 	});
 });
@@ -334,6 +364,7 @@ $(function(){
 			</c:forEach>
 			</select>&nbsp;
 			<select name="tno" id="town">
+				<option value="0">전체</option>
 			</select>
 			<label for="subject">카테고리 :</label>
 			<select name="kno" id="kind">
@@ -343,6 +374,7 @@ $(function(){
 			</c:forEach>
 			</select>&nbsp;
 			<select name="subno" id="subject">
+				<option value="0">전체</option>
 			</select>
 			
 			<label for="diff">난이도 : </label>
@@ -352,13 +384,19 @@ $(function(){
 				<option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
 			</c:forEach>
 			</select>
+			<!-- <select name="status" id="status">
+				<option value="전체">전체</option>
+				<option value="모집 중">모집 중</option>
+				<option value="마감 임박">마감 임박</option>
+				<option value="모집 마감">모집 마감</option>
+				<option value="진행 중">진행 중</option>
+				<option value="스터디 종료">스터디 종료</option>
+			</select> -->
 			<input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" maxlength="50" />
 			<input type="button" id="filterSearch" value="필터 검색" />
 			<a href="#" id="reFilter">검색 조건 초기화</a>
 			
 		</div>
-			
-	
 		<button type="button" id="sort-deadline">마감임박순</button>
 		<button type="button" id="sort-pop">인기스터디순</button>
 		

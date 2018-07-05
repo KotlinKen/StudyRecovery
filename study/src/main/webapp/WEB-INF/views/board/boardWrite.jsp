@@ -5,7 +5,9 @@
 <div class="container">
 	<form action="${rootPath}/board/boardWriteEnd"  method="post" enctype="multipart/form-data">
 		<input type="hidden" name="mno" value="${memberLoggedIn.mno}"/>
-		<input type="hidden" name="type" value="일반"/>
+		<input type="hidden" name="type" value="${param.type }"/>
+		
+		
 		<div class="form-row">
 			<div class="form-group col-md-12">
 				 <input type="text" class="form-control" id="title" name="title" id="title" placeholder="제목을 입력해주세요" autocomplete="off">

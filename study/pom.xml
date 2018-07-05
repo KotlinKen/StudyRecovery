@@ -19,6 +19,14 @@
          <id>datanucleus-repo</id>
          <url>http://www.datanucleus.org/downloads/maven2/</url>
       </repository>
+      
+      <!-- 결제 : 기묭정 -->
+      <repository>
+         <id>jitpack.io</id>
+         <url>https://jitpack.io</url>
+      </repository>
+      
+      
    </repositories>
    
    <dependencies>
@@ -304,21 +312,33 @@
           <artifactId>spring-context-support</artifactId>
           <version>${org.springframework-version}</version>
        </dependency>
-		<dependency>
+      <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>sockjs-client</artifactId>
             <version>1.0.2</version>
         </dependency>
-		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-websocket</artifactId>
-		    <version>5.0.4.RELEASE</version>
-		</dependency>
-		<dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-websocket</artifactId>
+          <version>5.0.4.RELEASE</version>
+      </dependency>
+      <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>stomp-websocket</artifactId>
             <version>2.3.3</version>
         </dependency>
+        
+        <!-- 결제 : 기묭정 디펜던시즈 -->
+      <dependency>
+         <groupId>com.squareup.retrofit2</groupId>
+         <artifactId>retrofit</artifactId>
+         <version>2.4.0</version>
+      </dependency>
+      <dependency>
+         <groupId>com.github.iamport</groupId>
+         <artifactId>iamport-rest-client-java</artifactId>
+         <version>0.1.10</version>
+      </dependency> 
            
            
    </dependencies>

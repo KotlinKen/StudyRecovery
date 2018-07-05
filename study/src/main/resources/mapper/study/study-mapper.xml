@@ -55,7 +55,8 @@
   <select id="selectStudyForSearch" resultMap="mapForStudy">
 	  select s.sno,s.mno, m.mname mname, m.mprofile, m.mid, k.kindname kname, k.kno,sb.subno,sb.subjectname subname, l.lno,l.local lname,t.tno,t.townname tname,
 	  		d.dno,d.DIFFICULTNAME dname,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,to_char(s.ldate,'yyyy-mm-dd') ldate,
-	  		to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate 
+	  		to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
+	  		decode(s.status,'마감 임박',1,'모집 중',2,'모집 마감',3,'진행 중',4,'스터디 종료',5) statusOrder
 	  from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno 
 	  			   join subject sb on s.subno=sb.subno join kind k on sb.kno=k.kno join member m on s.mno=m.mno
 	  where s.type='study' 
@@ -71,14 +72,32 @@
 	<if test="kno!=0">
 	and k.kno=#{kno}
 	</if>
-	<if test="dno!=0">
+	<if test="dno!=null and dno!=0">
 	and s.dno=#{dno}
 	</if>
 	<if test="leadername!=null and leadername !='' ">
 	and  m.mname like '%'||#{leadername}||'%'
 	</if>
-    order by s.regdate desc
-  
+	<if test="status!=null and status!='전체'">
+	and s.status=#{status}
+	</if>
+	<if test="year!=null and year!=0">
+	and to_char(s.sdate ,'yyyy') like '%'||#{year}||'%'
+	</if>
+	<if test="month!=null and month!=0">
+	and to_char(s.sdate ,'mm') = #{month}
+	</if>
+	<if test="title!=null and title!=''">
+	and s.title like '%'||#{title}||'%'
+	</if>
+	<if test="status==null">
+	order by statusOrder, s.regdate desc
+	</if>
+	<if test="status!=null">
+	order by s.regdate desc
+	</if>
+	
+ 
   </select>
   <select id="selectStudyAdd" resultMap="mapForStudy">
   	select  s.sno,s.mno,sb.subno,k.kno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
@@ -124,12 +143,25 @@
 	<if test="kno!=0">
 	and k.kno=#{kno}
 	</if>
-	<if test="dno!=0">
+	<if test="dno!=null and dno!=0">
 	and s.dno=#{dno}
 	</if>
 	<if test="leadername!=null and leadername !='' ">
 	and  m.mname like '%'||#{leadername}||'%'  
 	</if>
+	<if test="status!=null and status!='전체'">
+	and s.status=#{status}
+	</if>
+	<if test="year!=null and year!=0">
+	and to_char(s.sdate ,'yyyy') like '%'||#{year}||'%'
+	</if>
+	<if test="month!=null and month!=0">
+	and to_char(s.sdate ,'mm') = #{month}
+	</if>
+	<if test="title!=null and title!=''">
+	and s.title like '%'||#{title}||'%'
+	</if>
+	order by s.regdate desc
   </select>
   
   
@@ -145,34 +177,110 @@
   </delete>
   
   <select id="selectByDeadline" resultMap="mapForStudy">
-  select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
+  select    s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
   		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
- 		  m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
+ 		  m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname,
+          decode(status,'마감 임박',1,'모집 중','2') statusOrder
   from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
-  where   s.type='study' and s.status in ('모집 중','마감 임박')
-  order by s.ldate
+  where s.type='study' and s.status in ('모집 중','마감 임박')
+    <if test="lno!=0">
+	and l.lno =#{lno}
+	</if>
+	<if test="tno!=0">
+	and s.tno=#{tno}
+	</if>
+	<if test="subno!=0">
+	and sb.subno=#{subno}
+	</if>
+	<if test="kno!=0">
+	and k.kno=#{kno}
+	</if>
+	<if test="dno!=null and dno!=0">
+	and s.dno=#{dno}
+	</if>
+	<if test="leadername!=null and leadername !='' ">
+	and  m.mname like '%'||#{leadername}||'%'  
+	</if>
+	<if test="status!=null and status!='전체'">
+	and s.status=#{status}
+	</if>
+	<if test="searchCase=='deadline'">
+    order by statusOrder,s.ldate
+	</if>
+  
+  
   </select>
   
   
   <select id="studyDeadlineCount" resultType="_int">
-	  select  count(*) cnt
-	  from 	  study s 
-	  where   s.type='study' and s.status in ('모집 중','마감 임박')
-	  order by s.ldate
+	  select count(*) cnt
+	  from  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno 
+	  		join subject sb on s.subno=sb.subno join kind k on sb.kno=k.kno  join member m on s.mno=m.mno
+	  where s.type='study' and s.status in ('모집 중','마감 임박')
+    <if test="lno!=0">
+	and l.lno =#{lno}
+	</if>
+	<if test="tno!=0">
+	and s.tno=#{tno}
+	</if>
+	<if test="subno!=0">
+	and sb.subno=#{subno}
+	</if>
+	<if test="kno!=0">
+	and k.kno=#{kno}
+	</if>
+	<if test="dno!=null and dno!=0">
+	and s.dno=#{dno}
+	</if>
+	<if test="leadername!=null and leadername !='' ">
+	and  m.mname like '%'||#{leadername}||'%'  
+	</if>
+	<if test="status!=null and status!='전체'">
+	and s.status=#{status}
+	</if>
+	<if test="searchCase=='deadline'">
+	order by s.ldate
+	</if>
+	  
+	  
+	  
   </select>
   
   <select id="selectByApply" resultMap="mapForStudy">
 	  select s.sno, n.cnt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
 	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
-	 		s.etc,k.kno,subjectname subname,subjectename subename, kindname kname, kindename kename, DIFFICULTNAME dname,local lname, 
-	 		mid, mname, mprofile,cover
+	 		s.etc,k.kno,SUBJECTNAME subname,SNAMEENAME subename, kindname kname, KNAMEENAME kename, DIFFICULTNAME dname,local lname, 
+	 		mid, mname, mprofile,cover,
+	 		decode(s.status,'마감 임박',1,'모집 중',2) statusOrder
 	  from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='study' and s.status in ('모집 중','마감 임박','진행 중')
+	        where s.type='study' and s.status in ('모집 중','마감 임박')
 	        group by s.sno 
 	      ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
-	  order by cnt desc, s.REGDATE
+	  where 1=1
+	<if test="lno!=0">
+	and l.lno =#{lno}
+	</if>
+	<if test="tno!=0">
+	and s.tno=#{tno}
+	</if>
+	<if test="subno!=0">
+	and sb.subno=#{subno}
+	</if>
+	<if test="kno!=0">
+	and k.kno=#{kno}
+	</if>
+	<if test="dno!=null and dno!=0">
+	and s.dno=#{dno}
+	</if>
+	<if test="leadername!=null and leadername !='' ">
+	and  m.mname like '%'||#{leadername}||'%'  
+	</if>
+	<if test="status!=null and status!='전체'">
+	and s.status=#{status}
+	</if>
+	order by statusOrder, cnt desc, s.REGDATE
   
   </select>
   
@@ -181,10 +289,35 @@
 	  from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='study' and s.status in ('모집 중','마감 임박','진행 중')
+	        where s.type='study' and s.status in ('모집 중','마감 임박')
 	        group by s.sno 
 	        order by cnt desc
-	       )
+	       ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
+	  where 1=1
+	<if test="lno!=0">
+	and l.lno =#{lno}
+	</if>
+	<if test="tno!=0">
+	and s.tno=#{tno}
+	</if>
+	<if test="subno!=0">
+	and sb.subno=#{subno}
+	</if>
+	<if test="kno!=0">
+	and k.kno=#{kno}
+	</if>
+	<if test="dno!=null and dno!=0">
+	and s.dno=#{dno}
+	</if>
+	<if test="leadername!=null and leadername !='' ">
+	and  m.mname like '%'||#{leadername}||'%'  
+	</if>
+	<if test="status!=null and status!='전체'">
+	and s.status=#{status}
+	</if>
+	order by cnt desc, s.REGDATE
+	      
+	
   </select>
   
   <select id="preinsertApply" resultType="_int">
@@ -231,16 +364,58 @@
              SUBSTR(S.TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
       <if test="key=='study'">
       FROM STUDY S
+      WHERE C.MNO = #{mno}
       </if>
       <if test="key=='crew'">
-      FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
+      FROM CREW C RIGHT JOIN STUDY S ON C.SNO = S.SNO
+      WHERE C.MNO=#{mno} or S.MNO=#{mno}
       </if>
-      WHERE C.MNO = #{mno}
+     
+      
   </select>
   
   
   <select id="selectStudyByMnoTypeStudy" resultType="study">
   	select * from study where sno=#{sno}
   </select>
+  
+  <select id="selectStudyAdminSearchList" resultMap="mapForStudy">
+  	  select s.sno,s.mno, m.mname mname, m.mprofile, m.mid, k.kindname kname, k.kno,sb.subno,sb.subjectname subname, l.lno,l.local lname,t.tno,t.townname tname,
+	  		d.dno,d.DIFFICULTNAME dname,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,to_char(s.ldate,'yyyy-mm-dd') ldate,
+	  		to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate 
+	  from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno 
+	  			   join subject sb on s.subno=sb.subno join kind k on sb.kno=k.kno join member m on s.mno=m.mno
+	  where s.type='study' 
+    <if test="lno!=0">
+	and l.lno =#{lno}
+	</if>
+	<if test="tno!=0">
+	and s.tno=#{tno}
+	</if>
+	<if test="subno!=0">
+	and sb.subno=#{subno}
+	</if>
+	<if test="kno!=0">
+	and k.kno=#{kno}
+	</if>
+	<if test="leadername!=null and leadername !='' ">
+	and  m.mname like '%'||#{leadername}||'%'
+	</if>
+	<if test="title!=null and title!= '' ">
+	and s.title like '%'||#{title}||'%'
+	</if>
+	<if test="month!=0">
+	and to_char(s.sdate ,'mm') like '%'||#{month}||'%'
+	</if>
+	<if test="year!=0">
+	and to_char(s.sdate ,'yyyy') like '%'||#{year}||'%'
+	</if>
+    order by s.regdate desc
+   </select>
+   
+   
+   <delete id="deleteWish">
+   	delete from wish where mno=#{mno} and sno=#{sno}
+   </delete>
   
 </mapper>

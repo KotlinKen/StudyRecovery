@@ -6,15 +6,9 @@
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
-<script>	
+<script>
 	//참여신청 버튼 클릭 이벤트
 	function lectureApply(){
-		var applyBtn = $("#lectureApplyBtn").val();
-		
-		if( applyBtn != 0 ){
-			alert("잘못된 접근입니다.");
-			return false;
-		}
 		
 		// 결제 도전!
 		var IMP = window.IMP;
@@ -22,7 +16,7 @@
 		var msg = "";
 		
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};	
+		var mno = ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};	
 		var price = 100;
 		
 	   //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
@@ -36,9 +30,8 @@
 	        	 	mno : mno
 	         },
 	         success:function(data){
-	        	//강의를 등록할 수 있는 경우.
-	        	
-	        	if(confirm("결제 하시겠습니까?")){
+	        	//강의를 등록할 수 있는 경우.    	
+	       	if(confirm("결제 하시겠습니까?")){
 		         	if( data == "" ){
 		         		 IMP.request_pay({
 		     			    pg : 'inicis', // version 1.1.0부터 지원.
@@ -80,26 +73,22 @@
 		     			});
 		         	}
 		         }
+
 	        	// 없는 경우.
 	         	else{
 	         		alert("결제를 취소하셨습니다.");
 	         	}
 	         }
-	      }).done(); 		  
+	      }); 		  
 	   }
 	}
 	
 	//찜하기 버튼 클릭 이벤트
 	function lectureWish(){
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};
+		var mno = ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
 		var wishBtn = $("#lectureWishBtn").val();
-		
-		if( wishBtn != 0 ){
-			alert("잘못된 접근입니다.");
-			return false;
-		}
 		
 		$.ajax({
 			url : "lectureWish.do",
@@ -108,22 +97,15 @@
 				mno : mno
 			},
 			success : function(){
-				alert("찜해쑝");
-				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+				if(confirm("찜하시겠습니까?"))
+					location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
 			}
 		});
 	}
 	
 	function lectureWishCancel(){
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};
-		
-		var wishBtn = $("#lectureWishBtn").val();
-		
-		if( wishBtn != 0 ){
-			alert("잘못된 접근입니다.");
-			return false;
-		}
+		var mno =  ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
 		$.ajax({
 			url : "lectureWishCancel.do",
@@ -132,36 +114,48 @@
 				mno : mno
 			},
 			success : function(){
-				alert("찜취소해쑝");
-				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+				if(confirm("찜 취소하시겠습니까?")){
+					location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+				}
 			}
 		});
 	}
 	
 	function lectureCancel(){
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};
-		
-		var lectureCancelBtn = $("#lectureCancelBtn").val();
-		
-		if( lectureCancelBtn != 0 ){
-			alert("잘못된 접근입니다.");
-			return false;
-		}
+		var mno =  ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
 		if(confirm("신청을 취소하시겠습니까?")){
 			$.ajax({
-				url : "lectureCancel.do",
+				url : "selectPay.do",
 				data : {
-					sno : sno,
-					mno : mno
+					mno : mno,
+					sno : sno
 				},
-				success : function(){
-					alert("");
-					location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+				success : function(data){
+					var originNo = "imp_" + data;
+					var price = ${lecture.PRICE};
+					
+					console.log(originNo);
+					
+					$.ajax({
+						url : "lectureCancel.do",
+						data : {
+							sno : sno,
+							mno : mno,
+							originNo : originNo,
+							price : price
+						},
+						success: function( data ){
+							console.log(data);
+						}
+					});						
 				}
-			});			
-		}
+			}).done(function(){
+				alert("취소되었습니다");
+				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+			});
+		}			
 	}
 	
 	$(function(){   
@@ -178,9 +172,12 @@
 			});    
 	   });
 	});
+	
 	// 삭제버튼
 	function deleteLecture(){
-		location.href="${pageContext.request.contextPath}/lecture/deleteLecture.do?sno=" + ${lecture.SNO};
+		if( confirm("강의를 삭제하시겠습니까?")){			
+			location.href="${pageContext.request.contextPath}/lecture/deleteLecture.do?sno=" + ${lecture.SNO};
+		}
 	}
 </script>
 
@@ -237,7 +234,7 @@
                <!-- 모달 풋터 -->
                <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
                </div>
             </form>         
          </div>         
@@ -257,25 +254,25 @@
       <c:if test="${insert eq 0}">
       
       	<c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
-	         <button type="button" id="lectureApplyBtn" onclick="lectureApply();" value="0">참여 신청하기</button>
+	         <button type="button" onclick="lectureApply();" >참여 신청하기</button>
 	         
 	         <!-- 찜 -->
 	         <c:if test="${wish eq 0}">
-	            <button type="button" id="lectureWishBtn" value="0" onclick="lectureWish();">찜하기</button>
+	            <button type="button" onclick="lectureWish();">찜하기</button>
 	         </c:if>
 	         <c:if test="${wish ne 0}">
-	            <button type="button" id="lectureWishBtn" value="1" onclick="lectureWishCancel();">찜 취소</button>
+	            <button type="button" onclick="lectureWishCancel();">찜 취소</button>
 	         </c:if>
       	</c:if>      	
       	<c:if test="${lecture.STATUS == '모집 마감' || lecture.STATUS == '진행 중' || lecture.STATUS == '강의 종료'}">
-	         <button type="button" id="lectureApplyBtn" onclick="lectureApply();" value="1" disabled>참여 신청하기</button>
+	         <button type="button" onclick="lectureApply();" disabled>참여 신청하기</button>
 	         
 	         <!-- 찜 -->
 	         <c:if test="${wish eq 0}">
-	            <button type="button" id="lectureWishBtn" value="0" onclick="lectureWish();">찜하기</button>
+	            <button type="button" onclick="lectureWish();" disabled>찜하기</button>
 	         </c:if>
 	         <c:if test="${wish ne 0}">
-	            <button type="button" id="lectureWishBtn" value="1" onclick="lectureWishCancel();">찜 취소</button>
+	            <button type="button" onclick="lectureWishCancel();" disabled>찜 취소</button>
 	         </c:if>
       	</c:if>         
       </c:if>
@@ -283,10 +280,10 @@
       <!-- 신청 취소 -->
       <c:if test="${insert ne 0}">
 		<c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
-			<button type="button" id="lectureCancelBtn" value="0" onclick="lectureCancel();">신청 취소</button>
+			<button type="button" onclick="lectureCancel();">신청 취소</button>
 		</c:if>
 		<c:if test="${lecture.STATUS == '모집 마감' || lecture.STATUS == '진행 중' || lecture.STATUS == '강의 종료'}">
-			<button type="button" id="lectureCancelBtn" value="1" onclick="lectureCancel();" disabled>신청 취소</button>
+			<button type="button" onclick="lectureCancel();" disabled>신청 취소</button>
 		</c:if>      	
       </c:if>
    </c:if>

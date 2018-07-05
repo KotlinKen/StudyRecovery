@@ -24,7 +24,7 @@
 			<a href="${rootPath }/board/boardList?type=event">이벤트</a>
 		</span>
 	</div>
-<c:if test="${param.type ne 'faq' }"> 
+	<c:if test="${param.type ne 'faq' }"> 
 	<form action="${rootPath }/board/boardList" method="get">
 	<input type="hidden" name="cPage" value="1" />
 		<div class="form-row">
@@ -53,7 +53,10 @@
 	</div>
 	<c:if test="${mber != null }">
 	<div class="rightSection">
-		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite'">
+		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=one'">
+			1:1 문의하기
+		</button>
+		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=일반'">
 			게시글 등록
 		</button>
 	</div>

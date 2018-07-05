@@ -159,5 +159,25 @@ public class LectureServiceImpl implements LectureService {
 		return ld.lectureCancel(map);
 	}
 
+	@Override
+	public long selectPay(Map<String, Integer> map) {
+		return ld.selectPay(map);
+	}
+
+	@Override
+	public void successPayCancel(Map<String, Object> cancelMap) {
+		ld.successPayCancel(cancelMap);
+	}
+
+	@Override
+	public int selectTotalPayCount() {
+		return ld.selectTotalPayCount();
+	}
+
+	@Override
+	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key) {
+		return ld.selectPayList(cPage, numPerPage, key);
+	}
+
 
 }

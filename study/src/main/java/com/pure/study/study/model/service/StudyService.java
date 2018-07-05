@@ -43,13 +43,13 @@ public interface StudyService {
 
 	int deleteStudy(int sno);
 
-	List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage);
+	List<Map<String, Object>> selectByDeadline(Map<String, Object> terms);
 
-	int studyDeadlineCount();
+	int studyDeadlineCount(Map<String,Object> terms);
 
-	List<Map<String, Object>> selectByApply(int cPage, int numPerPage);
+	List<Map<String, Object>> selectByApply(Map<String,Object> terms);
 
-	int studyByApplyCount();
+	int studyByApplyCount(Map<String,Object> terms);
 
 	int preinsertApply(Map<String, Integer> map);
 
@@ -68,6 +68,10 @@ public interface StudyService {
 	List<Map<String, Object>> selectStudyListBySno(Map<String, Object> key);
 
 	Study selectStudyByMnoTypeStudy(String sno);
+
+	int deleteWish(Map<String, Integer> map);
+
+	
 
 
 }
