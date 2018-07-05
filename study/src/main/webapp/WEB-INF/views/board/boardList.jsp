@@ -159,7 +159,7 @@
 </div>
 <script>
 	function fn_boardView(bno){
-		location.href="${rootPath}/board/boardView?bno="+bno;
+		location.href="${rootPath}/board/boardView?bno="+bno+"&type=${param.type}";
 	}
 	
 	function searchVaildation(){

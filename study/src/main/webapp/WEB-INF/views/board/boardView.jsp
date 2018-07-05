@@ -57,7 +57,7 @@
 	<c:if test="${mber.mno eq board.MNO }">
 	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardModify?bno=${board.BNO}'">수정</button> 
 	</c:if>
-	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardList'">목록</button> 
+	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardList?type=${param.type}'">목록</button> 
 	</div>
 </div>
 
@@ -102,7 +102,7 @@
 		
 		</div>
 		<div class="form-group col-md-1">
-			<button type="button" class="btn rm_custom_btn" onclick="return commentLoginfirst()">전송</button>
+			<button type="button" class="btn rm_custom_btn" onclick="return commentLoginfirst()">로그인</button>
 		</div>
 	</div>
 	</c:if>

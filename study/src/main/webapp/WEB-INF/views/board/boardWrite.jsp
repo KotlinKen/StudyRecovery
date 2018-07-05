@@ -158,7 +158,7 @@ $(".input_fields_wrap").on("change",".upfile_name",  function(){
 	
 
 	$(document).ready(function() {
-	      $('#title').keyup(function(e){
+	      $('#title').keydown(function(e){
 	    	  console.log("test");
 	          var content = $(this).val();
 	          $(this).height(((content.split('\n').length + 1) * 1.5) + 'em');

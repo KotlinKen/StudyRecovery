@@ -56,7 +56,7 @@ public class BoardController {
 										@RequestParam (required=false) Map<String, String> queryMap,
 										@PathVariable(value="location", required=false) String location, HttpServletRequest request){
 		ModelAndView mav = new ModelAndView();
-		
+
 		if(location == null || !(location.equals("admin") || location.equals("board"))){
 			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
 			mav.addObject("loc", "/");
@@ -65,19 +65,26 @@ public class BoardController {
 		}
 		
 		
-
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
 		if(queryMap.get("type") == null) {
 			queryMap.put("type", "일반");
 		}
 		
-		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
+
 		if(queryMap != null && queryMap.get("type") !=null) {
 			if(queryMap.get("type").equals("one")){
 				if(m!=null) {
 					System.out.println(m.getMno());
-					queryMap.put("mno", String.valueOf(m.getMno()));
+					if(m.getMid().equals("manager")) {
+						
+					}else {
+						queryMap.put("mno", String.valueOf(m.getMno()));
+					}
 				}else {
-					queryMap.put("mno", "0");
+					mav.addObject("msg", "회원 가입후 이용 가능합니다.");
+					mav.addObject("loc", "/board/boardList?type=일반");
+					mav.setViewName("common/msg");
+					return mav;
 				}
 			}
 		}
@@ -194,8 +201,27 @@ public class BoardController {
 			return mav;
 		}
 		
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
 		
 		Map<String, String> board = boardService.selectOne(bno);
+		
+		System.out.println(String.valueOf(board.get("MNO")));
+		
+		if(board.get("TYPE").equals("one")) {
+			if(m != null) {
+				if(String.valueOf(board.get("MNO")).equals(String.valueOf(m.getMno())) || m.getMid().equals("manager")) {
+					
+				}else {
+					mav.addObject("msg", "비정상 접근입니다. 로그");
+					mav.addObject("loc", "/");
+					mav.setViewName("common/msg");
+				}
+			}else {
+				mav.addObject("msg", "비정상 접근입니다. 로그 ");
+				mav.addObject("loc", "/");
+				mav.setViewName("common/msg");
+			}
+		}
 		mav.addObject("board", board);
 		logger.info(board.toString());
 		return mav;
@@ -213,7 +239,7 @@ public class BoardController {
 		List<String> images = new ArrayList<String>();
 		
 		
-		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
+		if(location == null || !(location.equals("admin") || location.equals("board"))) {
 			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
 			mav.addObject("loc", "/");
 			mav.setViewName("common/msg");
@@ -255,6 +281,20 @@ public class BoardController {
 		
 		List<String> images = new ArrayList<String>();
 		ModelAndView mav = new ModelAndView();
+		
+		if(map.get("status") != null ) {
+			int result = boardService.updateBoard(map);
+			if(result > 0 ) {
+				mav.addObject("msg", "게시글이 삭제되었습니다.");
+				mav.addObject("loc", "/");
+				mav.setViewName("common/msg");
+			}else {
+				mav.addObject("msg", "게시글이 삭제에 실패 하였습니다.");
+				mav.addObject("loc", "/");
+				mav.setViewName("common/msg");
+			}
+		}
+		
 		
 		System.out.println("test"+ map.get("oldFileList"));
  		images.add(map.get("oldFileList")); //기존 파일 추가
