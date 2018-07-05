@@ -83,6 +83,7 @@ public class MemberController {
 	/********************************** 회원가입(장익순) 시작 */
 	@RequestMapping(value = "/member/memberAgreement.do")
 	public ModelAndView memberAgreement() {
+		logger.info("회원동의홈페이지");
 		if (logger.isDebugEnabled()) {
 			logger.debug("회원동의홈페이지");
 		}
