@@ -75,11 +75,12 @@
    
    <select id="selectPayList" resultMap="map">
    		SELECT P.PNO AS PNO, 
-		       S.SNO,
+		       S.SNO AS SNO,
+		       M.MNO AS MNO,
 		       M.MNAME AS MNAME, 
 		       S.TITLE AS TITLE, 
-		       S.REGDATE AS REGDATE,
-		       S.SDATE AS SDATE,
+		       TO_CHAR(S.REGDATE, 'YYYY-MM-DD') AS REGDATE,
+		       TO_CHAR(S.SDATE, 'YYYY-MM-DD') AS SDATE,
 		       S.FREQ AS FREQ,
 		       S.TIME AS TIME,
 		       S.PRICE AS PRICE, 
@@ -93,9 +94,9 @@
 		       P.STATUS AS PSTATUS       
 		FROM PAY P, STUDY S, MEMBER M, TOWN T, LOCAL L, KIND K, SUBJECT SUB 
 		WHERE P.SNO = S.SNO AND P.MNO = M.MNO AND S.TNO = T.TNO AND T.LNO = L.LNO AND S.SUBNO = SUB.SUBNO AND SUB.KNO = K.KNO AND S.TYPE = 'lecture'
+		<!-- <if test="">
 		
-		
-		
+		</if>	 -->
 		ORDER BY REGDATE
    </select>
    

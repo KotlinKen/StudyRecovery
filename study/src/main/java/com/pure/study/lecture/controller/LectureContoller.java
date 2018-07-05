@@ -31,6 +31,8 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
+import retrofit2.http.Path;
+
 @Controller
 public class LectureContoller {
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -611,36 +613,43 @@ public class LectureContoller {
 	@RequestMapping("/lecture/lectureCancel.do")
 	@ResponseBody
 	public String lectureCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam String originNo, @RequestParam int price) {
-		int result = 0;
-		String msg = "";
-
 		Map<String, Integer> map = new HashMap<>();
 
 		map.put("mno", mno);
 		map.put("sno", sno);
 
+		int result = 0;
 		result = ls.lectureCancel(map);
 		
 		String api_key = "6308212829698507";
 		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
 		
-		
+		// 토큰 얻어오기.
 		IamportClient imp = new IamportClient(api_key, api_secret);		
 		imp.getAuth();
 		
 		IamportResponse<Payment> p = imp.cancelPaymentByImpUid(new CancelData(originNo, true));
 		
-		msg = p.getMessage(); 
+		int success = p.getCode();
+		String msg = ""; 		
 		
-		Map<String, Object> cancelMap = new HashMap<>();
-		
-		cancelMap.put("mno", mno);
-		cancelMap.put("sno", sno);
-		cancelMap.put("msg", msg);	
-		cancelMap.put("price", price);
-		
-		ls.successPayCancel(cancelMap);
-
+		// 아임포트에서 결제취소가 성공한 경우.
+		if( success == 1 || success == 0  ) {
+			System.out.println("!");
+			Map<String, Object> cancelMap = new HashMap<>();
+			msg = "결제취소";
+			
+			cancelMap.put("mno", mno);
+			cancelMap.put("sno", sno);
+			cancelMap.put("msg", msg);	
+			cancelMap.put("price", price);
+			
+			ls.successPayCancel(cancelMap);			
+		}
+		// 실패한 경우
+		else {
+			msg = "결제 취소가 실패했습니다. 관리자에게 문의하세요.";
+		}
 		
 		return msg;
 	}
@@ -659,6 +668,30 @@ public class LectureContoller {
 		mav.addObject("numPerPage", count);
 		mav.addObject("cPage", cPage);
 		mav.addObject("total", total);
+		return mav;
+	}
+	
+	@RequestMapping(value="/lecture/pay/{cPage}/{count}/{key}", method= RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView adminPayment(@PathVariable(value="count", required=false) int count,
+									 @PathVariable(value="cPage", required=false) int cPage,
+									 @PathVariable(value="key", required=false) String[] keys) {
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		Map<String, String> key = new HashMap<>();
+		
+		int total = ls.selectTotalPayCount();
+		int numPerPage = 10;		
+		
+		List<Map<String, String>> list = ls.selectPayList(cPage, numPerPage, key);	
+		
+		System.out.println(list);
+		
+		mav.addObject("list", list);
+		mav.addObject("cPage", cPage);
+		mav.addObject("total", total);
+		mav.addObject("numPerPage", numPerPage);
+		
 		return mav;
 	}
 
@@ -737,31 +770,11 @@ public class LectureContoller {
 					e.printStackTrace();
 				}
 			}
-
 		} catch (Exception e) {
 			throw new RuntimeException("이미지등록오류");
 		}
 
 		map.put("url", renamedFileName);
 		return map;
-	}
-	
-	@RequestMapping("/admin/adminPayment.do")
-	public ModelAndView adminPayment(@RequestParam(required=true, defaultValue="0") int cPage) {
-		ModelAndView mav = new ModelAndView();
-		
-		Map<String, String> key = new HashMap<>();
-		
-		int totalPayCount = ls.selectTotalPayCount();
-		int numPerPage = 10;
-		
-		
-		List<Map<String, String>> list = ls.selectPayList(cPage, numPerPage, key);	
-		
-		mav.addObject("list", list);
-		
-		mav.setViewName("/admin/adminPayment");
-		
-		return mav;
-	}
+	}	
 }

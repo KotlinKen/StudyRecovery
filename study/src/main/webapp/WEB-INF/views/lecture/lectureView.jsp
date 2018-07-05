@@ -152,7 +152,7 @@
 					});						
 				}
 			}).done(function(){
-				alert("취소되었습니다.");
+				alert("취소되었습니다");
 				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
 			});
 		}			

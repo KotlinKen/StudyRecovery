@@ -53,7 +53,7 @@
 						</a></li> 
 						<li class="nav-item"><a class="nav-link  ${fn:contains(where, 'statistics') ? 'active' : ''}" href="${rootPath }/admin/adminStatistics"> <span data-feather="layers"></span> 통계
 						</a></li>
-						<li class="nav-item"><a class="nav-link  ${fn:contains(where, 'payment') ? 'active' : ''}" href="${rootPath }/admin/adminPayment.do"> <span data-feather="layers"></span> 결제
+						<li class="nav-item"><a class="nav-link  ${fn:contains(where, 'payment') ? 'active' : ''}" href="${rootPath }/admin/adminPayment"> <span data-feather="layers"></span> 결제
 						</a></li>
 					</ul>
 
