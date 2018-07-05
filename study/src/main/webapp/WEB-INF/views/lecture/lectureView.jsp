@@ -6,7 +6,7 @@
 
 <jsp:include page="/WEB-INF/views/common/header.jsp" />
 <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
-<script>	
+<script>
 	//참여신청 버튼 클릭 이벤트
 	function lectureApply(){
 		
@@ -16,7 +16,7 @@
 		var msg = "";
 		
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};	
+		var mno = ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};	
 		var price = 100;
 		
 	   //세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
@@ -86,7 +86,7 @@
 	//찜하기 버튼 클릭 이벤트
 	function lectureWish(){
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};
+		var mno = ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
 		var wishBtn = $("#lectureWishBtn").val();
 		
@@ -105,7 +105,7 @@
 	
 	function lectureWishCancel(){
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};
+		var mno =  ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
 		$.ajax({
 			url : "lectureWishCancel.do",
@@ -123,20 +123,39 @@
 	
 	function lectureCancel(){
 		var sno = ${lecture.SNO};
-		var mno = ${memberLoggedIn.getMno()};
+		var mno =  ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
 		if(confirm("신청을 취소하시겠습니까?")){
 			$.ajax({
-				url : "lectureCancel.do",
+				url : "selectPay.do",
 				data : {
-					sno : sno,
-					mno : mno
+					mno : mno,
+					sno : sno
 				},
-				success : function(){
-					location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+				success : function(data){
+					var originNo = "imp_" + data;
+					var price = ${lecture.PRICE};
+					
+					console.log(originNo);
+					
+					$.ajax({
+						url : "lectureCancel.do",
+						data : {
+							sno : sno,
+							mno : mno,
+							originNo : originNo,
+							price : price
+						},
+						success: function( data ){
+							console.log(data);
+						}
+					});						
 				}
-			});			
-		}
+			}).done(function(){
+				alert("취소되었습니다");
+				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
+			});
+		}			
 	}
 	
 	$(function(){   
