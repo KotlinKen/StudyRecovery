@@ -53,10 +53,10 @@
 	</div>
 	<c:if test="${mber != null }">
 	<div class="rightSection">
-		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite'">
-			문의하기
+		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=one'">
+			1:1 문의하기
 		</button>
-		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite'">
+		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=일반'">
 			게시글 등록
 		</button>
 	</div>
