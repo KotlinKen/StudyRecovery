@@ -61,11 +61,7 @@ $(document).ready(function() {
 
 <script>
 function validate(){
-	var fileName= $(this).prop("files")[0].name;
-	var upload = $("div.fileWrapper div.custom-file input:file").prop("files")[0].name;
-	console.log("upload="+upload);
-	
-	
+
 	// 유효성 검사 - 지역,도시
 	var local = $("#local").val();
 	var town = $("#town").val();
@@ -78,8 +74,8 @@ function validate(){
 	// 유효성 검사 - 카테고리, 세부종목
 	var kind = $("#kind").val();
 	var sub = $("#subject").val();
-	
-	if( kind=="" || sub=="세부 과목을 선택하세요"){
+	console.log(kind);
+	if( kind=="선택하세요" || sub=="세부 과목을 선택하세요"){
 		alert("강의 과목을 선택해주세요");
 		return false;
 	}
@@ -144,7 +140,7 @@ function validate(){
       return false;   
    }
 
-	return true;
+	return false;
 }
 
 $(document).ready(function(){
@@ -248,7 +244,7 @@ $(function(){
 		 
 		var kno= $("option:selected", this).val();
 			
-		if(kno == ""){
+		if(kno == "선택하세요"){
 			$("#subject").hide();
 			return;
 		}

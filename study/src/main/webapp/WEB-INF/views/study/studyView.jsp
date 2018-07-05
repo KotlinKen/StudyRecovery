@@ -81,9 +81,10 @@ function studyWish(sno){
 					console.log("찜했다");
 					$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/nowish.png");
 					if(confirm("찜했습니다. 찜 장바구니로 가시겠습니까?")){
-						$("input#isWish").val("1");//찜했음을 저장
+						
 						location.href="${pageContext.request.contextPath}/member/searchMyPageKwd.do?myPage=wish";
 					}
+					$("input#isWish").val("1");//찜했음을 저장
 				},error:function(){
 					
 				}
@@ -110,8 +111,16 @@ function studyWish(sno){
 $(function(){
 	
 	$("button.editStudy").click(function(){
-		location.href="studyUpdate.do?sno="+${study.SNO};
-		
+		$.ajax({
+			url:"preStudyUpdate.do",
+			data:{sno:${study.SNO}},
+			type:"post",
+			success:function(data){
+				if(data==0) location.href="studyUpdate.do?sno="+${study.SNO};
+				else alert("이미 신청한 회원이 있어 수정할 수 없습니다.");
+			}
+		});
+
 	});
 	
 	$("button.removeStudy").click(function(){
@@ -133,15 +142,14 @@ $(function(){
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 	<c:if test="${memberLoggedIn!=null }">
 		<c:if test="${memberLoggedIn.getMno()==study.MNO }">
-			<c:if test="${study.STATUS='모집 중'||study.STATUS='마감 임박'}">
+			<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박'||study.STATUS=='진행 중'}">
 				<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
 			</c:if>
 		</c:if>
 	</c:if>
 <c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()==study.MNO}">
-	<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
 	<c:if test="${study.STATUS ne '모집 마감'&&study.STATUS ne '스터디 종료' }">
-	
+		<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
 	</c:if>
 </c:if>	
 
