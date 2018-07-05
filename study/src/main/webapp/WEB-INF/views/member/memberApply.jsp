@@ -9,6 +9,19 @@
 	ul#ul-page > li:nth-child(3){
 		background: #ffffff;
 	}
+	td{
+		max-width: 180;
+		word-break:break-all;
+		text-overflow:ellipsis; 
+		overflow:hidden;
+		white-space:nowrap;
+	}
+	select#town{
+		display:none;
+	}
+	select#subject{
+		display:none;
+	}
 </style>
 <div class="page">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -40,17 +53,45 @@
 		</c:if>
 	</label>
 	<br />
+	
+	<!-- 검색 필터 지역, 카테고리, 난이도 디비에서 값 뽑기 -->
+	<label for="local">지역:</label>
+	<select name="lno" id="local" >
+	<option value="0">전체</option>
+	<c:forEach var="local" items="${localList }">
+		<option value="${local.LNO }" ${lno eq local.LNO?'selected':'' }>${local.LOCAL }</option>
+	</c:forEach>
+	</select>&nbsp;
+	<select name="tno" id="town">
+	</select>
+	<label for="subject">카테고리 :</label>
+	<select name="kno" id="kind">
+	<option value="0">전체</option>
+	<c:forEach var="k" items="${kindList }">
+		<option value="${k.KNO }" ${kno eq k.KNO?'selected':'' }>${k.KINDNAME }</option>
+	</c:forEach>
+	</select>&nbsp;
+	<select name="subno" id="subject">
+	</select>
+	<label for="diff">난이도 : </label>
+	<select name="dno" id="diff">
+	<option value="0">전체</option>
+	<c:forEach var="diff" items="${diffList }">
+		<option value="${diff.DNO }" ${dno eq diff.DNO?'selected':'' }>${diff.DIFFICULTNAME }</option>
+	</c:forEach>
+	</select>
+	<br />
 	<select id="searchKwd">
 		<option value="title" ${searchKwd eq 'title'?'selected':'' }>강의/스터디명</option>
 		<option value="captain" ${searchKwd eq 'captain'?'selected':'' }>팀장/강사명</option>
-		<option value="subject" ${searchKwd eq 'subject'?'selected':'' }>과목</option>
+		<%-- <option value="subject" ${searchKwd eq 'subject'?'selected':'' }>과목</option>
 		<option value="place" ${searchKwd eq 'place'?'selected':'' }>스터디 장소</option>
-		<option value="diff" ${searchKwd eq 'diff'?'selected':'' }>난이도</option>
+		<option value="diff" ${searchKwd eq 'diff'?'selected':'' }>난이도</option> --%>
 		<option value="term" ${searchKwd eq 'term'?'selected':'' }>신청 마감일</option>
 		<option value="freq" ${searchKwd eq 'freq'?'selected':'' }>주기</option>
 	</select>
 	
-	<form action="searchMyPageKwd.do" id="formSearch" autocomplete="off">
+	<form action="searchMyPageKwd.do" id="formSearch" autocomplete="off" style="display: inline">
 		<c:if test="${kwd != null and searchKwd != null and searchKwd != 'term' and searchKwd != 'freq' }">
 			<input type='text' name='kwd' value="${kwd }" />
 			<input type='hidden' name='searchKwd' value='${searchKwd }' />
@@ -152,6 +193,11 @@
 		String type = String.valueOf(request.getAttribute("type"));
 		String applyDate = String.valueOf(request.getAttribute("applyDate"));
 		String myPage = String.valueOf(request.getAttribute("myPage"));
+		String lno = String.valueOf(request.getAttribute("lno"));
+		String tno = String.valueOf(request.getAttribute("tno"));
+		String kno = String.valueOf(request.getAttribute("kno"));
+		String subno = String.valueOf(request.getAttribute("subno"));
+		String dno = String.valueOf(request.getAttribute("dno"));
 		
 		int cPage = 1;
 		try{
@@ -180,7 +226,7 @@
 					
 					console.log('captain');
 				} 
-				if($(this).val()=='subject'){
+				/* if($(this).val()=='subject'){
 					html="<input type='text' name='kwd' id='subjectKwd' placeholder='과목명' />";
 					html+="<input type='hidden' name='searchKwd' value='subject' />";
 					
@@ -197,7 +243,7 @@
 					html+="<input type='hidden' name='searchKwd' value='diff' />";
 					
 					console.log('diff');
-				} 
+				}  */
 				if($(this).val()=='term'){
 					//html="<input type='date' name='kwd' id='dateKwd' />";
 					html="<select name='kwd' id='dateKwdYear'>";
@@ -337,6 +383,126 @@
 			});
 		})
 		
+		
+		//지역을 선택하면 그에 맞는 도시들을 가져온다.
+	$("select#local").on("change",function(){
+		
+		var lno=$("select#local option:selected").val();
+		var lnoVal = $(this).val();
+		if(lno == "0"){
+			$("#town").hide();
+			return;
+		}
+		
+		townLoad(lnoVal,0);
+			
+	});
+	function townLoad(lnoVal, tno){
+		$.ajax({
+			url:"../study/selectTown.do",
+			data:{lno:lnoVal},
+			dataType:"json",
+			success:function(data){
+				var html="";
+				console.log(data);
+				for(var index in data){
+					if(tno==data[index].TNO){
+						html +="<option value='"+data[index].TNO+"' selected>"+data[index].TOWNNAME+"</option><br/>";						
+					}else{
+						html +="<option value='"+data[index].TNO+"'>"+data[index].TOWNNAME+"</option><br/>";												
+					}
+				}
+				$("#town").show();
+				$("select#town").html(html);
+			}
+		});
+	}
+
+	//카테고리를 선택하면 그에 맞는 과목들을 가져온다.
+	$("select#kind").on("change",function(){
+		
+		var kno= $("option:selected", this).val();
+		var knoVal = $(this).val();
+		if(kno == "0"){
+			$("#subject").hide();
+			return;
+		}		
+		
+		kindLoad(knoVal);
+			
+		
+	});
+	
+	function kindLoad(knoVal, subno){
+		$.ajax({
+			url:"../study/selectSubject.do",
+			data:{kno:knoVal},
+			dataType:"json",
+			success:function(data){
+				var html="";
+				for(var index in data){
+					if(subno==data[index].SUBNO){
+						html +="<option value='"+data[index].SUBNO+"' selected>"+data[index].SUBJECTNAME+"</option><br/>";						
+					}else{
+						html +="<option value='"+data[index].SUBNO+"'>"+data[index].SUBJECTNAME+"</option><br/>";												
+					}
+				}
+				$("#subject").show();
+				$("select#subject").html(html);
+			}
+		});
+	}
+	
+	//검색 제출 폼에 지역, 과목, 난이도 input:hidden 넣고 제출하기
+	$("#formSearch").click(function(){
+		var lno = ($("#local").val()!=null?$("#local").val():"0");
+		var tno = ($("#town").val()!=null?$("#town").val():"0");
+		var kno = ($("#kind").val()!=null?$("#kind").val():"0");
+		var subno = ($("#subject").val()!=null?$("#subject").val():"0");
+		var dno = ($("#diff").val()!=null?$("#diff").val():"0");
+		
+		hideSearch("lno",lno);
+		if(lno==0){
+			hideSearch("tno",'0');			
+		}else{
+			hideSearch("tno",tno);						
+		}
+		
+		hideSearch("kno",kno);
+		if(kno==0){
+			hideSearch("subno",'0');			
+		}else{
+			hideSearch("subno",subno);			
+		}
+		
+		hideSearch("dno",dno);
+		
+		
+		return true;
+	}); 
+	
+	//검색 폼 안에 넣을 input:hidden
+	function hideSearch(n,v){
+		var hide = document.createElement("input");
+		hide.type="hidden";
+		hide.name=n;
+		hide.value=v;
+		$("#formSearch").append(hide);
+	}
+	
+	//이전 검색 select박스 유지하기
+	$(document).ready(function(){
+		var lno = '<%=lno%>';
+		var tno = '<%=tno%>';
+		var kno = '<%=kno%>';
+		var subno = '<%=subno%>';
+		if(lno!=0){
+			townLoad(lno,tno);
+		}
+		if(kno!=0){
+			kindLoad(kno,subno);
+		}
+	});
 		
 	</script>
 	
