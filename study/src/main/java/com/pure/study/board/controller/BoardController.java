@@ -54,7 +54,7 @@ public class BoardController {
 	@ResponseBody
 	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
 										@RequestParam (required=false) Map<String, String> queryMap,
-										@PathVariable(value="location", required=false) String location){
+										@PathVariable(value="location", required=false) String location, HttpServletRequest request){
 		ModelAndView mav = new ModelAndView();
 		
 		if(location == null || !(location.equals("admin") || location.equals("board"))){
@@ -64,13 +64,27 @@ public class BoardController {
 			return mav;
 		}
 		
-		logger.info("queryMap"+queryMap);
-		int numPerPage = 10; 
 		
 
 		if(queryMap.get("type") == null) {
 			queryMap.put("type", "일반");
 		}
+		
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
+		if(queryMap != null && queryMap.get("type") !=null) {
+			if(queryMap.get("type").equals("one")){
+				if(m!=null) {
+					System.out.println(m.getMno());
+					queryMap.put("mno", String.valueOf(m.getMno()));
+				}else {
+					queryMap.put("mno", "0");
+				}
+			}
+		}
+		logger.info("queryMap"+queryMap);
+		int numPerPage = 10; 
+		
+
 
 		
 		//1. 현재 페이지 컨텐츠 구하기
@@ -315,9 +329,12 @@ public class BoardController {
 	      String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/board");
 	      
 	      File savedFile = new File(saveDirectory+"/"+name);
+	      	
 	      try {
+ 
 	         bis = new BufferedInputStream(new FileInputStream(savedFile));
 	         sos = response.getOutputStream();
+	         System.out.println(sos.toString());
 	         
 	         //응답 세팅
 	         response.setContentType("application/octet-stream; charset=utf-8");
@@ -338,6 +355,7 @@ public class BoardController {
 	            sos.close();
 	            bis.close();
 	         } catch(IOException e) {
+
 	        	 throw new BoardException("게시물 호출 에러");
 	         }
 	      }

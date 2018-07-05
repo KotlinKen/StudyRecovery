@@ -63,7 +63,10 @@ $(function(){
 	});
 	
 });	
-	
+function popHidden(){
+	$(".adverstingPopup").hide();
+}
+
 $(function(){
 var popCookie = "${cookie.popupValue.value}";
 if(popCookie != "Y"){
@@ -73,11 +76,12 @@ var type = "POPUP";
 		data : {type : type},
 		dataType : "json",
 		success : function(data){
+			var image = "<img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG+ "' onerror='popHidden()'/>";
 			if(data.adv == null){
 				console.log('등록된 팝업이 없습니다.');
 			}else{
 				$(".adverstingPopup").draggable();
-				$(".adverstingPopup").css("display", "block").append("<img src='${rootPath}/resources/upload/adversting/" + data.adv.ADVIMG+ "' />");
+				$(".adverstingPopup").css("display", "block").append(image);
 			}
 		}
 	});
