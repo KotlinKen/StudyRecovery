@@ -253,7 +253,7 @@ function categoryList(type, status, rownum, order, desc){
    				}
    				rmHtml += "</div>";
 				rmHtml += "<div class='inforSection'>";
-  				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 20)+"</h4>";
+  				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 18)+"</h4>";
 /*   				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/study/20180625_215620103_62.gif' /></div>"; */
   				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/member/"+study.MPROFILE+"' onerror='this.src=\"${rootPath}/resources/images/noprofile.jpg\"' /></div>";
   				rmHtml += 	"<div class='profileName'>"+study.MID+"</div>";
@@ -265,7 +265,7 @@ function categoryList(type, status, rownum, order, desc){
   				
    				rmHtml += "</div>";
 				rmHtml += "<div class='metaSection'>";
-  				rmHtml += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 20)+"</p>";
+  				rmHtml += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 18)+"</p>";
   				/* rmHtml += 	"<p>"+ "내용이 없네 정말.."+"</p>"; */
    				rmHtml += "</div>";
 				rmHtml += "<div class='localSection'>";
