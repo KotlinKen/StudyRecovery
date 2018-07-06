@@ -112,5 +112,12 @@
 	</websocket:handlers>
 
 	<beans:bean id="echoHandler" class="com.pure.study.common.websocket.EchoHandler" />
-	
+	<!-- 회원가입 확인 (장익순) 시작 -->
+	<interceptors>
+		<interceptor>
+		<mapping path="/member/memberAgreement.do"/>
+		<beans:bean class="com.pure.study.common.interceptor.EnrollInterceptora" id="enrollInterceptora"/>
+		</interceptor>
+	</interceptors>
+	<!-- 회원가입 확인 (장익순) 끝 -->
 </beans:beans>

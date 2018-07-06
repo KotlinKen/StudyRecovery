@@ -35,7 +35,7 @@
 	<li class='btn-page'>
 		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=wish">스터디 관심 목록</a>
 	</li>
-	<li class='btn-page'>
+	<li class='btn-page' id="insetruct">
 		<a href="#" onclick="javascript:document.myForm.submit();" >강사신청</a>
 	</li>
 	<li class='btn-page'>
@@ -49,3 +49,40 @@
 		<input type="hidden" name="mno" value="${memberLoggedIn.mno }" />
 		</form>
 </div>
+
+
+
+
+
+
+
+
+<!-- 장익순 작업 시작 -->
+<script>
+$(document).ready(function(){
+	console.log("?")
+	instruct( ${memberLoggedIn.mno } );
+});
+function instruct(mno) {
+	console.log(mno)
+	$.ajax({
+		url : "instructerCheckO.do",
+		data : {"mno": mno},
+		type : "POST",
+		dataType : "json",
+		success : function(date) {
+			console.log("data="+date.stack)
+			if(date.stack == false){
+				console.log("m.m")
+				$("#insetruct").hide();
+			}
+		},
+		error : function(jqxhr, textStatus,errorThrown) {
+			console.log(jqxhr);
+			console.log(textStatus);
+			console.log(errorThrown);
+		}
+	});
+}
+</script>
+<!-- 장익순 작업  끝-->

@@ -24,6 +24,7 @@
 <script src="${rootPath}/resources/js/member/enroll.js"></script>
 <link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/enroll.css" />
 <style type="text/css">
+body {background: lightblue url("${rootPath}/resources/images/laptop.jpg") no-repeat fixed center;}
 #upFile{width: 0px; height: 0px; position: absolute; left: -100px;}
 </style>
 </head>
@@ -31,17 +32,17 @@
 
 
 <div id="inindivik1"></div> 
-<div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><br /><h1>STUDY GROUPT</h1><br /></a></div>
-	<div id="enroll-container">
 		<form
 			action="${pageContext.request.contextPath}/member/memberEnrollEnd.do"
 			method="post" name='mainForm' id='mainForm'
 			onsubmit="return validate();">
+	<div id="enroll-container">
+<div id="inindivik2"><a class="navbar-brand rm-custom-brand" href="${rootPath}"><jsp:include page="/WEB-INF/views/common/logo_blue.jsp"></jsp:include></a></div>
 			<div id="id-password-div-ik">
 				<br />
 				<div id="userId-container">
 					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)"  maxlength="15" required autocomplete="off" />
-					<button type="button" onclick="fn_checkID();" class="btn btn-outline-secondary">아이디 확인</button>
+					<button type="button" onclick="fn_checkID();" class="btn btn-primary">아이디 확인</button>
 					<br />
 					<div id="check-id">
 					<span class="guide ok"></span> 
@@ -80,15 +81,15 @@
 			<!-- 이메일 -->
 			<input type="text" name="email" id="email" placeholder="이메일(필수)"  maxlength="15" required  autocomplete="off"  /> @ 
 			<input type="text" name="email" id="emailaddr" placeholder="직접입력"  maxlength="20" required  autocomplete="off"  />
-			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-outline-secondary"/> 
+			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-primary"/> 
 			<input type="hidden" id="checkcertification" value="0" /> 
-			<span id="countDown"></span>
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
-			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-outline-secondary" /> 
+			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-primary" /> 
+			<span id="countDown"></span>
 			<input type="hidden" id="checkPoint" value="0" /> <br />
 			
 			<!-- 생일 -->
-			생년월일 : <input type="date" name="birth" id="birth" required/><br />
+			<p class="textP">생년월일(필수)</p><input type="date" name="birth" id="birth" placeholder="생년월일" required/><br />
 			
 			<!-- 성별 -->
 			<span class="jender">
@@ -104,16 +105,17 @@
 			
 			<div id="choos-ik">
 			<br />
-			<button type="button" class="btn btn-outline-secondary" id="btn_upFile">프로필 사진(선택)</button> <input type="file" name="upFile" id="upFile" accept="image/*" /> 
+			<button type="button" class="btn btn-primary" id="btn_upFile">프로필 사진(선택)</button> <input type="file" name="upFile" id="upFile" accept="image/*" /> 
+			<button type="button" class="btn btn-primary" id="btn_noFile">취소</button> 
 			<input type='hidden' name='mprofile' id="mprofile" value='noprofile.jpg'> <br /><br />
 			<div id="div-img-ik"></div>
 			<div>
 			<br />
-			<textarea rows="10" cols="50" name="cover" placeholder="당신을 소개 하세요 모두가 알 수 있도록...(선택)" maxlength="1000" ></textarea>
+			<textarea rows="10" cols="50" name="cover" placeholder="자기 소개...(선택)" maxlength="1000" ></textarea>
 			</div>
 			<br />
 			
-			당신이 무엇을 좋아하는지 궁금합니다.(선택) : <br />
+			관심사.(선택) : <br />
 				<c:forEach var="v" items="${list }">
 				<span class="category">
 					<input type="checkbox" class="form-check-input" value="${v.KINDNAME }"
@@ -126,12 +128,12 @@
 			<br />
 			<%-- <button type="button"
 				onclick="location.href='${pageContext.request.contextPath}'">취소</button> --%>
-			<input type="submit" id="submit" value="가입하기" class="btn btn-outline-secondary"/>
+			<input type="submit" id="submit" value="가입하기" class="btn btn-primary"/>
 			<br />
 			<br />
 			</div>
-		</form>
 	</div>
+		</form>
 <br />
 </body>
 </html>
