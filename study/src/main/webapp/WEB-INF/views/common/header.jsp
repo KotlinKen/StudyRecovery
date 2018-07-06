@@ -137,7 +137,7 @@ $(function(){
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item ${pageTitle}"><a class='nav-link ${fn:contains(where, "study/study") ? "actived" : ""}' href="${rootPath }/study/studyList.do">스터디</a></li>
 						<li class="nav-item"><a class='nav-link ${fn:contains(where, "lecture/lecture") ? "actived" : ""}' href="${rootPath }/lecture/lectureList.do">강의</a></li>
-						<li class="nav-item"><a class='nav-link ${fn:contains(where, "board/board") ? "actived" : ""}' href="${rootPath }/board/boardList">게시판</a></li>
+						<li class="nav-item"><a class='nav-link ${fn:contains(where, "board/board") ? "actived" : ""}' href="${rootPath }/board/boardList?type=일반">게시판</a></li>
 					</ul>
 					<ul class="navbar-nav float-right">
 						<c:if test="${memberLoggedIn == null }">

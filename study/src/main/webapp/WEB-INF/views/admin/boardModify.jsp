@@ -1,17 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="게시물 수정" name="pageTitle" /></jsp:include>
 <c:set var = "images" value = "${fn:split(board.UPFILE, ',')}" />
-
-
-
-
+<div class="container">
+	<div class="commonTitler" >
+		<h1>게시글 수정</h1>
+	</div>
+</div>
 <form action="${rootPath}/admin/boardModifyEnd"  method="post" enctype="multipart/form-data">
 	<input type="hidden" name="bno" value="${board.BNO}"/>
 	<select name="type" id="boardType" required="required">
-		<option value="일반">일반</option>
-		<option value="공지">공지</option>
-		<option value="faq">FAQ</option>
-		<option value="event">이벤트</option>
+		<option value="일반" ${board.TYPE eq "일반" ? "selected" : ""}>일반</option>
+		<option value="공지" ${board.TYPE eq "공지" ? "selected" : ""}>공지</option>
+		<option value="faq" ${board.TYPE eq "faq" ? "selected" : ""}>FAQ</option>
+		<option value="event" ${board.TYPE eq "event" ? "selected" : ""}>이벤트</option>
 	</select>
 	<input type="hidden" name="oldFileList" class="oldFileList" value="">
 	<div class="form-row">

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="rest">
+	
+	<select id="satistics" resultMap="restMap"> 
+
+		SELECT NVL(TO_CHAR(REGDATE, 'YYYY/MM/DD'), '전체') RDATE, COUNT(*) CNT
+		FROM ${table}
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="type != null and type != '' ">
+				AND TYPE = #{type} 
+			</if>
+			<if test="gender != null and gender != '' ">
+				AND GENDER = #{gender} 
+			</if>
+				
+			AND REGDATE	<![CDATA[  >= ]]> TO_DATE(#{start}, 'YYYY/MM/DD')
+			AND REGDATE<![CDATA[  < ]]>TO_DATE(#{end}, 'YYYY/MM/DD') + 1
+					
+		</trim>
+		GROUP BY ROLLUP(TO_CHAR(REGDATE, 'YYYY/MM/DD'))
+
+	</select>
+	
+ 
+	<resultMap type="map" id="restMap">
+		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
+	
+	
+</mapper>

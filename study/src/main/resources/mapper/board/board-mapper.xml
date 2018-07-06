@@ -27,6 +27,9 @@
 			<if test="type != null and type != '' ">
 			AND TYPE = #{type}		
 			</if>
+			<if test="mno != null and mno != '' ">
+			AND B.MNO = #{mno}		
+			</if>
 			<if test="searchType != null and searchType != '' ">
 				<if test="searchKeyword != null and searchKeyword != '' ">
 				AND ${searchType} like '%'||#{searchKeyword}||'%'		

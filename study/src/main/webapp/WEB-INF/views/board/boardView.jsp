@@ -2,6 +2,8 @@
 <jsp:include page ="/WEB-INF/views/common/header.jsp">
 	<jsp:param value="${board.TITLE }" name="pageTitle"/>
 </jsp:include>
+
+ 
 <div class="container">
 <c:set var = "images" value = "${fn:split(board.UPFILE, ',')}" />
 <br />
@@ -57,7 +59,7 @@
 	<c:if test="${mber.mno eq board.MNO }">
 	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardModify?bno=${board.BNO}'">수정</button> 
 	</c:if>
-	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardList'">목록</button> 
+	<button type="button" class="btn btn_reg" onclick="javascript:location.href='${rootPath}/board/boardList?type=${param.type}'">목록</button> 
 	</div>
 </div>
 
@@ -102,7 +104,7 @@
 		
 		</div>
 		<div class="form-group col-md-1">
-			<button type="button" class="btn rm_custom_btn" onclick="return commentLoginfirst()">전송</button>
+			<button type="button" class="btn rm_custom_btn" onclick="return commentLoginfirst()">로그인</button>
 		</div>
 	</div>
 	</c:if>
@@ -412,7 +414,7 @@ function fn_fork(mno, bno, rno){
 	.felxerJustify{justify-content: center; display:flex;}
 	.replyPic{width:60px; height:60px; border-radius:30px; }
 	.replyMid{}
-	.replyContent{flex-grow:10;border: 1px solid #ededed; flex-basis: 400px;}
+	.replyContent{flex-grow:10;border: 1px solid #ededed; flex-basis: 400px;word-break:break-all;}
 	.oldContent{padding:10px;}
 	.newContent{width:100%; height:100%; padding:10px;}
 	.newContentBtn{align-self:center; flex-basis:90px; margin-left:10px; border:none; }

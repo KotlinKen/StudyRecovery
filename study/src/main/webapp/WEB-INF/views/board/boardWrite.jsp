@@ -3,10 +3,14 @@
 	<jsp:param value="게시물 작성하기" name="pageTitle"/>
 </jsp:include>
 <div class="container">
+	<div class="commonTitler" >
+		<h1>게시글 작성</h1>
+	</div>
+</div>
+<div class="container" style="margin-bottom:80px;">
 	<form action="${rootPath}/board/boardWriteEnd"  method="post" enctype="multipart/form-data">
 		<input type="hidden" name="mno" value="${memberLoggedIn.mno}"/>
 		<input type="hidden" name="type" value="${param.type }"/>
-		
 		
 		<div class="form-row">
 			<div class="form-group col-md-12">
@@ -158,7 +162,7 @@ $(".input_fields_wrap").on("change",".upfile_name",  function(){
 	
 
 	$(document).ready(function() {
-	      $('#title').keyup(function(e){
+	      $('#title').keydown(function(e){
 	    	  console.log("test");
 	          var content = $(this).val();
 	          $(this).height(((content.split('\n').length + 1) * 1.5) + 'em');
