@@ -136,7 +136,8 @@
 						html += "<img class ='call_img'   src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
 						$("#div-img-ik").html(html);
 						$("#div-img-ik").css({"display":"inline-block"});
-						$("#mprofile").val(date.renamedFileName)
+						$("#mprofile").val(date.renamedFileName);
+						$("#btn_noFile").show();
 					
 					},
 					error : function(jqxhr, textStatus,
@@ -678,7 +679,16 @@
 			$("#btn_upFile").click(function(e){
 				e.preventDefault(); 
 				$("input:file").click(); 
+				
 			});
+			
+			$("#btn_noFile").click(function(e){
+				$("#div-img-ik").hide();
+				$("#mprofile").val("noprofile.jpg");
+				
+				$("#btn_noFile").hide();
+			});
+			
 		});
 		
 		
@@ -714,3 +724,11 @@
 		 i = 0
 		 document.getElementById('countDown').innerHTML = (i / divide);
 		}
+		
+		
+		$("#birth").on("change",function() {
+			console.log("?");
+			//$("#birthspan").css({"display":"none"})
+		});
+		 
+		

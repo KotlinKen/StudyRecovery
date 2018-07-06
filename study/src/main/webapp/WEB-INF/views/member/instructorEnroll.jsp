@@ -22,22 +22,25 @@
 	integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
 	crossorigin="anonymous"></script>
 <script src="${rootPath}/resources/js/member/enroll.js"></script>
-<link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/enroll.css" />
+<link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/enroll.css" /><base>
+<style type="text/css">
+body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-910261_1920.jpg") no-repeat fixed left;}
+</style>
 </head>
 <body>
 	
 <div id="inindivik1"></div> 
-<div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><br /><h1>STUDY GROUPT</h1><br /></a></div>
-	<div id="enroll-container">
 		<form action="instructorEnrollEnd.do"
 			method="post" name='mainForm' id='mainForm'
 			onsubmit="return validate();" enctype="multipart/form-data">
+	<div id="enroll-container">
+<div id="inindivik2"><a class="navbar-brand rm-custom-brand" href="${rootPath}"><jsp:include page="/WEB-INF/views/common/logo_blue.jsp"></jsp:include></a></div>
 			<div id="id-password-div-ik">
 				<br />
 				<!-- 아이디 -->
 				<div id="userId-container">
 					<input type="text" name="mid" id="userId_" placeholder="아이디(필수)" maxlength="15" required autocomplete="off" />
-					<button type="button" onclick="fn_checkID();" class="btn btn-outline-secondary">아이디 확인</button>
+					<button type="button" onclick="fn_checkID();" class="btn btn-primary">아이디 확인</button>
 					<br />
 					<div id="check-id">
 					<span class="guide ok"></span> 
@@ -72,14 +75,15 @@
 			<!-- 이메일 -->
 			<input type="text" name="email" id="email" placeholder="이메일(필수)" required  maxlength="15"  autocomplete="off"  /> @ 
 			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required  maxlength="20"  autocomplete="off"  />
-			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-outline-secondary"/> 
+			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-primary"/> 
 			<input type="hidden" id="checkcertification" value="0" /> 
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
-			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-outline-secondary" /> 
+			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-primary" /> 
+			<span id="countDown"></span>
 			<input type="hidden" id="checkPoint" value="0" /> <br />
 			
 			<!-- 생년월일 -->
-			<input type="date" name="birth" required/><br />
+			<p class="textP">생년월일(필수)</p><input type="date" name="birth" required/><br />
 			<span class="jender">
 			<input type="radio" name="gender" value="M" id="male" checked /> <label for="male">남</label> 
 			</span>
@@ -91,15 +95,17 @@
 			<br /><br />
 
 			<!-- 사진 올리기 -->
-			프로필사진(필수) : <input type="file" name="upFile" id="upFile" accept="image/*" /> 
+			<p class="textP">프로필사진(필수)</p><input type="file" name="upFile" id="upFile" accept="image/*" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='noprofile.jpg' />
 			<div id="div-img-ik"></div>
 			<br />
 			<br />
 			
 			<!-- 파일 올리기 -->
-			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br /><br />
-			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
+			<p class="textP">포트폴리오(필수)</p><input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/><br />
+			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
+			<p class="textP">자기소개서(필수)</p><input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
+			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
 			
 			<!-- 카테고리 설정 -->
 			<div class="form-check-inline form-check">
@@ -119,15 +125,16 @@
 			</div>
 
 			<br />  <br />
-			<textarea rows="10" cols="50" name="cover"placeholder="강사님 당신을 소개 하세요 모두가 알 수 있도록...(필수)" maxlength="1000" ></textarea>
+			<textarea rows="10" cols="50"  name="cover"placeholder="자기소개...(필수)" maxlength="1000" style="width:98%" ></textarea>
 
 			<br />
 			<%-- <button type="button" onclick="location.href='${pageContext.request.contextPath}'">취소</button> --%>
-			<input type="submit" id="submit" value="가입하기" class="btn btn-outline-secondary"/>
+			<input type="submit" id="submit" value="가입하기" class="btn btn-primary" style="width:98%"/>
+			<br /><br />
+	</div>
 		</form>
 		<br />
 		<br />
 
-	</div>
 </body>
 </html>

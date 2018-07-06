@@ -26,21 +26,19 @@ div {
 	width: 600px;
 	min-height: 25px;
 	margin: auto;
-	background: rgb(255, 255, 255);
 }
 
-div#indivik {
+div#enroll-container {
 	margin: auto;
+	background: rgb(235, 235, 235,0.8);
+	padding: 10px;
 }
 
-div#inindivik1 {
-	background: rgb(230, 230, 230)
-}
+
 
 div#inindivik2 {
 	margin: auto;
 	text-align: center;
-	background: rgb(230, 230, 230)
 }
 
 div#inindivik3 {
@@ -85,9 +83,7 @@ div.blank-ik {
 	left: 71%;
 }
 
-body {
-	background: rgb(230, 230, 230)
-}
+body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-910261_1920.jpg") no-repeat fixed left;}
 
 #indivik {
 	border-radius: 5px;
@@ -221,15 +217,11 @@ body {
 		}
 		
 	</script>
-	<div id="inindivik1"></div>
-	<div id="inindivik2">
-		<a id="headaik" href="${pageContext.request.contextPath}"><br />
-		<h1>STUDY GROUPT</h1>
-			<br /></a>
-	</div>
+	<div id="inindivik1" style="height:100px;"></div>
 	<div id="enroll-container">
+	<div id="inindivik2"><a class="navbar-brand rm-custom-brand" href="${rootPath}"><jsp:include page="/WEB-INF/views/common/logo_blue.jsp"></jsp:include></a></div>
 		<br />
-		<h3>강사 신청</h3>
+		<h3 style="color:#0000ff;" >강사 신청</h3>
 		<form action="instructorApplyEnd.do" method="post" name='mainForm'
 			id='mainForm' onsubmit="return validate();"
 			enctype="multipart/form-data">
@@ -239,28 +231,23 @@ body {
 			
 			<br /> 
 			<!-- 파일 올리기 -->
-			<div  class="card border-secondary mb-3" style="max-width: 38rem;">
-			<div class="card-header">
-			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br />
-			</div>
-			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
-			</div>
+	
+		
+			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br /><br />
+		
+			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br />
 			<br />
-			<div  class="card border-secondary mb-3" style="max-width: 38rem;">
-			<div class="card-header">
-			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
-			</div>
-			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
-			</div>
-			<br />
+			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br /><br />
 			
+			<span class="card-body text-secondary" >.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
+			<br />
+			<br />
 			
 			<!-- 카테고리 설정 -->
-			<div class="form-check-inline form-check">
+			<div >
 				<label for="kind">카테고리 : </label>
 				<select name="kno" id="kind" required> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
 					<option value="-1" >과목을 선택하세요.</option>
-					
 					<c:if test="${!empty kindList }">
 					<c:forEach var="kind" items="${kindList }" varStatus="vs">
 						<option value="${kind.KNO }">${kind.KINDNAME }</option>
@@ -274,8 +261,7 @@ body {
 				<br />
 				<br />
 			</div> 
-			<input type="submit" id="submit" value="강사 신청" class="btn btn-outline-secondary" />
-
+			<input type="submit" id="submit" value="강사 신청" class="btn btn-primary" />
 		</form>
 		<br /> <br />
 

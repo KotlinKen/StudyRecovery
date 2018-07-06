@@ -15,20 +15,31 @@
 <!-- 사용자작성 css -->
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/style.css" />
 <style>
-p{width: 450px; height: 150px; overflow-y: scroll; margin: auto; text-align: left;}
-div{width: 500px; min-height: 60px;margin: auto; background: rgb(255, 255, 255);}
-div#indivik{margin: auto;}
-div#inindivik1{ background: rgb(230, 230, 230)}
-div#inindivik2{margin: auto; text-align: center; background: rgb(230, 230, 230)}
-div#inindivik3{width: 450px; margin: auto; text-align: center; }
-div#headerdivik{margin: auto; text-align: center;}
+p{width: 450px; height: 150px; overflow-y: scroll; margin: auto; background: white;}
+p#home{height: 100px; font-size: 35px;  color: rgb(0, 0, 255); background: rgb(255, 255, 255,0.001);}
+div{width: 500px; min-height: 30px;margin: auto;  }
+div#indivik{margin: auto; background: rgb(235, 235, 235,0.95); border-radius:30px; border: 1.5px solid blue; }
+div#inindivik1{ width: 100%;}
+div#inindivik2{ width:100%;   text-align: center;}
+div#inindivik3{width: 200px; margin: auto; text-align: left; }
+div#headerdivik{ background: blue; width: 100%; }
+/* div#background{ width: 100%; height: 900px; background: rgb(235, 235, 235,0.6);  } */
 span{position: relative; left: 20px;}
 #buttona{position: relative; left: 20px;}
 #buttonb{position: relative; left: 71%;}
 input[type=checkbox], input[type=radio]{ width: 20px;height: 20px; border-radius :10px;}
-body {background: rgb(230, 230, 230)}
-#indivik{border-radius: 5px; border: solid 1px rgb(210, 210, 210); }
 #headaik{color: black;}
+body{background: lightblue url("${rootPath}/resources/images/young.jpg") no-repeat fixed center; }
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+    background : rgb(0, 0, 255);
+} 
 ::-webkit-scrollbar {display:none;}
 </style>
 </head>
@@ -36,29 +47,34 @@ body {background: rgb(230, 230, 230)}
 <form name=frmSubmit>
 
 <div id="inindivik1"></div>
-<div id="inindivik2"><a id="headaik" href="${pageContext.request.contextPath}"><h2>STUDY GROUPT</h2></a></div>
+<div id="background">
+
 <div id="indivik">
+<div id="inindivik2"><a class="navbar-brand rm-custom-brand" href="${rootPath}"><jsp:include page="/WEB-INF/views/common/logo_blue.jsp"></jsp:include></a></div>
 		<div id="inindivik3"><input type="hidden" name="check" id="check" value="21" /></div> 
-		<span><b>전체 동의</b><input type="checkbox" class="agree" id="checkAll"  /></span>	 <br />
-		<hr />
-		<span><b>서비스 이용약관 동의 (필수) </b><input type="checkbox" class="agree" id="agree1" value="0" name="agree1" /></span>		
-		<p class="jumbotron jumbotron-fluid">
+<p id="home">회원가입</p>
+		<span><input type="checkbox" class="agree" id="checkAll"  /> <b>전체 동의</b></span>	 <br />
+		<br />
+		<span><input type="checkbox" class="agree" id="agree1" value="0" name="agree1" /> <b>서비스 이용약관 동의 (필수) </b></span>		
+		<p >
 			<c:forEach var ="v" items="${service }">
 				${v.SCONTENT } <br /><br />
 			</c:forEach>
 		</p>
-		<hr />
-		<span><b>개인정보 수집 및 이용 동의 (필수) </b><input type="checkbox" class="agree" id="agree2" value="0" name="agree2"  /></span>
-		<p class="jumbotron jumbotron-fluid">
+		<br />
+		<span><input type="checkbox" class="agree" id="agree2" value="0" name="agree2"  /> <b>개인정보 수집 및 이용 동의 (필수) </b></span>
+		<p >
 			<c:forEach var ="v" items="${information }">
 				${v.ICONTENT } <br /><br />
 			</c:forEach>
 		</p>
-		<button type="button" id="buttona" class="btn btn-outline-success" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
-		<button type="button" id="buttonb" class="btn btn-outline-success" onclick="getPost(01);">다음</button> 
 		<br /><br />
-		<span>강사를 희망 하신다면 여기 <a href="#" onclick="getPost(02);" >강사 신청하기</a>를 누르세요</span>
+		<button type="button" id="buttona" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
+		<button type="button" id="buttonb" class="btn btn-primary" onclick="getPost(01);">다음</button> 
+		<br /><br />
+		<span>강사를 희망 하신다면 여기 <a href="#" onclick="getPost(02);" ><b>강사 신청하기</b></a>를 누르세요</span>
 	<br /><br />
+</div>
 </div>
 </form>
 <br /><br />
