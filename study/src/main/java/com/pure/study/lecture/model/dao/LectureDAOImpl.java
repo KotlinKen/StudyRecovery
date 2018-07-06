@@ -88,28 +88,28 @@ public class LectureDAOImpl implements LectureDAO {
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectByDeadline(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage,numPerPage);
-		return session.selectList("lecture.selectByDeadline",null,rowBounds);
+		RowBounds rowBounds = new RowBounds(((int)terms.get("cPage")-1)*(int)terms.get("numPerPage"), (int)terms.get("numPerPage"));
+		return session.selectList("lecture.selectByDeadline",terms,rowBounds);
 	}
 
 	@Override
-	public int lectureDeadlineCount() {
+	public int lectureDeadlineCount(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return session.selectOne("lecture.lectureDeadlineCount");
+		return session.selectOne("lecture.lectureDeadlineCount",terms);
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByApply(int cPage, int numPerPage) {
-		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage,numPerPage);
-		return session.selectList("lecture.selectByApply",null,rowBounds);
+	public List<Map<String, Object>> selectByApply(Map<String, Object> terms) {
+		RowBounds rowBounds = new RowBounds(((int)terms.get("cPage")-1)*(int)terms.get("numPerPage"), (int)terms.get("numPerPage"));
+		return session.selectList("lecture.selectByApply",terms,rowBounds);
 	}
 
 	@Override
-	public int studyByApplyCount() {
+	public int studyByApplyCount(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return session.selectOne("lecture.studyByApplyCount");
+		return session.selectOne("lecture.studyByApplyCount",terms);
 	}
 
 	@Override

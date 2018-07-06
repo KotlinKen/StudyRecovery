@@ -378,7 +378,6 @@ public class LectureContoller {
 		int cPage = 1;
 
 		List<Map<String, Object>> list = ls.selectLectureList(cPage, numPerPage);
-
 		int total = ls.selectTotalLectureCount();
 
 		mav.addObject("list", list);
@@ -407,7 +406,8 @@ public class LectureContoller {
 			@RequestParam(value = "tno", defaultValue = "0") int tno, @RequestParam(value = "kno") int kno,
 			@RequestParam(value = "subno", defaultValue = "0") int subno, @RequestParam(value = "dno") int dno,
 			@RequestParam(value = "leadername") String leadername,
-			@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage) {
+			@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage,
+			@RequestParam(value="searchCase") String searchCase) {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		if (leadername.trim().length() < 1)
@@ -423,12 +423,27 @@ public class LectureContoller {
 		terms.put("leadername", leadername);
 		terms.put("cPage", cPage);
 		terms.put("numPerPage", numPerPage);
-
+		terms.put("searchCase", searchCase);
 		// 검색 조건에 따른 총 스터기 갯수
-		int total = ls.selectTotalLectureCountBySearch(terms);
-
+		
+		
+		int total =0;
+		List<Map<String, Object>> lectureList =null;
+		if(searchCase.equals("deadline")) {
+			total = ls.lectureDeadlineCount(terms);
+			lectureList=ls.selectByDeadline(terms);
+		}else if(searchCase.equals("search")) {
+			System.out.println("서치에용ㅇ");
+			total =      ls.selectTotalLectureCountBySearch(terms);
+			lectureList= ls.selectLectureListBySearch(terms);
+			
+		}else {//신청자순
+			System.out.println("신청자순이에용");
+			total = ls.studyByApplyCount(terms);
+			lectureList = ls.selectByApply(terms);
+		}
+		
 		// 페이징 처리해서 가져온 리스트
-		List<Map<String, Object>> lectureList = ls.selectLectureListBySearch(terms);
 		mav.addObject("list", lectureList);
 		mav.addObject("total", total);
 		mav.addObject("cPage", cPage + 1);
@@ -442,7 +457,8 @@ public class LectureContoller {
 			@RequestParam(value = "tno", defaultValue = "0") int tno, @RequestParam(value = "kno") int kno,
 			@RequestParam(value = "subno", defaultValue = "0") int subno, @RequestParam(value = "dno") int dno,
 			@RequestParam(value = "leadername") String leadername,
-			@RequestParam(value = "cPage", required = false) int cPage) {
+			@RequestParam(value = "cPage", required = false) int cPage,
+			@RequestParam(value="searchCase") String searchCase) {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		if (leadername.trim().length() < 1)
@@ -458,67 +474,22 @@ public class LectureContoller {
 		terms.put("leadername", leadername);
 		terms.put("cPage", cPage);
 		terms.put("numPerPage", numPerPage);
+		terms.put("searchCase", searchCase);
 
-		List<Map<String, Object>> list = ls.selectLectureListBySearch(terms);
-		mav.addObject("list", list);
-		mav.addObject("cPage", cPage + 1);
-
-		return mav;
-	}
-
-	// 마감입박순 첫 페이징 처리
-	@RequestMapping("/lecture/selectByDeadline.do")
-	public ModelAndView selectByDeadline() {
-		ModelAndView mav = new ModelAndView("jsonView");
-
-		int cPage = 1;
-
-		List<Map<String, Object>> list = ls.selectByDeadline(cPage, numPerPage);
-
-		int total = ls.lectureDeadlineCount();
-
-		mav.addObject("list", list);
-		mav.addObject("cPage", cPage + 1);
-		mav.addObject("total", total);
-
-		return mav;
-	}
-
-	// 스크롤 페이징 처리 - 마감임박순
-	@RequestMapping("/lecture/lectureDeadlinAdd.do")
-	public ModelAndView lectureDeadlinAdd(@RequestParam(value = "cPage", defaultValue = "1") int cPage) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		List<Map<String, Object>> lectureList = ls.selectByDeadline(cPage, numPerPage);
-
-		mav.addObject("list", lectureList);
-		mav.addObject("cPage", cPage + 1);
-
-		return mav;
-	}
-
-	// 신청자순 첫 페이징 처리
-	@RequestMapping("/lecture/selectByApply.do")
-	public ModelAndView selectByApply() {
-		ModelAndView mav = new ModelAndView("jsonView");
-
-		int cPage = 1;
-
-		List<Map<String, Object>> list = ls.selectByApply(cPage, numPerPage);
-
-		int total = ls.studyByApplyCount();
-
-		mav.addObject("list", list);
-		mav.addObject("cPage", cPage + 1);
-		mav.addObject("total", total);
-
-		return mav;
-	}
-
-	// 스크롤 페이징 처리 - 신청자순
-	@RequestMapping("/lecture/lectureApplyAdd.do")
-	public ModelAndView lectureApplyAdd(@RequestParam(value = "cPage", defaultValue = "1") int cPage) {
-		ModelAndView mav = new ModelAndView("jsonView");
-		List<Map<String, Object>> lectureList = ls.selectByApply(cPage, numPerPage);
+		
+		int total =0;
+		List<Map<String, Object>> lectureList =null;
+		if(searchCase.equals("deadline")) {
+			lectureList=ls.selectByDeadline(terms);
+		}else if(searchCase.equals("search")) {
+			System.out.println("서치에용ㅇ");
+			lectureList= ls.selectLectureListBySearch(terms);
+			
+		}else {//신청자순
+			System.out.println("신청자순이에용");
+			lectureList = ls.selectByApply(terms);
+		}
+		
 		mav.addObject("list", lectureList);
 		mav.addObject("cPage", cPage + 1);
 

@@ -35,7 +35,7 @@ $(function(){
 		dataType:"json",
 		success:function(data){
 			$("input#total").val(data.total);
-			$("input#numPerPage").val(data.numPerPage);
+			$("input#numPerPage").vaMl(data.numPerPage);
 			$("input#cPageNo").val(data.cPage);
 			var html="";
 			for(index in data.list){
@@ -561,12 +561,9 @@ h3#totalcountt{
 			</table>
 			
 		</div>
-			
-			
-		
-		
 		<hr />
-		<h3 id="totalcountt"><span id="totalcount"></span>개의 스터디</h3>
+		 <h3 id="totalcountt"><span id="totalcount"></span>개의 스터디</h3>
+		
 		<div id="study-list" class="content">
 			<ul class="list">
 			
