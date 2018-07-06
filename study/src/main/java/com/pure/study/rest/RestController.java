@@ -240,6 +240,24 @@ public class RestController {
 		return mav;
 	}
 	
+	// none Rest
+	@RequestMapping(value="/rest/board/list", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView boardList(@RequestParam Map<String, String> queryMap, 
+								  @RequestParam(value="type", required=false, defaultValue="") String type,		
+								  @RequestParam(value="cPage", required=true, defaultValue="1") int cPage,		
+								  @RequestParam(value="viewCount", required=true, defaultValue="10") int viewCount){		
+		
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		List<Map<String, String>> list = boardService.selectBoardList(cPage, viewCount, queryMap);
+		int total = boardService.selectCount(queryMap);
+		mav.addObject("list", list);
+		mav.addObject("viewCount", viewCount);
+		mav.addObject("cPage",cPage);
+		mav.addObject("total",total);
+		return mav;
+	}
 	
 	
 	//광고관련
