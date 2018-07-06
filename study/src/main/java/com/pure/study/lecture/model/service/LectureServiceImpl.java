@@ -184,4 +184,14 @@ public class LectureServiceImpl implements LectureService {
 		ld.successAdminPayCancel(pno);
 	}
 
+	@Override
+	public List<Map<String, String>> searchAdminLectureList(int cPage, int numPerPage, Map<String, Object> map) {
+		return ld.searchAdminLectureList(cPage, numPerPage, map);
+	}
+
+	@Override
+	public int selectTotalAdminLectureCount(Map<String, Object> map) {
+		return ld.selectTotalAdminLectureCount(map);
+	}
+
 }

@@ -55,7 +55,7 @@ function loadPay(cPage, pageBarSize, key){
     				rmHtml += "<td>" + pay.PNO + "</td>";
     				rmHtml += "<td>" + pay.TITLE + "</td>";
     				rmHtml += "<td>" + pay.MNAME + "</td>";
-    				rmHtml += "<td>" + pay.REGDATE + "</td>";    				
+    				rmHtml += "<td>" + pay.REGDATE + "</td>";
     				rmHtml += "<td>" + pay.SDATE + "</td>";
     				rmHtml += "<td>" + pay.FREQ + "</td>";
     				rmHtml += "<td>" + pay.TIME + "</td>";

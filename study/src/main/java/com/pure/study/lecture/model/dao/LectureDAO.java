@@ -73,4 +73,8 @@ public interface LectureDAO {
 
 	void successAdminPayCancel(long pno);
 
+	List<Map<String, String>> searchAdminLectureList(int cPage, int numPerPage, Map<String, Object> map);
+
+	int selectTotalAdminLectureCount(Map<String, Object> map);
+
 }

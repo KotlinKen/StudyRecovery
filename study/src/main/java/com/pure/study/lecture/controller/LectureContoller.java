@@ -230,28 +230,48 @@ public class LectureContoller {
 
 	@RequestMapping("/lecture/lectureView.do")
 	public ModelAndView lectureView(@RequestParam int sno,
-			@RequestParam(required = false, defaultValue = "0") int mno) {
+			@RequestParam(required = false, defaultValue = "0") int mno, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
-
-		Map<String, Integer> map = new HashMap<>();
-		map.put("sno", sno);
-
-		// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
-		if (mno > 0) {
-			map.put("mno", mno);
-
-			int wish = ls.lectureWish(map);
-			int insert = ls.preinsertApply(map);
-
-			mav.addObject("wish", wish);
-			mav.addObject("insert", insert);
+		
+		Member m = (Member) session.getAttribute("memberLoggedIn");
+		int realMNo = 0;		
+		
+		try {			
+			realMNo = m.getMno();			
 		}
+		catch( NullPointerException e ) {
+			realMNo = 0;
+		}
+		
+		if (mno != 0 && mno != realMNo) {
+			String msg = "잘못된 경로로 접근했다.";
+			String loc = "/lecture/lectureList.do";
 
-		Map<String, String> lecture = ls.selectLectureOne(sno);
+			mav.addObject("msg", msg);
+			mav.addObject("loc", loc);
 
-		mav.addObject("lecture", lecture);
-
-		mav.setViewName("lecture/lectureView");
+			mav.setViewName("/common/msg");
+		} else {		
+			Map<String, Integer> map = new HashMap<>();
+			map.put("sno", sno);
+	
+			// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
+			if (mno > 0) {
+				map.put("mno", mno);
+	
+				int wish = ls.lectureWish(map);
+				int insert = ls.preinsertApply(map);
+	
+				mav.addObject("wish", wish);
+				mav.addObject("insert", insert);
+			}
+	
+			Map<String, String> lecture = ls.selectLectureOne(sno);
+	
+			mav.addObject("lecture", lecture);
+	
+			mav.setViewName("lecture/lectureView");
+		}
 
 		return mav;
 	}
@@ -543,7 +563,6 @@ public class LectureContoller {
 
 		mav.addObject("lecture", lecture);
 		mav.addObject("locList", locList);
-
 		mav.addObject("kindList", kindList);
 		mav.addObject("diffList", diffList);
 
@@ -592,25 +611,25 @@ public class LectureContoller {
 
 		return "redirect:/lecture/lectureView.do?sno=" + sno + "&mno=" + mno;
 	}
-	
+
 	@RequestMapping("/lecture/selectPay.do")
 	@ResponseBody
 	public long selectPay(@RequestParam int sno, @RequestParam int mno) {
-		
- 
+
 		Map<String, Integer> map = new HashMap<>();
-		
+
 		map.put("mno", mno);
 		map.put("sno", sno);
-		
+
 		long impNo = ls.selectPay(map);
-		
+
 		return impNo;
 	}
 
 	@RequestMapping("/lecture/lectureCancel.do")
 	@ResponseBody
-	public String lectureCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam long pno, @RequestParam int price) {
+	public String lectureCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam long pno,
+			@RequestParam int price) {
 		Map<String, Integer> map = new HashMap<>();
 
 		map.put("mno", mno);
@@ -618,37 +637,38 @@ public class LectureContoller {
 
 		int result = 0;
 		result = ls.lectureCancel(map);
-		
-		String originNo = "imp_"+ String.valueOf(pno);
+
+		// 토큰 얻어오기.
+		String originNo = "imp_" + String.valueOf(pno);
 		String api_key = "6308212829698507";
 		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
-		
-		// 토큰 얻어오기.
-		IamportClient imp = new IamportClient(api_key, api_secret);		
+
+		IamportClient imp = new IamportClient(api_key, api_secret);
 		imp.getAuth();
-		
+
 		IamportResponse<Payment> p = imp.cancelPaymentByImpUid(new CancelData(originNo, true));
-		
+
 		int success = p.getCode();
-		String msg = ""; 		
-		
+		String msg = "";
+
 		// 아임포트에서 결제취소가 성공한 경우.
-		if( success == 1 || success == 0  ) {
-			msg = "결제취소";		
-			
-			ls.successPayCancel(pno);			
+		if (success == 1 || success == 0) {
+			msg = "결제취소";
+
+			ls.successPayCancel(pno);
 		}
 		// 실패한 경우
 		else {
 			msg = "결제 취소가 실패했습니다. 관리자에게 문의하세요.";
 		}
-		
+
 		return msg;
 	}
-	
+
 	@RequestMapping("/lecture/lectureAdminCancel.do")
 	@ResponseBody
-	public String lectureAdminCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam long pno, @RequestParam int price) {
+	public String lectureAdminCancel(@RequestParam int mno, @RequestParam int sno, @RequestParam long pno,
+			@RequestParam int price) {
 		Map<String, Integer> map = new HashMap<>();
 
 		map.put("mno", mno);
@@ -656,31 +676,31 @@ public class LectureContoller {
 
 		int result = 0;
 		result = ls.lectureCancel(map);
-		
-		String originNo = "imp_"+ String.valueOf(pno);
+
+		String originNo = "imp_" + String.valueOf(pno);
 		String api_key = "6308212829698507";
 		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
-		
+
 		// 토큰 얻어오기.
-		IamportClient imp = new IamportClient(api_key, api_secret);		
+		IamportClient imp = new IamportClient(api_key, api_secret);
 		imp.getAuth();
-		
+
 		IamportResponse<Payment> p = imp.cancelPaymentByImpUid(new CancelData(originNo, true));
-		
+
 		int success = p.getCode();
-		String msg = ""; 		
-		
+		String msg = "";
+
 		// 아임포트에서 결제취소가 성공한 경우.
-		if( success == 1 || success == 0  ) {
+		if (success == 1 || success == 0) {
 			msg = "결제취소";
-			
-			ls.successAdminPayCancel(pno);			
+
+			ls.successAdminPayCancel(pno);
 		}
 		// 실패한 경우
 		else {
 			msg = "결제 취소가 실패했습니다. 관리자에게 문의하세요.";
 		}
-		
+
 		return msg;
 	}
 
@@ -700,28 +720,68 @@ public class LectureContoller {
 		mav.addObject("total", total);
 		return mav;
 	}
-	
-	@RequestMapping(value="/lecture/pay/{cPage}/{count}/{key}", method= RequestMethod.GET)
-	@ResponseBody
-	public ModelAndView adminPayment(@PathVariable(value="count", required=false) int count,
-									 @PathVariable(value="cPage", required=false) int cPage,
-									 @PathVariable(value="key", required=false) String[] keys) {
+
+	@RequestMapping(value = "/lecture/searchAdminLecture/{cPage}/{count}", method = RequestMethod.GET)
+	public ModelAndView searhAdminLecture(@PathVariable(value = "count", required = false) int count,
+									      @PathVariable(value = "cPage", required = false) int cPage,
+										  @RequestParam(required=false) int lno,
+										  @RequestParam(required=false) int tno,
+										  @RequestParam(required=false) int subno,
+										  @RequestParam(required=false) int kno,
+										  @RequestParam(required=false, defaultValue="전체") String leader,
+										  @RequestParam(required=false, defaultValue="전체") String title,
+										  @RequestParam(required=false) String year,
+										  @RequestParam(required=false) String month,
+										  @RequestParam(required=false, defaultValue="전체") String status) {
 		ModelAndView mav = new ModelAndView("jsonView");
 		
+		Map<String, Object> map = new HashMap<>();
+		
+		map.put("lno", lno);
+		map.put("tno", tno);
+		map.put("subno", subno);
+		map.put("kno", kno);
+		map.put("leader", leader);
+		map.put("title", title);
+		map.put("year", year);
+		map.put("month", month);
+		map.put("status", status);
+		
+		System.out.println(map);
+		
+		int total = ls.selectTotalAdminLectureCount(map);
+
+		List<Map<String, String>> list = ls.searchAdminLectureList(cPage, count, map);
+
+		mav.addObject("list", list);
+		mav.addObject("cPage", cPage);
+		mav.addObject("total", total);
+		mav.addObject("numPerPage", count);
+
+		return mav;
+	}
+
+	@RequestMapping(value = "/lecture/pay/{cPage}/{count}/{key}", method = RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView adminPayment(@PathVariable(value = "count", required = false) int count,
+			@PathVariable(value = "cPage", required = false) int cPage,
+			@PathVariable(value = "key", required = false) String[] keys) {
+		ModelAndView mav = new ModelAndView("jsonView");
+
 		Map<String, String> key = new HashMap<>();
-		
+
 		int total = ls.selectTotalPayCount();
-		int numPerPage = 10;		
-		
-		List<Map<String, String>> list = ls.selectPayList(cPage, numPerPage, key);	
-		
+		int numPerPage = 10;
+
+		List<Map<String, String>> list = ls.selectPayList(cPage, numPerPage, key);
+
 		System.out.println(list);
-		
+
 		mav.addObject("list", list);
 		mav.addObject("cPage", cPage);
 		mav.addObject("total", total);
 		mav.addObject("numPerPage", numPerPage);
-		
+
 		return mav;
 	}
 
@@ -806,5 +866,5 @@ public class LectureContoller {
 
 		map.put("url", renamedFileName);
 		return map;
-	}	
+	}
 }

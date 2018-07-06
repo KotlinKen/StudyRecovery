@@ -126,14 +126,23 @@
    
    <select id="selectLectureList" resultMap="map">      
       SELECT SNO,
+             A.MNO AS MNO,
              (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
+             LNO,
              (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
+             TNO,
              (SELECT T.TOWNNAME AS TNAME FROM TOWN T WHERE T.TNO = A.TNO) TNAME,
+             KNO,
              (SELECT K.KINDNAME AS KNAME FROM KIND K WHERE K.KNO = A.KNO) KNAME,
+             SUBNO,
              (SELECT SUB.SUBJECTNAME AS SUBNAME FROM SUBJECT SUB WHERE SUB.SUBNO = A.SUBNO) SUBNAME,
+             DNO,
              (SELECT D.DIFFICULTNAME AS DNAME FROM DIFF D WHERE D.DNO = A.DNO) DNAME, 
              (SELECT M.COVER AS COVER FROM MEMBER M WHERE M.MNO = A.MNO) COVER,
              (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
+             (SELECT COUNT(*) AS CNT FROM CREW C WHERE C.SNO = A.SNO) CNT,
+             RECRUIT,
+             FREQ,
              CONTENT,
              TITLE,
              UPFILE,
@@ -178,6 +187,7 @@
              (SELECT M.MPROFILE AS PROFILE FROM MEMBER M WHERE M.MNO = A.MNO ) PROFILE,
              FREQ,
              CONTENT,
+             (SELECT COUNT(*) AS CNT FROM CREW C WHERE C.SNO = A.SNO) CNT,
              RECRUIT,
               TITLE,
               UPFILE,
@@ -295,6 +305,98 @@
       FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
       </if>
       WHERE S.MNO = #{mno}
+   </select>
+   
+   <select id="searchAdminLectureList" resultMap="map">
+   		SELECT S.SNO AS SNO, 
+		       S.TITLE AS TITLE, 
+		       M.MNAME AS MNAME, 
+		       L.LOCAL AS LOCAL, 
+		       T.TOWNNAME AS TOWNNAME, 
+		       K.KINDNAME AS KNAME,
+		       SUB.SUBJECTNAME AS SUBNAME,
+		       (SELECT COUNT(*) AS CNT FROM CREW C WHERE C.SNO = S.SNO) CNT,
+		       S.RECRUIT AS RECRUIT,
+		       S.FREQ AS FREQ,
+		       S.TIME AS TIME,
+		       TO_CHAR(S.SDATE, 'YYYY-MM-DD') AS SDATE,
+		       TO_CHAR(S.EDATE, 'YYYY-MM-DD') AS EDATE,
+		       TO_CHAR(S.REGDATE, 'YYYY-MM-DD') AS REGDATE,
+		       S.STATUS AS STATUS,
+		       S.PRICE AS PRICE
+		FROM STUDY S, MEMBER M, LOCAL L, TOWN T, KIND K, SUBJECT SUB
+		WHERE S.TYPE = 'lecture'
+		      AND S.MNO = M.MNO
+		      AND S.TNO = T.TNO
+		      AND T.LNO = L.LNO
+		      AND S.SUBNO = SUB.SUBNO
+		      AND SUB.KNO = K.KNO
+		      <if test="lno!=0">
+		      AND L.LNO = #{lno}
+		      </if>
+		      <if test="tno!=0">
+		      AND T.TNO = #{tno}
+		      </if>	
+		      <if test="subno!=0">
+		      AND SUB.SUBNO = #{subno}
+		      </if>	
+		      <if test="kno!=0">
+		      AND K.KNO = #{kno}
+		      </if>	
+		      <if test="leader!='전체'">
+		      AND MNAME LIKE '%'||#{leader}||'%'
+		      </if>	
+		      <if test="title!='전체'">
+		      AND TITLE LIKE '%'||#{title}||'%'
+		      </if>	
+		      <if test="year!=0">
+		      AND TO_CHAR(SDATE, 'YYYY') = #{year}
+		      </if>	
+		      <if test="month!=0">
+		      AND TO_CHAR(SDATE, 'MM') = #{month}
+		      </if>	
+		      <if test="status!='전체'">
+		      AND S.STATUS = #{status}
+		      </if>		      
+		ORDER BY REGDATE
+   </select>
+   
+   <select id="selectTotalAdminLectureCount" resultType="_int">
+		SELECT COUNT(*)
+		FROM STUDY S, MEMBER M, LOCAL L, TOWN T, KIND K, SUBJECT SUB
+		WHERE S.TYPE = 'lecture'
+		      AND S.MNO = M.MNO
+		      AND S.TNO = T.TNO
+		      AND T.LNO = L.LNO
+		      AND S.SUBNO = SUB.SUBNO
+		      AND SUB.KNO = K.KNO
+		      <if test="lno!=0">
+		      AND L.LNO = #{lno}
+		      </if>
+		      <if test="tno!=0">
+		      AND T.TNO = #{tno}
+		      </if>	
+		      <if test="subno!=0">
+		      AND SUB.SUBNO = #{subno}
+		      </if>	
+		      <if test="kno!=0">
+		      AND K.KNO = #{kno}
+		      </if>	
+		      <if test="leader!='전체'">
+		      AND MNAME LIKE '%'||#{leader}||'%'
+		      </if>	
+		      <if test="title!='전체'">
+		      AND TITLE LIKE '%'||#{title}||'%'
+		      </if>	
+		      <if test="year!=0">
+		      AND TO_CHAR(SDATE, 'YYYY') = #{year}
+		      </if>	
+		      <if test="month!=0">
+		      AND TO_CHAR(SDATE, 'MM') = #{month}
+		      </if>
+		      <if test="status!='전체'">
+		      AND S.STATUS = #{status}
+		      </if>
    </select>
    
    <delete id="deleteLecture">
