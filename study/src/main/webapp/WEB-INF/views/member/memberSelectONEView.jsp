@@ -349,10 +349,10 @@ table {
 					point(date.list[0].POINT,${m.NPoint});
 				}
 				if(e == 2){
-					point(${m.point},date.list[0].NPOINT)
+					point(${m.point},date.list[0].NPOINT);
 				}
 				if(e == 3){
-					point(${m.point},date.list[0].NPOINT)
+					point(${m.point},date.list[0].NPOINT);
 				}
 				
 			},

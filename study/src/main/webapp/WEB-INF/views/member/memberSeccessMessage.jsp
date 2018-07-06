@@ -16,18 +16,23 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/style.css" />
 <style>
 #instructor{display: none;}
-#seccessdiv{position: relative; left: 30%; top: 50px; width: 35%;text-align: center;}
-a{color: black;}
-h2{position: relative;left: 30%;}
-h1{display: inline-block;}
+#seccessdiv{ top: 50px; text-align: center;}
+.button{color: white; border: 1px solid white; padding: 10px; border-radius: 3px;}
+.button:hover{border: 2px solid white;}
+h2{position: relative; color: white;}
+h1{ color: white;}
+span{color: white;}
+img{width: 50%;}
 </style>
 </head>
 <body><br /><br />	
-저희<h1><a id="headaik" href="${pageContext.request.contextPath}">STUDY GROUPT</a></h1>
+<img src="${rootPath}/resources/images/ttbmp.png" alt="공부" /><br />
+	<h1>진심으로 축하 드립니다.</h1>
+<span>
+저희<a id="headaik" href="${pageContext.request.contextPath}" style="color: white;">STUDY GROUPT</a>
 에서는 보다 나은 서비스를 위해 최선을 다하겠습니다. 감사합니다.
+</span>
 <br /><br />
-	<h2>진심으로 축하 드립니다.</h2>
-	<br /><br />
 	
 	<c:if test="${'ok' eq check} ">
 		<h1 id="ccc">?????????</h1>
@@ -49,9 +54,10 @@ h1{display: inline-block;}
 			</div>
 		</form>
 	</div>
-	<a  href="${rootPath }/study/studyList.do">스터디 둘러보기</a> &nbsp;/&nbsp;
-	<a  href="${rootPath }/lecture/lectureList.do">강의 둘러보기</a><br /><br />
-	<a id="headaik" href="${pageContext.request.contextPath}">홈으로</a>
+	<a  href="${rootPath }/study/studyList.do" style="color: white;" class="button">스터디 둘러보기</a> &nbsp;&nbsp;
+	<a  href="${rootPath }/lecture/lectureList.do" style="color: white;" class="button">강의 둘러보기</a> &nbsp;&nbsp;
+	<a id="headaik" href="${pageContext.request.contextPath}" style="color: white;" class="button">홈으로</a>
+	<br /><br /><br /><br />
 	
 </div>
 <script>
