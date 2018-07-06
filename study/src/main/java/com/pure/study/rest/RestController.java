@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.socket.WebSocketSession;
 
 import com.pure.study.adversting.model.service.AdverstingService;
 import com.pure.study.adversting.model.vo.Adversting;
@@ -65,6 +67,10 @@ public class RestController {
 	
 	@Autowired
 	private EchoHandler echoHandler;
+	
+	@Autowired
+	@Qualifier("sessionsMap")
+	private HashMap<String, WebSocketSession> sessions;
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -253,6 +259,7 @@ public class RestController {
 		List<Map<String, String>> list = boardService.selectBoardList(cPage, viewCount, queryMap);
 		int total = boardService.selectCount(queryMap);
 		mav.addObject("list", list);
+		mav.addObject("queryMap", queryMap);
 		mav.addObject("viewCount", viewCount);
 		mav.addObject("cPage",cPage);
 		mav.addObject("total",total);
@@ -419,7 +426,7 @@ public class RestController {
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("common/chat");
-		
+		mav.addObject("ss", sessions);
 		return mav;
 	}
 	

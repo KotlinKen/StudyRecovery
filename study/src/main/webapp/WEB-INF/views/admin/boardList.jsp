@@ -31,6 +31,9 @@
 		$searchTypeVal = $searchType.val();
 		$searchKeywordVal = $searchKeyword.val();
 		
+		var obj = {searchType : $searchTypeVal, searchKeyword : $searchKeywordVal}
+		
+		loadData(1, 10, $searchTypeVal, $searchKeywordVal);
 		
 	}
 </script>
@@ -103,16 +106,21 @@
 <script>
 
 $(function(){
-	loadData(1, 10);
+	//var obj = {cPage : 1, viewCount : 10};
+	loadData(1, 10, 'type', '일반');
 });
 
-function loadData(cPage, viewCount){
-	obj = {cPage : cPage, viewCount : viewCount}
+
+
+function loadData(cPage, viewCount, searchType, searchKeyword){
+	var obj = {cPage : cPage, viewCout : viewCount, searchType : searchType, searchKeyword : searchKeyword};
 	$.ajax({
 		url : "${rootPath}/rest/board/list",
 		data : obj,
+		type : "GET",
 		dataType: "json",
 		success : function(data){
+			console.log(data);
 			var viewCount = data.viewCount;
 			var cPage = data.cPage;
 			var total = data.total;
@@ -122,22 +130,28 @@ function loadData(cPage, viewCount){
 			var pageEnd = pageNo + pageBarSize - 1;
 			var pageNation ="";
 			$pagination = $(".pagination");
+			
+			/* obj.type = data.queryMap.searchType;
+			obj.searchKeyword = data.queryMap.searchKeyword; */
+			
+			
 			if(pageNo == 1 ){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>';
 			}else{
 /* 				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+(pageNo-1)+','+pageBarSize+',\'all\')">Previous</a></li>'; */
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadData('+(pageNo-1)+','+pageBarSize+',\'all\')">Previous</a></li>';
+				
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadData('+obj+')">Previous</a></li>';
 			}
 			while(!(pageNo > pageEnd || pageNo > totalPage)){
-				console.log("test");
-				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadInstructor('+pageNo+','+pageBarSize+',\'all\')">'+pageNo+'</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadData('+pageNo+','+10+',\''+searchType+'\',\''+searchKeyword+'\')">'+pageNo+'</a></li>';
 				pageNo++;
 			}
 			//다음 버튼
 			if(pageNo > totalPage){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
 			}else{
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+pageNo+','+pageBarSize+',\'all\')">Next</a></li>';
+				obj.cPage = pageNo;
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor(\''+obj+'\')">Next</a></li>';
 			}
 			
 			
@@ -164,63 +178,12 @@ function loadData(cPage, viewCount){
 	    	$pagination.html(pageNation);
 			$(".table-responsive tbody").html(rmHtml);
 			
-			
-			
 		} // success
 	});
 }
 
 
-
-
-
-
-function loadInstructor(cPage, pageBarSize, type){
-	$.ajax({
-		url:"${rootPath}/rest/board/"+type+"/"+cPage+"/"+pageBarSize,
-		dataType:"json",
-		success:function(data){
-			
-			var numPerPage = data.numPerPage;
-			var cPage = data.cPage;
-			var total = data.total;
-			var totalPage = Math.ceil(parseFloat(total)/numPerPage);
-			var pageNo = (Math.floor((cPage - 1)/parseFloat(pageBarSize))) * pageBarSize +1;
-			var pageEnd = pageNo + pageBarSize - 1;
-			var pageNation ="";
-			
-			$pagination = $(".pagination");
-			
-
-			
-			//페이지 버튼 생성
-			$pagination.html(pageNation);
-			
-			console.log(data);
-			var rmHtml = "";
-			var board = null;
-	    	for(index in data.list){
-	    		board = data.list[index];
-	    		var upfile = (data.list[index].UPFILE);
-	    			rmHtml += "<tr>"
-	    				rmHtml += "<td>"+board.BNO+"</td>";
-		    			rmHtml += "<td class='text-left'>" +board.TITLE +"</td>";
-		    			rmHtml += "<td class='text-left'>" +(board.CONTENT.replace(/(<([^>]+)>)/ig,"")).replace("&nbsp;","").substring(0,45)+"</td>";
-		    			rmHtml += "<td>" +board.TYPE+"</td>";
-		    			rmHtml += "<td>" +board.FORK+"</td>";
-		    			rmHtml += "<td>" +board.MNAME+"</td>";
-		    			rmHtml += "<td>" +board.REG+"</td>";
-		    			rmHtml += "<td><button class='btn btn-primary' onclick='fn_boardModify("+board.BNO+")'>수정</button></td>";
-		    			rmHtml += "<td><button class='btn btn-primary' onclick='fn_boardView("+board.BNO+")'>보기</button></td>";
-	    			rmHtml += "</tr>";
-	    	}
-			$(".table-responsive tbody").html(rmHtml);
-
-		},error:function(){
-			
-		}
-	});
-}
+ 
 function fn_boardView(bno){
 	location.href="${rootPath}/admin/boardView?bno="+bno;
 }
