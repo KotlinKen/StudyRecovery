@@ -982,12 +982,16 @@
 				dataType: "json",
 				success: function(data){
 					var html = "";
+					if(data.msg!=null){
+						alert(data.msg);
+					}
 					//console.log(data);
 					<%if(("lecture").equals(type)){%>
 						html += "<h6>강의를 듣는 회원</h6>";
 					<%} else{%>
 						html += "<h5>스터디 신청을 수락 완료한 회원</h5>";
 					<%}%>
+					
 					html += "<hr>";
 					html += "<table>"; 
 					html += "<tr><td>프로필사진</td><td>평가 등급</td><td>성별</td><td>회원이름(ID)</td><td>자기 소개</td><td>보기</td></tr>";

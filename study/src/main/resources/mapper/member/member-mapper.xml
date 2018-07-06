@@ -76,8 +76,11 @@
 	</select>
 	
 	<!-- 로그아웃 처리 -->
-	<update id="dropMember">
+<!-- 	<update id="dropMember">
 		update member set qdate=sysdate where mid=#{mid}
+	</update> -->
+	<update id="dropMember">
+		update member set qdate=sysdate where mno=#{mno}
 	</update>
 	
 	
@@ -1089,6 +1092,69 @@
 	</select>
 	<resultMap type="map" id="grade"></resultMap>
 	
+	<!-- 나의 평가 목록 -->
+	<select id="selectEvalList" resultMap="evalListMap">
+		select r.rno as "rno", -- 리뷰 번호
+		        s.sno as "sno", --스터디 번호
+		        r.tmno as "tmno", -- 평가 받은 회원
+		        r.point as "point", -- 평가 점수
+		        r.content as "content", -- 평가 내용
+		        k.kindname as "kindname",
+		        sub.subjectname as "subjectname",
+		        (select mm.mname||'('||mm.mid||')' from member mm where mm.mno=s.mno) as "captain",
+		        s.title as "title", -- 스터디 이름
+		        s.time as "time", -- 스터디 시간(11:00~12:00)
+		        s.type as "type", -- 스터디/강의 분류
+		        to_char(s.sdate,'yyyy/mm/dd') as "sdate", -- 스터디 시작
+		        to_char(s.edate,'yyyy/mm/dd') as "edate" -- 스터디 마감
+		from review r join study s on s.sno=r.sno
+		            join member m on r.tmno=m.mno
+		            join subject sub on s.subno=sub.subno
+		            join kind k on sub.kno=k.kno
+		where r.tmno=#{mno}
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
+		</if>
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
+		</if>
+		<if test="point != 0 and point!=null">
+		and r.point=#{point}
+		</if>
+	</select>
+	<resultMap type="map" id="evalListMap"></resultMap>
+	
+	<!-- 나의 평가 목록 수 -->
+	<select id="selectEvalCnt" resultType="_int">
+		select count(*)
+		from review r join study s on s.sno=r.sno
+		            join member m on r.tmno=m.mno
+		            join subject sub on s.subno=sub.subno
+		            join kind k on sub.kno=k.kno
+		where r.tmno=#{mno}
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
+		</if>
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
+		</if>
+		<if test="point != 0 and point!=null">
+		and r.point=#{point}
+		</if>
+	</select>
+	
 	<!-- 김회진 mapper 끝 -->
 
  	<insert id="insertMailCertification">
@@ -1179,10 +1245,10 @@
 	
 	<!-- 김률민 추가 2018-06-23 10:19 -->
 	<select id="selectCntAllMemberList" resultType="_int">
-		SELECT COUNT(*) FROM MEMBER
+		SELECT COUNT(*) FROM MEMBER WHERE QDATE IS NULL
 	</select>
 	<select id="selectAllMemberList" resultMap="instructorForMap">
-		SELECT M.*, TO_CHAR(M.REGDATE, 'YYYY-MM-DD') REGDATES FROM MEMBER M ORDER BY REGDATE DESC 
+		SELECT M.*, TO_CHAR(M.REGDATE, 'YYYY-MM-DD') REGDATES FROM MEMBER M WHERE QDATE IS NULL ORDER BY REGDATE DESC
 	</select>
 	<select id="selectCntInstructorMember" resultType="_int">
 		SELECT COUNT(*) FROM MEMBER M, INSTRUCTOR I WHERE M.MNO = I.MNO

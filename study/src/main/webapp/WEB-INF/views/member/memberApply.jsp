@@ -164,7 +164,7 @@
 		</c:if>
 		<c:forEach var="a" items="${myPageList}" varStatus="vs" >
 			<tr>
-				<td>${vs.index+1 }</td>
+				<td>${(numPerPage*cPage)-(numPerPage-1)+vs.index }</td>
 				<td>${a.title }</td>
 				<td>${a.captain}</td>
 				<td>${a.type }</td>

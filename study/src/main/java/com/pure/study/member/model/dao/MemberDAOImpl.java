@@ -438,6 +438,17 @@ public class MemberDAOImpl implements MemberDAO {
 	public int updateInstructorCancel(int ino) {
 		return sqlSession.update("member.updateInstructorCancel", ino);
 	}
+
+	@Override
+	public List<Map<String, Object>> selectEvalList(Map<String, Object> map, int numPerPage, int cPage) {
+		return sqlSession.selectList("member.selectEvalList",map, new RowBounds(numPerPage*(cPage-1),numPerPage));
+	}
+
+	@Override
+	public int selectEvalCnt(Map<String, Object> map) {
+		return sqlSession.selectOne("member.selectEvalCnt",map);
+	}
+
 	
 	
 }

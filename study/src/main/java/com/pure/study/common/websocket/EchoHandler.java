@@ -21,9 +21,11 @@ public class EchoHandler extends TextWebSocketHandler {
 	 private static Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 	    
 	    //방법일 일대일챗팅 map사용
-		Map<String, WebSocketSession> sessions  = new HashMap<String, WebSocketSession>();
-	    private List<WebSocketSession> sessionList = new ArrayList<WebSocketSession>();
+		Map<String, WebSocketSession> sessions;
+		private List<WebSocketSession> sessionList = new ArrayList<WebSocketSession>();
 	    List<Member> mem = new ArrayList<>();
+	    
+	    
 	    /**
 	     * 클라이언트 연결 이후에 실행되는 메소드
 	     */
@@ -38,6 +40,8 @@ public class EchoHandler extends TextWebSocketHandler {
 	        //List쓸때
 	        sessionList.add(session);
 	        logger.info("{} 연결됨", session.getId());
+	        
+	        
 	    }
 	    /**
 	     * 클라이언트가 웹소켓서버로 메시지를 전송했을 때 실행되는 메소드
@@ -85,6 +89,7 @@ public class EchoHandler extends TextWebSocketHandler {
 	        //sessions.remove(session.getId());
 	        //logger.info("{} 연결 끊김", session.getId());
 	    }
+	    
 		public Map<String, WebSocketSession> getSessions() {
 			return sessions;
 		}

@@ -852,14 +852,16 @@ public class MemberController {
 	         
 	         if(mid==m.getMid()) {
 	        	 mav.addObject("msg", "회원 정보가 변경되었습니다.");
+	        	 mav.addObject("loc", "/member/memberView.do");
 	         }
 	         
 	      }else {
 	    	  mav.addObject("msg", "회원 정보가 변경되지 않았습니다.");
+	    	  mav.addObject("loc", "/member/memberView.do");
 	    	  mav.addObject("memberLoggedIn", m);
 	      }
 	      
-	      mav.addObject("loc", "/member/memberView.do");
+	      
 	      mav.setViewName("common/msg");
 	      
 	      return mav;
@@ -867,19 +869,26 @@ public class MemberController {
 
 	// 개인 정보 수정 - 탈퇴하기
 	@RequestMapping(value = "/member/memberDrop.do")
-	public String memberDrop(@RequestParam("mid") String mid, Model model, SessionStatus sessionStatus) {
+	public String memberDrop(@RequestParam("mno") String mno, 
+							@RequestParam(value="admin", required=false) String admin,
+							Model model, SessionStatus sessionStatus) {
 
 		// 탈퇴일만
-		int result = memberService.dropMember(mid);
+		int result = memberService.dropMember(mno);
 
-		if (result > 0) {
+		if (result > 0 && !"admin".equals(admin)) {
 			if (!sessionStatus.isComplete())
 				sessionStatus.setComplete();
 			return "redirect:/";
+		} else if(result > 0 && "admin".equals(admin)) {
+			
+			return "redirect:/admin/adminMember";
+		} else if(result <= 0 && "admin".equals(admin)) {
+			model.addAttribute("msg", "오류가 발생했습니다.");
+			return "redirect:/member/adminMemberView.do?mno="+mno;
 		} else {
 			model.addAttribute("msg", "오류가 발생하였습니다.");
 			model.addAttribute("loc", "/");
-
 		}
 		return "common/msg";
 	}
@@ -1072,10 +1081,10 @@ public class MemberController {
 		}
 		
 		mav.addObject("lno",lno);//지역 리스트
-		mav.addObject("kno",kno);//지역 리스트
 		mav.addObject("tno",tno);//지역 리스트
-		mav.addObject("subno",subno);//지역 리스트
-		mav.addObject("dno",dno);//지역 리스트
+		mav.addObject("kno",kno);//카테고리 리스트
+		mav.addObject("subno",subno);//과목 리스트
+		mav.addObject("dno",dno);//난이도 리스트
 		mav.addObject("localList",localList);//지역 리스트
 		mav.addObject("kindList",kindList);//카테고리 리스트(과목)
 		mav.addObject("diffList",diffList);//난이도 리스트
@@ -1298,24 +1307,24 @@ public class MemberController {
 		   Study study = studyService.selectStudyByMnoTypeStudy(sno);
 		   System.out.println("agree에 들어오나요"+list);
 			
-			   try {
-				   String[] freqs = study.getFreq().split(",");
-				   int cnt = checkDate(study, list, freqs);
-				   
-				   if (cnt == 0) {
-					   result = memberService.insertCrew(map);
-				   } else {
-					   //중복된게 있어서 회원을 팀원으로 수락 불가. 
-					   mav.addObject("msg","이미 참여한 스터디나 강의가 있는 회원입니다.");
-					   ///어디로 이동해야할까여..ㅋㅋ
-					   mav.setViewName("common/msg");
-				   }
-				   resultDel = memberService.deleteApply(map);
-			   } catch (NullPointerException e) {
-				   
-			   }
-			   
-
+		   try {
+               String[] freqs = study.getFreq().split(",");
+               int cnt = checkDate(study, list, freqs);
+               
+               if (cnt == 0) {
+                  System.out.println("###########중복이 없음##########");
+                  result = memberService.insertCrew(map);
+               } else {
+                  //중복된게 있어서 회원을 팀원으로 수락 불가. 
+                  System.out.println("&&&&&&&&&&&중복이 있음&&&&&&&&&&&");
+                  mav.addObject("msg","이미 참여한 스터디나 강의가 있는 회원입니다.");
+                  result=-1;
+                  
+               }
+               resultDel = memberService.deleteApply(map);
+            } catch (NullPointerException e) {
+               
+            }
 					
 		}else if("cancel".equals(confirm)){
 			result = memberService.insertApply(map);
@@ -1323,9 +1332,8 @@ public class MemberController {
 			
 		}
 		
-		if(result<=0 || resultDel<=0) {
-			mav.addObject("msg","다시 시도해주세요"); 
-			mav.setViewName("common/msg"); 
+		if(result==0 || resultDel==0) {
+			mav.addObject("msg","다시 시도해주세요");
 		}
 		
 		map.remove("mno");
@@ -1398,31 +1406,75 @@ public class MemberController {
 	//평가 목록 페이지
 	@RequestMapping(value="/member/searchMyPageEvaluation.do")
 	@ResponseBody 
-	public ModelAndView searchMyPageEvaluation( @RequestParam(value="eval",required=false, defaultValue="exp")	String eval 
-											, @ModelAttribute("memberLoggedIn") Member m ) { 
+	public ModelAndView searchMyPageEvaluation( @RequestParam(value="myPage",required=false, defaultValue="exp") String eval 
+												, @RequestParam(value="cPage",required=false, defaultValue="1" ) int cPage
+												, @RequestParam(value="count",required=false, defaultValue="0" ) int count
+												, @RequestParam(value="numPerPage",required=false, defaultValue="5" ) int numPerPage
+												, @RequestParam(value="kno",required=false, defaultValue="0" ) String kno
+												, @RequestParam(value="subno",required=false, defaultValue="0" ) String subno
+												, @RequestParam(value="point",required=false, defaultValue="0" ) String point
+												, @RequestParam(value="searchKwd",required=false, defaultValue="title" ) String searchKwd
+												, @RequestParam(value="kwd",required=false ) String kwd
+												, @ModelAttribute("memberLoggedIn") Member m ) { 
 		ModelAndView mav = new ModelAndView(); 
+		
+		kno = kno.split(",")[0];
+		subno = subno.split(",")[0];
+		
 		Map <String,Object> map = new HashMap<>();
 		map.put("eval", eval);
 		map.put("mno", m.getMno());
+		map.put("kno", kno);
+		map.put("subno", subno);
+		map.put("point", point);
+		map.put("searchKwd", searchKwd);
+		map.put("kwd", kwd);
 		
 		Map<String, Object> list = memberService.searchEvaluation(map);
 		List<Map<String,Object>> gradeList = memberService.selectGradeList();
-		//경험치 및 포인트 등급 보여주기
 		
-		System.out.println(list);
-		System.out.println(gradeList.get(0));
+		//나의 평가 리스트 tmno => 평가받는 회원
+		List<Map<String,Object>> evalList = memberService.selectEvalList(map, numPerPage, cPage); 
+		count = memberService.selectEvalCnt(map);
+		
+		//카테고리 리스트
+		List<Map<String,Object>> kindList=studyService.selectKind();
 		
 		
 		
 		//평가 관리 페이지로 이동
-		mav.addObject("eval", eval); 
+		mav.addObject("myPage", eval); 
+		
+		//경험치
 		mav.addObject("list", list); 
+		
+		//평가 점수 리스트
+		mav.addObject("evalList", evalList); 
 		mav.addObject("gradeList", gradeList); 
 		mav.addObject("gradeMin", gradeList.get(0)); 
 		mav.addObject("gradeMax", gradeList.get(gradeList.size()-1)); 
 		mav.addObject("m", m); 
-		mav.setViewName("member/MyEvaluation");
+		
+		//페이징
+		mav.addObject("numPerPage", numPerPage);
+		mav.addObject("cPage", cPage);
+		mav.addObject("count", count);
+		
+		//카테고리
+		mav.addObject("kindList", kindList);
+		mav.addObject("kno",kno);//카테고리 리스트
+		mav.addObject("subno",subno);//과목 리스트
+		
+		//평가 점수 검색
+		mav.addObject("searchKwd", searchKwd); //검색할 분야?
+		mav.addObject("kwd", kwd); // 검색할 키워드
+		mav.addObject("point", point); // 검색할 키워드
+		
+		//지식 점수 리스트
+		
 	
+		mav.setViewName("member/MyEvaluation");
+		
 	return mav; 
 	}
 	
@@ -1434,16 +1486,84 @@ public class MemberController {
 	public ModelAndView adminMemberView(@RequestParam(value = "mno", defaultValue = "0") int mno) {
 		
 		ModelAndView mav = new ModelAndView();
-		
-		Member m = memberService.selectOneMemberMno(mno);
+		Member member = memberService.selectOneMemberMno(mno);
 		List<Map<String, String>> favor = memberService.selectKind();
 		
-		
-		mav.addObject("member", m);
+		mav.addObject("member", member);
 		mav.addObject("favor", favor);
 		mav.setViewName("admin/adminMemberView");
 		return mav;
 	}
+	//회원 정보 수정 (전체)
+		@RequestMapping(value="/member/adminUpdateUser.do", method = RequestMethod.POST)
+		public ModelAndView adminUpdateUser(@RequestParam(value="mno") String mno,
+										@RequestParam(value="mid") String mid,
+										@RequestParam(value="mname") String mname,
+										@RequestParam(value="phone") String phone,
+										@RequestParam(value="preMprofile") String preMprofile,
+										@RequestParam(value="email") String email,
+										//@RequestParam(value="birth") Date birth,
+										//@RequestParam(value="gender") String gender,
+										@RequestParam(value="favor", required=false, defaultValue="no") String[] favor,
+										@RequestParam(value="cover", required=false) String cover,
+										@RequestParam(value="admin", required=false) String admin,										
+										@RequestParam(value="upFile", required=false) MultipartFile[] upFiles,
+										HttpServletRequest request
+										) {
+			ModelAndView mav = new ModelAndView();
+			Member member = new Member();
+			System.out.println("favor==="+favor);
+			try {
+				//1.파일 업로드 처리
+				String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/member");
+				
+				
+				/*********** MultipartFile을 이용한 파일 업로드 처리 로직 시작 **********/
+				for(MultipartFile f: upFiles) {
+					if(!f.isEmpty()) {
+						//파일명 재생성
+						String originalFileName = f.getOriginalFilename();
+						String ext = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
+						int rndNum = (int)(Math.random()*1000);
+						String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
+						
+						try {
+							f.transferTo(new File(saveDirectory+"/"+renamedFileName));
+						} catch (IllegalStateException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						member.setMprofile(renamedFileName);
+					}else {
+						member.setMprofile(preMprofile);					
+					}
+				}
+			}catch(Exception e) {
+				throw new MemberException("회원 정보 수정 오류");
+			}
+				
+				/*********** MultipartFile을 이용한 파일 업로드 처리 로직 끝 **********/
+				
+			  member.setMno(Integer.parseInt(mno));
+		      member.setMname(mname);
+		      member.setPhone(phone);
+		      member.setEmail(email);
+		      //member.setBirth(birth);
+		      //member.setGender(gender);
+		      member.setFavor(favor);
+		      member.setCover(cover);
+		      
+		      int result = memberService.updateMember(member);
+		     
+		      
+		      //mav.setViewName("common/msg");
+		      mav.setViewName("redirect:/member/adminMemberView.do?mno="+mno);
+		      
+		      return mav;
+		}
 
 	/* 로그인 및 마이페이지(김회진) 끝 **********************************************/
 	/*************************************
@@ -2418,7 +2538,26 @@ public class MemberController {
 		
 		
 	}
-
+	/* 강사확인  */
+	@RequestMapping(value = "/member/instructerCheckO.do", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> instructerCheckO(@RequestParam(value = "mno") int mno) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println("mno : "+ mno);
+		int result = memberService.instructorCheckO(mno);
+		System.out.println("result : "+ result);
+		if(result ==1) {
+			map.put("stack", false);
+			
+		}else {
+			
+			map.put("stack", true);
+		}
+		
+		return map;
+	}
+		
 	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)
 	@ResponseBody

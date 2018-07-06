@@ -175,4 +175,8 @@ public interface MemberDAO {
 
 	int updateInstructorCancel(int ino);
 
+	List<Map<String, Object>> selectEvalList(Map<String, Object> map, int numPerPage, int cPage);
+
+	int selectEvalCnt(Map<String, Object> map);
+
 }

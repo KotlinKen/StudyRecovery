@@ -27,7 +27,7 @@
 	
 	<!-- #10.1 파일업로드를 처리할 Resolver클래스 빈등록(빈이름 주의) -->
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">   
-	   <beans:property name="maxUploadSize" value="100000000" /> <!-- max 파일용량은 10MB이다. -->
+	   <beans:property name="maxUploadSize" value="10000000000" /> <!-- max 파일용량은 10MB이다. -->
 	</beans:bean>
 	
 	
@@ -75,6 +75,7 @@
 			<mapping path="/member/reviewFinish.do"/>
 			<mapping path="/member/reviewEnroll.do"/>
 			
+			
 			<beans:bean class="com.pure.study.common.interceptor.LoginCheckInterceptor" id="loginCheck"/>
 		</interceptor>
 	</interceptors>
@@ -110,6 +111,20 @@
 		<websocket:sockjs />
 	</websocket:handlers>
 
-	<beans:bean id="echoHandler" class="com.pure.study.common.websocket.EchoHandler" />
-	
+	<beans:bean id="echoHandler" class="com.pure.study.common.websocket.EchoHandler">
+		<beans:property name="sessions" ref="sessionsMap"/>
+	</beans:bean>
+	<beans:bean id="sessionsMap" class="java.util.HashMap">
+		<beans:constructor-arg>
+        	<beans:map key-type="java.lang.String" value-type="org.springframework.web.socket.WebSocketSession" />
+		</beans:constructor-arg>
+	</beans:bean>
+	<!-- 회원가입 확인 (장익순) 시작 -->
+	<interceptors>
+		<interceptor>
+		<mapping path="/member/memberAgreement.do"/>
+		<beans:bean class="com.pure.study.common.interceptor.EnrollInterceptora" id="enrollInterceptora"/>
+		</interceptor>
+	</interceptors>
+	<!-- 회원가입 확인 (장익순) 끝 -->
 </beans:beans>

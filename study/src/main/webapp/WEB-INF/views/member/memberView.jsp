@@ -4,6 +4,8 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@page import = 'com.pure.study.member.model.vo.Member, java.util.List, java.util.Map' %>
+<script src="${rootPath }/resources/js/jquery-3.3.1.js"></script>
+<script src="${rootPath}/resources/js/member/enroll.js"></script>
 <link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
 <style>
    span.check-no{
@@ -40,26 +42,7 @@
 		left: 760px;
 		display: inline;
 	}
-	.btncss{
-		width: auto;
-		height: auto;
-		font-size: 17px;
-		border-radius: 15px;
-		padding-left: 15px;
-		padding-right: 15px;
-		padding-top: 7px;
-		padding-bottom: 7px;
-		background: #ffffff;
-		border-style: solid;
-	}
-	.btncss:hover{
-		background: #0056e9;
-		color: white;
-	}
-	#submit:hover{
-		background: #0056e9;
-		color: white;
-	}
+	
 	
 </style>
 <div class="page">
@@ -82,8 +65,7 @@
          	<tr>
          		<th>회원 이름</th>
          		<td>
-         			<input type="text" name="mname" id="mname" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
-         			
+         			<input type="text" name="mname" id="name" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
          		</td>
          	</tr>
          	<tr>
@@ -175,7 +157,7 @@
          </div>
          </form>
          <form id="drop-form" action="${pageContext.request.contextPath }/member/memberDrop.do" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
-            <input type="hidden" name="mid" value="${memberLoggedIn.mid }" />
+            <input type="hidden" name="mno" value="${memberLoggedIn.mno }" />
          	<div class="btn-center2">
             	<button type="submit" class='btncss' id="drop">탈퇴하기</button>
             </div>

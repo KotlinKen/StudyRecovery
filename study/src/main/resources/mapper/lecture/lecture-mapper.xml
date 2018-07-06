@@ -486,7 +486,7 @@
    </delete>
    
 	<!-- 김률민 추가 -->
-	<select id="restTypeLister" resultMap="map">
+	<select id="restTypeLister_backup" resultMap="map">
 	SELECT S.*, M.*, T.*, D.*, L.*, SUB.*, K.*, 
 	(SELECT  COUNT(*) FROM APPLY AA WHERE S.SNO = AA.SNO) APPLYCNT 
 	FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
@@ -524,6 +524,70 @@
 			</choose>
 		</if>
 	</select>
+	
+	
+	<select id="restTypeLister" resultMap="map">
+	SELECT * FROM ( SELECT 
+		SNO, TITLE, FREQ, CONTENT, PRICE, UPFILE, RECRUIT, STATUS, TIME, TYPE, LDATE, SDATE, EDATE, S.REGDATE SREGDATE, S.ETC SETC,
+        M.MNO, MID, MNAME, PWD, PHONE, MPROFILE, COVER, EMAIL, BIRTH, GENDER, FAVOR, EXP, POINT, NPOINT, M.REGDATE MREGDATE, QDATE,
+        T.TNO, TOWNNAME,
+        D.DNO, DIFFICULTNAME, D.ETC DETC,
+        L.LNO, LOCAL,
+        SUB.SUBNO, SUBJECTNAME, SNAMEENAME,
+        K.KNO , KINDNAME, KNAMEENAME,
+		(SELECT  COUNT(*) FROM APPLY AA WHERE S.SNO = AA.SNO) APPLYCNT 
+		FROM STUDY S, MEMBER M, TOWN T, DIFF D, LOCAL L, SUBJECT SUB, KIND K
+		<trim prefix="WHERE" prefixOverrides="AND | OR ">
+		S.MNO = M.MNO AND S.TNO = T.TNO AND S.DNO = D.DNO AND 
+		T.LNO = L.LNO AND S.SUBNO = SUB.SUBNO AND SUB.KNO = K.KNO
+		
+			<if test="searchType != null and searchType != '' ">
+				<if test="searchKeyword != null and searchKeyword != '' ">
+				AND ${searchType} like '%'||#{searchKeyword}||'%'
+				</if>
+			</if>
+			
+			<!-- 스터디냐 강의냐 -->
+			<if test="type != null and type != '' ">
+				AND TYPE = #{type}
+			</if>
+			<if test="status != null and status !='' ">
+				AND STATUS = #{status}
+			</if>			
+
+		</trim>
+		<if test="order != null and order != '' ">
+			ORDER BY
+			<choose>
+				<when test="order eq 'SREGDATE'">SREGDATE</when>
+				<when test="order eq 'SDATE'">SDATE</when>
+				<when test="order eq 'LDATE'">LDATE</when>
+				<when test="order eq 'EDATE'">EDATE</when>
+				<when test="order eq 'SATUS'">STATUS</when>
+			</choose>
+			<choose>
+				<when test="desc eq 'desc'"> DESC </when>
+				<otherwise> ASC </otherwise>
+			</choose>
+		</if>
+		) 
+		<trim prefix="WHERE" prefixOverrides="AND | OR ">
+			<if test="rownum != null and rownum !='' ">
+				AND ROWNUM <![CDATA[ <= ]]> #{rownum}
+			</if>
+		</trim>
+		
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 <!-- 김률민 추가 -->   
 
 

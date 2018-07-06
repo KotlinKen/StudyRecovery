@@ -27,7 +27,7 @@
     }; */
     function sendMessage(){
             /*소켓으로 보내겠다.  */
-            sock.send($("#message").val());
+            sock.send("${mber.mid}," + $("#message").val());
     }
     //evt 파라미터는 웹소켓을 보내준 데이터다.(자동으로 들어옴)
     function onMessage(evt){
@@ -48,7 +48,7 @@
 <div id="data"></div>
 
 
-
+${ss}
 
 
 

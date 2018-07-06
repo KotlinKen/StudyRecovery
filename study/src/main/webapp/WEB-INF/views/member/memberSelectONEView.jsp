@@ -54,7 +54,6 @@ table {
 </style>
 
 <c:if test="${size!='10'}">
-
 	<!-- 장익순 작업 머리 버튼 설정 시작  -->
 	<jsp:include page="/WEB-INF/views/member/admin_member_button.jsp" />
 	<!-- 장익순 버튼 설정 끝 -->
@@ -104,30 +103,7 @@ table {
 
 	<div id="container" class="container"
 		style="min-width: 310px; height: 400px; margin: 0 auto">
-		<script type="text/javascript">
 
-	Highcharts.chart('container', {
-	    chart: {
-	        type: 'column'
-	    },
-	    title: {
-	        text: '평가 점수/지식점수'
-	    },
-	    xAxis: {
-	        categories: ['점수'] 
-	    },
-	    credits: {
-	        enabled: false
-	    },
-	    series: [{
-	        name: '평가점수',
-	        data: [${m.point}]
-	    }, {
-	        name: '지식점수',
-	        data: [${m.NPoint}]
-	    }]
-	});
-</script>
 	</div>
 
 	<!-- 점수 그래프 끝 -->
@@ -300,7 +276,7 @@ table {
 			a = ((double) exp / tblExp) * 100;
 		}
 	%>
-	<script>
+<script>
 	$(document).ready(function() { 
 		$("#myBar").attr("style", "width:"+<%=a%>+"%");
 	});
@@ -311,7 +287,7 @@ table {
 	});
 </script>
 
-	<script>
+<script>
 	function fn_goback() {
 		history.back();
 	}
@@ -331,16 +307,28 @@ table {
 		var url = "";
 		if(e == 0){
 			url="changPOINTPLUS.do";
-			if()
+			if(${m.point}+1000>100000){
+				return false;
+			}
+			
 		} 
 		if(e == 1){
 			url="changPOINTMINUS.do";
+			if(${m.point}-1000<-100000){
+				return false;
+			}
 		}
 		if(e == 2){
 			url="changNPOINTPLUS.do";
+			if(${m.NPoint}+1000>100000){
+				return false;
+			}
 		}
 		if(e == 3){
 			url="changNPOINTMINUS.do";
+			if(${m.NPoint}-1000 < 0){
+				return false;
+			}
 		}
 		console.log(url)
 		var data = new FormData();
@@ -354,7 +342,19 @@ table {
 			dataType : "json",
 			success : function(date) {
 				console.log(date.list[0]);
-				location.reload();
+				if(e == 0){
+					point(date.list[0].POINT,${m.NPoint});
+				} 
+				if(e == 1){
+					point(date.list[0].POINT,${m.NPoint});
+				}
+				if(e == 2){
+					point(${m.point},date.list[0].NPOINT)
+				}
+				if(e == 3){
+					point(${m.point},date.list[0].NPOINT)
+				}
+				
 			},
 			error : function(jqxhr, textStatus, errorThrown) {
 				console.log(jqxhr);
@@ -365,6 +365,35 @@ table {
 			processData : false
 		});
 	}
+</script>
+<script type="text/javascript">
+$(document).ready(function() { 
+	point(${m.point},${m.NPoint})
+});
+
+function point(point,npoint) {
+	Highcharts.chart('container', {
+	    chart: {
+	        type: 'column'
+	    },
+	    title: {
+	        text: '평가 점수/지식점수'
+	    },
+	    xAxis: {
+	        categories: ['점수'] 
+	    },
+	    credits: {
+	        enabled: false
+	    },
+	    series: [{
+	        name: '평가점수',
+	        data: [point]
+	    }, {
+	        name: '지식점수',
+	        data: [npoint]
+	    }]
+	});
+}
 </script>
 
 	<jsp:include page="/WEB-INF/views/common/admin_footer.jsp" />

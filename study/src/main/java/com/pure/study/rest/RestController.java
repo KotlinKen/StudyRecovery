@@ -1,7 +1,5 @@
 package com.pure.study.rest;
 
-import java.security.Principal;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +8,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.socket.WebSocketSession;
 
 import com.pure.study.adversting.model.service.AdverstingService;
 import com.pure.study.adversting.model.vo.Adversting;
@@ -35,10 +32,15 @@ import com.pure.study.common.websocket.EchoHandler;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.rest.model.RestService;
 import com.pure.study.study.model.service.StudyService;
 @SessionAttributes({ "memberLoggedIn" })
 @Controller
 public class RestController {
+	
+	@Autowired
+	private RestService restService;
+	
 	@Autowired
 	private StudyService studyService;
 	
@@ -65,6 +67,10 @@ public class RestController {
 	
 	@Autowired
 	private EchoHandler echoHandler;
+	
+	@Autowired
+	@Qualifier("sessionsMap")
+	private HashMap<String, WebSocketSession> sessions;
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -240,6 +246,25 @@ public class RestController {
 		return mav;
 	}
 	
+	// none Rest
+	@RequestMapping(value="/rest/board/list", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView boardList(@RequestParam Map<String, String> queryMap, 
+								  @RequestParam(value="type", required=false, defaultValue="") String type,		
+								  @RequestParam(value="cPage", required=true, defaultValue="1") int cPage,		
+								  @RequestParam(value="viewCount", required=true, defaultValue="10") int viewCount){		
+		
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		List<Map<String, String>> list = boardService.selectBoardList(cPage, viewCount, queryMap);
+		int total = boardService.selectCount(queryMap);
+		mav.addObject("list", list);
+		mav.addObject("queryMap", queryMap);
+		mav.addObject("viewCount", viewCount);
+		mav.addObject("cPage",cPage);
+		mav.addObject("total",total);
+		return mav;
+	}
 	
 	
 	//광고관련
@@ -344,6 +369,26 @@ public class RestController {
 		return mav;
 	}
 	
+	@RequestMapping(value="/rest/{location}/statistics", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView statistics( 
+					  @PathVariable(value="location", required=false) String location, 
+					  @RequestParam(value="table", required=true) String table, 
+					  @RequestParam(value="start", required=true) String start, 
+					  @RequestParam(value="end", required=true) String end, 
+					  @RequestParam(value="type", required=false) String type, 
+					  @RequestParam Map<String, String> queryMap) {
+		
+		System.out.println(queryMap);
+		ModelAndView mav = new ModelAndView("jsonView");
+		List<Map<String, String>> list = restService.statistics(queryMap);
+		mav.addObject("list", list);
+		return mav;
+		
+	}
+	
+	
+	
 	
 	
 	@RequestMapping(value="/rest/AllSessions", method=RequestMethod.GET)
@@ -381,7 +426,7 @@ public class RestController {
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("common/chat");
-		
+		mav.addObject("ss", sessions);
 		return mav;
 	}
 	

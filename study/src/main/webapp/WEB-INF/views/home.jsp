@@ -187,8 +187,8 @@
 <script>
 $(function(){
 
-	categoryList('study', "", 6, "SDATE", 'desc');
-	categoryList('lecture', "", 6, "SDATE", 'desc');
+	categoryList('study', "", 6, "SREGDATE", 'desc');
+	categoryList('lecture', "", 6, "SREGDATE", 'desc');
 	$('.carousel').carousel();
 	
 	$.ajax({
