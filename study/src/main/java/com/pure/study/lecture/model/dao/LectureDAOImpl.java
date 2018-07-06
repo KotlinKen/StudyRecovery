@@ -168,8 +168,8 @@ public class LectureDAOImpl implements LectureDAO {
 	}
 
 	@Override
-	public void successPayCancel(Map<String, Object> cancelMap) {
-		session.insert("lecture.succesPayCancel", cancelMap);
+	public void successPayCancel(long pno) {
+		session.insert("lecture.succesPayCancel", pno);
 	}
 
 
@@ -182,5 +182,31 @@ public class LectureDAOImpl implements LectureDAO {
 	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key) {
 		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
 		return session.selectList("lecture.selectPayList", key, rowBounds);
+	}
+
+	@Override
+	public void successAdminPayCancel(long pno) {
+		session.update("lecture.successAdminPayCancel", pno);
+	}
+
+	@Override
+	public List<Map<String, String>> searchAdminLectureList(int cPage, int numPerPage, Map<String, Object> map) {
+		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
+		return session.selectList("lecture.searchAdminLectureList", map, rowBounds);
+	}
+
+	@Override
+	public int selectTotalAdminLectureCount(Map<String, Object> map) {
+		return session.selectOne("lecture.selectTotalAdminLectureCount",map);
+	}
+
+	@Override
+	public int peopleCnt(int sno) {
+		return session.selectOne("lecture.peopleCnt", sno);
+	}
+
+	@Override
+	public int recruitCnt(int sno) {
+		return session.selectOne("lecture.recruitCnt", sno);
 	}
 }

@@ -165,8 +165,8 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public void successPayCancel(Map<String, Object> cancelMap) {
-		ld.successPayCancel(cancelMap);
+	public void successPayCancel(long pno) {
+		ld.successPayCancel(pno);
 	}
 
 	@Override
@@ -179,5 +179,29 @@ public class LectureServiceImpl implements LectureService {
 		return ld.selectPayList(cPage, numPerPage, key);
 	}
 
+	@Override
+	public void successAdminPayCancel(long pno) {
+		ld.successAdminPayCancel(pno);
+	}
+
+	@Override
+	public List<Map<String, String>> searchAdminLectureList(int cPage, int numPerPage, Map<String, Object> map) {
+		return ld.searchAdminLectureList(cPage, numPerPage, map);
+	}
+
+	@Override
+	public int selectTotalAdminLectureCount(Map<String, Object> map) {
+		return ld.selectTotalAdminLectureCount(map);
+	}
+
+	@Override
+	public int peopleCnt(int sno) {
+		return ld.peopleCnt(sno);
+	}
+
+	@Override
+	public int recruitCnt(int sno) {
+		return ld.recruitCnt(sno);
+	}
 
 }

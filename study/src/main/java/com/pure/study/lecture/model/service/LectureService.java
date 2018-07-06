@@ -65,10 +65,20 @@ public interface LectureService {
 
 	long selectPay(Map<String, Integer> map);
 
-	void successPayCancel(Map<String, Object> cancelMap);
+	void successPayCancel(long pno);
 
 	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key);
 
 	int selectTotalPayCount();
+
+	void successAdminPayCancel(long pno);
+
+	List<Map<String, String>> searchAdminLectureList(int cPage, int numPerPage, Map<String, Object> map);
+
+	int selectTotalAdminLectureCount(Map<String, Object> map);
+
+	int peopleCnt(int sno);
+
+	int recruitCnt(int sno);
 
 }

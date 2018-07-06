@@ -111,8 +111,7 @@ p.noMore{
 				
 			}
 		});
-		/* 처음에 조건없이 리스트를 가져오는 ajax */
-				
+		/* 처음에 조건없이 리스트를 가져오는 ajax */				
 		
 		// 검색
 		$("#searchLectureBtn").click(function(){
@@ -299,16 +298,14 @@ p.noMore{
 			 }else{
 				  if(!$("p#noMore").prop("noMore")){
 					  $("p#noMore").addClass("noMore");  
-				  }
-				  
+				  }				  
 			  }//if문 끝			
 		}    
    });
 </script>
 <div class="container">
-	<c:if test="${check > 0 }">
-	   <button type="button" onclick="location.href='${pageContext.request.contextPath}/lecture/insertLecture.do'">강의 작성</button>	
-	</c:if>
+   <button type="button" id="insertLectureBtn">강의 작성</button>	
+
    <div id="lectureList-container">   
       <!-- 지역 -->
       <label for="local">지역 : </label>
@@ -323,7 +320,7 @@ p.noMore{
       &nbsp; 
       
       <select name="tno" id="town">
-       <option value='0'>전체</option>
+		<option value='0'>전체</option>
       </select> 
       
       <!-- 카테고리 -->

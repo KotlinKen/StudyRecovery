@@ -238,19 +238,21 @@ function categoryList(type, status, rownum, order, desc){
         			var upfile = upfiles.split(",");
         		
         		var study = data.list[index]; 
+        		
         		rmHtml += "<li class='col-md-4'>";
         		rmHtml += "<div class='pixel'>";
         		
         		
         		if(type == "study"){       		
-       			rmHtml += "<a href='${rootPath}/study/studyView.do?sno="+study.SNO+"'>";
-   				rmHtml += "<div class='photoSection'>";
-	   					rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+"), url(${rootPath}/resources/images/nones.gif)'></div>";
+	       			rmHtml += "<a href='${rootPath}/study/studyView.do?sno="+study.SNO+"'>";
+	   				rmHtml += "<div class='photoSection'>";
+   					rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+"), url(${rootPath}/resources/images/nones.gif)'></div>";
    				}else{
-       			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"'>";
-  				rmHtml += "<div class='photoSection'>";	
+	       			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"&mno=" + ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"} +"'>";
+	  				rmHtml += "<div class='photoSection'>";	
 	   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[0]+"), url(${rootPath}/resources/images/nones.gif)'></div>";
    				}
+        		
    				rmHtml += "</div>";
 				rmHtml += "<div class='inforSection'>";
   				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 18)+"</h4>";
