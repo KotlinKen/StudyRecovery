@@ -199,4 +199,14 @@ public class LectureDAOImpl implements LectureDAO {
 	public int selectTotalAdminLectureCount(Map<String, Object> map) {
 		return session.selectOne("lecture.selectTotalAdminLectureCount",map);
 	}
+
+	@Override
+	public int peopleCnt(int sno) {
+		return session.selectOne("lecture.peopleCnt", sno);
+	}
+
+	@Override
+	public int recruitCnt(int sno) {
+		return session.selectOne("lecture.recruitCnt", sno);
+	}
 }

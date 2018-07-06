@@ -77,4 +77,8 @@ public interface LectureService {
 
 	int selectTotalAdminLectureCount(Map<String, Object> map);
 
+	int peopleCnt(int sno);
+
+	int recruitCnt(int sno);
+
 }

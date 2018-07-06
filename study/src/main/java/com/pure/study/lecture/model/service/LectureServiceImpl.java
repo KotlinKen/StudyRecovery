@@ -194,4 +194,14 @@ public class LectureServiceImpl implements LectureService {
 		return ld.selectTotalAdminLectureCount(map);
 	}
 
+	@Override
+	public int peopleCnt(int sno) {
+		return ld.peopleCnt(sno);
+	}
+
+	@Override
+	public int recruitCnt(int sno) {
+		return ld.recruitCnt(sno);
+	}
+
 }

@@ -292,6 +292,17 @@
       SELECT COUNT(*) FROM CREW WHERE SNO = #{sno} AND MNO = #{mno}
    </select>
    
+   <select id="peopleCnt" resultType="_int">
+   		SELECT COUNT(*) AS CNT
+		FROM STUDY S, CREW C
+		WHERE S.SNO = C.SNO
+		AND S.SNO = #{sno}
+   </select>
+   
+   <select id="recruitCnt" resultType="_int">
+   		SELECT RECRUIT FROM STUDY WHERE SNO = #{sno}
+   </select>
+   
    <select id="selectLectureListByMno" resultMap="map">
       SELECT SDATE,
             EDATE,

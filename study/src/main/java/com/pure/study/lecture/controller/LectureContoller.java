@@ -318,30 +318,39 @@ public class LectureContoller {
 		// 이미 강의가 들어가 있는지 확인.
 		result = ls.preinsertApply(preCheck);
 
-		if (result == 0) {
-			Map<String, Object> key = new HashMap<>();
-
-			key.put("mno", mno);
-			key.put("key", "crew");
-
-			// mno로 crew쪽 맵 뽑아오기.
-			List<Map<String, Object>> list = ls.selectLectureListByMno(key);
-			Lecture lecture = ls.selectLectureByMnoTypeLecture(sno);
-
-			try {
-				String[] freqs = lecture.getFreqs().split(",");
-				int cnt = checkDate(lecture, list, freqs);
-
-				if (cnt != 0)
-					msg = "날짜나 요일, 시간이 겹치는 강의 또는 스터디가 존재합니다.";
-
-			} catch (NullPointerException e) {
-				msg = "";
-			}
-
-		} else {
-			msg = "이미 신청한 강의입니다.";
+		// 강의에 남은 자릿수 확인.
+		// 들어간 인원 확인.
+		int peopleCnt = ls.peopleCnt(sno);
+		int recruitCnt = ls.recruitCnt(sno);
+		
+		if( peopleCnt < recruitCnt ) {
+			if (result == 0) {
+				Map<String, Object> key = new HashMap<>();
+				
+				key.put("mno", mno);
+				key.put("key", "crew");
+				
+				// mno로 crew쪽 맵 뽑아오기.
+				List<Map<String, Object>> list = ls.selectLectureListByMno(key);
+				Lecture lecture = ls.selectLectureByMnoTypeLecture(sno);
+				
+				try {
+					String[] freqs = lecture.getFreqs().split(",");
+					int cnt = checkDate(lecture, list, freqs);
+					
+					if (cnt != 0)
+						msg = "날짜나 요일, 시간이 겹치는 강의 또는 스터디가 존재합니다.";				
+				} catch (NullPointerException e) {
+					msg = "";
+				}
+			} else {
+				msg = "이미 신청한 강의입니다.";
+			}				
 		}
+		else {
+			msg="신청자 수가 초과했습니다.";
+		}
+		
 
 		return msg;
 	}
