@@ -96,7 +96,7 @@ function loadInstructor(cPage, pageBarSize, type){
 			$(".table-responsive tbody").html(rmHtml);
 			
 			$(".linkmno").on("click",function(){
-				location.href = "<%=rootPath%>/member/adminMemberView.do?mno="+this.id;
+				location.href = "../member/adminMemberView.do?mno="+this.id;
 			});
 
 		},error:function(){

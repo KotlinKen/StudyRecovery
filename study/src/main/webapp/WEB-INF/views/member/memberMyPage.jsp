@@ -39,7 +39,7 @@
 		<a href="#" onclick="javascript:document.myForm.submit();" >강사신청</a>
 	</li>
 	<li class='btn-page'>
-		<a href="${rootPath }/member/searchMyPageEvaluation.do" >평가 관리</a>
+		<a href="${rootPath }/member/searchMyPageEvaluation.do" >내 평가</a>
 	</li>
 </ul>
 	

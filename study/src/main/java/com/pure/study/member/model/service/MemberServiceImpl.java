@@ -429,5 +429,16 @@ public class MemberServiceImpl implements MemberService {
 	public int updateInstructorCancel(int ino) {
 		return memberDAO.updateInstructorCancel(ino);
 	}
+
+	@Override
+	public List<Map<String, Object>> selectEvalList(Map<String, Object> map, int numPerPage, int cPage) {
+		return memberDAO.selectEvalList(map, numPerPage, cPage);
+	}
+
+	@Override
+	public int selectEvalCnt(Map<String, Object> map) {
+		return memberDAO.selectEvalCnt(map);
+	}
+
 	
 }

@@ -157,7 +157,7 @@
          </div>
          </form>
          <form id="drop-form" action="${pageContext.request.contextPath }/member/memberDrop.do" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
-            <input type="hidden" name="mid" value="${memberLoggedIn.mid }" />
+            <input type="hidden" name="mno" value="${memberLoggedIn.mno }" />
          	<div class="btn-center2">
             	<button type="submit" class='btncss' id="drop">탈퇴하기</button>
             </div>
