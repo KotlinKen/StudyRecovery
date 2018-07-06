@@ -27,6 +27,7 @@ public class AdminCheckInterceptor extends HandlerInterceptorAdapter {
 				String admin = memberLoggedIn.getMid();
 				if(!(admin.equals("manager"))) {
 					logger.info("비정상적 접근 : 관리자만 접근 가능합니다.");
+					logger.info("비정상적 접근 : 관리자만 접근 가능합니다.");
 					request.setAttribute("msg", "비정상적 접근 : 관리자만 접근 가능합니다.");
 					request.setAttribute("loc", "/");
 					request.getRequestDispatcher("/WEB-INF/views/common/msg.jsp").forward(request, response);
@@ -50,6 +51,9 @@ public class AdminCheckInterceptor extends HandlerInterceptorAdapter {
 				String admin = memberLoggedIn.getMid();
 				if(!(admin.equals("manager"))) {
 					logger.info("비정상적 접근 : 관리자만 접근 가능합니다.");
+					request.setAttribute("msg", "비정상적 접근 : 관리자만 접근 가능합니다.");
+					request.setAttribute("loc", "/");
+					request.getRequestDispatcher("/WEB-INF/views/common/msg.jsp").forward(request, response);
 					return false;
 				}else {
 					logger.info(admin+"님 환영합니다.");

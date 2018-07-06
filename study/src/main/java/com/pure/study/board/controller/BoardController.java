@@ -113,7 +113,9 @@ public class BoardController {
 	
 
 	@RequestMapping("/{location}/boardWrite")
-	public ModelAndView boardForm(@PathVariable(value="location", required=false) String location) {
+	public ModelAndView boardWrite(@PathVariable(value="location", required=false) String location, 
+								   @RequestParam(required=false) Map<String, String> queryMap,
+								   HttpServletRequest request) {
 		ModelAndView mav = new ModelAndView();
 		if(location == null || !(location.equals("admin") || location.equals("board")) ) {
 			mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
@@ -125,7 +127,7 @@ public class BoardController {
 	}
 	
 	@RequestMapping("/{location}/boardWriteEnd")
-	public ModelAndView insertBoard(Board board, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles, HttpServletRequest request, @PathVariable(value="location", required=false) String location) {
+	public ModelAndView boardWriteEnd(Board board, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles, HttpServletRequest request, @PathVariable(value="location", required=false) String location) {
 		ModelAndView mav = new ModelAndView();
 		List<String> images = new ArrayList<String>();
 		
@@ -135,6 +137,27 @@ public class BoardController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
+		
+		System.out.println("testddddddddddddddddd");
+		
+		/*		Member m = (Member) request.getSession().getAttribute("memberLoggedIn");
+		if(board.getType().equals("event") || board.getType().equals("공지")) {
+			if(m != null) {
+				if(!m.getMid().equals("manager")) {
+					mav.addObject("msg", "잘못된 경로로 접근 하셨습니다.");
+					mav.addObject("loc", "/");
+					mav.setViewName("common/msg");
+					return mav;
+				}
+			}
+		}*/
+		if(board.getType() == null) {
+			board.setType("일반");
+		}
+		
+	
+		
+		
 		
 		try {
 			//1.파일업로드 처리
@@ -245,11 +268,12 @@ public class BoardController {
 			mav.setViewName("common/msg");
 			return mav;
 		}
+		Member m = (Member) request.getSession().getAttribute("memberLoggedIn");
+		
+		
 		
 		Map<String, String> oldFeed = boardService.selectOne(bno);
 		
-		HttpSession session = request.getSession();
-		Member m = (Member)session.getAttribute("memberLoggedIn");
 		String boardWriter = String.valueOf(oldFeed.get("MNO"));
 		
 		if(m == null) {
@@ -294,6 +318,9 @@ public class BoardController {
 				mav.setViewName("common/msg");
 			}
 		}
+		
+
+		
 		
 		
 		System.out.println("test"+ map.get("oldFileList"));

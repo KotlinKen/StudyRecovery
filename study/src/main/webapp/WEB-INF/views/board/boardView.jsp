@@ -2,6 +2,8 @@
 <jsp:include page ="/WEB-INF/views/common/header.jsp">
 	<jsp:param value="${board.TITLE }" name="pageTitle"/>
 </jsp:include>
+
+ 
 <div class="container">
 <c:set var = "images" value = "${fn:split(board.UPFILE, ',')}" />
 <br />
@@ -412,7 +414,7 @@ function fn_fork(mno, bno, rno){
 	.felxerJustify{justify-content: center; display:flex;}
 	.replyPic{width:60px; height:60px; border-radius:30px; }
 	.replyMid{}
-	.replyContent{flex-grow:10;border: 1px solid #ededed; flex-basis: 400px;}
+	.replyContent{flex-grow:10;border: 1px solid #ededed; flex-basis: 400px;word-break:break-all;}
 	.oldContent{padding:10px;}
 	.newContent{width:100%; height:100%; padding:10px;}
 	.newContentBtn{align-self:center; flex-basis:90px; margin-left:10px; border:none; }

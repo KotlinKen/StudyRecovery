@@ -75,6 +75,7 @@
 			<mapping path="/member/reviewFinish.do"/>
 			<mapping path="/member/reviewEnroll.do"/>
 			
+			
 			<beans:bean class="com.pure.study.common.interceptor.LoginCheckInterceptor" id="loginCheck"/>
 		</interceptor>
 	</interceptors>

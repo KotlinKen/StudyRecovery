@@ -1,27 +1,35 @@
 <%@page import="java.util.Map"%>
 <jsp:include page ="/WEB-INF/views/common/header.jsp"><jsp:param value="게시판" name="pageTitle"/></jsp:include>
+<style>
 
+.card-header{border-bottom:none;}
+.btn-link{text-decoration:none;}
+.btn-link:hover{text-decoration:none;}
+.card-body{padding:2.4rem}
+.tabs .actived{color:#0056e9;}
+
+</style>
 <div class="container">
 	<div class="tabs">
 		<span class="">
-			<a href="${rootPath }/board/boardList?type=일반">전체보기</a>
+			<a href="${rootPath }/board/boardList?type=일반" class="${param.type eq '일반' ? 'actived' : '' }">전체보기</a>
 		</span>
 		<span class="seperate">|</span>
 		<span class="">
-			<a href="${rootPath }/board/boardList?type=공지">공지사항</a>
+			<a href="${rootPath }/board/boardList?type=공지" class="${param.type eq '공지' ? 'actived' : '' }">공지사항</a>
 		</span>
 		<span class="seperate">|</span>
 		<span class="">
-			<a href="${rootPath }/board/boardList?type=one">1:1</a>
+			<a href="${rootPath }/board/boardList?type=one" class="${param.type eq 'one' ? 'actived' : '' }">1:1</a>
 		</span>
 		<span class="seperate">|</span>
 		<span class="">
-			<a href="${rootPath }/board/boardList?type=faq">FAQ</a>
+			<a href="${rootPath }/board/boardList?type=faq" class="${param.type eq 'faq' ? 'actived' : '' }">FAQ</a>
 		</span>
 		
 		<span class="seperate">|</span>
 		<span class="">
-			<a href="${rootPath }/board/boardList?type=event">이벤트</a>
+			<a href="${rootPath }/board/boardList?type=event" class="${param.type eq 'event' ? 'actived' : '' }">이벤트</a>
 		</span>
 	</div>
 	<c:if test="${param.type ne 'faq' }"> 
@@ -31,7 +39,9 @@
 			<div class="form-group col-md-1" style="max-width:90px;">
 				<select name="searchType" id="searchType">
 					<option value="title" ${param.searchType eq "title" || param.searchType eq null ? "selected" : "" } >제목</option>
+					<c:if test="${mber.mid eq 'manager' }"> 
 					<option value="mname" ${param.searchType eq "mname" ? "selected" : "" } >작성자</option>
+					</c:if>
 					<option value="content" ${param.searchType eq "content" ? "selected" : "" } >내용</option>
 				</select>
 			</div>
@@ -51,12 +61,14 @@
 			총 <span style="font-weight: bold;"> ${count } </span>건의 게시물이 있습니다.
 		</div>
 	</div>
-	<c:if test="${mber != null }">
+	<c:if test="${mber != null && param.type ne 'event' && param.type ne '공지' || mber.mid eq 'manager'}">
 	<div class="rightSection">
+		<c:if test="${mber.mid ne 'manager'}">
 		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=one'">
 			1:1 문의하기
 		</button>
-		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=일반'">
+		</c:if>
+		<button type="button" class="btn btn_reg" onclick="location.href='boardWrite?type=${param.type}'">
 			게시글 등록
 		</button>
 	</div>
@@ -104,9 +116,14 @@
 </c:if>
 
 <c:if test="${param.type eq 'faq' }"> 
-<div class="accordion" id="accordionExample">
+<div style="margin-top:20px;">
+	<h1>자주 묻는 질문</h1>
+</div>
+
+<div class="accordion" id="accordionExample" style="margin:30px 0px 60px 0px;">
 
 <c:forEach var="list" items="${list}" varStatus="status">
+
   <div class="card">
     <div class="card-header" id="headingOne">
       <h5 class="mb-0">

@@ -3,8 +3,14 @@
 	<jsp:param value="게시물 수정" name="pageTitle"/>
 </jsp:include>
 <div class="container">
-<c:set var = "images" value = "${fn:split(board.UPFILE, ',')}" />
+	<div class="commonTitler" >
+		<h1>게시글 수정</h1>
+	</div>
+</div>
 
+
+<div class="container" style="margin-bottom:60px;">
+<c:set var = "images" value = "${fn:split(board.UPFILE, ',')}" />
 
 
 <form action="${rootPath}/board/boardModifyEnd"  method="post" enctype="multipart/form-data">

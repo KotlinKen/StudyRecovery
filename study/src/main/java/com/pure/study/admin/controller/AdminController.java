@@ -75,4 +75,11 @@ public class AdminController {
 		return mav;
 	}
 	
+	/*통계  페이지*/
+	@RequestMapping("/admin/adminStatistics")
+	public ModelAndView adminStatistics() {
+		ModelAndView mav = new ModelAndView();
+		return mav;
+	}
+	
 }
