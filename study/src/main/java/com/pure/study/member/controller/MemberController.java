@@ -2418,7 +2418,26 @@ public class MemberController {
 		
 		
 	}
-
+	/* 강사확인  */
+	@RequestMapping(value = "/member/instructerCheckO.do", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> instructerCheckO(@RequestParam(value = "mno") int mno) {
+		Map<String, Object> map = new HashMap<>();
+		
+		System.out.println("mno : "+ mno);
+		int result = memberService.instructorCheckO(mno);
+		System.out.println("result : "+ result);
+		if(result ==1) {
+			map.put("stack", false);
+			
+		}else {
+			
+			map.put("stack", true);
+		}
+		
+		return map;
+	}
+		
 	/* 관리자 접속 여부 확인 
 	@RequestMapping(value="/member/adminInnerCheck.do",method = RequestMethod.POST)
 	@ResponseBody
