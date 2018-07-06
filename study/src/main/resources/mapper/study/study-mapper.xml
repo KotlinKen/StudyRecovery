@@ -4,10 +4,12 @@
  <select id="studyList" resultMap="mapForStudy">
  	select  s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
  	to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate, 
- 	m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname 
+ 	m.mprofile,m.mname,m.mid,m.point,m.exp,m.npoint,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname,
+ 	(select count(*) applycnt from apply where sno=s.sno) applycnt,
+ 	decode(s.status,'모집 마감',2,'진행 중',3,'스터디 종료',4,1) statusOrder 
  	from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
 	where s.type='study'
-	order by s.regdate desc
+	order by statusOrder, s.regdate desc
  </select>
  <resultMap type="map" id="mapForStudy">
  	<result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
@@ -56,7 +58,8 @@
 	  select s.sno,s.mno, m.mname mname, m.mprofile, m.mid, k.kindname kname, k.kno,sb.subno,sb.subjectname subname, l.lno,l.local lname,t.tno,t.townname tname,
 	  		d.dno,d.DIFFICULTNAME dname,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,to_char(s.ldate,'yyyy-mm-dd') ldate,
 	  		to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
-	  		decode(s.status,'마감 임박',1,'모집 중',2,'모집 마감',3,'진행 중',4,'스터디 종료',5) statusOrder
+	  		decode(s.status,'마감 임박',1,'모집 중',2,'모집 마감',3,'진행 중',4,'스터디 종료',5) statusOrder,
+	  		(select count(*) applycnt from apply where sno=s.sno) applycnt
 	  from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno 
 	  			   join subject sb on s.subno=sb.subno join kind k on sb.kno=k.kno join member m on s.mno=m.mno
 	  where s.type='study' 
@@ -180,7 +183,8 @@
   select    s.sno,s.mno,s.subno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
   		  to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate, to_char(s.regdate,'yyyy-mm-dd') regdate,
  		  m.mprofile,l.local lname,l.lno,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname,
-          decode(status,'마감 임박',1,'모집 중','2') statusOrder
+          decode(status,'마감 임박',1,'모집 중','2') statusOrder,
+          (select count(*) applycnt from apply where sno=s.sno) applycnt
   from 	  study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno join member m on s.mno=m.mno join subject sb on sb.subno=s.subno join kind k on k.kno=sb.kno 
   where s.type='study' and s.status in ('모집 중','마감 임박')
     <if test="lno!=0">
@@ -251,7 +255,8 @@
 	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
 	 		s.etc,k.kno,SUBJECTNAME subname,SNAMEENAME subename, kindname kname, KNAMEENAME kename, DIFFICULTNAME dname,local lname, 
 	 		mid, mname, mprofile,cover,
-	 		decode(s.status,'마감 임박',1,'모집 중',2) statusOrder
+	 		decode(s.status,'마감 임박',1,'모집 중',2) statusOrder,
+	 		(select count(*) applycnt from apply where sno=s.sno) applycnt
 	  from(
 	        select count(*) cnt, s.sno 
 	        from apply a right outer join study s on a.sno=s.sno 

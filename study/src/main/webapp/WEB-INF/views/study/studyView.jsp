@@ -79,7 +79,7 @@ function studyWish(sno){
 				data:{sno:sno,mno:mno},
 				success:function(data){
 					console.log("찜했다");
-					$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/nowish.png");
+					$("button#btn-wish").val("찜취소");
 					if(confirm("찜했습니다. 찜 장바구니로 가시겠습니까?")){
 						
 						location.href="${pageContext.request.contextPath}/member/searchMyPageKwd.do?myPage=wish";
@@ -109,6 +109,8 @@ function studyWish(sno){
 	
 }
 $(function(){
+	
+	if($("input#isWish").val()==1) $("button#btn-wish").val("찜취소");
 	
 	$("button.editStudy").click(function(){
 		$.ajax({
@@ -241,8 +243,8 @@ $(function(){
 <span>${study.SDATE }~${study.EDATE }</span>
 <c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
 	<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
-		<button type="button" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
-		<button type="button" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
+		<button type="button" id="btn-apply" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
+		<button type="button" id="btn-wish"  onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
 	</c:if>
 	
 </c:if>	

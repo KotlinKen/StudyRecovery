@@ -6,30 +6,28 @@
 <jsp:include page="/WEB-INF/views/common/header.jsp">
 	<jsp:param value="" name="pageTitle"/>
 </jsp:include>	 
-<style>
-p.noMore{
-	display:none;
-}
-div#study-list{
-	position:relative;
-	padding-left: 30px;
-	padding-right: 30px;
-	margin-top:50px;
-	text-align: center;
-}
-div.studyone{
-	display: inline-block;
-	width: 330px;
-	height: 600px;
-	margin-right: 50px;
-}
-</style>
+<link href="https://fonts.googleapis.com/css?family=Gaegu|Song+Myung" rel="stylesheet">
 <script>
 $(function(){
 	$("p#noMore").addClass("noMore");
 	
 	$("#subject").hide();
 	$("#town").hide();
+	
+	$(".rm_study_list").on("mouseenter mouseleave", ".profile", function(e){
+		   $pf = $(this);
+		   console.log($pf.siblings("div.profileInfors"));
+		   
+		   
+		   console.log(e.type);
+		   
+		   if(e.type=="mouseenter"){
+		      $pf.siblings("div.profileInfors").css({"display":"block"}).stop().animate({ "opacity" : "0.9"}, 100);
+		   }else{
+		      $pf.siblings("div.profileInfors").stop().animate({ "opacity" : "0"}, 100,"linear", function(){console.log($(this).css({"display": "none"}))});
+		   }
+		   
+	 });
 	
 	/* 처음에 조건없이 리스트를 가져오는 ajax */
 	$.ajax({
@@ -40,22 +38,57 @@ $(function(){
 			$("input#numPerPage").val(data.numPerPage);
 			$("input#cPageNo").val(data.cPage);
 			var html="";
-        	for(index in data.list){
-        	    html+="<div class='studyone'>";
-        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
-        		html+="<span class='studyinfo'>"+data.list[index].LNAME+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
-        		html+="<span class='studyinfo'>"+data.list[index].KNAME+ data.list[index].SUBNAME+"</span><br/>";
-        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
-        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
-        		html+="<span class='studyinfo'>"+ data.list[index].MPROFILE +"</span><br/>";
-        		if(data.list[index].UPFILE==undefined) html+="<span class='studyinfo'>"+ "사진없음" +"</span><br/>";
-        		else html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
-        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
-        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
-        		html+="</div>";
+			for(index in data.list){
+				var study = data.list[index];
+				var upfile = study.UPFILE.split(",");
+        	    html+="<li class='col-md-4'>";
+        	    html+="<div class='pixel'>";
+        	    html+="<a href='studyView.do?sno="+study.SNO+"'>";
+        	    html+= "<div class='photoSection'>";
+        	    html+= "<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+")'></div>";
+        	    html+= "</div>";
+        	    html+= "<div class='inforSection'>";
+        	    html+= "<h4>"+study.TITLE.substring(0, 18)+"</h4>";
+        	   /*  html+= "<h4>"+study.TITLE+"</h4>"; */
+        	    html += "<div class='profile'><img src='${rootPath}/resources/upload/member/"+study.MPROFILE+"' onerror='this.src=\"${rootPath}/resources/images/noprofile.jpg\"' /></div>";
+        	    html += 	"<div class='profileName'>"+study.MID+"</div>";
+        	    html += 	"<div class='profileInfors'>";
+        	    html += 	"<div class='nPoint'>N :"+study.NPOINT+"</div>";
+        	    html += 	"<div class='point'>P : "+study.POINT+"</div>";
+        	    html += 	"<div class='exp'>E : "+study.EXP+"</div>";
+        	    html += 	"</div>";
+        	    html += "</div>";
+        	    html += "<div class='metaSection'>";
+        	    html += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 18)+"</p>";
+        	    html += "</div>";
+        	    html += "<div class='localSection'>";
+        	    html += 	"<div class='study'>"+study.SUBNAME+"</div>";
+        	    html += 	"<div class='local'>"+study.LNAME+"|"+study.TNAME+"</div>";
+        	    html += 	"<div class='level'>"+study.DNAME+"</div>";
+        	    if(study.STATUS =='스터디 종료'){
+        	    	html +=    "<div class='time' style='background:#000; color:#fff;'>"+study.STATUS+"</div>";
+        	    }else if(study.STATUS=='마감 임박'){
+        	    	html +=    "<div class='time' style='background:red; color:#fff;'>"+study.STATUS+"</div>";
+        	    }else{
+        	    	html +=    "<div class='time'>"+study.STATUS+"</div>";
+        	    	
+        	    }
+        	    html += "</div>";
+        	    html += "<div class='subMeta'>";
+        	    html += "<div class='applycnt'>"+study.APPLYCNT+"</div>";
+        	    html += "<div class='ldate'>"+study.LDATE+"</div>";
+        	    html += "<div class='term'>"+study.SDATE+" ~ "+study.EDATE +"</div>";
+        	    html += "</div>";
+        	    html += "</a>";
+		        html += "</div>";
+		        html += "</li>";
+
         	}
-			$("div#study-list").html(html); 
+			
+			$("ul.list").html(html);
 			$("input#cPageNo").val(data.cPage);
+			$("span#totalcount").html(data.total);
+        	
 		},error:function(){
 			
 		}
@@ -114,13 +147,7 @@ $(function(){
 			});
 	});
 	
-	
-	//스터디 클릭시 스터디 상세보기 페이지로 이동하는 이벤트
-	$("div#study-list").on("click","div.studyone",function(){
-		location.href="${pageContext.request.contextPath}/study/studyView.do?sno="+$(this).children("input").val();
-	});
-	
-	
+
 	//필터 조건 정하고 검색 버튼을 누른 이벤트
 	$("input#filterSearch").on("click",function(){
 		
@@ -144,23 +171,56 @@ $(function(){
 			 	if(data.list.length>0){
 			 		
 		        	for(index in data.list){
-		        		html+="<div class='studyone'>";
-		        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+data.list[index].LNAME+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+data.list[index].SUBNAME+ data.list[index].KNAME+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].MPROFILE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
-		        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
-		        		html+="</div>"; 
+		        		var study = data.list[index];
+						var upfile = study.UPFILE.split(",");
+		        	    html+="<li class='col-md-4'>";
+		        	    html+="<div class='pixel'>";
+		        	    html+="<a href='studyView.do?sno="+study.SNO+"'>";
+		        	    html+= "<div class='photoSection'>";
+		        	    html+= "<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+")'></div>";
+		        	    html+= "</div>";
+		        	    html+= "<div class='inforSection'>";
+		        	    html+= "<h4>"+study.TITLE.substring(0, 18)+"</h4>";
+		        	   /*  html+= "<h4>"+study.TITLE+"</h4>"; */
+		        	    html += "<div class='profile'><img src='${rootPath}/resources/upload/member/"+study.MPROFILE+"' onerror='this.src=\"${rootPath}/resources/images/noprofile.jpg\"' /></div>";
+		        	    html += 	"<div class='profileName'>"+study.MID+"</div>";
+		        	    html += 	"<div class='profileInfors'>";
+		        	    html += 	"<div class='nPoint'>N :"+study.NPOINT+"</div>";
+		        	    html += 	"<div class='point'>P : "+study.POINT+"</div>";
+		        	    html += 	"<div class='exp'>E : "+study.EXP+"</div>";
+		        	    html += 	"</div>";
+		        	    html += "</div>";
+		        	    html += "<div class='metaSection'>";
+		        	    html += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 18)+"</p>";
+		        	    html += "</div>";
+		        	    html += "<div class='localSection'>";
+		        	    html += 	"<div class='study'>"+study.SUBNAME+"</div>";
+		        	    html += 	"<div class='local'>"+study.LNAME+"|"+study.TNAME+"</div>";
+		        	    html += 	"<div class='level'>"+study.DNAME+"</div>";
+		        	    if(study.STATUS =='스터디 종료'){
+		        	    	html +=    "<div class='time' style='background:#000; color:#fff;'>"+study.STATUS+"</div>";
+		        	    }else if(study.STATUS=='마감 임박'){
+		        	    	html +=    "<div class='time' style='background:red; color:#fff;'>"+study.STATUS+"</div>";
+		        	    }else{
+		        	    	html +=    "<div class='time'>"+study.STATUS+"</div>";
+		        	    	
+		        	    }
+		        	    html += "</div>";
+		        	    html += "<div class='subMeta'>";
+		        	    html += "<div class='applycnt'>"+study.APPLYCNT+"</div>";
+		        	    html += "<div class='ldate'>"+study.LDATE+"</div>";
+		        	    html += "<div class='term'>"+study.SDATE+" ~ "+study.EDATE +"</div>";
+		        	    html += "</div>";
+		        	    html += "</a>";
+				        html += "</div>";
+				        html += "</li>";
 		        	} 
+		        	
 			 	}else{
 			 		html+="<span>해당 스터디가 없습니다.<span>";
 			 	}
 				
-	        	$("div#study-list").html(html); 
+	        	$("ul.list").html(html); 
 	        	
 	        	//새로 cPage 1로 설정
 	        	$("input#cPageNo").val(data.cPage);
@@ -170,78 +230,34 @@ $(function(){
 	});
 	
 	$("button#sort-deadline").click(function(){
+		if($("button#sort-pop").hasClass("clicked")) {
+			$("button#sort-pop").removeClass("clicked");
+			console.log("pop눌러잇엄");
+		}
 		if($("input[name=case]").val()=="deadline"){
 			$("input[name=case]").val("none");
+			$(this).removeClass("clicked");
 		}else{
 			$("input[name=case]").val("deadline");
+			$(this).addClass("clicked");
 		}
 		
 		
-		
-		/* $.ajax({
-			url:"selectByDeadline.do",
-			dataType:"json",
-			success:function(data){
-				
-				var html="";
-				for(var index in data.list){
-					var s = data.list[index];
-					html+="<div class='studyone'>";
-	        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+data.list[index].LNAME+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+data.list[index].SUBNAME+ data.list[index].KNAME+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].MPROFILE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
-	        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
-	        		html+="</div>"; 
-					
-				}
-				$("div#study-list").html(html); 
-				$("input#cPageNo").val(data.cPage);
-				$("input#total").val(data.total);
-			}
-		}); */
 	});
 	
 	
 	//인기순 정렬(신청자순)
 	$("button#sort-pop").click(function(){
+		if($("button#sort-deadline").hasClass("clicked")) $("button#sort-deadline").removeClass("clicked");
+		
 		if($("input[name=case]").val()=="pop"){
 			$("input[name=case]").val("none");
+			$(this).removeClass("clicked");
 		}else{
 			$("input[name=case]").val("pop");
+			$(this).addClass("clicked");
 		}
 		
-		
-		/* $.ajax({
-			url:"selectByApply.do",
-			dataType:"json",
-			success:function(data){
-				
-				var html="";
-				for(var index in data.list){
-					var s = data.list[index];
-					html+="<div class='studyone'>";
-	        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+data.list[index].LNAME+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+data.list[index].SUBNAME+ data.list[index].KNAME+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].MPROFILE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
-	        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
-	        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
-	        		html+="</div>"; 
-					
-				}
-				$("div#study-list").html(html); 
-				$("input#cPageNo").val(data.cPage);
-				$("input#total").val(data.total);
-			}
-		}); */
 	});
 	
 	
@@ -299,22 +315,51 @@ $(function(){
 		        success:function(data){
 		        	console.log(data);
 		        	var html="";
-		        	
 		        	for(index in data.list){
-		        		html+="<div class='studyone'>";
-		        		html+="<span class='studyinfo'>신청기간 : ~"+data.list[index].LDATE+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+data.list[index].LNAME+"-"+data.list[index].TNAME+data.list[index].DNAME+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+data.list[index].SUBNAME+ data.list[index].KNAME+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].TITLE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].SDATE+"~"+data.list[index].EDATE+"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].PROFILE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].UPFILE +"</span><br/>";
-		        		html+="<span class='studyinfo'>"+ data.list[index].STATUS +"</span><br/><hr>";
-		        		html+="<input type='hidden' value='"+data.list[index].SNO+"'/>";
-		        		html+="</div>";
+		        		var study = data.list[index];
+						var upfile = study.UPFILE.split(",");
+		        	    html+="<li class='col-md-4'>";
+		        	    html+="<div class='pixel'>";
+		        	    html+="<a href='study/study/studyView.do?sno="+study.SNO+"'>";
+		        	    html+= "<div class='photoSection'>";
+		        	    html+= "<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+")'></div>";
+		        	    html+= "</div>";
+		        	    html+= "<div class='inforSection'>";
+		        	    html+= "<h4>"+study.TITLE.substring(0, 18)+"</h4>";
+		        	   /*  html+= "<h4>"+study.TITLE+"</h4>"; */
+		        	    html += "<div class='profile'><img src='${rootPath}/resources/upload/member/"+study.MPROFILE+"' onerror='this.src=\"${rootPath}/resources/images/noprofile.jpg\"' /></div>";
+		        	    html += 	"<div class='profileName'>"+study.MID+"</div>";
+		        	    html += 	"<div class='profileInfors'>";
+		        	    html += 	"<div class='nPoint'>N :"+study.NPOINT+"</div>";
+		        	    html += 	"<div class='point'>P : "+study.POINT+"</div>";
+		        	    html += 	"<div class='exp'>E : "+study.EXP+"</div>";
+		        	    html += 	"</div>";
+		        	    html += "</div>";
+		        	    html += "<div class='metaSection'>";
+		        	    html += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 18)+"</p>";
+		        	    html += "</div>";
+		        	    html += "<div class='localSection'>";
+		        	    html += 	"<div class='study'>"+study.SUBNAME+"</div>";
+		        	    html += 	"<div class='local'>"+study.LNAME+"</div>";
+		        	    html += 	"<div class='level'>"+study.DNAME+"</div>";
+		        	    if(study.STATUS =='스터디 종료'){
+		        	    	html +=    "<div class='time' style='background:#000; color:#fff;'>"+study.STATUS+"</div>";
+		        	    }else{
+		        	    	html +=    "<div class='time'>"+study.STATUS+"</div>";
+		        	    }
+		        	    html += "</div>";
+		        	    html += "<div class='subMeta'>";
+		        	    html += "<div class='applycnt'>"+study.APPLYCNT+"</div>";
+		        	    html += "<div class='ldate'>"+study.LDATE+"</div>";
+		        	    html += "<div class='term'>"+study.SDATE+" ~ "+study.EDATE +"</div>";
+		        	    html += "</div>";
+		        	    html += "</a>";
+				        html += "</div>";
+				        html += "</li>";
+
 		        	}
 		        	$("input#cPageNo").val(data.cPage);
-		        	$("div#study-list").append(html);
+		        	$("ul.list").append(html);
 		        },error:function(){
 		        	
 		        }
@@ -327,13 +372,11 @@ $(function(){
 		  }//if문 끝
 		
 	}
-	
-	
 	//검색 필터 조건 초기화 하기
 	$("a#reFilter").click(function(){
 		$("#town").hide();
 		$("#subject").hide();
-		
+		$("button.sortBy").removeClass("clicked");
 		
 		
 		$("#local option:eq(0)").prop("selected", true);
@@ -353,56 +396,181 @@ $(function(){
 
 
 </script>
-<div id="studylist-container">
-		<button onclick="location.href='${pageContext.request.contextPath}/study/studyForm.do'">스터디 작성</button>
+<style>
+select#local, select#kind, select#subject, select#town, select#diff{
+	width:100px;
+}
+input#leadername{
+	width:200px;
+	display:inline-block;
+	padding:0.4rem 0.75rem;
+}
+button.sortBy{
+	background:white;
+	border:1px solid lightgray;
+}
+button.sortBy:hover{
+	background:black;
+	color:white;
+}
+div#studylist-container button#enroll{
+	position:relative;
+	left:90%;
+	top:0px;
+}
+button.clicked{
+	background:black;
+	color:white;
+}
+input#filterSearch{
+	
+}
+div#study-search{
+	
+}
+div.wrap{
+	display:inline-block;
+}
+table{
+	margin:0 auto;
+	
+}
+table th{
+	text-align:center;
+}
+a#reFilter{
+	color:black;
+	text-shadow: 5px 5px 5px white;
+}
+</style>
+<style>
+p.noMore{
+	display:none;
+}
+
+.pixler .inforSection::before{
+   position: absolute;
+    top: -81px;
+    left: 56%;
+    content: "";
+    display: block;
+    width: 125px;
+    height: 107px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 156px auto;
+    background-image: url(${rootPath}/resources/images/before.svg);
+    clip: rect(-13px, 199px, 60px, 0px);
+    z-index: 0;
+}
+
+@media (min-width: 1025px) {
+
+.pixler .inforSection::before{
+    top: -81px;
+    left: 64%;
+}
+  
+}
+span#totalcount{
+	font-family: 'Song Myung', serif;
+}
+h3#totalcountt{
+	font-family: 'Song Myung', serif;
+}
+</style>
+
+<div id="studylist-container" class="section-content container rm_study_list">
+		<div class="btn-container">
+			<button id="enroll" onclick="location.href='${pageContext.request.contextPath}/study/studyForm.do'" class="btn btn-primary">스터디 작성</button>
+		</div>
+		
 		<div id="study-search">
-			<label for="local">지역:</label>
-			<select name="lno" id="local">
-			<option value="0">전체</option>
-			<c:forEach var="local" items="${localList }">
-				<option value="${local.LNO }">${local.LOCAL }</option>
-			</c:forEach>
-			</select>&nbsp;
-			<select name="tno" id="town">
-				<option value="0">전체</option>
-			</select>
-			<label for="subject">카테고리 :</label>
-			<select name="kno" id="kind">
-			<option value="0">전체</option>
-			<c:forEach var="k" items="${kindList }">
-				<option value="${k.KNO }">${k.KINDNAME }</option>
-			</c:forEach>
-			</select>&nbsp;
-			<select name="subno" id="subject">
-				<option value="0">전체</option>
-			</select>
-			
-			<label for="diff">난이도 : </label>
-			<select name="dno" id="diff">
-			<option value="0">전체</option>
-			<c:forEach var="diff" items="${diffList }">
-				<option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
-			</c:forEach>
-			</select>
-			<!-- <select name="status" id="status">
-				<option value="전체">전체</option>
-				<option value="모집 중">모집 중</option>
-				<option value="마감 임박">마감 임박</option>
-				<option value="모집 마감">모집 마감</option>
-				<option value="진행 중">진행 중</option>
-				<option value="스터디 종료">스터디 종료</option>
-			</select> -->
-			<input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" maxlength="50" />
-			<input type="button" id="filterSearch" value="필터 검색" />
-			<a href="#" id="reFilter">검색 조건 초기화</a>
+			<table>
+				<tr>
+					<th>지역</th>
+					<th>과목</th>
+					<th>난이도</th>
+					<th>팀장명</th>
+					<th>정렬</th>
+					<th>검색<th>
+				</tr>
+				<tr>
+					<td>
+						<select name="lno" id="local" class="custom-select">
+							<option value="0">전체</option>
+							<c:forEach var="local" items="${localList }">
+								<option value="${local.LNO }">${local.LOCAL }</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td>
+						<select name="kno" id="kind" class="custom-select">
+							<option value="0">전체</option>
+							<c:forEach var="k" items="${kindList }">
+								<option value="${k.KNO }">${k.KINDNAME }</option>
+							</c:forEach>
+						</select>
+					
+					</td>
+					<td>
+						<select name="dno" id="diff" class="custom-select">
+							<option value="0">전체</option>
+							<c:forEach var="diff" items="${diffList }">
+								<option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td>
+					    <input type="text" name="leadername" id="leadername" placeholder="팀장명을 적어주세요" maxlength="10" class="form-control" />
+					</td>	
+					<td>
+						<button type="button" id="sort-deadline" class="btn sortBy">마감임박순</button>
+						<button type="button" id="sort-pop" class="btn sortBy">인기스터디순</button>
+					</td>	
+					<td>
+						<input type="button" id="filterSearch" value="필터 검색" class="btn btn-dark"/>
+					</td>		
+				</tr>
+				<tr>
+					<td>
+						<select name="tno" id="town" class="custom-select">
+							<option value="0">전체</option>
+						</select>
+					</td>
+					<td>
+						<select name="subno" id="subject" class="custom-select">
+							<option value="0">전체</option>
+						</select>
+					</td>
+					<td>
+					<br /><br />                   
+					</td>
+					<td>
+					<br /><br />          
+					</td>
+					<td>
+						<br />
+					</td>
+					<td>
+						<a href="#" id="reFilter">검색 조건 초기화</a>
+					</td>
+					
+				
+				</tr>
+			</table>
 			
 		</div>
-		<button type="button" id="sort-deadline">마감임박순</button>
-		<button type="button" id="sort-pop">인기스터디순</button>
+			
+			
+		
 		
 		<hr />
-		<div id="study-list">
-		
+		<h3 id="totalcountt"><span id="totalcount"></span>개의 스터디</h3>
+		<div id="study-list" class="content">
+			<ul class="list">
+			
+			</ul>
 		</div>
 		
 		<p id="noMore">더이상 스터디가 존재하지 않습니다.</p>
