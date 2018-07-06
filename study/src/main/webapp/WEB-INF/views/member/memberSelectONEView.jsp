@@ -1,8 +1,6 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%-- <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="MEMBER" name="pageTitle" /></jsp:include> --%>
-<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="INSTRUCTOR" name="pageTitle" /></jsp:include>
 <div class="studyList">
 	<%@ page import="java.util.*, java.math.*"%>
 	<link type="text/css" rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
@@ -53,7 +51,11 @@ table {
 }
 </style>
 
+<c:if test="${size=='10'}">
+<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="INSTRUCTOR" name="pageTitle" /></jsp:include>
+</c:if>
 <c:if test="${size!='10'}">
+<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="MEMBER" name="pageTitle" /></jsp:include> 
 	<!-- 장익순 작업 머리 버튼 설정 시작  -->
 	<jsp:include page="/WEB-INF/views/member/admin_member_button.jsp" />
 	<!-- 장익순 버튼 설정 끝 -->
@@ -113,17 +115,17 @@ table {
 			onclick="fn_show_pmDiv(0);">평가점수 변경</button>
 		<div class="pmDiv">
 			<button class="btn btn-outline-primary"
-				onclick="fn_point(0,'${m.mno }');">평가 점수 더하기</button>
+				onclick="fn_point(0,'${m.mno }');">평가 점수 +1000</button>
 			<button class="btn btn-outline-primary"
-				onclick="fn_point(1,'${m.mno }');">평가 점수 빼기</button>
+				onclick="fn_point(1,'${m.mno }');">평가 점수 -1000</button>
 		</div>
 		<button type="button" class="btn btn-outline-primary btn-block"
 			onclick="fn_show_pmDiv(1);">지식점수 변경</button>
 		<div class="pmDiv">
 			<button class="btn btn-outline-primary"
-				onclick="fn_point(2,'${m.mno }');">지식 점수 더하기</button>
+				onclick="fn_point(2,'${m.mno }');">지식 점수 +1000</button>
 			<button class="btn btn-outline-primary"
-				onclick="fn_point(3,'${m.mno }');">지식 점수 빼기</button>
+				onclick="fn_point(3,'${m.mno }');">지식 점수 -1000</button>
 		</div>
 	</div>
 

@@ -18,7 +18,7 @@
 #instructor{display: none;}
 #seccessdiv{ top: 50px; text-align: center;}
 .button{color: white; border: 1px solid white; padding: 10px; border-radius: 3px;}
-.button:hover{border: 2px solid white;}
+.button:hover{border: 2px solid white; position: relative; top:-5px;}
 h2{position: relative; color: white;}
 h1{ color: white;}
 span{color: white;}
