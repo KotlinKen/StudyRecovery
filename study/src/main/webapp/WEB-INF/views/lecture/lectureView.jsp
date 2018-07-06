@@ -29,46 +29,49 @@
 	        	 	mno : mno
 	         },
 	         success:function(data){
-	        	//강의를 등록할 수 있는 경우.    	
-		       	if(confirm("결제 하시겠습니까?") && data == ""){
-	         		 IMP.request_pay({
-	     			    pg : 'inicis', // version 1.1.0부터 지원.
-	     			    pay_method : 'card',
-	     			    merchant_uid : 'merchant_' + new Date().getTime(),
-	     			    name : '강의 신청',
-	     			    amount : 100,
-	     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
-	     			}, function(rsp) {
-	     			    if ( rsp.success ) {	    			    	
-	     			        $.ajax({
-	     			        	url : "applyLecture.do",
-	     			        	data: {
-	     			        		sno : sno,
-	     			        		mno : mno
-	     			        	},
-	     			        	success:function(data){
-	     			        		var pno = rsp.imp_uid.replace("imp_", "");
-	     			        		
-	     			        		location.href = "successPay.do?mno=" + mno + 
-	     			        									 "&sno=" + sno + 
-	     			        									 "&pno=" + pno + 
-	     			        									 "&price=" + price;
-	     			        	}
-	     			        });
-   			        		msg = '결제가 완료되었습니다.';	     	     			        
-	     			    } else {
-	     			    	var pno = rsp.imp_uid.replace("imp_", "");
-	     			    	
-	     			    	location.href = "failedPay.do?mno=" + mno + 
-														 "&sno=" + sno + 
-														 "&pno=" + pno + 
-														 "&price=" + price;
-	     			    	
-	     			        msg = '결제에 실패하였습니다.';
-	     			        msg += '에러내용 : ' + rsp.error_msg;
-	     			    }
-	     			});
-	         	}
+	        	//강의를 등록할 수 있는 경우. 
+	        	if( data == ""){	        		
+			       	if(confirm("결제 하시겠습니까?")){
+		         		 IMP.request_pay({
+		     			    pg : 'inicis', // version 1.1.0부터 지원.
+		     			    pay_method : 'card',
+		     			    merchant_uid : 'merchant_' + new Date().getTime(),
+		     			    name : '강의 신청',
+		     			    amount : 100,
+		     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
+		     			}, function(rsp) {
+		     			    if ( rsp.success ) {	    			    	
+		     			        $.ajax({
+		     			        	url : "applyLecture.do",
+		     			        	data: {
+		     			        		sno : sno,
+		     			        		mno : mno
+		     			        	},
+		     			        	success:function(data){
+		     			        		var pno = rsp.imp_uid.replace("imp_", "");
+		     			        		
+		     			        		location.href = "successPay.do?mno=" + mno + 
+		     			        									 "&sno=" + sno + 
+		     			        									 "&pno=" + pno + 
+		     			        									 "&price=" + price;
+		     			        	}
+		     			        });
+	   			        		msg = '결제가 완료되었습니다.';	     	     			        
+		     			    } else {
+		     			    	var pno = rsp.imp_uid.replace("imp_", "");
+		     			    	
+		     			    	location.href = "failedPay.do?mno=" + mno + 
+															 "&sno=" + sno + 
+															 "&pno=" + pno + 
+															 "&price=" + price;
+		     			    	
+		     			        msg = '결제에 실패하였습니다.';
+		     			        msg += '에러내용 : ' + rsp.error_msg;
+		     			        alert(msg);
+		     			    }
+		     			});
+		         	}
+	        	}
 	        	// 없는 경우.
 	         	else{
 	         		if( data != "결제를 취소하셨습니다")
@@ -78,7 +81,9 @@
 	         	}
 	         }
 	      }).done(function(){
-	    	  alert(msg);
+	    	  console.log(msg);
+	    	  if( msg != "" )
+	    	  	alert(msg);
          });		  
 	   }
 	}
