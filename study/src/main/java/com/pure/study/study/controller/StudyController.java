@@ -378,7 +378,7 @@ public class StudyController {
 	@RequestMapping("/study/studyListAdd.do")
 	public ModelAndView selectStudyAdd(@RequestParam(value="cPage",defaultValue="1") int cPage){
 		ModelAndView mav = new ModelAndView("jsonView");
-		List<Map<String,Object>> studyList= studyService.selectStudyAdd(cPage,numPerPage);
+		List<Map<String,Object>> studyList= studyService.selectStudyList(cPage, numPerPage);
 		mav.addObject("list",studyList);
 		mav.addObject("cPage",cPage+1);
 		
@@ -700,8 +700,6 @@ public class StudyController {
 		}
 		
 		result = studyService.deleteStudyArr(study_arr);
-		
-		
 		
 		return result;
 	}

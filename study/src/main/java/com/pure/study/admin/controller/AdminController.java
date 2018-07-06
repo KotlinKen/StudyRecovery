@@ -1,5 +1,8 @@
 package com.pure.study.admin.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,18 +11,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.pure.study.admin.model.service.AdminService;
+import com.pure.study.lecture.model.service.LectureService;
 
 @Controller
 public class AdminController {
 	@Autowired
 	private AdminService adminService;
-
+	
+	@Autowired
+	private LectureService lectureService;
 	
 	@RequestMapping("/admin/adminLogin")
 	public void adminLogin() {
 		
-	}
-	
+	}	
 	
 	/* 메인페이지 */
 	@RequestMapping("/admin/adminMain")
@@ -37,6 +42,13 @@ public class AdminController {
 	@RequestMapping("/admin/adminLecture")
 	public ModelAndView adminLecture() {
 		ModelAndView mav = new ModelAndView();
+		
+		List<Map<String, String>> locList = lectureService.selectLocList();
+		List<Map<String, String>> kindList = lectureService.selectKindList();
+		
+		mav.addObject("locList", locList);
+		mav.addObject("kindList", kindList);
+		
 		return mav;
 	}
 	
@@ -71,7 +83,7 @@ public class AdminController {
 	/*결제 관리페이지*/
 	@RequestMapping("/admin/adminPayment.do")
 	public ModelAndView adminPayment() {
-		ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView();		
 		return mav;
 	}
 	
