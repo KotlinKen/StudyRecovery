@@ -69,7 +69,7 @@ public interface LectureDAO {
 
 	int selectTotalPayCount();
 
-	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key);
+	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> key);
 
 	void successAdminPayCancel(long pno);
 

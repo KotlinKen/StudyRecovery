@@ -6,12 +6,23 @@
 <script>
 $(function(){
 	var key = [];
-	loadPay(1, 5, key);
+	loadPay(1, 5);
+	
+	$("#paySearchBtn").click(function(){
+		loadPay(1,5);
+	});
 });// $(function(){});
 
-function loadPay(cPage, pageBarSize, key){	
+function loadPay(cPage, pageBarSize){	
 	$.ajax({
-		url:"${rootPath}/lecture/pay/"+cPage+"/"+pageBarSize+"/key",
+		url:"${rootPath}/lecture/pay/"+cPage+"/"+pageBarSize,
+		data: {
+			member : $("#member").val(),
+			price : $("#price").val(),
+			year : $("#year").val(),
+			month : $("#month").val(),
+			status : $("#status").val()
+		},
 		dataType:"json",
 		success:function(data){
 			
@@ -113,12 +124,50 @@ function lectureAdminCancel(sno, mno, pno, price){
    
 <div class="payList">
 	<div class="table-responsive">
+		<!-- 검색 -->
+		<label for="member">신청자 : </label>
+		<input type="text" name="member" id="member" placeholder="신청인 검색"/>
+		&nbsp;&nbsp;
+		
+		<label for="price">금액 : </label>
+		<input type="number" name="price" id="price" min="0"/>원
+		&nbsp;&nbsp;
+		
+		<label for="year">년도 : </label>
+		<select name="year" id="year">
+			<option value="0" selected>년도를 선택하세요</option>
+			
+			<c:forEach var="i" begin="2018" end="2022">
+				<option value="${i }">${i }년</option>
+			</c:forEach>
+		</select>
+		
+		<select name="month" id="month">
+			<option value="0" selected>월을 선택하세요</option>
+			
+			<c:forEach var="i" begin="1" end="12">
+				<option value="${i>10?'':'0' }${i}">${i }월</option>
+			</c:forEach>
+		</select>
+		&nbsp;&nbsp;&nbsp;
+		
+		<label for="status">결제 상태 : </label>
+		<select name="status" id="status">
+			<option value="전체" selected>전체</option>
+			<option value="결제 완료">결제 완료</option>
+			<option value="결제 취소">결제 취소</option>
+			<option value="결제 실패">결제 실패</option>
+		</select>
+		
+		<button type="button" id="paySearchBtn" style="float:right; widht: 30px; height: 30px;">검색</button>
+		
+		<!-- 리스트 -->
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
 					<th>No</th>
 					<th>제목</th>
-					<th>강사명</th>
+					<th>신청자</th>
 					<th>등록일</th>
 					<th>시작 일자</th>
 					<th>강의 요일</th>

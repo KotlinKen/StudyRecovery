@@ -175,7 +175,7 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key) {
+	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> key) {
 		return ld.selectPayList(cPage, numPerPage, key);
 	}
 
