@@ -15,24 +15,21 @@
 <!-- 사용자작성 css -->
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/style.css" />
 <style>
-p{width: 450px; height: 150px; overflow-y: scroll; margin: auto; background: white;}
-p#home{height: 100px; font-size: 35px;  color: rgb(0, 0, 255); background: rgb(255, 255, 255,0.001);}
+p{width: 450px; height: 150px; overflow-y: scroll; margin: auto; background: white;border: 0.1px solid gray; padding: 5px}
+#home{height: 100px; font-size: 35px;  background: rgb(255, 255, 255,0.001); display: block;}
 div{width: 500px; min-height: 30px;margin: auto;  }
-div#indivik{margin: auto; background: rgb(235, 235, 235,0.95); border-radius:30px; border: 1.5px solid blue; }
+div#indivik{margin: auto; border-radius:5px;  }
 div#inindivik1{ width: 100%;}
 div#inindivik2{ width:100%;   text-align: center;}
 div#inindivik3{width: 200px; margin: auto; text-align: left; }
 div#headerdivik{ background: blue; width: 100%; }
-/* div#background{ width: 100%; height: 900px; background: rgb(235, 235, 235,0.6);  } */
 span{position: relative; left: 20px;}
 #buttona{position: relative; left: 20px;}
 #buttonb{position: relative; left: 71%;}
 input[type=checkbox], input[type=radio]{ width: 20px;height: 20px; border-radius :10px;}
 #headaik{color: black;}
-body{
-/* background: lightblue url("${rootPath}/resources/images/young.jpg") no-repeat fixed center; */ 
-background: rgb(100, 150, 235,0.95);
-}
+/* body{background: lightblue url("${rootPath}/resources/images/young.jpg") no-repeat fixed right; } */
+#backbord{width:100%; height:100%;  background: #efefef;} 
 hr { 
     display: block;
     margin-top: 0.5em;
@@ -47,6 +44,7 @@ hr {
 </style>
 </head>
 <body>
+<div id="backbord">
 <form name=frmSubmit>
 
 <div id="inindivik1"></div>
@@ -55,23 +53,24 @@ hr {
 <div id="indivik">
 <div id="inindivik2"><a class="navbar-brand rm-custom-brand" href="${rootPath}"><jsp:include page="/WEB-INF/views/common/logo_blue.jsp"></jsp:include></a></div>
 		<div id="inindivik3"><input type="hidden" name="check" id="check" value="21" /></div> 
-<p id="home">회원가입</p>
+<span id="home"><b>회원가입</b></span>
 		<span><input type="checkbox" class="agree" id="checkAll"  /> <b>전체 동의</b></span>	 <br />
 		<br />
-		<span><input type="checkbox" class="agree" id="agree1" value="0" name="agree1" /> <b>서비스 이용약관 동의 (필수) </b></span>		
+		<span><input type="checkbox" class="agree" id="agree1" value="0" name="agree1" /> <b>서비스 이용약관 동의 (필수) </b></span>		<br /><br />
 		<p >
 			<c:forEach var ="v" items="${service }">
 				${v.SCONTENT } <br /><br />
 			</c:forEach>
 		</p>
+		
 		<br />
-		<span><input type="checkbox" class="agree" id="agree2" value="0" name="agree2"  /> <b>개인정보 수집 및 이용 동의 (필수) </b></span>
+		<span><input type="checkbox" class="agree" id="agree2" value="0" name="agree2"  /> <b>개인정보 수집 및 이용 동의 (필수) </b></span> <br /><br />
 		<p >
 			<c:forEach var ="v" items="${information }">
 				${v.ICONTENT } <br /><br />
 			</c:forEach>
 		</p>
-		<br /><br />
+		<br />
 		<button type="button" id="buttona" class="btn btn-primary" onclick="location.href='${pageContext.request.contextPath}'">취소</button>
 		<button type="button" id="buttonb" class="btn btn-primary" onclick="getPost(01);">다음</button> 
 		<br /><br />
@@ -149,5 +148,6 @@ hr {
 	 	theForm.submit();
  	}
 </script>
+</div>
 </body>
 </html>

@@ -118,7 +118,7 @@ public class MemberController {
 		System.out.println(c);
 		if (c != 23) {
 			String loc = "/member/memberAgreement.do";
-			String msg = "회원가입을 실패했습니다.";
+			String msg = "잘못된 경로 입니다. 관리자에게 문의 하세요.";
 			mav.addObject("msg", msg);
 			mav.addObject("loc", loc);
 			mav.setViewName("common/msg");
@@ -153,7 +153,7 @@ public class MemberController {
 		System.out.println("tomail"+tomail);
 		try {
 			int result = memberService.memberCheckEmail(tomail);
-			if(result >0) {
+			if(result >1) {
 				System.out.println("이미 가입?");
 				map.put("check", false);
 				return map;
@@ -301,6 +301,38 @@ public class MemberController {
 			}
 		} catch (Exception e) {
 		}
+		/**
+		 * 탈퇴 회원 여부 확인 탈퇴 회원일 경우 EXP/POINt/NPOINT 가져오고 set해준다
+		 */
+
+		try {
+			int memberCheckEmail = memberService.memberCheckEmail(email);
+			if (memberCheckEmail == 2) {
+				msg = "회원가입을 실패했습니다. 탈퇴 확인을 해주세요";
+				msg = "회원가입실패!";
+				model.addAttribute("loc", loc);
+				model.addAttribute("msg", msg);
+				return "common/msg";
+			} else if (memberCheckEmail == 1) {
+				Member memberGetPoint = memberService.memberGetPoint(email);
+				member.setExp(memberGetPoint.getExp());
+				member.setPoint(memberGetPoint.getPoint());
+				member.setNPoint(memberGetPoint.getNPoint());
+
+			} else {
+				member.setExp(0);
+				member.setPoint(0);
+				member.setNPoint(0);
+			}
+		} catch (Exception e) {
+			msg = "회원가입을 실패했습니다. 관리자에게 문의 하세요";
+			msg = "회원가입실패!";
+			model.addAttribute("loc", loc);
+			model.addAttribute("msg", msg);
+			return "common/msg";
+		}
+		System.out.println("member : " + member);
+		logger.debug(email);
 
 		String rawPassword = member.getPwd();
 		/******* password 암호화 시작 *******/
@@ -2391,7 +2423,7 @@ public class MemberController {
 		return map;
 	}
 	@RequestMapping("/member/memberSelectONEView.do")
-	public ModelAndView memberSelectONEView(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
+	public ModelAndView selectViewMember(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
 		ModelAndView mav = new ModelAndView();
 		System.out.println(mid);
 		Member m = memberService.selectOneMember(mid);
@@ -2597,4 +2629,86 @@ public class MemberController {
 		return mav; 
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*****   장익순 작업 ****/
+	@RequestMapping("/member/selectViewInstructor.do")
+	public ModelAndView selectViewInstructor(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
+		ModelAndView mav = new ModelAndView();
+		System.out.println(mid);
+		Member m = memberService.selectOneMember(mid);
+		List<Map<String,String>> reviewList = memberService.selectMemberReviewList(m.getMno());
+		
+		
+		Map <String,Object> map = new HashMap<>();
+		map.put("eval", "exp");
+		map.put("mno", m.getMno());
+		
+		Map<String, Object> list = memberService.searchEvaluation(map);
+		List<Map<String,Object>> gradeList = memberService.selectGradeList();
+		//경험치 및 포인트 등급 보여주기
+		List<Map<String,Object>> replyList = memberService.selectmemberReply(m.getMno());
+		Map<String,String> instruct = memberService.selectOneInstruct(m.getMno());
+		System.out.println("size = "+size);
+		if(size==10) {
+			mav.addObject("size",size);
+			List<Map<String, String>> category = memberService.selectCategory();
+			
+			System.out.println(category);
+			mav.addObject("category", category);
+		}
+		
+		//평가 관리 페이지로 이동
+		mav.addObject("instruct", instruct); 
+		mav.addObject("eval", "exp"); 
+		mav.addObject("list", list); 
+		mav.addObject("gradeList", gradeList); 
+		mav.addObject("gradeMin", gradeList.get(0)); 
+		mav.addObject("gradeMax", gradeList.get(gradeList.size()-1)); 
+		mav.addObject("replyList",replyList);
+		mav.addObject("m",m);
+		mav.addObject("reviewList", reviewList);
+		mav.setViewName("instructor/selectViewInstructor");
+		return mav;
+	}
+	
+	/*****장익순 작업 끝******/
 }

@@ -21,7 +21,7 @@ span#pwdok {font-size:15px;position:absolute;right:2%;top:135px;color:green;}
 span#pwd2 {font-size: 15px;position: absolute;right:2%;top:200px;color:red;}
 span#pwd2ok {font-size:15px;position:absolute;right:2%;top:200px;color:green;}
 div{width: 600px; min-height: 25px;margin: auto; }
-div#enroll-container{background: rgb(235, 235, 235,0.85); padding: 25px; border-radius:30px; border: 1.5px solid blue;}
+div#enroll-container{ padding: 25px;  }
 div#inindivik2{margin: auto; text-align: center;}
 div#inindivik3{width: 450px; margin: auto; text-align: center; }
 div#headerdivik{margin: auto; text-align: center;}
@@ -151,3 +151,5 @@ textarea {
 .textP{ z-index:10; display:inline-block; position:relative ;  left: 0px;  padding:13px; height:50px; background: #007bff; color: #ffffff; border-radius:5px 0px 0px 5px; }
 input[type=file]{background: white; padding: 10px;position: relative;left: -95px}
 #btn_noFile{display: none;}
+#kind{width: 30%}
+#sub{width: 30%}
