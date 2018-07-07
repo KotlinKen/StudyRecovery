@@ -232,48 +232,53 @@ public class LectureContoller {
 	public ModelAndView lectureView(@RequestParam int sno,
 			@RequestParam(required = false, defaultValue = "0") int mno, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
-		
-		Member m = (Member) session.getAttribute("memberLoggedIn");
-		int realMNo = 0;		
-		
-		try {			
-			realMNo = m.getMno();			
-		}
-		catch( NullPointerException e ) {
-			realMNo = 0;
-		}
-		
-		if (mno != 0 && mno != realMNo) {
-			String msg = "잘못된 경로로 접근했다.";
-			String loc = "/lecture/lectureList.do";
+	      
+	      Member m = (Member) session.getAttribute("memberLoggedIn");
+	      int realMNo = 0;   
+	      
+	      int insert = 0;
+	      int wish = 0;
+	      
+	      try {         
+	         realMNo = m.getMno();         
+	      }
+	      catch( NullPointerException e ) {
+	         realMNo = 0;
+	      }
+	      
+	      if (mno != 0 && mno != realMNo) {
+	         String msg = "잘못된 경로로 접근했다.";
+	         String loc = "/lecture/lectureList.do";
 
-			mav.addObject("msg", msg);
-			mav.addObject("loc", loc);
+	         mav.addObject("msg", msg);
+	         mav.addObject("loc", loc);
 
-			mav.setViewName("/common/msg");
-		} else {		
-			Map<String, Integer> map = new HashMap<>();
-			map.put("sno", sno);
-	
-			// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
-			if (mno > 0) {
-				map.put("mno", mno);
-	
-				int wish = ls.lectureWish(map);
-				int insert = ls.preinsertApply(map);
-	
-				mav.addObject("wish", wish);
-				mav.addObject("insert", insert);
-			}
-	
-			Map<String, String> lecture = ls.selectLectureOne(sno);
-	
-			mav.addObject("lecture", lecture);
-	
-			mav.setViewName("lecture/lectureView");
-		}
+	         mav.setViewName("/common/msg");
+	      } else {      
+	         Map<String, Integer> map = new HashMap<>();
+	         map.put("sno", sno);
+	   
+	         // 이미 찜이 들어가 있는지, 신청을 했는지 확인.
+	         if (mno > 0) {
+	            map.put("mno", mno);
+	   
+	            wish = ls.lectureWish(map);
+	            insert = ls.preinsertApply(map);            
+	         }
+	   
+	         Map<String, String> lecture = ls.selectLectureOne(sno);
+	   
+	         mav.addObject("lecture", lecture);
+	   
+	         mav.setViewName("lecture/lectureView");
+	      }
+	      
+	      mav.addObject("wish", wish);
+	      mav.addObject("insert", insert);
+	      
+	      System.out.println(insert);
 
-		return mav;
+	      return mav;
 	}
 
 	@RequestMapping("/lecture/deleteLecture.do")
