@@ -191,6 +191,7 @@ div.study-description{
 </style>
 <div class="studyView-container">
 <div id="study-detail">
+
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 	<c:if test="${memberLoggedIn!=null }">
 		<c:if test="${memberLoggedIn.getMno()==study.MNO }">
