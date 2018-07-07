@@ -19,6 +19,10 @@
 	li.btn-page a{
 		color: #666;
 	}
+	div.ulpage{
+		margin-left: 10%;
+		margin-right: 10%;
+	}
 </style>
 <br />
 <div class="ulpage">

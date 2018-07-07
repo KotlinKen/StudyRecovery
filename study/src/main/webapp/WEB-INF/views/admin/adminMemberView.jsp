@@ -24,9 +24,6 @@
 		[type=submit]#submit{
 			display: none;
 		}
-		label{
-			display: none;
-		}
 		p#length{
 		text-align: right;
 		font-size: 20px;
@@ -38,14 +35,14 @@
 		top: 0;
 		left: 580px;
 		display: inline;
-	}
-	div.btn-center2{
-		text-align: center;
-		position: relative;
-		top: -43px;
-		left: 660px;
-		display: inline;
-	}
+		}
+		div.btn-center2{
+			text-align: center;
+			position: relative;
+			top: -43px;
+			left: 660px;
+			display: inline;
+		}
 	</style>
 
 	<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="MEMBER" name="pageTitle" /></jsp:include>

@@ -32,14 +32,21 @@
 	select#subject{
 		display:none;
 	}
+	div.page{
+		margin-left: 10%;
+		margin-right: 10%;
+	}
+	div.background{
+		background: #ffffff;
+	}
 </style>
-<div class="page">
+<div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="" name="pageTitle"/>
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
+<div class="page">
 	<br />
-	평가 관리
 	<form action="${rootPath }/member/searchMyPageEvaluation.do" id="form-eval">
 		<input type="radio" name="myPage" id="exp" value="exp" ${myPage eq 'exp'?'checked':'' }/>
 		<label for="exp">경험치</label>
@@ -63,7 +70,7 @@
 				  <input type="range" min="${gradeMin.POINT }" max="${gradeMax.POINT }" value="${list.point }" class="slider" id="myRange" disabled>
 				</div>
 				<c:forEach var="g" items="${gradeList }" varStatus="vs">
-				<span style="position:absolute; left: ${((50*(vs.index))/2)*0.77+5}%;">
+				<span style="position:absolute; left: ${((37*(vs.index))/2)*0.77+16}%;">
 				${g.STATUS } 
 				</span>
 				</c:forEach>
@@ -130,7 +137,7 @@
 							</td>
 							<td>${ms.content }</td>
 							<td>
-								<button type=button class="btn btn-outline-success btncss btn-detail " value="${ms.type },${ms.sno }">자세히</button>
+								<button type=button class="btn btn-outline-success btncss btn-detail " value="${ms.sno }">자세히</button>
 							</td>					
 						</tr>
 					</c:forEach>
@@ -305,11 +312,18 @@
 			}
 		});
 		
+		//스터디 자세히 보기
+		$(".btn-detail ").click(function(){
+			var sno = $(this).val();
+			
+			location.href="${rootPath}/study/studyView.do?sno="+sno;
+		});
 	</script>
 	
 	
 
 	
 	
+	</div>	
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 </div>	

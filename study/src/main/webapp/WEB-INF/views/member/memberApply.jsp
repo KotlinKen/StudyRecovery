@@ -22,13 +22,21 @@
 	select#subject{
 		display:none;
 	}
+	div.page{
+		margin-left: 10%;
+		margin-right: 10%;
+	}
+	div.background{
+		background: #ffffff;
+	}
 </style>
-<div class="page">
+<div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="내 신청 목록" name="pageTitle"/>
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
 	<br />
+<div class="page">
 	<input type="radio" name="type" id="study" ${(type eq 'study') or (type == null)?'checked':'' }/>
 	<label for="study">study</label>
 	<input type="radio" name="type" id="lecture"  ${type eq 'lecture'?'checked':'' } />
@@ -507,5 +515,6 @@
 	</script>
 	
 	
+	</div>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 </div>
