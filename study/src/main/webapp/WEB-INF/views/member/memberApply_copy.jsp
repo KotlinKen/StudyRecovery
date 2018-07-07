@@ -37,17 +37,28 @@
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
 	<br />
 <div class="page">
-	<%-- <input type="radio" name="type" id="study" ${(type eq 'study') or (type == null)?'checked':'' }/>
-	<label for="study">study</label> --%>
-	<h4>스터디 신청 목록</h4>
+	<input type="radio" name="type" id="study" ${(type eq 'study') or (type == null)?'checked':'' }/>
+	<label for="study">study</label>
+	<input type="radio" name="type" id="lecture"  ${type eq 'lecture'?'checked':'' } />
+	<label for="lecture">lecture</label>
 	<br />
 	<input type="radio" name="applyDate" id="present" value="present" ${(applyDate eq 'present') or (applyDate == null)?'checked':'' }/>
 	<label for="present">
+		<c:if test="${type eq 'lecture' }">
+			현재 신청 중인 강의
+		</c:if>
+		<c:if test="${type eq 'study' }">
 			현재 신청 중인 스터디
+		</c:if>
 	</label>
 	<input type="radio" name="applyDate" id="last" value="last"  ${applyDate eq 'last'?'checked':'' } />
 	<label for="last">
+		<c:if test="${type eq 'lecture' }">
+			신청이 지난 강의
+		</c:if>
+		<c:if test="${type eq 'study' }">
 			신청이 지난 스터디
+		</c:if>
 	</label>
 	<br />
 	
@@ -212,13 +223,13 @@
 				var html = "";
 				$("form#formSearch").empty();
 				if($(this).val()=='title'){
-					html="<input type='text' name='kwd' id='titleKwd' placeholder='스터디명' />";
+					html="<input type='text' name='kwd' id='titleKwd' placeholder='강의/스터디명' />";
 					html+="<input type='hidden' name='searchKwd' value='title' />";
 					
 					console.log('title');
 				} 
 				if($(this).val()=='captain'){
-					html="<input type='text' name='kwd' id='captainKwd' placeholder='팀장명' />";
+					html="<input type='text' name='kwd' id='captainKwd' placeholder='강사/팀장명' />";
 					html+="<input type='hidden' name='searchKwd' value='captain' />";
 					
 					console.log('captain');
@@ -456,7 +467,7 @@
 		var tno = ($("#town").val()!=null?$("#town").val():"0");
 		var kno = ($("#kind").val()!=null?$("#kind").val():"0");
 		var subno = ($("#subject").val()!=null?$("#subject").val():"0");
-		var dno = ($("#diff").val()!=null?$("#diff").val():"");
+		var dno = ($("#diff").val()!=null?$("#diff").val():"0");
 		
 		hideSearch("lno",lno);
 		if(lno==0){

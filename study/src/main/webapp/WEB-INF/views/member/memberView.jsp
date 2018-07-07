@@ -23,10 +23,6 @@
 	td{
 		text-align: left;
 	}
-	p#length{
-		text-align: right;
-		font-size: 20px;
-	}
 	
 	div.btn-center1{
 		text-align: center;
@@ -42,15 +38,52 @@
 		left: 760px;
 		display: inline;
 	}
-	
-	
+	/* 수정하기 버튼 css */
+	input.hiddencss{
+		display:none;
+	}
+	#phototitle{
+		display:none;
+		position: relative; 
+		top: 0; 
+		left: -205px; 
+		z-index: 1000; 
+		border: 0px solid white; 
+		background: #ffffff;
+	}
+	textarea#cover{
+		display:none;
+		resize: none;
+	}
+	[type=submit]#submit{
+		display: none;
+	}
+	p#length{
+		text-align: right;
+		font-size: 20px;
+		display:none;
+	}
+	div.page{
+		margin-left: 10%;
+		margin-right: 10%;
+	}
+	div.background{
+		background: #ffffff;
+	}
+	p#covercss{
+		width: 900px;
+		height: auto;
+	    display: inline-block;
+	    word-wrap: break-word;
+	}
 </style>
-<div class="page">
+<div class="background">
    <jsp:include page="/WEB-INF/views/common/header.jsp"> 
       <jsp:param value="내 정보 보기" name="pageTitle"/>
    </jsp:include>
          <jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
          <br />
+	<div class="page">
          
          <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >
             <c:if test="${memberLoggedIn != null }">
@@ -59,26 +92,30 @@
          		<th>회원 아이디</th>
          		<td>
 	                <input type="hidden" name="mno" id="mno" value="${memberLoggedIn.mno }" />
-	                <input type="text" name="mid" id="mid" value="${memberLoggedIn.mid }" readonly/>               
+	                <input type="text" class="hiddencss" name="mid" id="mid" value="${memberLoggedIn.mid }" readonly/>       
+	                <span>${memberLoggedIn.mid }</span>        
          		</td>
          	</tr>
          	<tr>
          		<th>회원 이름</th>
          		<td>
-         			<input type="text" name="mname" id="name" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
+         			<input type="text" class="hiddencss" name="mname" id="name" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
+         			<span>${memberLoggedIn.mname }</span> 
          		</td>
          	</tr>
          	<tr>
          		<th>비밀번호 변경</th>
          		<td>
-         			<button type="button" class="btn btn-outline-success" data-toggle="modal" 
+         			<button type="button" class="btn btn-outline-success btncss btn-detail" data-toggle="modal" 
                       data-target="#pwdUpdate">비밀번호 변경</button>
          		</td>
          	</tr>
          	<tr>
          		<th>연락처</th>
          		<td>
-         			<input type="text" name="phone" id="phone" maxlength="11" value="${fn:trim(memberLoggedIn.phone) }" autocomplete="off" />
+         			<input type="text" class="hiddencss" name="phone" id="phone" maxlength="11" value="${fn:trim(memberLoggedIn.phone) }" autocomplete="off" />
+         			<span>${memberLoggedIn.phone }</span> 
+         			 <span id="phoneerr" class="phone"></span>
          		</td>
          	</tr>
          	<tr>
@@ -86,33 +123,35 @@
          		<td>
          			<c:if test="${!(memberLoggedIn.mprofile eq 'no')}">
                   <div id="imgChange" style="width:100px;">
-                     <img id="photo" src="${pageContext.request.contextPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" onerror="this.src=''" style="width:100px;" /> 
+                     <img id="photo" src="${rootPath }/resources/upload/member/${memberLoggedIn.mprofile}" alt="${memberLoggedIn.mprofile}" onerror="src='/study/resources/upload/member/imageError.PNG'" style="width:100px;" /> 
                   </div>
                   </c:if>
                   <c:if test="${memberLoggedIn.mprofile eq 'no'}">
                      <p>프로필 사진이 없습니다.</p>
                   </c:if>
                   <br />
-                  <input type="file" name="upFile" style="position: relative; top: 0; left: 0; z-index: 100;" />
+                  <input type="file" class="hiddencss" name="upFile" style="position: relative; top: 0; left: 0; z-index: 100;" />
                   <input type="hidden" name="preMprofile" value="${memberLoggedIn.mprofile }" />
                   
-                  <span id="phototitle" style="position: relative; top: 0; left: -205px; z-index: 1000; border: 0px solid white; background: #ffffff;">${memberLoggedIn.mprofile}</span>
+                  <span id="phototitle">${memberLoggedIn.mprofile}</span>
          		</td>
          	</tr>
          	<tr>
          		<th>이메일 변경</th>
          		<td>
          			<button type="button"
-                        class="btn btn-outline-success"
+                        class="btn btn-outline-success btncss btn-detail"
                          data-toggle="modal" 
                          data-target="#emailUpdate">이메일 변경</button>
-                  <input type="email" name="email" id="email" value="${memberLoggedIn.email }" readonly /> 
+                  <span>${memberLoggedIn.email }</span> 
+                  <input type="email" class="hiddencss" name="email" id="email" value="${memberLoggedIn.email }" readonly /> 
          		</td>
          	</tr>
          	<tr>
          		<th>생년월일</th>
          		<td>
-         			<input type="date" name="birth" id="birth" value="${memberLoggedIn.birth }" readonly />
+         			<span>${memberLoggedIn.birth }</span> 
+         			<input type="date" class="hiddencss" name="birth" id="birth" value="${memberLoggedIn.birth }" readonly />
          		</td>
          	</tr>
          	<tr>
@@ -124,6 +163,14 @@
          	<tr>
          		<th> 관심사</th>
          		<td>
+         			<span>
+	                  <c:forEach var="f" items="${memberLoggedIn.favor }" varStatus="vs">
+	                  <c:if test="${vs.index != 0 }">
+	                  ,
+	                  </c:if>
+	                  	${f }
+	                  </c:forEach>
+	                 </span>
          			<%
                   	Member m = (Member)request.getAttribute("memberLoggedIn");
                   	System.out.println("mfavor=="+m);
@@ -133,12 +180,12 @@
                   	int cnt=0;
                   %>
           			<% for(Map a : list) {%>
-          				<input type="checkbox" name="favor" id="favor<%=cnt %>" value="<%=a.get("KINDNAME")%>" 
+          				<input type="checkbox" class="hiddencss" name="favor" id="favor<%=cnt %>" value="<%=a.get("KINDNAME")%>" 
           				<%for(String b : mfavor) {%>
           					<%=a.get("KINDNAME").equals(b)?"checked":"" %>
           				<% }%>/>
              				
-            			<label for="favor<%=cnt %>"><%=a.get("KINDNAME")%></label>   
+            			<label for="favor<%=cnt %>" style='display:none'><%=a.get("KINDNAME")%></label>   
           			<% cnt++; }%>
          		</td>
          	</tr>
@@ -146,14 +193,16 @@
          		<th>자기 소개</th>
          		<td>
          			<p id="length"></p>
-                  <textarea class="form-control" name="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항" style="resize: none;">${memberLoggedIn.cover }</textarea>
+         			<p id="covercss">${memberLoggedIn.cover }</p> 
+                  <textarea class="form-control" name="cover" id="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항" style="resize: none;">${memberLoggedIn.cover }</textarea>
                   
          		</td>
          	</tr>
          </table>
          </c:if>
          <div class="btn-center1">
-	         <button type="submit" class='btncss' id="submit">수정</button>                  
+	         <button type="submit" class='btncss' id="submit">수정</button>   
+	         <span><button type="button" class='btncss' id="updateForm">수정</button></span>               
          </div>
          </form>
          <form id="drop-form" action="${pageContext.request.contextPath }/member/memberDrop.do" onsubmit="return confirm('정말 탈퇴하시겠습니까?')">
@@ -208,7 +257,7 @@
                <button type="button" class="btn btn-outline-success" id="emailUpdate">인증번호 발송</button>
                <br />
                <input type="hidden" id="send" value="duplication" />
-               <input type="text" id="key" placeholder="인증키 입력" />
+               <input type="text" class="form-control" id="key" style="width:200px; display:inline" placeholder="인증키 입력" />
                <input type="hidden" id="keyCheck" value="check" />
                <button type="button" class="btn btn-outline-success" id="emailUpdateCheck">인증번호 확인</button>
                <span class="check-no" >불일치</span>
@@ -318,6 +367,17 @@
 			if (textLength > 11) {
 				$(this).val($(this).val().substr(0, 11));
 			}
+		});
+		/* 수정하기 버튼 css */
+		$("#updateForm").click(function(){
+			$("input").attr("style","display: inline-block");
+			$("label").attr("style","display: inline-block");
+			$("span").attr("style","display: none");
+			$("#submit").attr("style","display: block");
+			$("#cover").attr("style","display: block");
+			$("p#length").attr("style","display: block");
+			$("#phototitle").attr("style","display: inline");			
+			$("p#covercss").attr("style","display: none");			
 		});
 
 	});
@@ -446,5 +506,6 @@
             
 </script>
    
+	</div> 
    <jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 </div> 

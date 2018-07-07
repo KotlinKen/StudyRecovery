@@ -13,9 +13,9 @@
 					<th>선택 <input type="checkbox" id="checkAll"/></th>
 					<th>아이디</th>
 					<th>이름</th>
-					<th>경험치 <button type="button" id="expPlus">+</button><button type="button" id="expMinus">-</button> </th>
-					<th>점수 <button type="button" id="pointPlus">+</button><button type="button" id="pointMinus">-</button></th>
-					<th>지식점수 <button type="button" id="npointPlus">+</button><button type="button" id="npointMinus">-</button></th>
+					<th>경험치 <button type="button" class="btn btn-outline-primary" id="expPlus">+</button><button type="button" class="btn btn-outline-primary" id="expMinus">-</button> </th>
+					<th>점수 <button type="button" class="btn btn-outline-primary" id="pointPlus">+</button><button type="button" class="btn btn-outline-primary" id="pointMinus">-</button></th>
+					<th>지식점수 <button type="button" class="btn btn-outline-primary" id="npointPlus">+</button><button type="button" class="btn btn-outline-primary" id="npointMinus">-</button></th>
 				</tr>
 			</thead>
 
@@ -82,9 +82,9 @@ function loadInstructor(cPage, pageBarSize, type){
 	    				rmHtml += "<td><input type=\"checkbox\" class = \"check\" /> <input type=\"hidden\" value=\" "+member.MNO+ " \" /></td>";
 		    			rmHtml += "<td><a href=\"${rootPath }/member/memberSelectONEView.do?mid="+member.MID+"\">" +member.MID +"</a></td>";
 		    			rmHtml += "<td>" +member.MNAME+"</td>";
-		    			rmHtml += "<td class=\"td1\" id=\"tdexp"+member.MNO+"\"> <input type=\"number\" value=\""+member.EXP+ "\" id=\"exp"+member.MNO+"\" class=\"number num1\" max=\"10000\" min=\"0\"  /> <br/><button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_expInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_expCancel('"+member.MNO+"','"+member.EXP+"');\">되돌리기</button></td>";
-		    			rmHtml += "<td class=\"td2\" id=\"tdpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.POINT+ "\" id=\"point"+member.MNO+"\" class=\"number num2\" max=\"100000\" min=\"-100000\"  /> <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_pointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_pointCancel('"+member.MNO+"','"+member.POINT+"');\">되돌리기</button></td>";
-		    			rmHtml += "<td class=\"td3\" id=\"tdnpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.NPOINT+ "\" id=\"npoint"+member.MNO+"\" class=\"number num3\" max=\"100000\" min=\"0\"  />  <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_npointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-success \" onclick=\"fn_npointCancel('"+member.MNO+"','"+member.NPOINT+"');\">되돌리기</button>";
+		    			rmHtml += "<td class=\"td1\" id=\"tdexp"+member.MNO+"\"> <input type=\"number\" value=\""+member.EXP+ "\" id=\"exp"+member.MNO+"\" class=\"number num1\" max=\"10000\" min=\"0\"  /> <br/><button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_expInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_expCancel('"+member.MNO+"','"+member.EXP+"');\">되돌리기</button></td>";
+		    			rmHtml += "<td class=\"td2\" id=\"tdpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.POINT+ "\" id=\"point"+member.MNO+"\" class=\"number num2\" max=\"100000\" min=\"-100000\"  /> <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_pointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_pointCancel('"+member.MNO+"','"+member.POINT+"');\">되돌리기</button></td>";
+		    			rmHtml += "<td class=\"td3\" id=\"tdnpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.NPOINT+ "\" id=\"npoint"+member.MNO+"\" class=\"number num3\" max=\"100000\" min=\"0\"  />  <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_npointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_npointCancel('"+member.MNO+"','"+member.NPOINT+"');\">되돌리기</button>";
 	    			rmHtml += "</tr>";
 	    	}
 			$(".table-responsive tbody").html(rmHtml);

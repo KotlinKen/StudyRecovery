@@ -83,7 +83,7 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 			<input type="hidden" id="checkPoint" value="0" /> <br />
 			
 			<!-- 생년월일 -->
-			<p class="textP">생년월일(필수)</p><input type="date" name="birth" required/><br />
+			<label for="birth" class="textP">생년월일(필수)</label><input type="date" name="birth" id="birth" required/><br />
 			<span class="jender">
 			<input type="radio" name="gender" value="M" id="male" checked /> <label for="male">남</label> 
 			</span>
@@ -95,16 +95,16 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 			<br /><br />
 
 			<!-- 사진 올리기 -->
-			<p class="textP">프로필사진(필수)</p><input type="file" name="upFile" id="upFile" accept="image/*" /> 
+			<label for="upFile" class="textP">프로필사진(필수)</label><input type="file" name="upFile" id="upFile" accept="image/*" /> 
 			<input type='hidden' name='mprofile' id="mprofile" value='noprofile.jpg' />
 			<div id="div-img-ik"></div>
 			<br />
 			<br />
 			
 			<!-- 파일 올리기 -->
-			<p class="textP">포트폴리오(필수)</p><input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/><br />
+			<label for="port" class="textP">포트폴리오(필수)</label><input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/><br />
 			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
-			<p class="textP">자기소개서(필수)</p><input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
+			<label for="self" class="textP">자기소개서(필수)</label><input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
 			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
 			
 			<!-- 카테고리 설정 -->

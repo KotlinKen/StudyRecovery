@@ -5,6 +5,7 @@
  <jsp:include page="/WEB-INF/views/member/admin_member_button.jsp"/>
 <!-- 장익순 버튼 설정 끝 -->
 	<div class="table-responsive">
+		<!-- 아이디, 이름, 성별,  -->
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
@@ -13,6 +14,7 @@
 					<th>이름</th>
 					<th>연락처</th>
 					<th>성별</th>
+					<th>경험치</th>
 					<th>포인트</th>
 					<th>지식포인트</th>
 					<th>등록일</th>
@@ -87,10 +89,11 @@ function loadInstructor(cPage, pageBarSize, type){
 		    			rmHtml += "<td>" +member.MNAME+"</td>";
 		    			rmHtml += "<td>" +member.PHONE+"</td>";
 		    			rmHtml += "<td>" +member.GENDER+"</td>";
+		    			rmHtml += "<td>" +member.EXP+"</td>";
 		    			rmHtml += "<td>" +member.POINT+"</td>";
 		    			rmHtml += "<td>" +member.NPOINT+"</td>";
 		    			rmHtml += "<td>" +member.REGDATES+"</td>";
-	    			rmHtml += "</tr>";
+	    				rmHtml += "</tr>";
 	    	}
 	    	
 			$(".table-responsive tbody").html(rmHtml);
