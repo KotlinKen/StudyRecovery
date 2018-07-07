@@ -1,29 +1,71 @@
 package com.pure.study.common.websocket;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pure.study.member.controller.MemberController;
+import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Member;
 
 public class EchoHandler extends TextWebSocketHandler {
 	 private static Logger logger = LoggerFactory.getLogger(EchoHandler.class);
-	    
+	 
+	 	public class Message {
+	 		private String type;
+	 		private String sender;
+	 		private String recevier;
+	 		private String msg;
+	 		
+			public Message(String type, String sender, String recevier, String msg) {
+				super();
+				this.type = type;
+				this.sender = sender;
+				this.recevier = recevier;
+				this.msg = msg;
+			}
+			
+			public String getType() {
+				return type;
+			}
+			public void setType(String type) {
+				this.type = type;
+			}
+			public String getSender() {
+				return sender;
+			}
+			public void setSender(String sender) {
+				this.sender = sender;
+			}
+			public String getRecevier() {
+				return recevier;
+			}
+			public void setRecevier(String recevier) {
+				this.recevier = recevier;
+			}
+			public String getMsg() {
+				return msg;
+			}
+			public void setMsg(String msg) {
+				this.msg = msg;
+			}
+	 	}
+	 
+	 
 	    //방법일 일대일챗팅 map사용
-		Map<String, WebSocketSession> sessions  = new HashMap<String, WebSocketSession>();
-	    private List<WebSocketSession> sessionList = new ArrayList<WebSocketSession>();
-	    List<Member> mem = new ArrayList<>();
+		private Map<String, WebSocketSession> sessions = new HashMap<String, WebSocketSession>();
+	    private ObjectMapper mapper = new ObjectMapper();
+	    
+	    
 	    /**
 	     * 클라이언트 연결 이후에 실행되는 메소드
 	     */
@@ -35,9 +77,29 @@ public class EchoHandler extends TextWebSocketHandler {
 	        //Map사용시
 	    	sessions.put(member.getMid(), session);
 	        
-	        //List쓸때
-	        sessionList.add(session);
 	        logger.info("{} 연결됨", session.getId());
+	        
+	        
+	        Message message = new Message("init", member.getMid(), null, "안녕~");
+	        
+	        Iterator<String> sessionIds = sessions.keySet().iterator();
+	        String sessionId="";
+	        
+	        
+	        memberService.selectMyStudyList(map, numPerPage, cPage)
+	        
+	        while(sessionIds.hasNext()){
+	            sessionId = sessionIds.next();
+	            System.out.println("담겨있는 값" + ":" + sessionId );
+ 
+	        }
+	        
+	        
+	        
+	      
+	        
+	        
+	        handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
 	    }
 	    /**
 	     * 클라이언트가 웹소켓서버로 메시지를 전송했을 때 실행되는 메소드
@@ -45,22 +107,13 @@ public class EchoHandler extends TextWebSocketHandler {
 	    @Override
 	    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 	    	  
-	    	
+	    	logger.error("handdle 호출" + session.getId());
 	    	 
-	    	  
-	    	  
-	    	  
-	    	  for(Member m : mem) {
-	    		  System.out.println(m.getMid());
-	    	  }
-	        
+	   
 	        //배열이면 많이 쓸수 있고, 쓰지않으면 최대 2개임여
 	        logger.info("{}와 부터 {}받음",new String[] {session.getId(), message.getPayload()});
 	        
 	    	  message.getPayload();
-
-
-	 
 
 	/*        for(WebSocketSession sess : sessionList){
 	            sess.sendMessage(new TextMessage("echo: " +  message.getPayload()));
@@ -70,7 +123,9 @@ public class EchoHandler extends TextWebSocketHandler {
 	        String sessionId="";
 	        while(sessionIds.hasNext()){
 	            sessionId = sessionIds.next();
-	            sessions.get(sessionId).sendMessage(new TextMessage(sessionId+" echo " + message.getPayload()));
+	            //sessions.get(sessionId).sendMessage(new TextMessage(sessionId+" echo " + message.getPayload()));
+	            sessions.get(sessionId).sendMessage(message);
+	            logger.error("sessionids 호출" + sessionId);
 	        }
 	        
 	    }
@@ -79,12 +134,18 @@ public class EchoHandler extends TextWebSocketHandler {
 	     */
 	    @Override
 	    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-	        //list
-	        sessionList.remove(session);
 	        //map
-	        //sessions.remove(session.getId());
+	    	Iterator<String> tarKeyIter = sessions.keySet().iterator();
+	    	while (tarKeyIter.hasNext()) {
+	    	    String key = tarKeyIter.next();
+	    	    if(sessions.get(key) == session) {
+	    	        sessions.remove(key);
+	    	        break;
+	    	    }
+	    	}
 	        //logger.info("{} 연결 끊김", session.getId());
 	    }
+	    
 		public Map<String, WebSocketSession> getSessions() {
 			return sessions;
 		}

@@ -35,13 +35,13 @@ public interface LectureService {
 
 	List<Map<String, Object>> selectLectureListBySearch(Map<String, Object> terms);
 
-	List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage);
+	List<Map<String, Object>> selectByDeadline(Map<String, Object> terms);
 
-	int lectureDeadlineCount();
+	int lectureDeadlineCount(Map<String, Object> terms);
 
-	List<Map<String, Object>> selectByApply(int cPage, int numPerPage);
+	List<Map<String, Object>> selectByApply(Map<String, Object> terms);
 
-	int studyByApplyCount();
+	int studyByApplyCount(Map<String, Object> terms);
 
 	int lectureWish(Map<String, Integer> map);
 
@@ -65,10 +65,20 @@ public interface LectureService {
 
 	long selectPay(Map<String, Integer> map);
 
-	void successPayCancel(Map<String, Object> cancelMap);
+	void successPayCancel(long pno);
 
-	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key);
+	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> key);
 
 	int selectTotalPayCount();
+
+	void successAdminPayCancel(long pno);
+
+	List<Map<String, String>> searchAdminLectureList(int cPage, int numPerPage, Map<String, Object> map);
+
+	int selectTotalAdminLectureCount(Map<String, Object> map);
+
+	int peopleCnt(int sno);
+
+	int recruitCnt(int sno);
 
 }

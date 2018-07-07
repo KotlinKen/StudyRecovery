@@ -90,20 +90,21 @@ $(function(){
 
 $(function(){
 $(window).scroll(function(){
-	console.log($(this).scrollTop());
 	
 	$scrollTop = $(this).scrollTop();
 	$wingSection = $(".wingSection"); 
-	if($scrollTop > 200){
-		console.log("test");
-		$wingSection.removeClass("col-md-4");		
-		$wingSection.addClass("fixed");
-		
+	
+	if($("#studyDetails").height() > $(".wingSection").height()+$scrollTop){
+	if($scrollTop > 60){
+		$wingSection.stop().animate({top: $scrollTop - 145});  
 	}else{
-		console.log("none");
-		$wingSection.removeClass("fixed");		
-		$wingSection.addClass("col-md-4");
+		$wingSection.stop().animate({top: $scrollTop});
 	}
+	console.log($(".container").height());
+	
+	
+	}
+	
 	
 })
 	
@@ -115,120 +116,69 @@ $(window).scroll(function(){
 </script>
 
 <style>
-section#content {
-	padding: 0px;
-}
-
-#studyDetails {
-	
-}
-
-#studyDetails .contentSection {
-	padding: 0px;
-}
-#studyDetails .contentSection .sliderSection {
-position: relative; 
-}
-
-
-
-#studyDetails .wingSection {
-	padding-left: 15px;
-	position: relative;
-	top: 0px;
-	right: 0px;
-}
-
-#studyDetails .wingSection .wingWrap {
-	background: #ececec;
-	padding: 10px;
-}
-
-#studyDetails .fixed {
-	position: fixed;
-	bacgkround: red;
-	left: 60%;
-	top: 0%;
-}
-
-.levelBox {
-	position: absolute;
-	background: #EF6C00;
-	width: 100px;
-	height: 100px;
-	z-index: 10;
-	bottom: -50px;
-	left: 35px;
-	text-align:center;
-}
-.naming{display:inline-block ;font-weight:bold; font-size:1.6rem; color:#FEE538; padding-top:15px; }
-.levels{color:#fff; font-size:1.4rem;}
-.studyViewContent{margin-top:80px;  word-break : keep-all; text-align:center;}
-.titleSection{padding:10px 50px 20px 50px; font-weight:bold;  }
-.localSection{color:#999;}
-.studyInfoSection{text-align: left;}
-
+#studyDetails .container{position:relative; height:900px; margin-top: 10px;  }
+.content{background:red; width:75%;}
+.wingSection{position:absolute; right:0px; top:10px; width:25%; padding:10px; background:#fff; }
+.wingSection > div{margin:20px 0px; line-height:1.8rem}
+.customBtn{width:100%; background:none; padding:15px 0px; border:none; margin-bottom:10px; cursor:pointer; }
+.baseColor{background:#0056e9; color:#fff;  border:1px solid #0056e9;}
+.baseColor:hover{background:#fff; color:#0056e9; border:1px solid #0056e9;}
+.baseColorRefelct{background:#fff; color:#0056e9; border:1px solid #0056e9;} 
+.baseColorRefelct:hover{background:#0056e9; color:#fff;} 
 </style>
 
 <div id="studyDetails">
 	<div class="container">
-		<div class="row">
-			<div class="contentSection col-md-8">
-				<div class="sliderSection">
-					<div class="levelBox">
-						<span class="naming">LEVEL</span> <br />
-						<span class="levels"> ${study.DNAME }</span>		
-					</div>
-					
-					<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-						<div class="carousel-inner">
-							<c:forEach var="img" items="${imgs }" varStatus="vs">
-								<div class="carousel-item ${vs.first? 'active':'' }">
-									<img class="d-block w-100 rm_cover_img" src="${pageContext.request.contextPath }/resources/upload/study/${img }" alt="Second slide">
-								</div>
-							</c:forEach>
-						</div>
-
-						<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev"> <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span>
-						</a> <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next"> <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span>
-						</a>
-
-					</div>
-				</div>
-				
-				
-				
-				
-				<div class="studyViewContent">
-					<div class="localSection">${study.LNAME } ${study.TNAME }</div>
-					<div class="titleSection"><h2>${study.TITLE }</h2></div>
-					<div class="studyInfoSection row">
-						<div class="col-md-4">스터디 소개</div>
-						<div class="col-md-8">${study.CONTENT }</div>
-			
-					</div>
-					<div>3</div>
-					<div>4</div>
+		<div class="content">
+			<div class="sliderSection">
+				<div class="levelBox">
+					<span class="naming">LEVEL</span> <br /> <span class="levels"> ${study.DNAME }</span>
 				</div>
 
+				<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+					<div class="carousel-inner">
+						<c:forEach var="img" items="${imgs }" varStatus="vs">
+							<div class="carousel-item ${vs.first? 'active':'' }">
+								<img class="d-block w-100 rm_cover_img" src="${pageContext.request.contextPath }/resources/upload/study/${img }" alt="Second slide">
+							</div>
+						</c:forEach>
+					</div>
 
-			<%-- <textarea cols=300 rows=500 readonly>${study.CONTENT }</textarea> --%>
+					<a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev"> <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span>
+					</a> <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next"> <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span>
+					</a>
 
-				
-				<div>3</div>
-				<div>4</div>
-			
-			
-			</div>
-			<div class="wingSection col-md-2">
-				<div class="wingWrap"> 
-					<div>1</div>
-					<div>2</div>
-					<div>3</div>
-					<div>4</div>
 				</div>
 			</div>
+
 		</div>
+		<div class="wingSection"> 
+			<div style="font-weight:bold;">
+				원어민 영어발음, Joanne의 쉽고 재밌는 영어회화의 시작!
+			</div>
+			<div>
+				12주 
+			</div>
+			<div>
+				<span>참가비</span><span>24000원</span> 
+			</div>
+			<div>
+				<button class="customBtn baseColor">참여 신청하기</button>
+				<button class="customBtn baseColorRefelct">찜하기</button>
+			</div> 
+			<div>
+				<div>리얼 후기</div>
+			</div>
+			<div>
+				<div>신청인원</div>
+			</div>
+			
+		
+		</div>
+	
+	
+	
+
 	</div>
 </div>
 

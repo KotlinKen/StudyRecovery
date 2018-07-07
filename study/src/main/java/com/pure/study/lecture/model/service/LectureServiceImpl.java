@@ -86,27 +86,27 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectByDeadline(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.selectByDeadline(cPage,numPerPage);
+		return ld.selectByDeadline(terms);
 	}
 
 	@Override
-	public int lectureDeadlineCount() {
+	public int lectureDeadlineCount(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.lectureDeadlineCount();
+		return ld.lectureDeadlineCount(terms);
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByApply(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectByApply(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.selectByApply(cPage,numPerPage);
+		return ld.selectByApply(terms);
 	}
 
 	@Override
-	public int studyByApplyCount() {
+	public int studyByApplyCount(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.studyByApplyCount();
+		return ld.studyByApplyCount(terms);
 	}
 
 	@Override
@@ -165,8 +165,8 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public void successPayCancel(Map<String, Object> cancelMap) {
-		ld.successPayCancel(cancelMap);
+	public void successPayCancel(long pno) {
+		ld.successPayCancel(pno);
 	}
 
 	@Override
@@ -175,9 +175,33 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key) {
+	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> key) {
 		return ld.selectPayList(cPage, numPerPage, key);
 	}
 
+	@Override
+	public void successAdminPayCancel(long pno) {
+		ld.successAdminPayCancel(pno);
+	}
+
+	@Override
+	public List<Map<String, String>> searchAdminLectureList(int cPage, int numPerPage, Map<String, Object> map) {
+		return ld.searchAdminLectureList(cPage, numPerPage, map);
+	}
+
+	@Override
+	public int selectTotalAdminLectureCount(Map<String, Object> map) {
+		return ld.selectTotalAdminLectureCount(map);
+	}
+
+	@Override
+	public int peopleCnt(int sno) {
+		return ld.peopleCnt(sno);
+	}
+
+	@Override
+	public int recruitCnt(int sno) {
+		return ld.recruitCnt(sno);
+	}
 
 }
