@@ -570,9 +570,7 @@ div#enroll button#insertLectureBtn{
 					</td>
 					<td>
 						<a href="#" id="reFilter">검색 조건 초기화</a>
-					</td>
-					
-				
+					</td>				
 				</tr>
 			</table>
    </div>
