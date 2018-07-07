@@ -9,19 +9,19 @@
         <div class="col-6 col-md">
           <h5>Features</h5>
           <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="#">Cool stuff</a></li>
-            <li><a class="text-muted" href="#">Random feature</a></li>
-            <li><a class="text-muted" href="#">Team feature</a></li>
-            <li><a class="text-muted" href="#">Stuff for developers</a></li>
-            <li><a class="text-muted" href="#">Another one</a></li>
-            <li><a class="text-muted" href="#">Last time</a></li>
+            <li><a class="text-muted" href="${rootPath }/study/studyList.do">Study</a></li>
+            <li><a class="text-muted" href="${rootPath }/lecture/lectureList.do">Lecture</a></li>
+            <li><a class="text-muted" href="${rootPath }/board/boardList?type=일반">Board</a></li>
+            <li><a class="text-muted" href="${rootPath }/board/boardList?type=one">Board Q&A</a></li>
+            <li><a class="text-muted" href="${rootPath }/board/boardList?type=faq">Board FAQ</a></li>
+            <li><a class="text-muted" href="${rootPath }/board/boardList?type=event">Board Event</a></li>
           </ul>
         </div>
         <div class="col-6 col-md">
           <h5>Resources</h5>
           <ul class="list-unstyled text-small">
-            <li><a class="text-muted --yellow" href="#">Resource</a></li>
-            <li><a class="text-muted" href="#">Resource name</a></li>
+            <li><a class="text-muted" href="${rootPath }/member/memberAgreement.do">Join studyGrooupt</a></li>
+            <li><a class="text-muted" href="${rootPath }/admin/adminLogin">Manager Login</a></li>
             <li><a class="text-muted" href="#">Another resource</a></li>
             <li><a class="text-muted" href="#">Final resource</a></li>
           </ul>
@@ -38,10 +38,10 @@
         <div class="col-6 col-md">
           <h5>About</h5>
           <ul class="list-unstyled text-small">
-            <li><a class="text-muted" href="#">Team</a></li>
-            <li><a class="text-muted" href="#">Locations</a></li>
-            <li><a class="text-muted" href="#">Privacy</a></li>
-            <li><a class="text-muted" href="#">Terms</a></li>
+            <li><a class="text-muted" href="${rootPath }/etc/team">Team</a></li>
+            <li><a class="text-muted" href="${rootPath }/etc/locations">Locations</a></li>
+            <li><a class="text-muted" href="${rootPath }/etc/privacy">Privacy</a></li>
+            <li><a class="text-muted" href="${rootPath }/etc/terms">Terms</a></li>
           </ul>
         </div>
       </div>
@@ -56,7 +56,7 @@
 
 
 <div class="followFooter">
-	<div style="float:left">design by Kim ryulimn in KH Academy Spring Framework tutorials projects</div>
+	<div style="float:left">design by Kim Ryulmin in KH Academy Spring Framework tutorials projects</div>
 	<div style="float:right;"> ⓒcopyright all reserved 2018</div>
 	</div>
 </body>

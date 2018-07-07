@@ -37,7 +37,7 @@
 		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=apply">스터디 신청 목록</a>
 	</li>
 	<li class='btn-page'>
-		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=wish">스터디 관심 목록</a>
+		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=wish">스터디/강의 관심 목록</a>
 	</li>
 	<li class='btn-page' id="insetruct">
 		<a href="#" onclick="javascript:document.myForm.submit();" >강사신청</a>

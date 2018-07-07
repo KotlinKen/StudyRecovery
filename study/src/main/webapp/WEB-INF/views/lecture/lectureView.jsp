@@ -8,8 +8,7 @@
 <script src="https://service.iamport.kr/js/iamport.payment-1.1.5.js" type="text/javascript"></script>
 <script>
 	//참여신청 버튼 클릭 이벤트
-	function lectureApply(){
-		
+	function lectureApply(){		
 		// 결제 도전!
 		var IMP = window.IMP;
 		IMP.init("imp25308825"); // 아임포트에 등록된 내 아이디.		
@@ -30,14 +29,14 @@
 	        	 	mno : mno
 	         },
 	         success:function(data){
-	        	//강의를 등록할 수 있는 경우.    	
-	       	if(confirm("결제 하시겠습니까?")){
-		         	if( data == "" ){
+	        	//강의를 등록할 수 있는 경우. 
+	        	if( data == ""){	        		
+			       	if(confirm("결제 하시겠습니까?")){
 		         		 IMP.request_pay({
 		     			    pg : 'inicis', // version 1.1.0부터 지원.
 		     			    pay_method : 'card',
 		     			    merchant_uid : 'merchant_' + new Date().getTime(),
-		     			    name : '스터디 강의 신청',
+		     			    name : '강의 신청',
 		     			    amount : 100,
 		     			    m_redirect_url : 'https://www.yourdomain.com/payments/complete'
 		     			}, function(rsp) {
@@ -68,18 +67,23 @@
 		     			    	
 		     			        msg = '결제에 실패하였습니다.';
 		     			        msg += '에러내용 : ' + rsp.error_msg;
+		     			        alert(msg);
 		     			    }
-		   			        alert(msg); 
 		     			});
 		         	}
-		         }
-
+	        	}
 	        	// 없는 경우.
 	         	else{
-	         		alert("결제를 취소하셨습니다.");
+	         		if( data != "결제를 취소하셨습니다")
+	         			msg = data;
+	         		else
+	         			msg = "결제를 취소하셨습니다.";
 	         	}
 	         }
-	      }); 		  
+	      }).done(function(){
+	    	  if( msg != "" )
+	    	  	alert(msg);
+         });		  
 	   }
 	}
 	
@@ -121,7 +125,7 @@
 		});
 	}
 	
-	function lectureCancel(){
+	function lectureCancel(){		
 		var sno = ${lecture.SNO};
 		var mno =  ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
@@ -133,21 +137,19 @@
 					sno : sno
 				},
 				success : function(data){
-					var originNo = "imp_" + data;
+					console.log(pno);
+					var pno = data;
 					var price = ${lecture.PRICE};
-					
-					console.log(originNo);
 					
 					$.ajax({
 						url : "lectureCancel.do",
 						data : {
 							sno : sno,
 							mno : mno,
-							originNo : originNo,
+							pno : pno,
 							price : price
 						},
 						success: function( data ){
-							console.log(data);
 						}
 					});						
 				}
@@ -155,7 +157,7 @@
 				alert("취소되었습니다");
 				location.href="${rootPath}/lecture/lectureView.do?sno=" +sno + "&mno=" + mno;
 			});
-		}			
+		}
 	}
 	
 	$(function(){   

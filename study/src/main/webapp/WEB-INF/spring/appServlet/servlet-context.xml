@@ -112,6 +112,7 @@
 	</websocket:handlers>
 
 	<beans:bean id="echoHandler" class="com.pure.study.common.websocket.EchoHandler" />
+
 	<!-- 회원가입 확인 (장익순) 시작 -->
 	<interceptors>
 		<interceptor>
