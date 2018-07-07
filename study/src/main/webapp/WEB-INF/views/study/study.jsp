@@ -35,7 +35,7 @@ $(function(){
 		dataType:"json",
 		success:function(data){
 			$("input#total").val(data.total);
-			$("input#numPerPage").vaMl(data.numPerPage);
+			$("input#numPerPage").val(data.numPerPage);
 			$("input#cPageNo").val(data.cPage);
 			var html="";
 			for(index in data.list){

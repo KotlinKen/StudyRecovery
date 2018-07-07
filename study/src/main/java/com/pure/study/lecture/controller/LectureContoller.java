@@ -234,7 +234,10 @@ public class LectureContoller {
 		ModelAndView mav = new ModelAndView();
 		
 		Member m = (Member) session.getAttribute("memberLoggedIn");
-		int realMNo = 0;		
+		int realMNo = 0;	
+		
+		int insert = 0;
+		int wish = 0;
 		
 		try {			
 			realMNo = m.getMno();			
@@ -259,11 +262,8 @@ public class LectureContoller {
 			if (mno > 0) {
 				map.put("mno", mno);
 	
-				int wish = ls.lectureWish(map);
-				int insert = ls.preinsertApply(map);
-	
-				mav.addObject("wish", wish);
-				mav.addObject("insert", insert);
+				wish = ls.lectureWish(map);
+				insert = ls.preinsertApply(map);				
 			}
 	
 			Map<String, String> lecture = ls.selectLectureOne(sno);
@@ -272,6 +272,11 @@ public class LectureContoller {
 	
 			mav.setViewName("lecture/lectureView");
 		}
+		
+		mav.addObject("wish", wish);
+		mav.addObject("insert", insert);
+		
+		System.out.println(insert);
 
 		return mav;
 	}
