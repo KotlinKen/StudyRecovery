@@ -349,8 +349,7 @@ public class LectureContoller {
 		}
 		else {
 			msg="신청자 수가 초과했습니다.";
-		}
-		
+		}		
 
 		return msg;
 	}
@@ -387,7 +386,6 @@ public class LectureContoller {
 		mav.addObject("total", total);
 
 		return mav;
-
 	}
 
 	// 스크롤 페이징 처리 - 조건 없음
@@ -866,7 +864,7 @@ public class LectureContoller {
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
-					e.printStackTrace();
+		 			e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {

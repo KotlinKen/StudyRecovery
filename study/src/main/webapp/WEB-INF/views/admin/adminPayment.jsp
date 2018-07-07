@@ -102,7 +102,6 @@ function lectureAdminCancel(sno, mno, pno, price){
 				price : price
 			},
 			success : function(data){
-				console.log(data);
 				location.href="${rootPath}/admin/adminPayment";
 			}
 		}).done(function(){

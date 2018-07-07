@@ -81,7 +81,6 @@
 	         	}
 	         }
 	      }).done(function(){
-	    	  console.log(msg);
 	    	  if( msg != "" )
 	    	  	alert(msg);
          });		  
@@ -150,7 +149,6 @@
 							price : price
 						},
 						success: function( data ){
-							console.log(data);
 						}
 					});						
 				}
