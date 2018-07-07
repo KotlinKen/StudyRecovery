@@ -1861,7 +1861,7 @@ public class MemberController {
 		if (result > 0)
 			msg = "강사신청이 됬습니다. 결과를 기다려 주세요";
 		else
-			msg = "회원가입실패!";
+			msg = "강사신청이 실패!";
 
 		mav.addObject("loc", loc);
 		mav.addObject("msg", msg);
