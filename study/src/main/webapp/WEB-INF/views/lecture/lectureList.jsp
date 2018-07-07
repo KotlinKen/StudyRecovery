@@ -316,6 +316,7 @@ div#enroll button#insertLectureBtn{
 					$("ul.list").html(html); 
 					$("input#total").val(data.total);
 					$("input#cPageNo").val(data.cPage);
+					$("span#totalcount").html(data.total);
 			 }
 			});
 		});
