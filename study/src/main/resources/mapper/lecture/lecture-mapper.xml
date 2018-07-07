@@ -523,19 +523,13 @@
    </select>
    
    <select id="selectByApply" resultMap="map">
-     select s.sno, n.cntt,s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
-	  		to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
-	 		s.etc,k.kno,SUBJECTNAME subname,SNAMEENAME subename, kindname kname, KNAMEENAME kename, DIFFICULTNAME dname,local, 
-	 		mid, mname, mprofile,cover,t.townname tname,
-	 		decode(s.status,'마감 임박',1,'모집 중',2) statusOrder,
-	 		(select count(*) applycnt from apply where sno=s.sno) cnt
-	  from(
-	        select count(*) cntt, s.sno 
-	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' and s.status in ('모집 중','마감 임박')
-	        group by s.sno 
-	      ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
-	  where M.QDATE IS NULL
+    select s.sno, s.mno,s.subno,s.tno,s.dno,l.lno,title,freq,content,price,upfile,recruit,s.status,s.time,
+       to_char(s.ldate,'yyyy-mm-dd') ldate, to_char(s.sdate,'yyyy-mm-dd') sdate,to_char(s.edate,'yyyy-mm-dd') edate,to_char(s.regdate,'yyyy-mm-dd') regdate,
+      s.etc,k.kno,SUBJECTNAME subname,SNAMEENAME subename, kindname kname, KNAMEENAME kename, DIFFICULTNAME dname,local, 
+      mid, mname, mprofile,m.point, cover,t.townname tname,
+      decode(s.status,'마감 임박',1,'모집 중',2) statusOrder
+      from  study s join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
+     where s.type='lecture' and s.status in ('모집 중','마감 임박') and m.qdate is null
 	<if test="lno!=0">
 	and l.lno =#{lno}
 	</if>
@@ -554,19 +548,13 @@
 	<if test="leadername!=null and leadername !='' ">
 	and  m.mname like '%'||#{leadername}||'%'  
 	</if>
-	order by statusOrder, cntt desc, s.REGDATE
+	order by statusOrder, m.point desc, s.regdate desc
    </select>
    
    <select id="studyByApplyCount" resultType="_int">
-     select count(*) cnt
-	  from(
-	        select count(*) cnt, s.sno 
-	        from apply a right outer join study s on a.sno=s.sno 
-	        where s.type='lecture' and s.status in ('모집 중','마감 임박')
-	        group by s.sno 
-	        order by cnt desc
-	       ) n join study s on n.sno=s.sno join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
-	  where M.QDATE IS NULL
+     select count(*)  cnt
+     from  study s join subject sb on s.subno=sb.subno join kind k on k.kno=sb.kno join diff d on s.dno=d.dno join town t on t.tno=s.tno join local l on l.lno=t.lno join member m on m.mno=s.mno
+     where s.type='lecture' and s.status in ('모집 중','마감 임박') and m.qdate is null
 	<if test="lno!=0">
 	and l.lno =#{lno}
 	</if>
