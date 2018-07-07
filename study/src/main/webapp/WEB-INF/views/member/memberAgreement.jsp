@@ -29,7 +29,10 @@ span{position: relative; left: 20px;}
 #buttonb{position: relative; left: 71%;}
 input[type=checkbox], input[type=radio]{ width: 20px;height: 20px; border-radius :10px;}
 #headaik{color: black;}
-body{background: lightblue url("${rootPath}/resources/images/young.jpg") no-repeat fixed center; }
+body{
+/* background: lightblue url("${rootPath}/resources/images/young.jpg") no-repeat fixed center; */ 
+background: rgb(100, 150, 235,0.95);
+}
 hr { 
     display: block;
     margin-top: 0.5em;
