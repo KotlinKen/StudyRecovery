@@ -358,7 +358,7 @@ $(function(){
 	<br />
 	
 	<label for="price">수강료 : </label>
-	<input type="number" name="price" id="price" class="form-control" min="1000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
+	<input type="number" name="price" id="price" class="form-control" min="1000" max="10000000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
 	<br />
 	
 	<label for="recruit">모집 인원 : </label>

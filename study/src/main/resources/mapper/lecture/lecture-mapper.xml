@@ -172,9 +172,11 @@
              DECODE(STATUS,'모집 마감',2,'진행 중',3,'강의 종료',4,1) STATUSORDER
       FROM (SELECT S.*, 
                   (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
-                  (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
+                  (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
+            	  (SELECT M.QDATE AS QDATE FROM MEMBER M WHERE S.MNO = M.MNO) QDATE
             FROM STUDY S 
       WHERE TYPE = 'lecture') A
+      WHERE QDATE IS NULL
       ORDER BY STATUSORDER, SNO DESC
    </select>
    
@@ -217,9 +219,11 @@
               TO_CHAR(REGDATE,'yyyy-mm-dd') REGDATE
       FROM (SELECT S.*, 
                   (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
-                  (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO
+                  (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
+            	  (SELECT M.QDATE AS QDATE FROM MEMBER M WHERE S.MNO = M.MNO) QDATE
             FROM STUDY S 
       WHERE TYPE = 'lecture' AND SNO = #{sno}) A
+      WHERE QDATE IS NULL
       ORDER BY SNO DESC
    </select>
    
@@ -285,10 +289,11 @@
       FROM (SELECT S.*, 
                   (SELECT T.LNO AS LNO FROM TOWN T WHERE T.TNO = S.TNO) LNO,
                   (SELECT SUB.KNO AS KNO FROM SUBJECT SUB WHERE SUB.SUBNO = S.SUBNO) KNO,
-                  (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = S.MNO) MNAME
+                  (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = S.MNO) MNAME,
+            	  (SELECT M.QDATE AS QDATE FROM MEMBER M WHERE S.MNO = M.MNO) QDATE
             FROM STUDY S 
-           WHERE TYPE = 'lecture') A
-      WHERE 1=1 
+            WHERE TYPE = 'lecture') A
+      WHERE QDATE IS NULL
       <if test="lno != 0">
          AND A.LNO = #{lno}
       </if>
