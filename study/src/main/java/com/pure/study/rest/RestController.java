@@ -68,10 +68,6 @@ public class RestController {
 	@Autowired
 	private EchoHandler echoHandler;
 	
-	@Autowired
-	@Qualifier("sessionsMap")
-	private HashMap<String, WebSocketSession> sessions;
-	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	
@@ -399,7 +395,7 @@ public class RestController {
 		
 		ModelAndView  mav = new ModelAndView("jsonView");
 		
-		mav.addObject("list" ,rs.getMemberLists());
+		mav.addObject("list" , rs.getMemberLists());
 		return mav;
 	}
 	
@@ -426,7 +422,6 @@ public class RestController {
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("common/chat");
-		mav.addObject("ss", sessions);
 		return mav;
 	}
 	

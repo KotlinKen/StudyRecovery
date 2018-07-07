@@ -27,12 +27,14 @@
     }; */
     function sendMessage(){
             /*소켓으로 보내겠다.  */
-            sock.send("${mber.mid}," + $("#message").val());
+            var message = {type:'chat',sender:'${mber.mid}',recevier:'',msg:$('#message').val()};
+            sock.send(JSON.stringify(message));
     }
     //evt 파라미터는 웹소켓을 보내준 데이터다.(자동으로 들어옴)
     function onMessage(evt){
         var data = evt.data;
-        $("#data").append(data+"<br/>");
+        data = JSON.parse(data);
+        $("#data").append(data.msg+"<br/>");
         //sock.close();
     }
     

@@ -111,14 +111,8 @@
 		<websocket:sockjs />
 	</websocket:handlers>
 
-	<beans:bean id="echoHandler" class="com.pure.study.common.websocket.EchoHandler">
-		<beans:property name="sessions" ref="sessionsMap"/>
-	</beans:bean>
-	<beans:bean id="sessionsMap" class="java.util.HashMap">
-		<beans:constructor-arg>
-        	<beans:map key-type="java.lang.String" value-type="org.springframework.web.socket.WebSocketSession" />
-		</beans:constructor-arg>
-	</beans:bean>
+	<beans:bean id="echoHandler" class="com.pure.study.common.websocket.EchoHandler" />
+
 	<!-- 회원가입 확인 (장익순) 시작 -->
 	<interceptors>
 		<interceptor>

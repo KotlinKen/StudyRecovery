@@ -86,27 +86,27 @@ public class LectureServiceImpl implements LectureService {
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByDeadline(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectByDeadline(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.selectByDeadline(cPage,numPerPage);
+		return ld.selectByDeadline(terms);
 	}
 
 	@Override
-	public int lectureDeadlineCount() {
+	public int lectureDeadlineCount(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.lectureDeadlineCount();
+		return ld.lectureDeadlineCount(terms);
 	}
 
 	@Override
-	public List<Map<String, Object>> selectByApply(int cPage, int numPerPage) {
+	public List<Map<String, Object>> selectByApply(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.selectByApply(cPage,numPerPage);
+		return ld.selectByApply(terms);
 	}
 
 	@Override
-	public int studyByApplyCount() {
+	public int studyByApplyCount(Map<String, Object> terms) {
 		// TODO Auto-generated method stub
-		return ld.studyByApplyCount();
+		return ld.studyByApplyCount(terms);
 	}
 
 	@Override

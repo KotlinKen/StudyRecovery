@@ -27,18 +27,41 @@
 		$searchBox = $(".searchBox");
 		$searchType = $searchBox.find("#searchType");
 		$searchKeyword = $searchBox.find("#searchKeyword");
+		$type = $("[name=type]").val();
 		
 		$searchTypeVal = $searchType.val();
 		$searchKeywordVal = $searchKeyword.val();
 		
-		var obj = {searchType : $searchTypeVal, searchKeyword : $searchKeywordVal}
 		
-		loadData(1, 10, $searchTypeVal, $searchKeywordVal);
+		loadData(1, 10, $type, $searchTypeVal, $searchKeywordVal);
 		
 	}
 </script>
 
-
+<div class="fluid-container typetabs">
+	<div class="tabs">
+		<span class="">
+			<a href="javascript:loadData(1, 10, '일반', '', '')" class="${param.type eq '일반' ? 'actived' : '' }">전체보기</a>
+		</span>
+		<span class="seperate">|</span>
+		<span class="">
+			<a href="javascript:loadData(1, 10, '공지', '', '')" class="${param.type eq '공지' ? 'actived' : '' }">공지사항</a>
+		</span>
+		<span class="seperate">|</span>
+		<span class="">
+			<a href="javascript:loadData(1, 10, 'one', '', '')" class="${param.type eq 'one' ? 'actived' : '' }">1:1</a>
+		</span>
+		<span class="seperate">|</span>
+		<span class="">
+			<a href="javascript:loadData(1, 10, 'faq', '', '')"  class="${param.type eq 'faq' ? 'actived' : '' }">FAQ</a>
+		</span>
+		
+		<span class="seperate">|</span>
+		<span class="">
+			<a href="javascript:loadData(1, 10, 'event', '', '')" class="${param.type eq 'event' ? 'actived' : '' }">이벤트</a>
+		</span>
+	</div>
+</div>
 
 <div class="fluid-container searchBox">
 	<div class="row text-left" style="margin-bottom: 10px;">
@@ -58,8 +81,8 @@
 				</div>
 				
 
-		<div class="form-group col-md-3">
-						<input type="hidden" name="type" value="${param.type}" /> <input type="text" name="searchKeyword" class="form-control searchKeyword" id="searchKeyword" value="${param.searchKeyword }" autocomplete="off" />
+					<div class="form-group col-md-3">
+						<input type="hidden" name="type" value="" /> <input type="text" name="searchKeyword" class="form-control searchKeyword" id="searchKeyword" value="${param.searchKeyword }" autocomplete="off" />
 					</div>
 				
 				<div class="form-group col-md-1">
@@ -107,13 +130,13 @@
 
 $(function(){
 	//var obj = {cPage : 1, viewCount : 10};
-	loadData(1, 10, 'type', '일반');
+	loadData(1, 10, '일반', '', '');
 });
 
 
 
-function loadData(cPage, viewCount, searchType, searchKeyword){
-	var obj = {cPage : cPage, viewCout : viewCount, searchType : searchType, searchKeyword : searchKeyword};
+function loadData(cPage, viewCount, type, searchType, searchKeyword){
+	var obj = {cPage : cPage, viewCout : viewCount, type : type, searchType : searchType, searchKeyword : searchKeyword };
 	$.ajax({
 		url : "${rootPath}/rest/board/list",
 		data : obj,
@@ -121,7 +144,11 @@ function loadData(cPage, viewCount, searchType, searchKeyword){
 		dataType: "json",
 		success : function(data){
 			console.log(data);
+			console.log(data.queryMap);
+			console.log(data.queryMap.type);
 			var viewCount = data.viewCount;
+			var type = data.queryMap.type;
+			$("[name=type]").val(type);
 			var cPage = data.cPage;
 			var total = data.total;
 			var pageBarSize = 5;
@@ -140,10 +167,10 @@ function loadData(cPage, viewCount, searchType, searchKeyword){
 			}else{
 /* 				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor('+(pageNo-1)+','+pageBarSize+',\'all\')">Previous</a></li>'; */
 				
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadData('+obj+')">Previous</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadData('+(pageNo-1)+','+10+',\''+type+'\' ,\''+searchType+'\',\''+searchKeyword+'\')">Previous</a></li>';
 			}
 			while(!(pageNo > pageEnd || pageNo > totalPage)){
-				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadData('+pageNo+','+10+',\''+searchType+'\',\''+searchKeyword+'\')">'+pageNo+'</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link '+ ( pageNo == cPage ? "currentPage" : "" )+'" href="javascript:loadData('+pageNo+','+10+',\''+type+'\' ,\''+searchType+'\',\''+searchKeyword+'\')">'+pageNo+'</a></li>';
 				pageNo++;
 			}
 			//다음 버튼
@@ -151,7 +178,7 @@ function loadData(cPage, viewCount, searchType, searchKeyword){
 				pageNation += '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
 			}else{
 				obj.cPage = pageNo;
-				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadInstructor(\''+obj+'\')">Next</a></li>';
+				pageNation += '<li class="page-item"><a class="page-link" href="javascript:loadData('+pageNo+','+10+',\''+type+'\' ,\''+searchType+'\',\''+searchKeyword+'\')">Next</a></li>';
 			}
 			
 			
