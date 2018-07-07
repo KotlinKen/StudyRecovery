@@ -68,7 +68,7 @@
 <script>
 $(document).ready(function(){
 	console.log("?")
-	instruct( ${memberLoggedIn.mno } );
+	instruct( ${memberLoggedIn.mno } )
 });
 function instruct(mno) {
 	console.log(mno)

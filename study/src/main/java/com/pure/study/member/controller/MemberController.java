@@ -775,11 +775,15 @@ public class MemberController {
 	
 	//redirect:/사용하면서 msg 주기 위해 추가함.
 	@RequestMapping(value="/msg.do")
-	public String sendMsg(Model model) {
+	public String sendMsg(Model model, @ModelAttribute("memberLoggedIn") Member m) {
 		
 		model.addAttribute("loc", "/");
 		model.addAttribute("msg", "다시 로그인 해주세요.");
-		
+		System.out.println(m);
+		if("manager".equals(m.getMid())) {
+			model.addAttribute("msg", "해당 회원을 탈퇴했습니다.");			
+		}
+		 
 		return "common/msg";
 	}
 	
@@ -880,10 +884,11 @@ public class MemberController {
 		if (result > 0 && !"admin".equals(admin)) {
 			if (!sessionStatus.isComplete())
 				sessionStatus.setComplete();
-			return "redirect:/";
+				model.addAttribute("loc", "/");
+				return "redirect:/msg.do";
 		} else if(result > 0 && "admin".equals(admin)) {
-			
-			return "redirect:/admin/adminMember";
+			model.addAttribute("loc", "/admin/adminMember");
+			return "redirect:/msg.do";
 		} else if(result <= 0 && "admin".equals(admin)) {
 			model.addAttribute("msg", "오류가 발생했습니다.");
 			return "redirect:/member/adminMemberView.do?mno="+mno;
@@ -2584,17 +2589,17 @@ public class MemberController {
 	
 	/*김률민 2018 07 07 추가 작업*/
 	
-	
+	/*
 	@RequestMapping(value="/member/messageList", method=RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
 										@RequestParam (required=false) Map<String, String> queryMap,
-										@PathVariable(value="location", required=false) String location, HttpServletRequest request){
+		 							@PathVariable(value="location", required=false) String location, HttpServletRequest request){
 		ModelAndView mav = new ModelAndView();
 	
 		
-		
+		 
 		return mav; 
 	}
-	
+	*/  
 }
