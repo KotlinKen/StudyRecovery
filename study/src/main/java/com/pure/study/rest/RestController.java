@@ -395,7 +395,7 @@ public class RestController {
 		
 		ModelAndView  mav = new ModelAndView("jsonView");
 		
-		mav.addObject("list" ,rs.getMemberLists());
+		mav.addObject("list" , rs.getMemberLists());
 		return mav;
 	}
 	
