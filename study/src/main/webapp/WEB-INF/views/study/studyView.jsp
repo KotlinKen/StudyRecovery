@@ -139,7 +139,27 @@ $(function(){
 
 
 </script>
-<div class="container" class="section-content">
+<style>
+div.studyView-container{
+	width:1400px;
+	margin:0 auto;
+	position:relative;
+
+}
+div.study-info{
+	width:900px;
+	border:1px solid black;
+	position:relative;
+}
+div.level-mark{
+	position:absolute;
+	top:400px;
+	border:1px solid black;
+	left:300px;
+}
+
+</style>
+<div class="studyView-container">
 <div id="study-detail">
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 	<c:if test="${memberLoggedIn!=null }">
@@ -179,8 +199,8 @@ $(function(){
 </div>
 <div class="front-text">
 <div class="level-mark">
-<div class="label">LEVEL</div>
-<div class="level">난이도값</div>
+	<div class="label">LEVEL</div>
+	<div class="level">난이도값</div>
 </div>
 <span class="area">지역/도시 값</span>
 <h1>제목값</h1>
