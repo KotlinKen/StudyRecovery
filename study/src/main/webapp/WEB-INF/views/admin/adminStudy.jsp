@@ -4,6 +4,30 @@
 div.infoinfo{
 	display:none;
 }
+table{
+	margin:0 auto;
+	
+}
+table th{
+	text-align:center;
+}
+a#reFilter{
+	color:black;
+	text-shadow: 5px 5px 5px white;
+}
+input#btn-search{
+	position:relative;
+	left:90%;
+	top:0px;
+}
+select#local, select#kind, select#subject, select#town, select#diff{
+	width:100px;
+}
+input#leadername{
+	width:200px;
+	display:inline-block;
+	padding:0.4rem 0.75rem;
+}
 </style>
 <script>
 $(function(){
@@ -193,8 +217,8 @@ function loadStudy(cPage, pageBarSize, type){
 	    				rmHtml += "<td>"+study.STATUS+"</td>";
 	    				rmHtml += "<td>"+study.SDATE+"</td>";
 	    				rmHtml += "<td>"+study.EDATE+"</td>";
-	    				rmHtml += "<td>"+study.RECRUIT+"</td>";
 	    				rmHtml += "<td>"+study.APPLYCNT+"</td>";
+	    				rmHtml += "<td>"+study.RECRUIT+"</td>";
 	    				rmHtml += "<td>"+study.FREQ+"<br>"+study.TIME+"</td>";
 		    			/* rmHtml += "<td>" +(study.CONTENT.replace(/(<([^>]+)>)/ig,"")).substring(0,10)+"</td>"; */
 		    			rmHtml += "<td>" +study.REGDATE+"</td>";
@@ -270,8 +294,8 @@ function SearchStudy(cPage, pageBarSize){
     				rmHtml += "<td>"+study.STATUS+"</td>";
     				rmHtml += "<td>"+study.SDATE+"</td>";
     				rmHtml += "<td>"+study.EDATE+"</td>";
-    				rmHtml += "<td>"+study.RECRUIT+"</td>";
     				rmHtml += "<td>"+study.APPLYCNT+"</td>";
+    				rmHtml += "<td>"+study.RECRUIT+"</td>";
     				rmHtml += "<td>"+study.FREQ+"<br>"+study.TIME+"</td>";
 	    			/* rmHtml += "<td>" +(study.CONTENT.replace(/(<([^>]+)>)/ig,"")).substring(0,10)+"</td>"; */
 	    			rmHtml += "<td>" +study.REGDATE+"</td>";
@@ -288,7 +312,98 @@ function SearchStudy(cPage, pageBarSize){
 }
 </script>
 <div class="studyList">
+	<div class="study-search">
+		<table>
+				<tr>
+					<th>지역</th>
+					<th>과목</th>
+					<th>스터디명</th>
+					<th>팀장명</th>
+					<th>스터디 시작일</th>
+					<th>스터디 상태<th>
+					<th>검색<th>
+				</tr>
+				<tr>
+					<td>
+						<select name="lno" id="local">
+						</select>
+					</td>
+					<td>
+						<select name="kno" id="kind">
+						</select>
+					</td>
+					<td>
+						<input type="text" name="title" id="title" placeholder="스터디명을 입력하세요" />
+					</td>
+					<td>
+						<input type="text" name="leadername" id="leadername" placeholder="팀장명을 입력하세요" class="form-control" maxlength="10"/>
+					</td>	
+					<td>
+						<select name="year" id="year">
+							<option value="">년도를 선택하세요</option>
+							<c:forEach var="i" begin="2018" end="2022">
+								<option value="${i }">${i }년</option>
+							</c:forEach>
+						</select>
+					</td>	
+					<td>
+						<select name="status" id="status">
+							<option value="전체">전체</option>
+							<option value="모집 중">모집중</option>
+							<option value="마감 임박">마감 임박</option>
+							<option value="모집 마감">모집 마감</option>
+							<option value="진행 중">진행 중</option>
+							<option value="스터디 종료">스터디 종료</option>
+						</select>
+					</td>	
+					<td>
+						<input type="button" id="btn-search" value="필터 검색" class="btn btn-dark"/>
+					</td>	
+				</tr>
+				<tr>
+					<td>
+						<select name="tno" id="town">
+							<option value="0">전체</option>
+						</select>
+					</td>
+					<td>
+						<select name="subno" id="subject">
+							<option value="0">전체</option>
+						</select>
+					</td>
+					<td>
+					<br /><br />                   
+					</td>
+					<td>
+					<br /><br />          
+					</td>
+					<td>
+						<select name="month" id="month">
+							<option value="0">월을 선택하세요</option>
+							<c:forEach var="i" begin="1" end="12">
+								<option value="${i>10?'':'0' }${i}">${i }월</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td>
+						
+					</td>
+					<td>
+						<a href="#" id="reFilter">검색 조건 초기화</a>
+					</td>
+				</tr>
+			</table>
+	
+	</div>
+	
+	
 	<div class="table-responsive">
+	
+		
+		
+		
+<%-- 
+		
 		<label for="local">지역:</label>
 		<select name="lno" id="local">
 		
@@ -328,7 +443,7 @@ function SearchStudy(cPage, pageBarSize){
 			<option value="스터디 종료">스터디 종료</option>
 		</select>
 		
-		<button type="button" id="btn-search">검색</button><br />
+		<button type="button" id="btn-search">검색</button><br /> --%>
 		<button type='button' id="btn-delete">스터디 삭제</button>
 		<table class="table table-striped table-sm">
 			<thead>
@@ -343,7 +458,6 @@ function SearchStudy(cPage, pageBarSize){
 					<th>종료</th>
 					<th>신청인원</th>
 					<th>모집인원</th>
-					<th>주기</th>
 					<th>시간</th>
 					<th>등록일</th>
 					<th>선택</th>

@@ -35,7 +35,7 @@ $(function(){
 		dataType:"json",
 		success:function(data){
 			$("input#total").val(data.total);
-			$("input#numPerPage").vaMl(data.numPerPage);
+			$("input#numPerPage").val(data.numPerPage);
 			$("input#cPageNo").val(data.cPage);
 			var html="";
 			for(index in data.list){
@@ -159,8 +159,9 @@ $(function(){
 		var filter={lno:$("select#local option:selected").val(),tno:$("select#town option:selected").val(),
 				subno:$("select#subject option:selected").val(),kno:$("select#kind option:selected").val(),
 				dno:$("select#diff option:selected").val(),leadername:$("input#leadername").val(),
-				searchCase:$("input[name=case]").val(),	status:$("select#status").val()};
-
+				searchCase:$("input[name=case]").val()};
+		console.log("filter");
+		console.log(filter);
 		$.ajax({
 			url:"searchStudy.do",
 			data:filter,
@@ -225,6 +226,7 @@ $(function(){
 	        	//새로 cPage 1로 설정
 	        	$("input#cPageNo").val(data.cPage);
 	        	$("input#total").val(data.total);
+	        	$("span#totalcount").html(data.total);
 			}
 		});
 	});
@@ -320,7 +322,7 @@ $(function(){
 						var upfile = study.UPFILE.split(",");
 		        	    html+="<li class='col-md-4'>";
 		        	    html+="<div class='pixel'>";
-		        	    html+="<a href='study/study/studyView.do?sno="+study.SNO+"'>";
+		        	    html+="<a href='studyView.do?sno="+study.SNO+"'>";
 		        	    html+= "<div class='photoSection'>";
 		        	    html+= "<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+")'></div>";
 		        	    html+= "</div>";
@@ -376,6 +378,8 @@ $(function(){
 	$("a#reFilter").click(function(){
 		$("#town").hide();
 		$("#subject").hide();
+		$("#town").html("<option value='0'></option>");
+		$("#subject").html("<option value='0'></option>");
 		$("button.sortBy").removeClass("clicked");
 		
 		
@@ -412,7 +416,7 @@ button.sortBy{
 button.sortBy:hover{
 	background:black;
 	color:white;
-}
+} 
 div#studylist-container button#enroll{
 	position:relative;
 	left:90%;

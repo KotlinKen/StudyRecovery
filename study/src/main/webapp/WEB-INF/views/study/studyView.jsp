@@ -139,7 +139,7 @@ $(function(){
 
 
 </script>
-<div class="container">
+<div class="container" class="section-content">
 <div id="study-detail">
 	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 	<c:if test="${memberLoggedIn!=null }">
@@ -150,13 +150,14 @@ $(function(){
 		</c:if>
 	</c:if>
 <c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()==study.MNO}">
-	<c:if test="${study.STATUS ne '모집 마감'&&study.STATUS ne '스터디 종료' }">
+	<c:if test="${study.STATUS ne '모집 마감'&&study.STATUS ne '스터디 종료'&&study.STATUS ne '진행 중' }">
 		<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
 	</c:if>
 </c:if>	
 
 <input type="hidden" id="isWish" value="${isWish }" />
-<!-- 사진 뷰 -->
+<div class="study-info">
+<header class="front-info">
 <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
 	   <c:forEach var="img" items="${imgs }" varStatus="vs"> 
@@ -176,7 +177,47 @@ $(function(){
   </a>
   
 </div>
-<!-- 사진 뷰 끝 -->
+<div class="front-text">
+<div class="level-mark">
+<div class="label">LEVEL</div>
+<div class="level">난이도값</div>
+</div>
+<span class="area">지역/도시 값</span>
+<h1>제목값</h1>
+</div>
+</header>
+<div class="center-content">
+<section class="study-infomation">
+	<div class="study-description">
+	
+	</div>
+	<div class="study-detail">
+	
+	</div>
+</section>
+<section class="leader-information">
+	<header class="front-leader">
+	<h1>리더소개</h1>
+	<img src="" alt="" class="leader-profile-image" />
+	</header>
+</section>
+<div class="center-leader">
+<span>리더 소개 내용 자기소개 줄ㅈ</span>
+</div>
+</div>
+
+
+<aside id="action-widget">
+<div class="order-action">
+	<h1 class='title'>타이틀이여</h1>
+	<label for="">회비</label><span class="price">가격</span>
+	<span class="term">기간</span>
+	<span class="time">주기 시간</span>
+	<!-- 참여신청하기, 찜하기 버튼ㄴ -->
+</div>
+</aside>
+</div>
+
 
 
 <span>LEVEL : ${study.DNAME }</span>
