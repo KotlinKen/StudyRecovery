@@ -179,7 +179,7 @@ public class LectureDAOImpl implements LectureDAO {
 	}
 
 	@Override
-	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key) {
+	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> key) {
 		RowBounds rowBounds = new RowBounds((cPage-1)*numPerPage, numPerPage);
 		return session.selectList("lecture.selectPayList", key, rowBounds);
 	}
