@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="message">
+
+	<!-- 메시지 넣기-->
+	<insert id="messageWrite">
+			INSERT INTO message (MESSAGENO, SENDERMNO, RECEIVERMNO, <if test="sno != null and sno != '' "> SNO,</if> CONTENT, CHECKDATE, REGDATE)
+			VALUES (SEQ_MESSAGE.NEXTVAL, #{sendermno}, #{receivermno}, <if test="sno != null and sno != '' ">#{sno},</if> #{content}, DEFAULT, DEFAULT)
+	</insert>
+	
+	<select id="messageCount" resultType="_int">
+		SELECT COUNT(*) TOTALCOUNT FROM MESSAGE MSG, MEMBER M, STUDY S
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="type != null and type != '' ">
+			AND TYPE = #{type}		
+			</if>
+			<if test="mno != null and mno != '' ">
+			AND MSG.MNO = #{mno}		
+			</if>
+			<if test="searchType != null and searchType != '' ">
+				<if test="searchKeyword != null and searchKeyword != '' ">
+				AND ${searchType} LIKE '%'||#{searchKeyword}||'%'		
+				</if>
+			</if>
+			AND MSG.MNO = M.MNO AND MSG.MNO = S.MNO
+		</trim>
+	</select>
+	
+
+	<select id="messageList" resultMap="messageMap">
+		SELECT MSG.*, RM.MNAME, SM.MNAME, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG
+		FROM MESSAGE MSG, MEMBER RM, MEMBER SM
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="mno != null and mno != '' ">
+			AND MSG.RECEIVERMNO = #{mno}		
+			</if>
+			<if test="searchType != null and searchType != '' ">
+				<if test="searchKeyword != null and searchKeyword != '' ">
+				AND ${searchType} like '%'||#{searchKeyword}||'%'		
+				</if>
+			</if>
+			AND MSG.SENDERMNO = SM.MNO AND MSG.RECEIVERMNO = RM.MNO
+		</trim>
+		ORDER BY REG DESC
+	</select>
+	
+	
+	
+	<select id="messageOne" resultMap="messageMap">
+		
+		SELECT MSG.*, RM.MNO, RM.MNAME, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG, TO_CHAR(MSG.CHECKDATE , 'YYYY-MM-DD') CREG
+		FROM MESSAGE MSG, MEMBER RM, MEMBER SM
+		WHERE MSG.MESSAGENO = #{messagno}
+		AND MSG.SENDERMNO = SM.MNO AND MSG.RECEIVERMNO = RM.MNO
+ 	</select>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<update id="messageUpdate">
+	  	UPDATE MESSAGE
+	    <trim prefix="SET" suffixOverrides=",">
+	      <if test="title != null"> TITLE=#{title},</if>
+	    </trim>
+	  	WHERE MSGNO = #{bno}
+	</update>
+	<resultMap type="map" id="messageMap">
+		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String" />
+	</resultMap>
+	
+	
+</mapper>

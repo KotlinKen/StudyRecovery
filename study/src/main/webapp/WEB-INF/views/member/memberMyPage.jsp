@@ -45,6 +45,9 @@
 	<li class='btn-page'>
 		<a href="${rootPath }/member/searchMyPageEvaluation.do" >내 평가</a>
 	</li>
+	<li class='btn-page'>
+		<a href="${rootPath }/member/messageList" >쪽지</a>
+	</li>
 </ul>
 	
 	
