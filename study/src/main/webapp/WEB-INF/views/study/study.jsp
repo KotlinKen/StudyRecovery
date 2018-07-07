@@ -97,8 +97,7 @@ $(function(){
 	
 	
 	//카테고리를 선택하면 그에 맞는 과목들을 가져온다.
-	$("select#kind").on("change",function(){
-		
+	$("select#kind").on("change",function(){		
 		var kno= $("option:selected", this).val();
 		
 		if(kno == "0"){
@@ -114,6 +113,8 @@ $(function(){
 				data:{kno:$(this).val()},
 				dataType:"json",
 				success:function(data){
+					html += "<option value='0'>전체</option>";
+					
 					for(var index in data){
 						html +="<option value='"+data[index].SUBNO+"'>"+data[index].SUBJECTNAME+"</option><br/>";
 					}

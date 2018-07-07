@@ -99,7 +99,6 @@
 	<if test="status!=null">
 	order by s.regdate desc
 	</if>	
- 
   </select>
   <select id="selectStudyAdd" resultMap="mapForStudy">
   	select  s.sno,s.mno,sb.subno,k.kno,s.tno,s.dno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
