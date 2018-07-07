@@ -139,7 +139,14 @@ function validate(){
       alert("사진을 최소 1개이상 등록해주세요.");
       return false;   
    }
-
+   
+// summernote required마냥 만들어주기.
+   var sumVal = $("#summernote").val();
+   
+   if( sumVal.trim().length == 0 ){
+      alert("내용을 입력해주세요");
+      return false;
+   }
 	return true;
 }
 
@@ -421,7 +428,7 @@ $(function(){
 		<select name="tno" id="town">
 		</select>	
 		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
-		<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required ></textarea>
+		<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
