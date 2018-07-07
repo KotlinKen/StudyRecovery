@@ -70,6 +70,12 @@
 	div.background{
 		background: #ffffff;
 	}
+	p#covercss{
+		width: 900px;
+		height: auto;
+	    display: inline-block;
+	    word-wrap: break-word;
+	}
 </style>
 <div class="background">
    <jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -187,7 +193,7 @@
          		<th>자기 소개</th>
          		<td>
          			<p id="length"></p>
-         			<span>${memberLoggedIn.cover }</span> 
+         			<p id="covercss">${memberLoggedIn.cover }</p> 
                   <textarea class="form-control" name="cover" id="cover" cols="30" rows="10" placeholder="자기소개 및 특이 사항" style="resize: none;">${memberLoggedIn.cover }</textarea>
                   
          		</td>
@@ -371,6 +377,7 @@
 			$("#cover").attr("style","display: block");
 			$("p#length").attr("style","display: block");
 			$("#phototitle").attr("style","display: inline");			
+			$("p#covercss").attr("style","display: none");			
 		});
 
 	});
