@@ -111,7 +111,7 @@
 			AND TO_CHAR(SDATE, 'MM') = #{month}
 		</if>	
 		<if test="status!='전체'">
-			AND PSTATUS = #{status}
+			AND P.STATUS = #{status}
 		</if>
 		ORDER BY REGDATE
    </select>
