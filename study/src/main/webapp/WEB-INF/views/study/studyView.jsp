@@ -141,21 +141,51 @@ $(function(){
 </script>
 <style>
 div.studyView-container{
-	width:1400px;
+	width:1200px;
 	margin:0 auto;
 	position:relative;
 
 }
 div.study-info{
-	width:900px;
+	width:800px;
 	border:1px solid black;
 	position:relative;
 }
 div.level-mark{
 	position:absolute;
-	top:400px;
+	top:350px;
 	border:1px solid black;
-	left:300px;
+	left:50px;
+	height:90px;
+	width:100px;
+}
+span.area{
+	border:1px solid black;
+	margin:0 auto;
+	position: relative;
+	left:330px;
+}
+div.study-images{
+	border:1px solid black;
+	height:400px;
+	
+}
+div.title-wrap{
+	margin:0 auto;
+	text-align:center;
+}
+h2.section-label{
+	float:left;
+	clear:right;
+	height:100px;
+}
+div.study-detail{
+	float:right;
+	border:1px solid black;
+}
+div.study-description{
+	float:right;
+	border:1px solid black;
 }
 
 </style>
@@ -178,41 +208,85 @@ div.level-mark{
 <input type="hidden" id="isWish" value="${isWish }" />
 <div class="study-info">
 <header class="front-info">
-<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-  <div class="carousel-inner">
-	   <c:forEach var="img" items="${imgs }" varStatus="vs"> 
-			<div class="carousel-item ${vs.first? 'active':'' }">
-		     	<img class="d-block w-100" src="${pageContext.request.contextPath }/resources/upload/study/${img }" alt="Second slide">
-		     </div> 
-  		</c:forEach> 
-  </div>
-  
-  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-  
+<div class="study-images">
+	<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+	  <div class="carousel-inner">
+		   <c:forEach var="img" items="${imgs }" varStatus="vs"> 
+				<div class="carousel-item ${vs.first? 'active':'' }">
+			     	<img class="d-block w-100" src="${pageContext.request.contextPath }/resources/upload/study/${img }" alt="Second slide">
+			     </div> 
+	  		</c:forEach> 
+	  </div>
+	  
+	  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+	    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+	    <span class="sr-only">Previous</span>
+	  </a>
+	  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+	    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+	    <span class="sr-only">Next</span>
+	  </a>
+	  
+	</div>
 </div>
+
 <div class="front-text">
 <div class="level-mark">
 	<div class="label">LEVEL</div>
 	<div class="level">난이도값</div>
 </div>
-<span class="area">지역/도시 값</span>
-<h1>제목값</h1>
+<span class="area">지역/도시 값</span><br /><br />
+<div class="title-wrap">
+	<h1 class="title">제목값</h1>
+</div>
 </div>
 </header>
 <div class="center-content">
 <section class="study-infomation">
+		<h2 class="section-label">스터디 소개</h2>
 	<div class="study-description">
-	
+		영어로 이야기를 하려고 할 때, 또는 외국인 앞에서 말문을 열어야 할 때..
+등에서 식은땀이 나고 어디서부터 어떤 이야기를 꺼내야 할 지 막막하신 분들이 계신가요?
+
+회화를 시작해야 하는데, 배울건 너무나도 많고 어디에서부터 시작해서 무엇을 어떻게 배워야 할지 막막하셨죠? 제 스터디에서는 가장 기초가 되지만 자칫 밋밋해질 수 있는 자기소개를 어떻게 톡톡 튀고 매력있게 할 수 있을지부터 시작해서, 모든 대화의 기초가 되는 표현을 바탕으로 문장을 어떻게 만들어 가야 할지를 차근차근 배워 볼 거에요.
+
+
+[진행방식]
+
+1. Say hello!
+서로 인사 나누고, 이번 한주에 대해 얘기하며 친해져요.
+
+2. Vocabularies
+처음엔 단어부터 입에 붙도록 연습해야 해요. 주마다 유용한 단어들 같이 읽어보면서 외워봐요.
+
+3. Activities
+특정 문장 구조 혹은 단어들로 재밌게 할 수 있는 활동들 가져올거에요. 이때는 틀리더라도 괜찮으니 마구마구 입 밖으로 영어를 뱉어봐요!
+
+4. Grammar
+Activity로 익힌 문장구조를 문법 설명으로 연결해드릴 거에요. 먼저 입에 익은 다음에 설명을 들으시면 이해가 더 잘 되실 거에요 :)
+
+5. Free talk
+한주간 뭐할 건지, 요즘 고민은 없는 지 자유롭게 이야기 하는 시간입니다. 오늘 배운 문장구조를 써먹을 수 있는 주제로 이야기 나누면 연습이 많이 되실거에요. 제가 듣다가 설명해 드릴 부분은 찾아서 설명해드릴게요!
+
+6. Q&A
+Any questions! 무엇이든 물어보세요.
+
+
+[스터디 목표]
+
+- I am driving / I drive 구별
+- I do / I did 구별
+- 영어로 질문 만들기
+- I will / I am gonna + ~
+- I like/love/prefer + ~
+- I can/should/must/could/might/would + ~
+- Interesting + Interested
+- I’d like to + ~ / Would you like to + -
+
+위의 기본 문장구조에 익숙해져 영어로 간단한 의사 표현을 할 수 있게 되는것을 목표로 삼아요! :-)		
 	</div>
 	<div class="study-detail">
-	
+		
 	</div>
 </section>
 <section class="leader-information">
