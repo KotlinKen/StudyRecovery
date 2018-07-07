@@ -125,8 +125,7 @@
 		});
 	}
 	
-	function lectureCancel(){
-		
+	function lectureCancel(){		
 		var sno = ${lecture.SNO};
 		var mno =  ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
