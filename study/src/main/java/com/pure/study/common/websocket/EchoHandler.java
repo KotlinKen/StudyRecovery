@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -13,13 +14,14 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pure.study.member.model.vo.Member;
-import com.pure.study.message.model.vo.Message;
+import com.pure.study.message.model.service.MessageService;
 
 public class EchoHandler extends TextWebSocketHandler {
 	 private static Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 	 
 
-	 
+	 	@Autowired
+	 	MessageService messageService;
 	 
 	    //방법일 일대일챗팅 map사용
 		private Map<String, WebSocketSession> sessions = new HashMap<String, WebSocketSession>();
@@ -35,30 +37,41 @@ public class EchoHandler extends TextWebSocketHandler {
 	    	  Member member = (Member) map.get("memberLoggedIn");
 	    	  System.out.println("로그인 한 아이디 : " + member.getMid());
 	        //Map사용시
-	    	sessions.put(member.getMid(), session);
+	    	sessions.put(String.valueOf(member.getMno()), session);
 	        
 	        logger.info("{} 연결됨", session.getId());
 	        
 	        
-	        Message message = new Message("init", member.getMid(), null, "안녕~");
+	        //Message message = new Message("init", member.getMid(), null, "안녕~");
+	        
+	        
+	        Map<String, String> queryMap = new HashMap<>();
+	        
+	        queryMap.put("receivermno", String.valueOf(member.getMno()));
+	        queryMap.put("checkdate", "checkdate");
+	        int count = messageService.messageCount(queryMap);
+	        System.out.println(count);
+	        
+	        
+	        
+	        System.out.println(messageService.messageList(queryMap));
+	        
 	        
 	        Iterator<String> sessionIds = sessions.keySet().iterator();
 	        String sessionId="";
 	        
-	    
+
+	        
+	        
 	        
 	        while(sessionIds.hasNext()){
 	            sessionId = sessionIds.next();
 	            System.out.println("담겨있는 값" + ":" + sessionId );
- 
 	        }
-	        
-	        
-	        
 	      
 	        
 	        
-	        handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
+	        //handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
 	    }
 	    /**
 	     * 클라이언트가 웹소켓서버로 메시지를 전송했을 때 실행되는 메소드

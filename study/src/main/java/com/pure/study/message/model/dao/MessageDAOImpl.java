@@ -34,4 +34,9 @@ public class MessageDAOImpl implements MessageDAO{
 		return sqlSession.insert("message.messageWrite", queryMap);
 	}
 
+	@Override
+	public int messageCount(Map<String, String> queryMap) {
+		return sqlSession.selectOne("message.messageCount", queryMap);
+	}
+
 }

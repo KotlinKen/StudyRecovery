@@ -13,4 +13,6 @@ public interface MessageService {
 
 	int messageWrite(Map<String, String> queryMap);
 
+	int messageCount(Map<String, String> queryMap);
+
 }

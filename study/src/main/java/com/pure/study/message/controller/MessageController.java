@@ -38,6 +38,9 @@ public class MessageController {
 			queryMap.put("mno", String.valueOf(m.getMno()));
 		}
 		
+		
+		
+		
 		List<Map<String, String>> listAll = messageService.messageList();
 		System.out.println("+==========================================================+");
 		List<Map<String, String>> listQuery = messageService.messageList(queryMap);
