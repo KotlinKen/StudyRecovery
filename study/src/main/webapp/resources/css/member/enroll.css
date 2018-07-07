@@ -148,6 +148,6 @@ textarea {
 #div-img-ik{width: 280px;min-height: 0px; border: solid 1px #8e8e8e; margin-left: 5px;}
 .call_img{width: 100%; position: relative;}
 #countDown{color: red}
-p.textP{ z-index:10; display:inline-block; position:relative ;  left: 0px;  padding:13px; height:50px; background: white; color: #8e8e8e}
+.textP{ z-index:10; display:inline-block; position:relative ;  left: 0px;  padding:13px; height:50px; background: #007bff; color: #ffffff; border-radius:5px 0px 0px 5px; }
 input[type=file]{background: white; padding: 10px;position: relative;left: -95px}
 #btn_noFile{display: none;}

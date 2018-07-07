@@ -22,14 +22,22 @@
 	select#subject{
 		display:none;
 	}
+	div.page{
+		margin-left: 10%;
+		margin-right: 10%;
+	}
+	div.background{
+		background: #ffffff;
+	}
 </style>
 
-<div class="page">
+<div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="내 스터디 목록" name="pageTitle"/>
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
 	<br />
+<div class="page">
 	<input type="hidden" id="hiddenUserId" value="${memberLoggedIn.mid }" />
 	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
 	
@@ -1162,6 +1170,7 @@
 	});
 	</script>
 		
+	</div>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 	
 </div>

@@ -81,7 +81,6 @@
 	         	}
 	         }
 	      }).done(function(){
-	    	  console.log(msg);
 	    	  if( msg != "" )
 	    	  	alert(msg);
          });		  
@@ -126,7 +125,7 @@
 		});
 	}
 	
-	function lectureCancel(){
+	function lectureCancel(){		
 		var sno = ${lecture.SNO};
 		var mno =  ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"};
 		
@@ -138,6 +137,7 @@
 					sno : sno
 				},
 				success : function(data){
+					console.log(pno);
 					var pno = data;
 					var price = ${lecture.PRICE};
 					
@@ -150,7 +150,6 @@
 							price : price
 						},
 						success: function( data ){
-							console.log(data);
 						}
 					});						
 				}

@@ -67,7 +67,7 @@ public interface LectureService {
 
 	void successPayCancel(long pno);
 
-	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, String> key);
+	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> key);
 
 	int selectTotalPayCount();
 

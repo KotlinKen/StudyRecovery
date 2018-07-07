@@ -229,49 +229,51 @@ public class LectureContoller {
 	}
 
 	@RequestMapping("/lecture/lectureView.do")
-	public ModelAndView lectureView(@RequestParam int sno,
-			@RequestParam(required = false, defaultValue = "0") int mno, HttpSession session) {
+	public ModelAndView lectureView(@RequestParam int sno, @RequestParam(required = false, defaultValue = "0") int mno,
+			HttpSession session) {
 		ModelAndView mav = new ModelAndView();
-		
+
 		Member m = (Member) session.getAttribute("memberLoggedIn");
-		int realMNo = 0;		
-		
-		try {			
-			realMNo = m.getMno();			
-		}
-		catch( NullPointerException e ) {
+		int realMNo = 0;
+
+		int insert = 0;
+		int wish = 0;
+
+		try {
+			realMNo = m.getMno();
+		} catch (NullPointerException e) {
 			realMNo = 0;
 		}
-		
+
 		if (mno != 0 && mno != realMNo) {
 			String msg = "잘못된 경로로 접근했다.";
 			String loc = "/lecture/lectureList.do";
 
-			mav.addObject("msg", msg);
-			mav.addObject("loc", loc);
+	         mav.addObject("msg", msg);
+	         mav.addObject("loc", loc);
 
 			mav.setViewName("/common/msg");
-		} else {		
+		} else {
 			Map<String, Integer> map = new HashMap<>();
 			map.put("sno", sno);
-	
+
 			// 이미 찜이 들어가 있는지, 신청을 했는지 확인.
 			if (mno > 0) {
 				map.put("mno", mno);
-	
-				int wish = ls.lectureWish(map);
-				int insert = ls.preinsertApply(map);
-	
-				mav.addObject("wish", wish);
-				mav.addObject("insert", insert);
+
+				wish = ls.lectureWish(map);
+				insert = ls.preinsertApply(map);
 			}
-	
+
 			Map<String, String> lecture = ls.selectLectureOne(sno);
-	
+
 			mav.addObject("lecture", lecture);
-	
+
 			mav.setViewName("lecture/lectureView");
 		}
+
+		mav.addObject("wish", wish);
+		mav.addObject("insert", insert);
 
 		return mav;
 	}
@@ -322,35 +324,33 @@ public class LectureContoller {
 		// 들어간 인원 확인.
 		int peopleCnt = ls.peopleCnt(sno);
 		int recruitCnt = ls.recruitCnt(sno);
-		
-		if( peopleCnt < recruitCnt ) {
+
+		if (peopleCnt < recruitCnt) {
 			if (result == 0) {
 				Map<String, Object> key = new HashMap<>();
-				
+
 				key.put("mno", mno);
 				key.put("key", "crew");
-				
+
 				// mno로 crew쪽 맵 뽑아오기.
 				List<Map<String, Object>> list = ls.selectLectureListByMno(key);
 				Lecture lecture = ls.selectLectureByMnoTypeLecture(sno);
-				
+
 				try {
 					String[] freqs = lecture.getFreqs().split(",");
 					int cnt = checkDate(lecture, list, freqs);
-					
+
 					if (cnt != 0)
-						msg = "날짜나 요일, 시간이 겹치는 강의 또는 스터디가 존재합니다.";				
+						msg = "날짜나 요일, 시간이 겹치는 강의 또는 스터디가 존재합니다.";
 				} catch (NullPointerException e) {
 					msg = "";
 				}
 			} else {
 				msg = "이미 신청한 강의입니다.";
-			}				
+			}
+		} else {
+			msg = "신청자 수가 초과했습니다.";
 		}
-		else {
-			msg="신청자 수가 초과했습니다.";
-		}
-		
 
 		return msg;
 	}
@@ -386,7 +386,6 @@ public class LectureContoller {
 		mav.addObject("total", total);
 
 		return mav;
-
 	}
 
 	// 스크롤 페이징 처리 - 조건 없음
@@ -407,7 +406,7 @@ public class LectureContoller {
 			@RequestParam(value = "subno", defaultValue = "0") int subno, @RequestParam(value = "dno") int dno,
 			@RequestParam(value = "leadername") String leadername,
 			@RequestParam(value = "cPage", required = false, defaultValue = "1") int cPage,
-			@RequestParam(value="searchCase") String searchCase) {
+			@RequestParam(value = "searchCase") String searchCase) {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		if (leadername.trim().length() < 1)
@@ -425,24 +424,23 @@ public class LectureContoller {
 		terms.put("numPerPage", numPerPage);
 		terms.put("searchCase", searchCase);
 		// 검색 조건에 따른 총 스터기 갯수
-		
-		
-		int total =0;
-		List<Map<String, Object>> lectureList =null;
-		if(searchCase.equals("deadline")) {
+
+		int total = 0;
+		List<Map<String, Object>> lectureList = null;
+		if (searchCase.equals("deadline")) {
 			total = ls.lectureDeadlineCount(terms);
-			lectureList=ls.selectByDeadline(terms);
-		}else if(searchCase.equals("search")) {
+			lectureList = ls.selectByDeadline(terms);
+		} else if (searchCase.equals("search")) {
 			System.out.println("서치에용ㅇ");
-			total =      ls.selectTotalLectureCountBySearch(terms);
-			lectureList= ls.selectLectureListBySearch(terms);
-			
-		}else {//신청자순
+			total = ls.selectTotalLectureCountBySearch(terms);
+			lectureList = ls.selectLectureListBySearch(terms);
+
+		} else {// 신청자순
 			System.out.println("신청자순이에용");
 			total = ls.studyByApplyCount(terms);
 			lectureList = ls.selectByApply(terms);
 		}
-		
+
 		// 페이징 처리해서 가져온 리스트
 		mav.addObject("list", lectureList);
 		mav.addObject("total", total);
@@ -458,7 +456,7 @@ public class LectureContoller {
 			@RequestParam(value = "subno", defaultValue = "0") int subno, @RequestParam(value = "dno") int dno,
 			@RequestParam(value = "leadername") String leadername,
 			@RequestParam(value = "cPage", required = false) int cPage,
-			@RequestParam(value="searchCase") String searchCase) {
+			@RequestParam(value = "searchCase") String searchCase) {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		if (leadername.trim().length() < 1)
@@ -476,20 +474,19 @@ public class LectureContoller {
 		terms.put("numPerPage", numPerPage);
 		terms.put("searchCase", searchCase);
 
-		
-		int total =0;
-		List<Map<String, Object>> lectureList =null;
-		if(searchCase.equals("deadline")) {
-			lectureList=ls.selectByDeadline(terms);
-		}else if(searchCase.equals("search")) {
+		int total = 0;
+		List<Map<String, Object>> lectureList = null;
+		if (searchCase.equals("deadline")) {
+			lectureList = ls.selectByDeadline(terms);
+		} else if (searchCase.equals("search")) {
 			System.out.println("서치에용ㅇ");
-			lectureList= ls.selectLectureListBySearch(terms);
-			
-		}else {//신청자순
+			lectureList = ls.selectLectureListBySearch(terms);
+
+		} else {// 신청자순
 			System.out.println("신청자순이에용");
 			lectureList = ls.selectByApply(terms);
 		}
-		
+
 		mav.addObject("list", lectureList);
 		mav.addObject("cPage", cPage + 1);
 
@@ -703,20 +700,16 @@ public class LectureContoller {
 
 	@RequestMapping(value = "/lecture/searchAdminLecture/{cPage}/{count}", method = RequestMethod.GET)
 	public ModelAndView searhAdminLecture(@PathVariable(value = "count", required = false) int count,
-									      @PathVariable(value = "cPage", required = false) int cPage,
-										  @RequestParam(required=false) int lno,
-										  @RequestParam(required=false) int tno,
-										  @RequestParam(required=false) int subno,
-										  @RequestParam(required=false) int kno,
-										  @RequestParam(required=false, defaultValue="전체") String leader,
-										  @RequestParam(required=false, defaultValue="전체") String title,
-										  @RequestParam(required=false) String year,
-										  @RequestParam(required=false) String month,
-										  @RequestParam(required=false, defaultValue="전체") String status) {
+			@PathVariable(value = "cPage", required = false) int cPage, @RequestParam(required = false) int lno,
+			@RequestParam(required = false) int tno, @RequestParam(required = false) int subno,
+			@RequestParam(required = false) int kno, @RequestParam(required = false, defaultValue = "전체") String leader,
+			@RequestParam(required = false, defaultValue = "전체") String title,
+			@RequestParam(required = false) String year, @RequestParam(required = false) String month,
+			@RequestParam(required = false, defaultValue = "전체") String status) {
 		ModelAndView mav = new ModelAndView("jsonView");
-		
+
 		Map<String, Object> map = new HashMap<>();
-		
+
 		map.put("lno", lno);
 		map.put("tno", tno);
 		map.put("subno", subno);
@@ -726,9 +719,9 @@ public class LectureContoller {
 		map.put("year", year);
 		map.put("month", month);
 		map.put("status", status);
-		
+
 		System.out.println(map);
-		
+
 		int total = ls.selectTotalAdminLectureCount(map);
 
 		List<Map<String, String>> list = ls.searchAdminLectureList(cPage, count, map);
@@ -741,14 +734,23 @@ public class LectureContoller {
 		return mav;
 	}
 
-	@RequestMapping(value = "/lecture/pay/{cPage}/{count}/{key}", method = RequestMethod.GET)
+	@RequestMapping(value = "/lecture/pay/{cPage}/{count}", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView adminPayment(@PathVariable(value = "count", required = false) int count,
 			@PathVariable(value = "cPage", required = false) int cPage,
-			@PathVariable(value = "key", required = false) String[] keys) {
+			@RequestParam(required = false, defaultValue = "") String member,
+			@RequestParam(required = false, defaultValue = "0") int price, 
+			@RequestParam(required = false) String year,
+			@RequestParam(required = false, defaultValue="전체") String month, @RequestParam(required = false) String status) {
 		ModelAndView mav = new ModelAndView("jsonView");
 
-		Map<String, String> key = new HashMap<>();
+		Map<String, Object> key = new HashMap<>();
+
+		key.put("member", member);
+		key.put("price", price);
+		key.put("year", year);
+		key.put("month", month);
+		key.put("status", status);
 
 		int total = ls.selectTotalPayCount();
 		int numPerPage = 10;

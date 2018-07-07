@@ -1,12 +1,8 @@
 package com.pure.study.common.websocket;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,48 +13,12 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.message.model.vo.Message;
 
 public class EchoHandler extends TextWebSocketHandler {
 	 private static Logger logger = LoggerFactory.getLogger(EchoHandler.class);
-	 	public class Message {
-	 		private String type;
-	 		private String sender;
-	 		private String recevier;
-	 		private String msg;
-	 		
-			public Message(String type, String sender, String recevier, String msg) {
-				super();
-				this.type = type;
-				this.sender = sender;
-				this.recevier = recevier;
-				this.msg = msg;
-			}
-			
-			public String getType() {
-				return type;
-			}
-			public void setType(String type) {
-				this.type = type;
-			}
-			public String getSender() {
-				return sender;
-			}
-			public void setSender(String sender) {
-				this.sender = sender;
-			}
-			public String getRecevier() {
-				return recevier;
-			}
-			public void setRecevier(String recevier) {
-				this.recevier = recevier;
-			}
-			public String getMsg() {
-				return msg;
-			}
-			public void setMsg(String msg) {
-				this.msg = msg;
-			}
-	 	}
+	 
+
 	 
 	 
 	    //방법일 일대일챗팅 map사용
@@ -81,6 +41,21 @@ public class EchoHandler extends TextWebSocketHandler {
 	        
 	        
 	        Message message = new Message("init", member.getMid(), null, "안녕~");
+	        
+	        Iterator<String> sessionIds = sessions.keySet().iterator();
+	        String sessionId="";
+	        
+	    
+	        
+	        while(sessionIds.hasNext()){
+	            sessionId = sessionIds.next();
+	            System.out.println("담겨있는 값" + ":" + sessionId );
+ 
+	        }
+	        
+	        
+	        
+	      
 	        
 	        
 	        handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));

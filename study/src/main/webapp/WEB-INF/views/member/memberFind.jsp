@@ -30,7 +30,7 @@
 	.id-pwd{
 		width: 40%;
 		height: 40%;
-		background: #ebebee;
+		background: #ededed;
 		position: relative;
 		top: 0;
 		left: 0;
@@ -53,6 +53,18 @@
 	    border: none;
 	    border-bottom: 1px solid #cccccc;
 	}
+	#findid{
+		width: 300px; 
+		margin-left:6%;
+		margin-right:7.5%;
+		margin-bottom:5%;
+	}
+	#findpwd{
+		width: 300px; 
+		margin-left:6%;
+		margin-right:7.5%;
+		margin-bottom:5%;
+	}
 </style>
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="${findType } 찾기" name="pageTitle"/>
@@ -65,6 +77,7 @@
 		<c:if test="${mid==null and findType eq '아이디' }">
 			<!-- <span id="idServiceLogo"></span> -->
 			<form class="find" action="${pageContext.request.contextPath }/member/memberFindIdPwd.do" onsubmit="return validate();">
+				<img src="${rootPath }/resources/upload/member/findid.PNG" alt="아이디 찾기" id="findid"/>
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
@@ -76,7 +89,7 @@
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="email" name="email" id="email" maxlength="30" required placeholder="이메일"/>						
+							<input type="email" name="email" id="email" maxlength="30" required placeholder="이메일" autocomplete="off"/>						
 						</td>
 					</tr>
 					<tr  class="id-pwd">
@@ -97,21 +110,22 @@
 		</c:if>
 		<c:if test="${pwd==null and findType eq '비밀번호' }">
 			<span id="pwdServiceLogo" class=".link_findpw"></span>
-			<form class="find" action="${pageContext.request.contextPath }/member/mailSending.do" method="post" onsubmit="return confirm();">
+			<form class="find" action="${rootPath }/member/mailSending.do" method="post" onsubmit="return confirm();">
+				<img src="${rootPath }/resources/upload/member/findpwd.PNG" alt="비밀번호 찾기" id="findpwd"/>
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="text" name="mid" id="mid" placeholder="아이디" />
+							<input type="text" name="mid" id="mid" placeholder="아이디" autocomplete="off" maxlength="15"/>
 						</td>
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="email" name="email" id="email" placeholder="이메일" />
+							<input type="email" name="email" id="email" placeholder="이메일" autocomplete="off" maxlength="35"/>
 						</td>
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="submit" id="pwdSearch" value="찾기" />
+							<input type="submit" class='btncss' id="submit" value="찾기" />
 						</td>
 					</tr>
 				</table>
