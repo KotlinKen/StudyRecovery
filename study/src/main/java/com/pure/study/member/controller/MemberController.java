@@ -28,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -2578,5 +2579,22 @@ public class MemberController {
 		}
 		return map;
 	}*/
+	
+	
+	
+	/*김률민 2018 07 07 추가 작업*/
+	
+	
+	@RequestMapping(value="/member/messageList", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
+										@RequestParam (required=false) Map<String, String> queryMap,
+										@PathVariable(value="location", required=false) String location, HttpServletRequest request){
+		ModelAndView mav = new ModelAndView();
+	
+		
+		
+		return mav; 
+	}
 	
 }
