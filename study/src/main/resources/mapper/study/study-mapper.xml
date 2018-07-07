@@ -98,8 +98,7 @@
 	</if>
 	<if test="status!=null">
 	order by s.regdate desc
-	</if>
-	
+	</if>	
  
   </select>
   <select id="selectStudyAdd" resultMap="mapForStudy">
