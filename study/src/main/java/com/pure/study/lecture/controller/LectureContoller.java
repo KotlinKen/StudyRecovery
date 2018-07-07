@@ -249,8 +249,8 @@ public class LectureContoller {
 			String msg = "잘못된 경로로 접근했다.";
 			String loc = "/lecture/lectureList.do";
 
-			mav.addObject("msg", msg);
-			mav.addObject("loc", loc);
+	         mav.addObject("msg", msg);
+	         mav.addObject("loc", loc);
 
 			mav.setViewName("/common/msg");
 		} else {

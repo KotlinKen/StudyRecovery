@@ -1,25 +1,25 @@
 package com.pure.study.common.websocket;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pure.study.member.controller.MemberController;
+import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Member;
 
 public class EchoHandler extends TextWebSocketHandler {
 	 private static Logger logger = LoggerFactory.getLogger(EchoHandler.class);
+	 
 	 	public class Message {
 	 		private String type;
 	 		private String sender;
@@ -81,6 +81,22 @@ public class EchoHandler extends TextWebSocketHandler {
 	        
 	        
 	        Message message = new Message("init", member.getMid(), null, "안녕~");
+	        
+	        Iterator<String> sessionIds = sessions.keySet().iterator();
+	        String sessionId="";
+	        
+	        
+	        memberService.selectMyStudyList(map, numPerPage, cPage)
+	        
+	        while(sessionIds.hasNext()){
+	            sessionId = sessionIds.next();
+	            System.out.println("담겨있는 값" + ":" + sessionId );
+ 
+	        }
+	        
+	        
+	        
+	      
 	        
 	        
 	        handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
