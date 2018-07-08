@@ -16,11 +16,11 @@ div.sideInfo{
 }
 div#carouselExampleControls{
 	width:500px;
-	height:600px;
+	height:400px;
 }
 div.carousel-item img{
 	width:500px;
-	height:600px;
+	height:400px;
 }
 div.member-photo img{
 	widht:60px;
@@ -141,13 +141,13 @@ $(function(){
 </script>
 <style>
 div.studyView-container{
-	width:1200px;
+	width:1000px;
 	margin:0 auto;
 	position:relative;
 
 }
 div.study-info{
-	width:800px;
+	width:700px;
 	border:1px solid black;
 	position:relative;
 }
@@ -158,12 +158,23 @@ div.level-mark{
 	left:50px;
 	height:90px;
 	width:100px;
+	background:#ef6c00;
+	text-align:center;
+}
+div.label{
+	font-size: 20px;
+	color:#ffeb3b;
+}
+div.level{
+	font-size:30px;
+	color:white;
 }
 span.area{
 	border:1px solid black;
 	margin:0 auto;
 	position: relative;
 	left:330px;
+	color:#0056e9;
 }
 div.study-images{
 	border:1px solid black;
@@ -171,28 +182,79 @@ div.study-images{
 	
 }
 div.title-wrap{
-	margin:0 auto;
 	text-align:center;
+	
 }
-h2.section-label{
+h1.title{
+	color:#3c3c3c;
+	font-size:28px;
+}
+.section-label{
 	float:left;
 	clear:right;
 	height:100px;
+	color:#333;
+	font-size:15px;
+	margin-left:30px;
+}
+h3.leader-label{
+	color:#333;
+	font-size:15px;
+	
 }
 div.study-detail{
-	float:right;
+	overflow:hidden;
 	border:1px solid black;
 }
 div.study-description{
-	float:right;
 	border:1px solid black;
+	width:600px;
 }
-
+section.leader-information{
+	position:relative;
+}
+div.introduce-wrap{
+	overflow: hidden;
+}
+div.section-content{
+	float:right;
+	width:500px;
+	
+}
+dl#deatil-list dt, dl#deatil-list dd{
+	display:inline-block;
+}
+dl#deatil-list dt{
+	width:90px;
+}
+dl#deatil-list dd{
+	width:165px;
+}
+aside#action-widget{
+	width:280px;
+	border:1px solid black;
+	float:right;
+	
+}
+div.study-wrap{
+	float:left;
+	clear:right;
+}
+div.no{
+	clear:both;
+	
+} 
+div#review-container{
+	clear:both;
+}
+li.review-one{
+	clear:left;
+}
 </style>
 <div class="studyView-container">
 <div id="study-detail">
-
-	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
+	<div class="study-wrap">
+		<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 	<c:if test="${memberLoggedIn!=null }">
 		<c:if test="${memberLoggedIn.getMno()==study.MNO }">
 			<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박'||study.STATUS=='진행 중'}">
@@ -234,18 +296,19 @@ div.study-description{
 <div class="front-text">
 <div class="level-mark">
 	<div class="label">LEVEL</div>
-	<div class="level">난이도값</div>
+	<div class="level">${study.DNAME }</div>
 </div>
-<span class="area">지역/도시 값</span><br /><br />
+<span class="area">${study.LNAME } | ${study.TNAME }</span><br /><br />
 <div class="title-wrap">
-	<h1 class="title">제목값</h1>
+	<h1 class="title">${study.TITLE }</h1>
 </div>
 </div>
 </header>
 <div class="center-content">
 <section class="study-infomation">
+	<div class="introduce-wrap">
 		<h2 class="section-label">스터디 소개</h2>
-	<div class="study-description">
+		<div class="study-description section-content">
 		영어로 이야기를 하려고 할 때, 또는 외국인 앞에서 말문을 열어야 할 때..
 등에서 식은땀이 나고 어디서부터 어떤 이야기를 꺼내야 할 지 막막하신 분들이 계신가요?
 
@@ -286,34 +349,43 @@ Any questions! 무엇이든 물어보세요.
 
 위의 기본 문장구조에 익숙해져 영어로 간단한 의사 표현을 할 수 있게 되는것을 목표로 삼아요! :-)		
 	</div>
+	</div>
+	<hr />
 	<div class="study-detail">
+		<h3 class='section-label'>상세 정보</h3>
+		<div class="section-content">
+			<dl id="deatil-list">
+				<dt>지역 :</dt>
+				<dd>강남</dd>
+				<dt class="right-column">인원 : </dt>
+				<dd class="right-column">6명</dd>
+				<dt>일정:</dt>
+				<dd>2018~~</dd>
+				<dt class="right-column">시간</dt>
+				<dd class="right-column">11:00~</dd>
+				<dt>장소비</dt>
+				<dd>0원</dd>
+			</dl>
 		
+		</div>
 	</div>
 </section>
 <section class="leader-information">
-	<header class="front-leader">
-	<h1>리더소개</h1>
+	<header class="front-leader section-label">
+	<h3 class="leader-label">리더소개</h3>
 	<img src="" alt="" class="leader-profile-image" />
 	</header>
+	<div class="center-leader section-content">
+		<span>리더 소개 내용 소개ㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐ</span>
+	</div>
 </section>
-<div class="center-leader">
-<span>리더 소개 내용 자기소개 줄ㅈ</span>
-</div>
+
 </div>
 
 
-<aside id="action-widget">
-<div class="order-action">
-	<h1 class='title'>타이틀이여</h1>
-	<label for="">회비</label><span class="price">가격</span>
-	<span class="term">기간</span>
-	<span class="time">주기 시간</span>
-	<!-- 참여신청하기, 찜하기 버튼ㄴ -->
-</div>
-</aside>
 </div>
 
-
+<%-- 
 
 <span>LEVEL : ${study.DNAME }</span>
 <span>${study.LNAME }-${study.TNAME }</span>
@@ -338,9 +410,9 @@ Any questions! 무엇이든 물어보세요.
 <img src="${pageContext.request.contextPath}/resources/upload/member/basicprofile.png" alt="" />
 </c:if>
 
-<span>${study.COVER }</span>
+<span>${study.COVER }</span> --%>
 
-</div>
+
 
 
 <div id="review-container"><!-- 팀장에 대한 후기 -->
@@ -352,7 +424,7 @@ Any questions! 무엇이든 물어보세요.
 				<div class="member-photo">
 					<img src="${pageContext.request.contextPath }/resources/upload/member/${r.MPROFILE!=null? r.MPROFILE:'basicprofile.png'}" alt="" />
 				</div>
-				<div class="review-detail">
+				<div class="review-detail section-content">
 					<span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
 					<p>${r.CONTENT }</p>
 					<a href="studyView.do?sno=${r.SNO }">${r.TITLE }</a><br />
@@ -371,9 +443,32 @@ Any questions! 무엇이든 물어보세요.
 
 </div>
 
-
 </div>
-<div id="side-info"> <!-- 오른쪽 fix창 -->
+<aside id="action-widget">
+<div class="order-action">
+	<h1 class='title'>타이틀이여</h1>
+	<label for="">회비</label><span class="price">가격</span>
+	<span class="term">기간</span>
+	<span class="time">주기 시간</span>
+	<span>${study.KNAME } : ${study.SUBNAME }</span>
+	<span>${study.TITLE }</span><br />
+	<span>${study.SDATE }~${study.EDATE }</span>
+	<c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
+		<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
+			<button type="button" id="btn-apply" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
+			<button type="button" id="btn-wish"  onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
+		</c:if>
+</c:if>	
+</div>
+</aside>
+	</div>
+
+	
+
+
+
+
+<%-- <div id="side-info"> <!-- 오른쪽 fix창 -->
 <span>${study.KNAME } : ${study.SUBNAME }</span>
 <span>${study.TITLE }</span><br />
 <span>${study.SDATE }~${study.EDATE }</span>
@@ -383,12 +478,12 @@ Any questions! 무엇이든 물어보세요.
 		<button type="button" id="btn-wish"  onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
 	</c:if>
 	
-</c:if>	
+</c:if>	 --%>
 
 
 
-</div>
+</div><!-- 전체 -->
 
-
-</div>
+<div class="no"></div>
+<!-- </div> -->
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>	
