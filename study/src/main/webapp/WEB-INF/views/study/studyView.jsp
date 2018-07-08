@@ -23,8 +23,10 @@ div.carousel-item img{
 	height:400px;
 }
 div.member-photo img{
-	widht:60px;
+	width:60px;
 	height:70px;
+	border-radius: 50px;
+	
 }
 div.review-detail a{
 	color:coral;
@@ -421,18 +423,20 @@ Any questions! 무엇이든 물어보세요.
 	<ul class="reviews">
 		<c:forEach var="r" items="${reviewList }">
 			<li class="review-one">
-				<div class="member-photo">
+				<div class="member-photo section-label">
 					<img src="${pageContext.request.contextPath }/resources/upload/member/${r.MPROFILE!=null? r.MPROFILE:'basicprofile.png'}" alt="" />
 				</div>
 				<div class="review-detail section-content">
 					<span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
 					<p>${r.CONTENT }</p>
-					<a href="studyView.do?sno=${r.SNO }">${r.TITLE }</a><br />
-					<span><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></span>
+					<a href="studyView.do?sno=${r.SNO }">${r.TITLE }</a>
+					<p><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></p>
 				
 					
 				</div>
+				<hr />
 			</li>
+			
 		</c:forEach>
 	</ul>
 
