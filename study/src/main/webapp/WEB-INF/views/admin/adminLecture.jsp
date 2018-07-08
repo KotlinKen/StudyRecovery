@@ -86,6 +86,7 @@
 					<th>가격</th>
 					<th>현황</th>
 					<th>등록일</th>
+					<th></th>
 				</tr>
 			</thead>			
 			<tbody>
@@ -254,6 +255,11 @@ function loadLecture(cPage, pageBarSize, type){
 	    			rmHtml += "<td>" +lecture.PRICE+"</td>";
 	    			rmHtml += "<td>" +lecture.STATUS+"</td>";
 	    			rmHtml += "<td>" +lecture.REGDATE+"</td>";
+	    			
+					if( lecture.CNT == 0 && (lecture.STATUS == "모집 중" || lecture.STATUS == "마감 임박"))
+						rmHtml += "<td><input type='checkbox' name='lecture' id='deleteLecturesBtn'/></td>";
+					else
+						rmHtml += "<td></td>";
     			rmHtml += "</tr>";
 	    	}
 			$(".table-responsive tbody").html(rmHtml);
@@ -328,6 +334,11 @@ function searchAdminLecture(cPage, pageBarSize){
 	    			rmHtml += "<td>" +lecture.PRICE+"</td>";
 	    			rmHtml += "<td>" +lecture.STATUS+"</td>";
 	    			rmHtml += "<td>" +lecture.REGDATE+"</td>";
+	    			
+	    			if( lecture.CNT == 0 && (lecture.STATUS == "모집 중" || lecture.STATUS == "마감 임박"))
+						rmHtml += "<td><input type='checkbox' name='lecture' id='deleteLecturesBtn'/></td>";
+					else
+						rmHtml += "<td></td>";
     			rmHtml += "</tr>";
 	    	}
 			$(".table-responsive tbody").html(rmHtml);

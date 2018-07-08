@@ -184,9 +184,14 @@
 </script>
 
 <div id="lecture-detail">
-   <c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
+   <c:if test="${memberLoggedIn.getMno() eq lecture.MNO && peopleCnt == 0  }">
       <!-- <button type="button" id="updateLecture" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">수정   </button> -->
       <button type="button" onclick="deleteLecture();">강의 삭제</button>
+      <br />
+   </c:if>
+   <c:if test="${memberLoggedIn.getMno() eq lecture.MNO && peopleCnt != 0  }">
+      <!-- <button type="button" id="updateLecture" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">수정   </button> -->
+      <button type="button" onclick="deleteLecture();" disabled>강의 삭제</button>
       <br />
    </c:if>
 
@@ -213,7 +218,14 @@
 
    <!-- 팀장에 대한 후기 -->
    <div id="review">
-   
+   		<c:if test="${reviewList ne null}">
+   			<c:forEach var="review" items="${reviewList }">
+   			
+   			</c:forEach>
+   		</c:if>
+   		<c:if test="${reviewList eq null}">
+   			리뷰 목록이 없습니다.
+   		</c:if>
    </div>
    
    <!-- 수정 모달 -->
