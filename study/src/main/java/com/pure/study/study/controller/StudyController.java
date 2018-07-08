@@ -627,7 +627,8 @@ public class StudyController {
 			msg="스터디 삭제 실패";
 			loc="/study/studyView?sno="+sno;
 		}
-		
+		mav.addObject("msg", msg);
+		mav.addObject("loc", loc);
 		mav.setViewName("common/msg");
 		
 		

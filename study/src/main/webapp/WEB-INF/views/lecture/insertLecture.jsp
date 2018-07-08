@@ -49,6 +49,14 @@ function validate(){
    
    $("#time").val(startTime + "~" + endTime);   
    
+   // summernote required마냥 만들어주기.
+   var sumVal = $("#summernote").val();
+   
+	if( sumVal.trim().length == 0 ){
+		alert("내용을 입력해주세요");
+		return false;
+	}
+   
    return true;
 }
 
@@ -293,7 +301,7 @@ $(function(){
    <label for="title">스터디 제목 : </label>
    <input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
    <label for="content">스터디 내용 : </label>
-   <textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요" required></textarea>
+   <textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
    <br />
 
    <!-- 카테고리 -->
@@ -358,7 +366,7 @@ $(function(){
 	<br />
 	
 	<label for="price">수강료 : </label>
-	<input type="number" name="price" id="price" class="form-control" min="1000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
+	<input type="number" name="price" id="price" class="form-control" min="1000" max="10000000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
 	<br />
 	
 	<label for="recruit">모집 인원 : </label>

@@ -741,7 +741,7 @@ public class LectureContoller {
 			@RequestParam(required = false, defaultValue = "") String member,
 			@RequestParam(required = false, defaultValue = "0") int price, 
 			@RequestParam(required = false) String year,
-			@RequestParam(required = false) String month, @RequestParam(required = false) String status) {
+			@RequestParam(required = false, defaultValue="전체") String month, @RequestParam(required = false) String status) {
 		ModelAndView mav = new ModelAndView("jsonView");
 
 		Map<String, Object> key = new HashMap<>();
