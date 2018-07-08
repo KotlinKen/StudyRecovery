@@ -666,11 +666,18 @@ public class LectureContoller {
 
 		int success = p.getCode();
 		String msg = "";
+		System.out.println("tokkens = " + success);
 
 		// 아임포트에서 결제취소가 성공한 경우.
 		if (success == 1 || success == 0) {
 			msg = "결제취소";
 
+			ls.successAdminPayCancel(pno);
+		}
+		// 이미 취소한 경우.
+		else if ( success == -1 ) {
+			msg = "이미 취소된 결제입니다.";
+			
 			ls.successAdminPayCancel(pno);
 		}
 		// 실패한 경우
