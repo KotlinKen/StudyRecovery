@@ -154,9 +154,9 @@ function lectureAdminCancel(sno, mno, pno, price){
 		<label for="status">결제 상태 : </label>
 		<select name="status" id="status">
 			<option value="전체" selected>전체</option>
-			<option value="결제 완료">결제 완료</option>
-			<option value="결제 취소">결제 취소</option>
-			<option value="결제 실패">결제 실패</option>
+			<option value="결제완료">결제 완료</option>
+			<option value="결제취소">결제 취소</option>
+			<option value="결제실패">결제 실패</option>
 		</select>
 		
 		<button type="button" id="paySearchBtn" style="float:right; widht: 30px; height: 30px;">검색</button>

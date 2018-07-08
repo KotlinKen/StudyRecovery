@@ -33,6 +33,7 @@
   <filter>
     <filter-name>encodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <async-supported>true</async-supported>
     <init-param>
       <param-name>encoding</param-name>
       <param-value>utf-8</param-value>
@@ -52,6 +53,10 @@
 	  
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
+		<location>/WEB-INF/views/common/error/exception.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
 		<location>/WEB-INF/views/common/error/exception.jsp</location>
 	</error-page>
 	<error-page>
