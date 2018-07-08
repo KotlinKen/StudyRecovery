@@ -12,9 +12,12 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.message.model.service.MessageService;
+import com.pure.study.message.model.vo.Message;
 
 public class EchoHandler extends TextWebSocketHandler {
 	 private static Logger logger = LoggerFactory.getLogger(EchoHandler.class);
@@ -35,50 +38,72 @@ public class EchoHandler extends TextWebSocketHandler {
 	    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 	    	  Map<String,Object> map = session.getAttributes();
 	    	  Member member = (Member) map.get("memberLoggedIn");
-	    	  System.out.println("로그인 한 아이디 : " + member.getMid());
+	    	  if(member != null) {
+	    		  System.out.println("로그인 한 아이디 : " + member.getMid());
+	    	 
 	        //Map사용시
 	    	sessions.put(String.valueOf(member.getMno()), session);
 	        
 	        logger.info("{} 연결됨", session.getId());
 	        
 	        
-	        //Message message = new Message("init", member.getMid(), null, "안녕~");
+	 
 	        
-	        
+	        Message message = null;
 	        Map<String, String> queryMap = new HashMap<>();
 	        
 	        queryMap.put("receivermno", String.valueOf(member.getMno()));
 	        queryMap.put("checkdate", "checkdate");
-	        int count = messageService.messageCount(queryMap);
-	        System.out.println(count);
-	        
-	        
-	        
+
 	        System.out.println(messageService.messageList(queryMap));
 	        
 	        
 	        Iterator<String> sessionIds = sessions.keySet().iterator();
 	        String sessionId="";
 	        
-
-	        
 	        
 	        
 	        while(sessionIds.hasNext()){
-	            sessionId = sessionIds.next();
-	            System.out.println("담겨있는 값" + ":" + sessionId );
+	        	sessionId = sessionIds.next();
+	        	int count = messageService.messageCount(queryMap);
+		        if(count>0) {
+		        	message = new Message("init", String.valueOf(member.getMno()), String.valueOf(member.getMno()), String.valueOf(count), count);
+		        	handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
+		        }
 	        }
+	    	  }
+	        
+/*	        
+	        while(sessionIds.hasNext()){
+	            sessionId = sessionIds.next();
+	            System.out.println(sessionId);
+	            
+		        int count = messageService.messageCount(queryMap);
+		        message = new Message("init", member.getMid(), null, String.valueOf(count));
+	            
+	            
+	            if(count > 0 ) {
+	            	if(Integer.parseInt(sessionId) == member.getMno()) {
+		                handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
+	            	}
+	            }
+	            System.out.println("담겨있는 값" + ":" + sessionId );
+	        }*/
 	      
 	        
 	        
-	        //handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
+	 
 	    }
 	    /**
 	     * 클라이언트가 웹소켓서버로 메시지를 전송했을 때 실행되는 메소드
 	     */
 	    @Override
 	    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-	    	  
+	    	 
+	    	  Map<String,Object> map = session.getAttributes();
+	    	  Member member = (Member) map.get("memberLoggedIn");
+	    	  System.out.println("로그인 한 아이디 : " + member.getMid());
+	    	
 	    	logger.error("handdle 호출" + session.getId());
 	    	 
 	   
@@ -93,10 +118,42 @@ public class EchoHandler extends TextWebSocketHandler {
 	    	  
 	        Iterator<String> sessionIds = sessions.keySet().iterator();
 	        String sessionId="";
-	        while(sessionIds.hasNext()){
+
+	        
+	        String s = message.getPayload();
+
+	        
+	        mapper = new ObjectMapper();
+	        
+	        Message ms = mapper.readValue(s, Message.class);
+	        
+	        Map<String, String> queryMap = new HashMap<>();
+	        
+	        System.out.println(ms);
+	        
+	        
+	        queryMap.put("receivermno", String.valueOf(ms.getReceiver()));
+	        queryMap.put("checkdate", "checkdate");
+	        
+
+	        
+	        System.out.println(ms);
+	        System.out.println(ms.getReceiver());
+	        System.out.println(ms.getMsg());
+	        System.out.println(ms.getSender());
+	        System.out.println(member.getMno());
+	        
+ 	        while(sessionIds.hasNext()){
 	            sessionId = sessionIds.next();
-	            //sessions.get(sessionId).sendMessage(new TextMessage(sessionId+" echo " + message.getPayload()));
-	            sessions.get(sessionId).sendMessage(message);
+	            System.out.println("세션아이디"+sessionId);
+		            if(ms.getReceiver().equals(sessionId)){
+		    	        int count = messageService.messageCount(queryMap);
+		    	        ms.setCount(count);
+		            	sessions.get(sessionId).sendMessage(new TextMessage(mapper.writeValueAsString(ms)));
+		            	System.out.println(ms);
+		            }else {
+		            	
+		            }
 	            logger.error("sessionids 호출" + sessionId);
 	        }
 	        

@@ -4,9 +4,9 @@
 
 
 <form action="${rootPath }/message/messageWriteEnd" method="POST">
-	<input type="text" name="receivermno"/>
-	<input type="text" name="content"/>
-	<input type="submit" value="눌러" />
+	<input type="text" name="receivermno" id="receiver"/>
+	<input type="text" id="message" name="content"/>
+	<input id ="sendBtn" type="submit" value="눌러" />
 </form>
 
 
