@@ -6,33 +6,6 @@
  <jsp:include page="/WEB-INF/views/common/header.jsp">
  	<jsp:param value="" name="pageTitle"/>
 </jsp:include>	 
-<style>
-.notLeader{
-	display:none;
-}
-
-div.sideInfo{
-
-}
-div#carouselExampleControls{
-	width:500px;
-	height:400px;
-}
-div.carousel-item img{
-	width:500px;
-	height:400px;
-}
-div.member-photo img{
-	width:60px;
-	height:70px;
-	border-radius: 50px;
-	
-}
-div.review-detail a{
-	color:coral;
-}
-</style>
-
 <script>
 //참여신청 버튼 클릭 이벤트
 function studyApply(sno){
@@ -133,6 +106,21 @@ $(function(){
 
 		}
 	});
+	
+	
+	$(window).on('scroll',function(){
+		var maxHeight = $(document).height();
+		console.log("document height"+maxHeight);
+	    var currentScroll = $(window).scrollTop() + $(window).height();
+	    console.log("currentScroll"+currentScroll);
+		if(1108 <= currentScroll){
+			console.log("으엥");
+			$("aside#action-widget").addClass("fixed");
+		}else{
+			$("aside#action-widget").removeClass("fixed");
+		}
+		
+	});
 		
 	
 	
@@ -142,21 +130,48 @@ $(function(){
 
 </script>
 <style>
+.notLeader{
+	display:none;
+}
+
+div.sideInfo{
+
+}
+div#carouselExampleControls{
+	width:700px;
+	height:400px;
+}
+div.carousel-item img{
+	width:700px;
+	height:400px;
+}
+div.member-photo img{
+	width:60px;
+	height:70px;
+	border-radius: 50px;
+	
+}
+div.review-detail a{
+	color:coral;
+}
 div.studyView-container{
 	width:1000px;
 	margin:0 auto;
 	position:relative;
+	background:white;
+	margin-top:50px;
 
 }
 div.study-info{
-	width:700px;
-	border:1px solid black;
+	width:700px;/* 
+	border:1px solid black; */
 	position:relative;
+	background:white;
+	margin-bottom:20px;
 }
 div.level-mark{
 	position:absolute;
 	top:350px;
-	border:1px solid black;
 	left:50px;
 	height:90px;
 	width:100px;
@@ -172,19 +187,24 @@ div.level{
 	color:white;
 }
 span.area{
-	border:1px solid black;
 	margin:0 auto;
 	position: relative;
 	left:330px;
 	color:#0056e9;
+	font-weight:bold;
+	font-size:15px;
+	margin-top:5px;
 }
 div.study-images{
-	border:1px solid black;
+	/* border:1px solid black; */
 	height:400px;
 	
 }
 div.title-wrap{
 	text-align:center;
+	background:white;
+	margin-bottom: 33px;
+    margin-top: 33px;
 	
 }
 h1.title{
@@ -196,79 +216,156 @@ h1.title{
 	clear:right;
 	height:100px;
 	color:#333;
-	font-size:15px;
+	font-size:20px;
+	font-weight:bold;
 	margin-left:30px;
+	background:white;
+	margin-top:20px;
 }
 h3.leader-label{
 	color:#333;
 	font-size:15px;
+	background:white;
+	font-size:20px;
+	font-weight:bold;
 	
 }
 div.study-detail{
 	overflow:hidden;
-	border:1px solid black;
+	/* border:1px solid black; */
+	background:white;
 }
 div.study-description{
-	border:1px solid black;
+	/* border:1px solid black; */
 	width:600px;
+	background:white;
 }
 section.leader-information{
 	position:relative;
+	background:white;
 }
 div.introduce-wrap{
 	overflow: hidden;
+	background:white;
 }
 div.section-content{
 	float:right;
 	width:500px;
+	background:white;
 	
 }
 dl#deatil-list dt, dl#deatil-list dd{
 	display:inline-block;
 }
 dl#deatil-list dt{
-	width:90px;
+	width:70px;
 }
 dl#deatil-list dd{
-	width:165px;
+	width:162px;
 }
 aside#action-widget{
 	width:280px;
-	border:1px solid black;
 	float:right;
+	background:white;
+	box-shadow: 8px 8px 8px lightgray;
 	
 }
 div.study-wrap{
 	float:left;
 	clear:right;
+	background:white;
 }
 div.no{
 	clear:both;
+	background:white;
 	
 } 
 div#review-container{
 	clear:both;
+	background:white;
 }
 li.review-one{
 	clear:left;
+	background:white;
 }
+img.leader-profile-image{
+	width:80px;
+	height:80px;
+	border-radius: 50px;
+}
+div.order-action{
+	background:white;
+	padding:10px;
+}
+div.order-action button{
+	width:100%;
+	padding:15px;
+	font-size:18px;
+}
+.fixed{
+	position:fixed;
+	top:0;
+	left:50%;
+	margin-left:13.8pc;
+}
+div.center-leader{
+	margin-top:20px;
+}
+.side-info{
+	font-size: 15px;
+	font-weight: bold;
+}
+.price{
+	font-size:20px;
+	color:#ef6c00;
+	font-weight:bold;
+}
+div.leader-btn-wrap{
+	width:1000px;
+	margin:0 auto;
+	text-align:right;
+	position:relative;
+}
+div.leader-btn-wrap button{
+	position:relative;
+	top:30px;
+	right:10px;
+	
+}
+button.removeStudy{
+	background:red;
+	color:white;
+}
+button.editStudy{
+	background:black;
+	color:white;
+}
+button#btn-apply{
+	background:#ef6c00;
+	color:white;
+}
+
 </style>
-<div class="studyView-container">
-<div id="study-detail">
-	<div class="study-wrap">
-		<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
-	<c:if test="${memberLoggedIn!=null }">
+<div class="leader-btn-wrap">
+		<c:if test="${memberLoggedIn!=null }">
 		<c:if test="${memberLoggedIn.getMno()==study.MNO }">
 			<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박'||study.STATUS=='진행 중'}">
-				<button type="button" class="removeStudy">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
+				<button type="button" class="removeStudy btn">스터디 삭제</button><!-- 팀장일때만 나타날 것임. -->
 			</c:if>
 		</c:if>
 	</c:if>
 <c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()==study.MNO}">
 	<c:if test="${study.STATUS ne '모집 마감'&&study.STATUS ne '스터디 종료'&&study.STATUS ne '진행 중' }">
-		<button type="button" class="editStudy">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
+		<button type="button" class="editStudy btn">스터디 수정</button> <!-- 팀장일때만 나타날 것임. -->
 	</c:if>
 </c:if>	
+</div>
+<div class="studyView-container">
+	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
+
+<div id="study-detail">
+	<div class="study-wrap">
+	
 
 <input type="hidden" id="isWish" value="${isWish }" />
 <div class="study-info">
@@ -311,46 +408,8 @@ li.review-one{
 	<div class="introduce-wrap">
 		<h2 class="section-label">스터디 소개</h2>
 		<div class="study-description section-content">
-		영어로 이야기를 하려고 할 때, 또는 외국인 앞에서 말문을 열어야 할 때..
-등에서 식은땀이 나고 어디서부터 어떤 이야기를 꺼내야 할 지 막막하신 분들이 계신가요?
-
-회화를 시작해야 하는데, 배울건 너무나도 많고 어디에서부터 시작해서 무엇을 어떻게 배워야 할지 막막하셨죠? 제 스터디에서는 가장 기초가 되지만 자칫 밋밋해질 수 있는 자기소개를 어떻게 톡톡 튀고 매력있게 할 수 있을지부터 시작해서, 모든 대화의 기초가 되는 표현을 바탕으로 문장을 어떻게 만들어 가야 할지를 차근차근 배워 볼 거에요.
-
-
-[진행방식]
-
-1. Say hello!
-서로 인사 나누고, 이번 한주에 대해 얘기하며 친해져요.
-
-2. Vocabularies
-처음엔 단어부터 입에 붙도록 연습해야 해요. 주마다 유용한 단어들 같이 읽어보면서 외워봐요.
-
-3. Activities
-특정 문장 구조 혹은 단어들로 재밌게 할 수 있는 활동들 가져올거에요. 이때는 틀리더라도 괜찮으니 마구마구 입 밖으로 영어를 뱉어봐요!
-
-4. Grammar
-Activity로 익힌 문장구조를 문법 설명으로 연결해드릴 거에요. 먼저 입에 익은 다음에 설명을 들으시면 이해가 더 잘 되실 거에요 :)
-
-5. Free talk
-한주간 뭐할 건지, 요즘 고민은 없는 지 자유롭게 이야기 하는 시간입니다. 오늘 배운 문장구조를 써먹을 수 있는 주제로 이야기 나누면 연습이 많이 되실거에요. 제가 듣다가 설명해 드릴 부분은 찾아서 설명해드릴게요!
-
-6. Q&A
-Any questions! 무엇이든 물어보세요.
-
-
-[스터디 목표]
-
-- I am driving / I drive 구별
-- I do / I did 구별
-- 영어로 질문 만들기
-- I will / I am gonna + ~
-- I like/love/prefer + ~
-- I can/should/must/could/might/would + ~
-- Interesting + Interested
-- I’d like to + ~ / Would you like to + -
-
-위의 기본 문장구조에 익숙해져 영어로 간단한 의사 표현을 할 수 있게 되는것을 목표로 삼아요! :-)		
-	</div>
+			${study.CONTENT }
+		</div>
 	</div>
 	<hr />
 	<div class="study-detail">
@@ -358,27 +417,33 @@ Any questions! 무엇이든 물어보세요.
 		<div class="section-content">
 			<dl id="deatil-list">
 				<dt>지역 :</dt>
-				<dd>강남</dd>
+				<dd>${study.LNAME } | ${study.TNAME }</dd>
 				<dt class="right-column">인원 : </dt>
-				<dd class="right-column">6명</dd>
+				<dd class="right-column">${study.RECRUIT }명</dd>
 				<dt>일정:</dt>
-				<dd>2018~~</dd>
-				<dt class="right-column">시간</dt>
-				<dd class="right-column">11:00~</dd>
-				<dt>장소비</dt>
-				<dd>0원</dd>
+				<dd>${study.SDATE }~${study.EDATE }</dd>
+				<dt class="right-column">주기</dt>
+				<dd class="right-column">${study.FREQ }  </dd>
+				<dt>시간</dt>
+				<dd>${study.TIME }</dd>
+				<dt class="right-column">협의비</dt>
+				<dd class="right-column">${study.PRICE }원</dd>
 			</dl>
 		
 		</div>
 	</div>
 </section>
+
 <section class="leader-information">
+	<hr />
 	<header class="front-leader section-label">
+		
 	<h3 class="leader-label">리더소개</h3>
-	<img src="" alt="" class="leader-profile-image" />
+	<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 	</header>
+
 	<div class="center-leader section-content">
-		<span>리더 소개 내용 소개ㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐㅐ</span>
+		<span>${study.COVER }</span>
 	</div>
 </section>
 
@@ -386,36 +451,7 @@ Any questions! 무엇이든 물어보세요.
 
 
 </div>
-
-<%-- 
-
-<span>LEVEL : ${study.DNAME }</span>
-<span>${study.LNAME }-${study.TNAME }</span>
-<span>${study.TITLE }</span>
-<span>스터디 소개 : ${study.CONTENT }</span>
-<div id="detail">
-<span>지역 : ${study.LNAME }-${study.TNAME }</span>
-<span>인원 : ${study.RECRUIT }명</span><br />
-<span>
-	${study.FREQ }
-</span>
-<span>${study.TIME }</span><br />
-<span>신청기간 : ${study.LDATE }까지</span>
-<span>수업 기간 : ${study.SDATE }~${study.EDATE }</span>
-<span>협의비 : ${study.PRICE }</span>
-<hr />
-<label for="">리더 소개</label><br />
-<c:if test="${study.MPROFILE!=null }">
-<img src="${pageContext.request.contextPath}/resources/upload/member/${study.MPROFILE}" alt="" />
-</c:if>
-<c:if test="${study.MPROFILE==null }">
-<img src="${pageContext.request.contextPath}/resources/upload/member/basicprofile.png" alt="" />
-</c:if>
-
-<span>${study.COVER }</span> --%>
-
-
-
+<br />
 
 <div id="review-container"><!-- 팀장에 대한 후기 -->
 <h5>리더에 대한 후기</h5>
@@ -428,13 +464,13 @@ Any questions! 무엇이든 물어보세요.
 				</div>
 				<div class="review-detail section-content">
 					<span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
-					<p>${r.CONTENT }</p>
+					<pre>${r.CONTENT }</pre>
 					<a href="studyView.do?sno=${r.SNO }">${r.TITLE }</a>
 					<p><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></p>
 				
 					
 				</div>
-				<hr />
+				
 			</li>
 			
 		</c:forEach>
@@ -448,46 +484,24 @@ Any questions! 무엇이든 물어보세요.
 </div>
 
 </div>
+<!-- 옆에 따라디는 정보 창, 참여 신청 찜하기  -->
 <aside id="action-widget">
 <div class="order-action">
-	<h1 class='title'>타이틀이여</h1>
-	<label for="">회비</label><span class="price">가격</span>
-	<span class="term">기간</span>
-	<span class="time">주기 시간</span>
-	<span>${study.KNAME } : ${study.SUBNAME }</span>
-	<span>${study.TITLE }</span><br />
-	<span>${study.SDATE }~${study.EDATE }</span>
+	<h1 class='title'>${study.TITLE }</h1>
+	<label for="">신청 기간 : </label> <span class="side-info">~${study.LDATE }</span><br />
+	<label for="">스터디일정 : </label> <span class="side-info">${study.SDATE }~${study.EDATE }</span><br />
+	<label for="">회비 : </label> <span class="price side-info">${study.PRICE }원</span><br />
 	<c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
 		<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
-			<button type="button" id="btn-apply" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
-			<button type="button" id="btn-wish"  onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
+			<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button><br /><br />
+			<button type="button" id="btn-wish"  class="btn" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
 		</c:if>
 </c:if>	
 </div>
 </aside>
 	</div>
 
-	
-
-
-
-
-<%-- <div id="side-info"> <!-- 오른쪽 fix창 -->
-<span>${study.KNAME } : ${study.SUBNAME }</span>
-<span>${study.TITLE }</span><br />
-<span>${study.SDATE }~${study.EDATE }</span>
-<c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
-	<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
-		<button type="button" id="btn-apply" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button>
-		<button type="button" id="btn-wish"  onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
-	</c:if>
-	
-</c:if>	 --%>
-
-
-
 </div><!-- 전체 -->
 
 <div class="no"></div>
-<!-- </div> -->
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>	
