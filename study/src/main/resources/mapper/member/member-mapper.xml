@@ -1393,7 +1393,7 @@
 		select * from 
 		member m left join instructor i
 		on m.mno = i.mno 
-		where I.STATE is not null
+		where I.STATE is not null and M.QDATE is null
 		order by APPLICATIONDATE
 	</select>
 	<select id="selectOneInstruct" resultType="map">

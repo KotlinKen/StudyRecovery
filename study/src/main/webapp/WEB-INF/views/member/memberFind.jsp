@@ -7,13 +7,11 @@
 <script src="${rootPath}/resources/js/member/enroll.js"></script>
 <%-- <script src="${rootPath}/resources/js/member/find.js"></script> --%>
 <!-- 테이블 css -->
-<link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" />
+<%-- <link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/member.css" /> --%>
 
 <style>
 	.find{
-		padding-top: 5%;
-		padding-bottom: 5%;
-		padding-left: 33%;
+		padding: 15px;
 	}
 	span.name{
 		position: relative;
@@ -28,14 +26,14 @@
 		color: red;		
 	}
 	table.id-pwd{
-		/* width: 40%;
-		height: 20%; */
-		background: #ededed;
-		position: relative;
-		top: 25px;
+		width: 100%;
+		/*height: 20%; */
+		/* position: relative;
+		top: 25px; */
+		
 		left: -80px;
 		z-index: 100; 
-		border-radius: 5px;
+		
 	}
 	input[type=text] {
 	    width: 100%;
@@ -46,12 +44,22 @@
 	    border-bottom: 1px solid #cccccc;
 	}
 	input[type=email] {
+	  	width: 100%;
+	    padding: 12px 20px;
+	    margin: 8px 0;
+	    box-sizing: border-box;
+	    border: none;
+	    border-bottom: 1.5px solid #0000ff;
+	    background: #f8f9fb;
+	}
+	input[type=text] {
 	    width: 100%;
 	    padding: 12px 20px;
 	    margin: 8px 0;
 	    box-sizing: border-box;
 	    border: none;
-	    border-bottom: 1px solid #cccccc;
+	    border-bottom: 1.5px solid #0000ff;
+	    background: #f8f9fb;
 	}
 	#findid{
 		width: 300px; 
@@ -70,12 +78,24 @@
 	div.page{
 		width: 500px;
 		height: 500px;
-		border: 3px solid #0056E9;
-		border-radius: 10px;
-		position: relative;
-		left:35%;
+		/* position: relative;
+		left:35%; */
+		margin:auto;
 		top:0;
+		background: #f8f9fb;
+		
 	}
+	#idServiceLogo{
+	font-size: 25px;
+	width: 100px;
+	}
+	.blank-div{
+	height: 50px;
+	width: 100%;
+	padding: 20px;
+	text-align: center;
+	}
+	.buttontd{text-align: center;}
 </style>
 <div class="page-all">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -85,18 +105,21 @@
 		String findType = String.valueOf(request.getAttribute("findType"));
 		System.out.println("아이디?"+findType);
 	%>
+	<div class="blank-div">	</div>
 	<div class="page">
 		<c:if test="${mid==null and findType eq '아이디' }">
-			<!-- <span id="idServiceLogo"></span> -->
 			<form class="find" action="${pageContext.request.contextPath }/member/memberFindIdPwd.do" onsubmit="return validate();">
-				<img src="${rootPath }/resources/upload/member/findid.PNG" alt="아이디 찾기" id="findid"/>
+			<span id="idServiceLogo"><b>아이디 찾기</b></span>
+			<div class="blank-div">	</div>
+				<%-- <img src="${rootPath }/resources/upload/member/findid.PNG" alt="아이디 찾기" id="findid"/> --%>
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
 						<input type="text" name="mname" id="name" placeholder="회원 이름" maxlength="7" autocomplete="off"/>	
 						<br /> 
+					
 						<span id="nameerr" class="name"></span> 
-						<span id="nameok" class="name"></span>					
+						<span id="nameok" class="name"></span>	<br />
 						</td>
 					</tr>
 					<tr  class="id-pwd">
@@ -110,8 +133,8 @@
 						</td>
 					</tr>
 					<tr  class="id-pwd">
-						<td  class="id-pwd">
-							<input type="submit" class="btncss" id="submit" value="찾기" />							
+						<td  class="id-pwd buttontd" ><br />
+							<input type="submit" class="btn btn-primary" id="submit" value="찾기" />							
 						</td>
 					</tr>
 				</table>
@@ -136,7 +159,7 @@
 						</td>
 					</tr>
 					<tr  class="id-pwd">
-						<td  class="id-pwd">
+						<td  class="id-pwd buttontd" >
 							<input type="submit" class='btncss' id="submit" value="찾기" />
 						</td>
 					</tr>

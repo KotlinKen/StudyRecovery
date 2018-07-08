@@ -2436,7 +2436,7 @@ public class MemberController {
 		map.put("list", list);
 		return map;
 	}
-	@RequestMapping("/member/memberSelectONEView.do")
+	@RequestMapping("/member/selectViewMember.do")
 	public ModelAndView selectViewMember(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
 		ModelAndView mav = new ModelAndView();
 		System.out.println(mid);
