@@ -30,7 +30,7 @@
 	
 
 	<select id="messageList" resultMap="messageMap">
-		SELECT MSG.*, RM.MNAME RNAME, SM.MNAME SNAME, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG
+		SELECT MSG.*, RM.MNAME RNAME, SM.MNAME SNAME, RM.MID RMID, SM.MID SMID, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG
 		FROM MESSAGE MSG, MEMBER RM, MEMBER SM
 		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
 			<if test="receivermno != null and receivermno != '' ">

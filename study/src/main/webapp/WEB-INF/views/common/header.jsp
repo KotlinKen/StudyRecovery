@@ -151,9 +151,9 @@ $(function(){
 							
 							<li class="nav-item loginBox"><a class="nav-link loginId" href="${pageContext.request.contextPath }/member/memberView.do" style="cursor:pointer">${memberLoggedIn.mname }님</a></li>
 							<!-- 메시지 알람 -->
-							<li class="messageBox"style="padding:10px 0px;" >
-								<a href="${rootPath }/member/memberMessageList" style="padding:10px 20px; background:#0056e9; color:#fff; border-radius:30px;">
-								
+							<li class="messageBox"style="padding:5px 10px 10px 0px;" >
+								<a href="${rootPath }/member/memberMessageList" style="padding:5px 10px; background:#0056e9; color:#fff; font-size:0.9rem; border-radius:30px;">
+								 0
 								</a>							
 							</li>
 							

@@ -4,6 +4,7 @@
 <style>
 .memberlist > div{padding:10px; cursor:pointer; }
 .memberlist > div:hover{background:#0056e9; color:#fff;}
+#returnMember{margin-bottom:10px;}
 
 </style>
 
@@ -11,6 +12,20 @@
 <jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
 
 
+
+
+	<div class="panel">
+		<div class="leftSection">
+			<div style="padding: 5px 10px;">
+				총 <span style="font-weight: bold;"> ${count } </span>건의 쪽지가 있습니다.
+			</div>
+		</div>
+			<div class="rightSection">
+				<button type="button" id="btn-login" class="btn btn_reg" data-toggle="modal" data-target="#messageWriteModal" style="cursor:pointer">쪽지 작성</button>
+			</div>
+	</div>
+
+	
 <table class="table rm_table">
 	<tr>
 		<th>번호</th>	
@@ -46,7 +61,7 @@
 <%= com.pure.study.common.util.Utils.getPageBarRm(totalContents, cPage, numPerPage, "memberMessageList") %>
  
 
-<a id="btn-login" class="nav-link" data-toggle="modal" data-target="#messageWriteModal" style="cursor:pointer">글쓰기</a>
+
 
 </div>
 
@@ -216,7 +231,7 @@ $("#searchMember").keyup(function(){
 			console.log(data.resultListMap);
 			var html = "";
 			for(index in data.resultListMap){
-				html += "<div onclick='setMember("+data.resultListMap[index].MNO+", \""+data.resultListMap[index].MNAME+"\")'>"+data.resultListMap[index].MNAME+"</div>";
+				html += "<div onclick='setMember("+data.resultListMap[index].MNO+", \""+data.resultListMap[index].MNAME+"\")'>"+data.resultListMap[index].MNAME+" <span style='color:#999; display:inline-block; padding-left:10px;'>"+ data.resultListMap[index].MID+ "</span></div>";
 			}
 			
 			$memberList.html(html);
