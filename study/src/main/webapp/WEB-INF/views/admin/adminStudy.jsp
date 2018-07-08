@@ -80,6 +80,7 @@ $(function(){
 					data:{lno:$(this).val()},
 					dataType:"json",
 					success:function(data){
+						html += "<option value='0'>전체</option>";
 						for(var index in data){
 							html +="<option value='"+data[index].TNO+"'>"+data[index].TOWNNAME+"</option><br/>";
 						}
@@ -121,6 +122,7 @@ $(function(){
 					data:{kno:$(this).val()},
 					dataType:"json",
 					success:function(data){
+						html += "<option value='0'>전체</option>";
 						for(var index in data){
 							html +="<option value='"+data[index].SUBNO+"'>"+data[index].SUBJECTNAME+"</option><br/>";
 						}
