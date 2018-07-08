@@ -27,14 +27,14 @@
 	span#nameerr{
 		color: red;		
 	}
-	.id-pwd{
-		width: 40%;
-		height: 40%;
+	table.id-pwd{
+		/* width: 40%;
+		height: 20%; */
 		background: #ededed;
 		position: relative;
-		top: 0;
-		left: 0;
-		z-index: 100;
+		top: 25px;
+		left: -80px;
+		z-index: 100; 
 		border-radius: 5px;
 	}
 	input[type=text] {
@@ -55,17 +55,29 @@
 	}
 	#findid{
 		width: 300px; 
-		margin-left:6%;
+		margin-left:-60px;
 		margin-right:7.5%;
-		margin-bottom:5%;
+		margin-bottom:1%;
+		margin-top:5%;
 	}
 	#findpwd{
 		width: 300px; 
-		margin-left:6%;
+		margin-left:-60px;
 		margin-right:7.5%;
-		margin-bottom:5%;
+		margin-bottom:1%;
+		margin-top:5%;
+	}
+	div.page{
+		width: 500px;
+		height: 500px;
+		border: 3px solid #0056E9;
+		border-radius: 10px;
+		position: relative;
+		left:35%;
+		top:0;
 	}
 </style>
+<div class="page-all">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="${findType } 찾기" name="pageTitle"/>
 	</jsp:include>
@@ -139,7 +151,7 @@
 	} 
 	</script>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
-
+</div>
 	
 	
 	

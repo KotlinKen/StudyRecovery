@@ -119,6 +119,9 @@
 						<if test="favor != null">
 							favor=#{favor, typeHandler=strArrTypeHandler}, 
 						</if>
+						<if test="pwd != null">
+							pwd=#{pwd},
+						</if>
 						<if test="cover != null">
 							cover=#{cover}
 						</if>

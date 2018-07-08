@@ -254,7 +254,7 @@
             <form action="${pageContext.request.contextPath }/member/newEmail.do" method="post" onsubmit="return emailDuplicateCheck();">
             <div class="modal-body">
                <input type="email" class="form-control" name="email" id="newEmail" placeholder="이메일 변경" required/>
-               <button type="button" class="btn btn-outline-success" id="emailUpdate">인증번호 발송</button>
+               <button type="button" class="btn btn-outline-success" id="emailUpdate" value="0">인증번호 발송</button>
                <br />
                <input type="hidden" id="send" value="duplication" />
                <input type="text" class="form-control" id="key" style="width:200px; display:inline" placeholder="인증키 입력" />
@@ -301,16 +301,21 @@
 		//이메일 변경
 		$("[type=button]#emailUpdate").click(function() {
 			var newEmail = $("#newEmail").val().trim();
-			
-			if ($("#newEmail").val().trim() == "") {
-				alert("새로 변경할 이메일을 입력해주세요.");
-			}
-			if ($("input#send").val() == "duplication") { //이메일이 중복되는지 체크하기
-				emailDuplication(newEmail);
-			}
-			if ($("input#send").val() == "keySend") { //조건문 바꿔야함.
-				//console.log("확인"+$("#send").val());
-				emailSendKey(newEmail);
+			var once = $(this).val();
+			if(once=='0'){
+				if ($("#newEmail").val().trim() == "") {
+					alert("새로 변경할 이메일을 입력해주세요.");
+				}
+				if ($("input#send").val() == "duplication") { //이메일이 중복되는지 체크하기
+					emailDuplication(newEmail);
+				}
+				if ($("input#send").val() == "keySend") { //조건문 바꿔야함.
+					//console.log("확인"+$("#send").val());
+					emailSendKey(newEmail);
+				}
+				$(this).val("1");
+			} else{
+				alert("새로고침을 하고 다시 시도 해주세요.");
 			}
 		});
 

@@ -70,7 +70,7 @@
          	<tr>
          		<th>비밀번호 변경</th>
          		<td>
-         			어떻게 할까~?
+         			<input type="password" name="newPwd" id="newPwd" size="30px"  value="" autocomplete="off" />
          		</td>
          	</tr>
          	<tr>
@@ -101,7 +101,7 @@
          		<th>이메일 변경</th>
          		<td>
          			 <span>${member.email }</span> 
-                  <input type="email" name="email" id="email" value="${member.email }" readonly /> 
+                  <input type="email" name="email" id="email" value="${member.email }" autocomplete="off" /> 
          		</td>
          	</tr>
          	<tr>

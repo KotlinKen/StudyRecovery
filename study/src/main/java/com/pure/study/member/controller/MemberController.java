@@ -758,8 +758,10 @@ public class MemberController {
 
 				if (!sessionStatus.isComplete())
 					sessionStatus.setComplete();
+				model.addAttribute("loc", "/");
+				model.addAttribute("msg", "비밀번호가 변경되었습니다. 다시 로그인 해주세요.");
 
-				return "redirect:/msg.do"; 
+				return "common/msg"; 
 			} else {
 				model.addAttribute("loc", "/member/memberView.do");
 				model.addAttribute("msg", "비밀번호가 변경되지 않았습니다.");
@@ -775,12 +777,13 @@ public class MemberController {
 	
 	//redirect:/사용하면서 msg 주기 위해 추가함.
 	@RequestMapping(value="/msg.do")
-	public String sendMsg(Model model, @ModelAttribute("memberLoggedIn") Member m) {
+	public String sendMsg(Model model, @ModelAttribute(value="memberLoggedIn") Member m) {
 		
 		model.addAttribute("loc", "/");
 		model.addAttribute("msg", "다시 로그인 해주세요.");
-		System.out.println(m);
+		
 		if("manager".equals(m.getMid())) {
+			model.addAttribute("loc", "/admin/adminMember");
 			model.addAttribute("msg", "해당 회원을 탈퇴했습니다.");			
 		}
 		 
@@ -795,7 +798,7 @@ public class MemberController {
 									@RequestParam(value="phone") String phone,
 									@RequestParam(value="preMprofile") String preMprofile,
 									@RequestParam(value="email") String email,
-									//@RequestParam(value="birth") Date birth,
+									//@RequestParam(value="newPwd", required=false, defaultValue="no") String newPwd,
 									//@RequestParam(value="gender") String gender,
 									@RequestParam(value="favor", required=false, defaultValue="no") String[] favor,
 									@RequestParam(value="cover", required=false) String cover,
@@ -841,6 +844,7 @@ public class MemberController {
 			
 			/*********** MultipartFile을 이용한 파일 업로드 처리 로직 끝 **********/
 			
+		  
 		  member.setMno(Integer.parseInt(mno));
 	      member.setMname(mname);
 	      member.setPhone(phone);
@@ -885,12 +889,14 @@ public class MemberController {
 			if (!sessionStatus.isComplete())
 				sessionStatus.setComplete();
 				model.addAttribute("loc", "/");
-				return "redirect:/msg.do";
+				model.addAttribute("msg", "탈퇴 되었습니다.");
 		} else if(result > 0 && "admin".equals(admin)) {
 			model.addAttribute("loc", "/admin/adminMember");
+			
 			return "redirect:/msg.do";
 		} else if(result <= 0 && "admin".equals(admin)) {
 			model.addAttribute("msg", "오류가 발생했습니다.");
+			
 			return "redirect:/member/adminMemberView.do?mno="+mno;
 		} else {
 			model.addAttribute("msg", "오류가 발생하였습니다.");
@@ -1508,7 +1514,7 @@ public class MemberController {
 										@RequestParam(value="phone") String phone,
 										@RequestParam(value="preMprofile") String preMprofile,
 										@RequestParam(value="email") String email,
-										//@RequestParam(value="birth") Date birth,
+										@RequestParam(value="newPwd", required=false, defaultValue="no") String newPwd,
 										//@RequestParam(value="gender") String gender,
 										@RequestParam(value="favor", required=false, defaultValue="no") String[] favor,
 										@RequestParam(value="cover", required=false) String cover,
@@ -1552,7 +1558,10 @@ public class MemberController {
 			}
 				
 				/*********** MultipartFile을 이용한 파일 업로드 처리 로직 끝 **********/
-				
+			if(!"no".equals(newPwd)) {
+				String encodedPassword = bcryptPasswordEncoder.encode(newPwd);
+				member.setPwd(encodedPassword);
+			  }
 			  member.setMno(Integer.parseInt(mno));
 		      member.setMname(mname);
 		      member.setPhone(phone);
