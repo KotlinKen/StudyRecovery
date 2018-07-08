@@ -20,8 +20,8 @@
 		color: #666;
 	}
 	div.ulpage{
-		margin-left: 10%;
-		margin-right: 10%;
+		margin-left: 20%;
+		margin-right: 20%;
 	}
 </style>
 <br />

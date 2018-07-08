@@ -147,4 +147,7 @@ button[name=evaluationView] {
 	background: #0056e9;
 	color: white;
 }
-
+div.page{
+	margin-left: 20%;
+	margin-right: 20%;
+}

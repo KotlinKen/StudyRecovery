@@ -533,7 +533,7 @@ public class MemberController {
 		} else if (m == null && findType.equals("아이디")) {
 			msg = "존재 하지 않는 회원 입니다. ";
 			mav.addObject("msg", msg);
-			mav.addObject("loc", loc);
+			mav.addObject("loc", "/member/memberFindPage.do?findType=아이디");
 			mav.setViewName("common/msg");
 		} else if (findType.equals("비밀번호")) {
 
@@ -586,7 +586,7 @@ public class MemberController {
 
 						messageHelper.setFrom("kimemail2018@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
 						messageHelper.setTo(email); // 받는사람 이메일
-						messageHelper.setSubject("스터디 그룹 임시 비밀번호 발송"); // 메일제목은 생략이 가능하다
+						messageHelper.setSubject("스터디 그룹 비밀번호 변경"); // 메일제목은 생략이 가능하다
 
 						// 4. 인증키를 암호화 한다.
 						Member changeM = new Member();
@@ -602,7 +602,8 @@ public class MemberController {
 								"<form action='http://localhost:9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
 								.append("<input type='hidden' name='mid' value='" + mid + "'/>")
 								.append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
-								.append("<button type='submit'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
+								.append("<h4>Study Grooupt 비밀번호 변경</h4>")
+								.append("<button type='submit' style='padding:5px; background: #ffffff; color: #666; border: 1px solid #666; border-radius: 10px;'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
 
 						mailSender.send(message);
 					} catch (Exception e) {
@@ -611,6 +612,7 @@ public class MemberController {
 
 				} else {
 					msg = "일치하는 회원 정보가 없습니다.";
+					loc="/member/memberFindPage.do?findType=비밀번호";
 				}
 
 				mav.addObject("loc", loc);
@@ -623,7 +625,7 @@ public class MemberController {
 			
 		// 5. 암호화 한 인증키를 이동시켜준다.
 		@RequestMapping(value = "/member/memberPwd.do", method = RequestMethod.POST)
-		public ModelAndView pwd(String mid, String key) {
+		public ModelAndView pwd(@RequestParam(value="mid") String mid, @RequestParam(value="key") String key) {
 			ModelAndView mav = new ModelAndView();
 
 			// System.out.println("이동 중인 값 : "+ key);
@@ -986,7 +988,7 @@ public class MemberController {
 
 			messageHelper.setFrom("kimemail201807@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
 			messageHelper.setTo(newEmail); // 받는사람 이메일
-			messageHelper.setSubject("스터디 그룹 이메일 인증 비밀번호 변경"); // 메일제목은 생략이 가능하다
+			messageHelper.setSubject("스터디 그룹 이메일 인증"); // 메일제목은 생략이 가능하다
 			messageHelper.setText("이메일 인증 번호는 [" + tempPwd + "] 입니다.");
 
 			mailSender.send(message);

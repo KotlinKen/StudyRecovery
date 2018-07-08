@@ -21,10 +21,6 @@
 	select#subject{
 		display:none;
 	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
-	}
 	div.background{
 		background: #ffffff;
 	}

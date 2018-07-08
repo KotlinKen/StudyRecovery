@@ -32,12 +32,12 @@
 	select#subject{
 		display:none;
 	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
-	}
 	div.background{
 		background: #ffffff;
+	}
+	h5.npoint{
+		text-align: center;
+		margin-top: 50px;
 	}
 </style>
 <div class="background">
@@ -70,7 +70,7 @@
 				  <input type="range" min="${gradeMin.POINT }" max="${gradeMax.POINT }" value="${list.point }" class="slider" id="myRange" disabled>
 				</div>
 				<c:forEach var="g" items="${gradeList }" varStatus="vs">
-				<span style="position:absolute; left: ${((37*(vs.index))/2)*0.77+16}%;">
+				<span style="position:absolute; left: ${((28*(vs.index))/2)*0.77+24}%;">
 				${g.STATUS } 
 				</span>
 				</c:forEach>
@@ -166,7 +166,7 @@
 	
 		</c:if>
 		<c:if test="${myPage eq 'npoint' }">
-			<h5>당신의 지식 점수는 ${list.NPOINT }입니다.</h5>
+			<h5 class="npoint">당신의 지식 점수는 <strong style="font-size: 30px;">${list.NPOINT }</strong>입니다.</h5>
 			
 			<!-- 
 				게시판 내가쓴 글..

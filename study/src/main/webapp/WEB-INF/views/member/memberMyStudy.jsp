@@ -22,29 +22,30 @@
 	select#subject{
 		display:none;
 	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
-	}
 	div.background{
 		background: #ffffff;
 	}
 	button.cancel, .apply, .like, .dislike{
-		border:1px solid #7d99ca; 
-		-webkit-border-radius: 3px; 
-		-moz-border-radius: 3px;
-		border-radius: 3px;
-		font-size:15px;
-		padding: 5px; 
-		text-decoration:none; 
-		display:inline-block;
-		font-weight:bold; 
-		color: #FFFFFF;
-		background-color: #A5B8DA; 
+		width: auto;
+		height: auto;
+		font-size: 15px;
+		border-radius: 10px;
+		padding-left: 5px;
+		padding-right: 5px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		background: #ffffff;
+		border-style: solid ;
+		color: #666;
 	}
-	button:hover{
-		border:1px solid #5d7fbc;
-		background-color: #819bcb;
+	.leader{
+		padding: 5px;
+		border-radius: 10px;
+		border: 1px solid #666;
+	}
+	button.apply:hover, .cancel:hover{
+		background: #0056e9;
+		color: #ffffff;
 	}
 </style>
 
@@ -59,8 +60,9 @@
 	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
 	
 	<!-- 팀장/팀원 구분 -->
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y&type=${type}" ${leader eq 'y' ? "style='color:#007bff'" :'' }>팀장</a>|
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n&type=${type}" ${leader eq 'n' ? "style='color:#007bff'" :'' }>팀원</a>
+	<a class="leader" href="${rootPath }/member/searchMyPageKwd.do?leader=y&type=${type}" ${leader eq 'y' ? "style='background:#007bff; color: white;'" :'' }>팀장</a>
+	<a class="leader" href="${rootPath }/member/searchMyPageKwd.do?leader=n&type=${type}" ${leader eq 'n' ? "style='background:#007bff; color: white;'" :'' }>팀원</a>
+	<br />
 	<br />
 	
 	<!-- 스터디/강의 구분 -->
@@ -539,7 +541,7 @@
 									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
 									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
-									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
+									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' autocomplete='off' required/></td>";
 									html += "</tr>";
 								}  else if(userId!=index.tmid && <%="n"==leader%>){ //자기 자신이 아니면서 팀원인 경우
 									html += "<tr>";
@@ -555,7 +557,7 @@
 									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
 									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
-									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
+									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' autocomplete='off' required/></td>";
 									html += "</tr>";
 								}
 							}
@@ -577,15 +579,15 @@
 							$(".like").on("click",function(){
 								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
-								$("#dislikeq"+tmno).attr("style","background-color: #A5B8DA");
-								$(this).attr("style","background: #819bcb");
+								$("#dislikeq"+tmno).attr("style","background-color: #ffffff");
+								$(this).attr("style","background: #0056e9");
 								$("#pointq"+tmno).val($(this).val());
 							});
 							$(".dislike").on("click",function(){
 								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
-								$("#likeq"+tmno).attr("style","background-color: #A5B8DA");
-								$(this).attr("style","background: #819bcb");
+								$("#likeq"+tmno).attr("style","background-color: #ffffff");
+								$(this).attr("style","background: #0056e9");
 								$("#pointq"+tmno).val($(this).val());
 							});
 						

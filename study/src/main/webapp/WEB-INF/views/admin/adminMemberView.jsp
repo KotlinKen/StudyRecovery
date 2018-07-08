@@ -121,9 +121,14 @@
          		<th> 관심사</th>
          		<td>
                   <span>
+                  <c:if test="${!(member.favor[0] eq 'no') }">
                   <c:forEach var="f" items="${member.favor }">
                   	${f }
                   </c:forEach>
+                  </c:if>
+                  <c:if test="${member.favor[0] eq 'no' }">
+         			없음
+         		  </c:if>
                   </span>
                   <%
                   	Member m = (Member)request.getAttribute("member");

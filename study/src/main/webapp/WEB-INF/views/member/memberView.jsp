@@ -28,14 +28,14 @@
 		text-align: center;
 		position: relative;
 		top: 0;
-		left: 680px;
+		left: 480px;
 		display: inline;
 	}
 	div.btn-center2{
 		text-align: center;
 		position: relative;
 		top: -43px;
-		left: 760px;
+		left: 560px;
 		display: inline;
 	}
 	/* 수정하기 버튼 css */
@@ -62,10 +62,6 @@
 		text-align: right;
 		font-size: 20px;
 		display:none;
-	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
 	}
 	div.background{
 		background: #ffffff;
@@ -101,6 +97,8 @@
          		<td>
          			<input type="text" class="hiddencss" name="mname" id="name" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
          			<span>${memberLoggedIn.mname }</span> 
+         			<p id="nameerr" class="name"></p> 
+					<p id="nameok" class="name"></p> <br /> 
          		</td>
          	</tr>
          	<tr>
@@ -144,7 +142,7 @@
                          data-toggle="modal" 
                          data-target="#emailUpdate">이메일 변경</button>
                   <span>${memberLoggedIn.email }</span> 
-                  <input type="email" class="hiddencss" name="email" id="email" value="${memberLoggedIn.email }" readonly /> 
+                  <input type="email" class="hiddencss" name="email" id="email" size="40px" autocomplete="off" value="${memberLoggedIn.email }" readonly /> 
          		</td>
          	</tr>
          	<tr>
@@ -258,19 +256,19 @@
             </div>
             <form action="${pageContext.request.contextPath }/member/newEmail.do" method="post" onsubmit="return emailDuplicateCheck();">
             <div class="modal-body">
-               <input type="email" class="form-control" name="email" id="newEmail" placeholder="이메일 변경" required/>
-               <button type="button" class="btn btn-outline-success" id="emailUpdate" value="0">인증번호 발송</button>
+               <input type="email" class="form-control" name="email" id="newEmail" placeholder="이메일 변경" autocomplete="off" required/>
+               <button type="button" class="btn btn-outline-success btncss" id="emailUpdate"  value="0">인증번호 발송</button>
                <br />
                <input type="hidden" id="send" value="duplication" />
-               <input type="text" class="form-control" id="key" style="width:200px; display:inline" placeholder="인증키 입력" />
+               <input type="text" class="form-control" id="key" style="width:200px; display:inline" autocomplete="off" placeholder="인증키 입력" />
                <input type="hidden" id="keyCheck" value="check" />
-               <button type="button" class="btn btn-outline-success" id="emailUpdateCheck">인증번호 확인</button>
+               <button type="button" class="btn btn-outline-success btncss" id="emailUpdateCheck">인증번호 확인</button>
                <span class="check-no" >불일치</span>
             <span class="check-yes" >일치</span>
             <input type="hidden" id="email-ok" value="1" />
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-outline-success">변경</button>
+              <button type="submit" class="btn btn-outline-success btncss">변경</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
             </form>

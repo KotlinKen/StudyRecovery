@@ -73,7 +73,7 @@
 		border: 3px solid #0056E9;
 		border-radius: 10px;
 		position: relative;
-		left:35%;
+		left:10%;
 		top:0;
 	}
 </style>
@@ -93,7 +93,7 @@
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-						<input type="text" name="mname" id="name" placeholder="회원 이름" maxlength="7" autocomplete="off"/>	
+						<input type="text" name="mname" id="name" placeholder="회원 이름" maxlength="7" autocomplete="off" required/>	
 						<br /> 
 						<span id="nameerr" class="name"></span> 
 						<span id="nameok" class="name"></span>					
@@ -101,7 +101,7 @@
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="email" name="email" id="email" maxlength="30" required placeholder="이메일" autocomplete="off"/>						
+							<input type="email" name="email" id="email" maxlength="30" required placeholder="이메일" autocomplete="off" required/>						
 						</td>
 					</tr>
 					<tr  class="id-pwd">
@@ -127,12 +127,12 @@
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="text" name="mid" id="mid" placeholder="아이디" autocomplete="off" maxlength="15"/>
+							<input type="text" name="mid" id="mid" placeholder="아이디" autocomplete="off" maxlength="15" required/>
 						</td>
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="email" name="email" id="email" placeholder="이메일" autocomplete="off" maxlength="35"/>
+							<input type="email" name="email" id="email" placeholder="이메일" autocomplete="off" maxlength="35" required/>
 						</td>
 					</tr>
 					<tr  class="id-pwd">
