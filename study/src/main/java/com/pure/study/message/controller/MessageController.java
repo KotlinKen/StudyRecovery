@@ -24,11 +24,7 @@ public class MessageController {
 	@Autowired
 	MessageService messageService;
 	
-	@Autowired
-	EchoHandler echoHandler;
-	
-	@Autowired
-	WebSocketSession session;
+
 	
 	
 	@RequestMapping(value="/message/messageList", method=RequestMethod.GET)
