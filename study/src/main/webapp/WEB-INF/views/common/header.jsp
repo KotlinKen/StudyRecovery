@@ -321,7 +321,11 @@ function getCookie(cookieName) {
         var data = evt.data;
         data = JSON.parse(data);
         console.log(data);
-        $(".messageBox").html(data.count);
+        if(data.type == "insert:crew"){
+        	alert(data.msg);
+        }else{
+        	$(".messageBox").html(data.count);
+        }
         //$("#data").append(data.msg+"<br/>");
         //sock.close();
     }

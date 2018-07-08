@@ -37,15 +37,19 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.socket.TextMessage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pure.study.common.crontab.dao.SchedulerDAO;
+import com.pure.study.common.websocket.EchoHandler;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.exception.MemberException;
 import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.member.model.vo.Review;
+import com.pure.study.message.model.vo.Message;
 import com.pure.study.rest.RestMemberService;
 import com.pure.study.study.model.service.StudyService;
 import com.pure.study.study.model.vo.Study;
@@ -77,6 +81,9 @@ public class MemberController {
 
 	@Autowired
 	private SchedulerDAO schedulerDAO;
+	
+	@Autowired
+	private EchoHandler echoHandler; 
 	
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -1315,6 +1322,21 @@ public class MemberController {
                if (cnt == 0) {
                   System.out.println("###########중복이 없음##########");
                   result = memberService.insertCrew(map);
+                  /*김률민 추가 20180708 메시징 핸들러를 위해 *************************************************/
+                  ObjectMapper mapper = new ObjectMapper();
+  				  Message message = new Message("insert:crew","45", map.get("mno"), map.get("studyNo")+"신청수락 되었습니다.", 0);
+
+                  if(result > 0 ) {
+      				try {
+						echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(45)), new TextMessage(mapper.writeValueAsString(message)));
+					} catch (JsonProcessingException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+                  }
+                  /*김률민 추가 20180708 메시징 핸들러를 위해 ***************************************************/
                } else {
                   //중복된게 있어서 회원을 팀원으로 수락 불가. 
                   System.out.println("&&&&&&&&&&&중복이 있음&&&&&&&&&&&");

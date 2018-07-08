@@ -1,5 +1,7 @@
 package com.pure.study.message.controller;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pure.study.common.websocket.EchoHandler;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.message.model.service.MessageService;
+import com.pure.study.message.model.vo.Message;
 
 @Controller
 public class MessageController {
@@ -24,7 +30,8 @@ public class MessageController {
 	@Autowired
 	MessageService messageService;
 	
-
+	@Autowired
+	EchoHandler echoHandler;
 	
 	
 	@RequestMapping(value="/message/messageList", method=RequestMethod.GET)
@@ -87,13 +94,24 @@ public class MessageController {
 		
 		int result = messageService.messageWrite(queryMap);
 		
-		
-		
+		System.out.println("성공"+result);
 		
 		
 		if(result > 0 ) {
-			
-
+			queryMap.put("receivermno", String.valueOf(receivermno));
+			int count = messageService.messageCount(queryMap);
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				
+				Message message = new Message("insert------------값", queryMap.get("sendermno"), String.valueOf(queryMap.get("receivermno")), "인서팅 자동값", count );
+				System.out.println(message);
+				System.out.println(echoHandler.getSessions().get(String.valueOf(45)));
+				
+				echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(45)), new TextMessage(mapper.writeValueAsString(message)));
+				System.out.println(message);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 			
 			mav.addObject("msg", "쪽지를 발송하였습니다.");
 			mav.addObject("loc", "/message/messageWrite");
