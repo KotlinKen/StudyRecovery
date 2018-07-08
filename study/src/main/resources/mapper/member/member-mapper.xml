@@ -44,14 +44,14 @@
 	
 	<!-- 회원 mno로 검색(률민오빠 요청) -->
 	<select id="selectOneMemberMno" resultMap="memberMap">
-		select * from member where mno=#{mno}
+		select * from member where mno=#{mno} 
 	</select>
 	
 
 	
 	<!-- 회원 id/pwd 찾기 -->
 	<select id="selectOneMemberId" parameterType="member" resultMap="memberMap">
-		select * from member where mname=#{mname} and email=#{email} 
+		select * from member where mname=#{mname} and email=#{email} and qdate is null
 					<if test="mno != 0">
 						and mno=#{mno}
 					</if>

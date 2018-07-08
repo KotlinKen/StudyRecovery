@@ -85,7 +85,7 @@
 		background: #f8f9fb;
 		
 	}
-	#idServiceLogo{
+	.spanidpass{
 	font-size: 25px;
 	width: 100px;
 	}
@@ -109,7 +109,7 @@
 	<div class="page">
 		<c:if test="${mid==null and findType eq '아이디' }">
 			<form class="find" action="${pageContext.request.contextPath }/member/memberFindIdPwd.do" onsubmit="return validate();">
-			<span id="idServiceLogo"><b>아이디 찾기</b></span>
+			<span id="idServiceLogo" class="spanidpass"><b>아이디 찾기</b></span>
 			<div class="blank-div">	</div>
 				<%-- <img src="${rootPath }/resources/upload/member/findid.PNG" alt="아이디 찾기" id="findid"/> --%>
 				<table  class="id-pwd">
@@ -144,9 +144,11 @@
 			당신의 아이디는 ${mid }** 입니다.
 		</c:if>
 		<c:if test="${pwd==null and findType eq '비밀번호' }">
-			<span id="pwdServiceLogo" class=".link_findpw"></span>
+			<span id="pwdServiceLogo" class="link_findpw"></span>
 			<form class="find" action="${rootPath }/member/mailSending.do" method="post" onsubmit="return confirm();">
-				<img src="${rootPath }/resources/upload/member/findpwd.PNG" alt="비밀번호 찾기" id="findpwd"/>
+				<%-- <img src="${rootPath }/resources/upload/member/findpwd.PNG" alt="비밀번호 찾기" id="findpwd"/> --%>
+				<span id="pwdServiceLogo" class="spanidpass"><b>비밀번호 찾기</b></span>
+				<div class="blank-div">	</div>
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
