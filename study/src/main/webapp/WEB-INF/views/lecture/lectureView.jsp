@@ -173,6 +173,23 @@
 				}
 			});    
 	   });
+		
+		$(window).on('scroll',function(){
+			var maxHeight = $(document).height();
+			console.log("document height"+maxHeight);
+		    var currentScroll = $(window).scrollTop() + $(window).height();
+		    console.log("currentScroll"+currentScroll);
+			if(1108 <= currentScroll){
+				console.log("으엥");
+				$("aside#action-widget").addClass("fixed");
+			}else{
+				$("aside#action-widget").removeClass("fixed");
+			}
+			
+		});
+		
+		
+		
 	});
 	
 	// 삭제버튼
@@ -183,38 +200,428 @@
 	}
 </script>
 
-<div id="lecture-detail">
-   <c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-      <!-- <button type="button" id="updateLecture" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">수정   </button> -->
-      <button type="button" onclick="deleteLecture();">강의 삭제</button>
-      <br />
-   </c:if>
 
-   <span>LEVEL : ${lecture.DNAME }</span> <span>${lecture.LNAME }-${lecture.TNAME }</span>
-   <span>${lecture.TITLE }</span> <br />
-   <span>스터디 소개 : ${lecture.CONTENT }</span> 
 
-   <div id="detail">
-      <span>지역 : ${lecture.LNAME } ${lecture.TNAME }</span> 
-      <span>인원 : ${lecture.RECRUIT }명</span>      
-      <br /> 
-      
-      <span>${lecture.FREQ }</span> <span>${lecture.TIME }</span>      
-      <br />
-      
-      <span>신청기간 : ${lecture.LDATE }까지</span> 
-      <span>수업 기간 : ${lecture.SDATE }~${lecture.EDATE }</span> 
-      <span>협의비 : ${lecture.PRICE }</span>
-      
-      <hr />
 
-      <label for="">리더 소개</label> <span>${lecture.COVER }</span>
-   </div>
+<!-- css 씌우기 -->
+<style>
+.notLeader{
+	display:none;
+}
 
-   <!-- 팀장에 대한 후기 -->
-   <div id="review">
-   
-   </div>
+div.sideInfo{
+
+}
+div#carouselExampleControls{
+	width:700px;
+	height:400px;
+}
+div.carousel-item img{
+	width:700px;
+	height:400px;
+}
+div.member-photo img{
+	width:60px;
+	height:70px;
+	border-radius: 50px;
+	
+}
+div.review-detail a{
+	color:coral;
+}
+div.studyView-container{
+	width:1000px;
+	margin:0 auto;
+	position:relative;
+	background:white;
+	margin-top:50px;
+
+}
+div.study-info{
+	width:700px;/* 
+	border:1px solid black; */
+	position:relative;
+	background:white;
+	margin-bottom:20px;
+}
+div.level-mark{
+	position:absolute;
+	top:350px;
+	left:50px;
+	height:90px;
+	width:100px;
+	background:#ef6c00;
+	text-align:center;
+}
+div.label{
+	font-size: 20px;
+	color:#ffeb3b;
+}
+div.level{
+	font-size:30px;
+	color:white;
+}
+p.area{
+	margin:0 auto;
+	position: relative;
+	left:330px;
+	color:#0056e9;
+	font-weight:bold;
+	font-size:18px;
+	margin-top:5px;
+	top:10px;
+}
+div.study-images{
+	/* border:1px solid black; */
+	height:400px;
+	
+}
+div.title-wrap{
+	text-align:center;
+	background:white;
+	margin-bottom: 33px;
+    margin-top: 33px;
+	
+}
+h1.title{
+	color:#3c3c3c;
+	font-size:28px;
+}
+.section-label{
+	float:left;
+	clear:right;
+	height:100px;
+	color:#333;
+	font-size:20px;
+	font-weight:bold;
+	margin-left:30px;
+	background:white;
+	margin-top:20px;
+}
+h3.leader-label{
+	color:#333;
+	font-size:15px;
+	background:white;
+	font-size:20px;
+	font-weight:bold;
+	
+}
+div.study-detail{
+	overflow:hidden;
+	/* border:1px solid black; */
+	background:white;
+}
+div.study-description{
+	/* border:1px solid black; */
+	width:600px;
+	background:white;
+}
+section.leader-information{
+	position:relative;
+	background:white;
+	overflow: hidden;
+}
+div.introduce-wrap{
+	overflow: hidden;
+	background:white;
+}
+div.section-content{
+	float:right;
+	width:500px;
+	background:white;
+	
+}
+dl#deatil-list dt, dl#deatil-list dd{
+	display:inline-block;
+}
+dl#deatil-list dt{
+	width:70px;
+}
+dl#deatil-list dd{
+	width:162px;
+}
+aside#action-widget{
+	width:280px;
+	float:right;
+	background:white;
+	box-shadow: 8px 8px 8px lightgray;
+	
+}
+div.study-wrap{
+	float:left;
+	clear:right;
+	background:white;
+}
+div.no{
+	clear:both;
+	background:white;
+	
+} 
+div#review-container{
+	clear:both;
+	background:white;
+}
+li.review-one{
+	clear:left;
+	background:white;
+}
+img.leader-profile-image{
+	width:80px;
+	height:80px;
+	border-radius: 50px;
+}
+div.order-action{
+	background:white;
+	padding:10px;
+}
+div.order-action button{
+	width:100%;
+	padding:15px;
+	font-size:18px;
+}
+.fixed{
+	position:fixed;
+	top:0;
+	left:50%;
+	margin-left:13.8pc;
+}
+div.center-leader{
+	margin-top:20px;
+}
+.side-info{
+	font-size: 15px;
+	font-weight: bold;
+}
+.price{
+	font-size:20px;
+	color:#ef6c00;
+	font-weight:bold;
+}
+div.leader-btn-wrap{
+	width:1000px;
+	margin:0 auto;
+	text-align:right;
+	position:relative;
+}
+div.leader-btn-wrap button{
+	position:relative;
+	top:30px;
+	right:10px;
+	
+}
+button.removeStudy{
+	background:red;
+	color:white;
+}
+button.editStudy{
+	background:black;
+	color:white;
+}
+button.btn-apply{
+	background:#ef6c00;
+	color:white;
+}
+ul.reviews{
+	overflow:hidden;
+}
+li.review-one{
+	overflow:hidden;
+}
+
+</style>
+<div class="leader-btn-wrap">
+	
+		<c:if test="${memberLoggedIn!=null }">
+			<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
+		      <button type="button" class="removeStudy btn" onclick="deleteLecture();">강의 삭제</button>
+		      <br />
+		   </c:if>
+		</c:if>
+
+</div>
+<div class="studyView-container">
+	
+
+<div id="study-detail">
+	<div class="study-wrap">
+	
+
+<%-- <input type="hidden" id="isWish" value="${isWish }" /> --%>
+<div class="study-info">
+<header class="front-info">
+<div class="study-images">
+	<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+	  <div class="carousel-inner">
+		   <c:forEach var="img" items="${imgs }" varStatus="vs"> 
+				<div class="carousel-item ${vs.first? 'active':'' }">
+			     	<img class="d-block w-100" src="${pageContext.request.contextPath }/resources/upload/lecture/${img }" alt="Second slide">
+			     </div> 
+	  		</c:forEach> 
+	  </div>
+	  
+	  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+	    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+	    <span class="sr-only">Previous</span>
+	  </a>
+	  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+	    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+	    <span class="sr-only">Next</span>
+	  </a>
+	  
+	</div>
+</div>
+
+<div class="front-text">
+<div class="level-mark">
+	<div class="label">LEVEL</div>
+	<div class="level">${lecture.DNAME }</div>
+</div>
+<p class="area">${lecture.LOCAL } | ${lecture.TNAME }</p>
+<div class="title-wrap">
+	<h1 class="title">${lecture.TITLE }</h1>
+</div>
+</div>
+</header>
+<div class="center-content">
+<section class="study-infomation">
+	<div class="introduce-wrap">
+		<h2 class="section-label">스터디 소개</h2>
+		<div class="study-description section-content">
+			${lecture.CONTENT }
+		</div>
+	</div>
+	<hr />
+	<div class="study-detail">
+		<h3 class='section-label'>상세 정보</h3>
+		<div class="section-content">
+			<dl id="deatil-list">
+				<dt>지역 :</dt>
+				<dd>${lecture.LOCAL } | ${lecture.TNAME }</dd>
+				<dt class="right-column">인원 : </dt>
+				<dd class="right-column">${lecture.RECRUIT }명</dd>
+				<dt>일정:</dt>
+				<dd>${lecture.SDATE }~${lecture.EDATE }</dd>
+				<dt class="right-column">주기</dt>
+				<dd class="right-column">${lecture.FREQ }  </dd>
+				<dt>시간</dt>
+				<dd>${lecture.TIME }</dd>
+				<dt class="right-column">강의료</dt>
+				<dd class="right-column">${lecture.PRICE }원</dd>
+			</dl>
+		
+		</div>
+	</div>
+</section>
+
+<section class="leader-information">
+	<hr />
+	<div class="leader-wrap">
+		<header class="front-leader section-label" style="margin-bottom: 20px;">
+			
+		<h3 class="leader-label">강사 소개</h3>
+		<img src="${pageContext.request.contextPath }/resources/upload/member/${lecture.PROFILE}" alt="" class="leader-profile-image" />
+		</header>
+	
+		<div class="center-leader section-content">
+			<span>${lecture.COVER }</span>
+		</div>
+	</div>
+	
+</section>
+
+</div>
+
+
+</div>
+<br />
+
+<div id="review-container"><!-- 팀장에 대한 후기 -->
+<h5 style="font-weight:bold; margin-left:20px; margin-bottom:10px;">강사에 대한 후기</h5>
+<c:if test="${reviewList!=null }">
+	<ul class="reviews">
+		<c:forEach var="r" items="${reviewList }">
+			<li class="review-one">
+				<div class="member-photo section-label">
+					<img src="${pageContext.request.contextPath }/resources/upload/member/${r.MPROFILE!=null? r.MPROFILE:'basicprofile.png'}" alt="" />
+				</div>
+				<div class="review-detail section-content">
+					<span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
+					<pre>${r.CONTENT }</pre>
+					<a href="lectureView.do?sno=${r.SNO }">${r.TITLE }</a>
+					<p><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></p>
+				
+					
+				</div>
+				
+			</li>
+			<hr />
+			
+		</c:forEach>
+	</ul>
+
+</c:if>
+<c:if test="${reviewList==null }">
+아직 평가가 없습니다.
+</c:if>
+
+</div>
+
+</div>
+<!-- 옆에 따라디는 정보 창, 참여 신청 찜하기  -->
+<aside id="action-widget">
+	<div class="order-action">
+		<h1 class='title'>${lecture.TITLE }</h1>
+		<label for="">신청 기간 : </label> <span class="side-info">~${lecture.LDATE }</span><br />
+		<label for="">스터디일정 : </label> <span class="side-info">${lecture.SDATE }~${lecture.EDATE }</span><br />
+		<label for="">강의료 : </label> <span class="price side-info">${lecture.PRICE }원</span><br />
+		  <c:if test="${memberLoggedIn.getMno() ne null && memberLoggedIn.getMno() ne lecture.MNO  }">
+	      <!-- 참여, 찜 -->
+	      <c:if test="${insert eq 0}">
+	      
+	      	<c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
+		         <button type="button" class="btn btn-apply" onclick="lectureApply();" >참여 신청하기</button>
+		         
+		         <!-- 찜 -->
+		         <c:if test="${wish eq 0}">
+		            <button type="button" class="btn btn-wish" onclick="lectureWish();">찜하기</button>
+		         </c:if>
+		         <c:if test="${wish ne 0}">
+		            <button type="button" class="btn btn-wish" onclick="lectureWishCancel();">찜 취소</button>
+		         </c:if>
+	      	</c:if>      	
+	      	<c:if test="${lecture.STATUS == '모집 마감' || lecture.STATUS == '진행 중' || lecture.STATUS == '강의 종료'}">
+		         <button type="button" class="btn btn-apply" onclick="lectureApply();" disabled>참여 신청하기</button>
+		         
+		         <!-- 찜 -->
+		         <c:if test="${wish eq 0}">
+		            <button type="button" class="btn btn-wish" onclick="lectureWish();" disabled>찜하기</button>
+		         </c:if>
+		         <c:if test="${wish ne 0}">
+		            <button type="button" class="btn btn-wish" onclick="lectureWishCancel();" disabled>찜 취소</button>
+		         </c:if>
+	      	</c:if>         
+	      </c:if>
+	      
+	      <!-- 신청 취소 -->
+	      <c:if test="${insert ne 0}">
+			<c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
+				<button type="button" class="btn btn-apply" onclick="lectureCancel();">신청 취소</button>
+			</c:if>
+			<c:if test="${lecture.STATUS == '모집 마감' || lecture.STATUS == '진행 중' || lecture.STATUS == '강의 종료'}">
+				<button type="button" class="btn btn-apply" onclick="lectureCancel();" disabled>신청 취소</button>
+			</c:if>      	
+	      </c:if>
+	   </c:if>
+	</div>
+	</aside>
+	</div>
+
+</div><!-- 전체 -->
+
+<div class="no"></div>
+
+
+<%-- 
    
    <!-- 수정 모달 -->
    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -242,13 +649,13 @@
          </div>         
       </div>
    </div>   
-</div>
+</div> --%>
 
-<!-- 오른쪽 fix창 -->
+<%-- <!-- 오른쪽 fix창 -->
 <div id="side-info">
    <span>${lecture.SUBNAME } : ${lecture.KNAME }</span> 
    <span>${lecture.TITLE }</span><br />
-   <span>${lecture.SDATE }~${study.EDATE }</span>
+   <span>${lecture.SDATE }~${lecture.EDATE }</span>
    <br />
 
    <c:if test="${memberLoggedIn.getMno() ne null && memberLoggedIn.getMno() ne lecture.MNO  }">
@@ -288,6 +695,6 @@
 			<button type="button" onclick="lectureCancel();" disabled>신청 취소</button>
 		</c:if>      	
       </c:if>
-   </c:if>
-</div>
+   </c:if> --%>
+
 <jsp:include page="/WEB-INF/views/common/footer.jsp" />

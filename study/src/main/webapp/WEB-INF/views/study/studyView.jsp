@@ -186,14 +186,15 @@ div.level{
 	font-size:30px;
 	color:white;
 }
-span.area{
+p.area{
 	margin:0 auto;
 	position: relative;
 	left:330px;
 	color:#0056e9;
 	font-weight:bold;
-	font-size:15px;
+	font-size:18px;
 	margin-top:5px;
+	top:10px;
 }
 div.study-images{
 	/* border:1px solid black; */
@@ -243,6 +244,7 @@ div.study-description{
 section.leader-information{
 	position:relative;
 	background:white;
+	overflow: hidden;
 }
 div.introduce-wrap{
 	overflow: hidden;
@@ -344,6 +346,12 @@ button#btn-apply{
 	background:#ef6c00;
 	color:white;
 }
+ul.reviews{
+	overflow:hidden;
+}
+li.review-one{
+	overflow:hidden;
+}
 
 </style>
 <div class="leader-btn-wrap">
@@ -361,7 +369,6 @@ button#btn-apply{
 </c:if>	
 </div>
 <div class="studyView-container">
-	<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 
 <div id="study-detail">
 	<div class="study-wrap">
@@ -397,7 +404,7 @@ button#btn-apply{
 	<div class="label">LEVEL</div>
 	<div class="level">${study.DNAME }</div>
 </div>
-<span class="area">${study.LNAME } | ${study.TNAME }</span><br /><br />
+<p class="area">${study.LNAME } | ${study.TNAME }</p>
 <div class="title-wrap">
 	<h1 class="title">${study.TITLE }</h1>
 </div>
@@ -436,15 +443,19 @@ button#btn-apply{
 
 <section class="leader-information">
 	<hr />
-	<header class="front-leader section-label">
-		
-	<h3 class="leader-label">리더소개</h3>
-	<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
-	</header>
-
-	<div class="center-leader section-content">
-		<span>${study.COVER }</span>
+	<div class="leader-wrap">
+		<header class="front-leader section-label" style="
+    margin-bottom: 20px;">
+			
+		<h3 class="leader-label">리더소개</h3>
+		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
+		</header>
+	
+		<div class="center-leader section-content">
+			<span>${study.COVER }</span>
+		</div>
 	</div>
+	
 </section>
 
 </div>
@@ -454,7 +465,7 @@ button#btn-apply{
 <br />
 
 <div id="review-container"><!-- 팀장에 대한 후기 -->
-<h5>리더에 대한 후기</h5>
+<h5 style="font-weight:bold; margin-left:20px; margin-bottom:10px;">리더에 대한 후기</h5>
 <c:if test="${reviewList!=null }">
 	<ul class="reviews">
 		<c:forEach var="r" items="${reviewList }">
@@ -472,6 +483,7 @@ button#btn-apply{
 				</div>
 				
 			</li>
+			<hr />
 			
 		</c:forEach>
 	</ul>

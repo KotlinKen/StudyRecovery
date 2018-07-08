@@ -1,76 +1,127 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="LECTURE" name="pageTitle" /></jsp:include>
-
-<div class="lectureList">
-	<div class="table-responsive">
-		<!-- 지역 -->
-		<label for="local">지역 : </label>
-		<select name="local" id="local">
-			<option value="0" selected>전체</option>
-			
-			<c:if test="${!empty locList}">
-				<c:forEach var="loc" items="${locList }" varStatus="vs">
-					<option value="${loc.LNO }">${loc.LOCAL }</option>
-				</c:forEach>      
-			</c:if>
-		</select>
-		&nbsp;&nbsp; 
+<style>
+table{
+	margin:0 auto;
 	
-		<select name="town" id="town">
-			<option value="0">전체</option>
-		</select>		
-		
-		<!-- 카레고리 -->
-		<label for="kind">카테고리</label>
-		<select name="kind" id="kind">
-			 <option value="0">전체</option>
-         
-	         <c:if test="${!empty kindList }">
-		         <c:forEach var="kind" items="${kindList }" varStatus="vs">
-		            <option value="${kind.KNO }">${kind.KINDNAME }</option>
-		         </c:forEach>
-	         </c:if>
-		</select>
-		
-		<select name="sub" id="sub">
-			<option value="0">전체</option>
-		</select>
-		&nbsp;&nbsp;
-		
-		<input type="text" id="title" placeholder="강의/스터디명을 입력하세요" />
-		<input type="text" id="leader" placeholder="팀장/강사명을 입력하세요" />			
-		
-		<select name="year" id="year">
-			<option value="0" selected>년도를 선택하세요</option>
-			
-			<c:forEach var="i" begin="2018" end="2022">
-				<option value="${i }">${i }년</option>
-			</c:forEach>
-		</select>
-		
-		<select name="month" id="month">
-			<option value="0" selected>월을 선택하세요</option>
-			
-			<c:forEach var="i" begin="1" end="12">
-				<option value="${i>10?'':'0' }${i}">${i }월</option>
-			</c:forEach>
-		</select>
-		
-		<label for="status">강의 상태 :</label>
-		<select name="status" id="status">
-			<option value="전체">전체</option>
-			<option value="모집 중">모집중</option>
-			<option value="마감 임박">마감 임박</option>
-			<option value="모집 마감">모집 마감</option>
-			<option value="진행 중">진행 중</option>
-			<option value="강의 종료">강의 종료</option>
-		</select>
-		
-		<!-- 검색 -->
-		<button type="button" id="searchBtn">검색</button>		
+}
+table th{
+	text-align:center;
+}
+a#reFilter{
+	color:black;
+	text-shadow: 5px 5px 5px white;
+}
+select#local, select#kind, select#sub, select#town, select#diff{
+	width:100px;
+}
+input#leadername, input#title{
+	width:200px;
+	display:inline-block;
+	padding:0.4rem 0.75rem;
+}
+</style>
+<div class="lectureList">
+	<div class="lecture-search">
+		<table>
+				<tr>
+					<th>지역</th>
+					<th>과목</th>
+					<th>강의명</th>
+					<th>강사명</th>
+					<th>강의 시작일</th>
+					<th>강의 상태</th>
+					<th>검색</th>
+				</tr>
+				<tr>
+					<td>
+						<select name="local" id="local" class="custom-select">
+							<option value="0" selected>전체</option>
+							
+							<c:if test="${!empty locList}">
+								<c:forEach var="loc" items="${locList }" varStatus="vs">
+									<option value="${loc.LNO }">${loc.LOCAL }</option>
+								</c:forEach>      
+							</c:if>
+						</select>
+					</td>
+					<td>
+						<select name="kind" id="kind" class="custom-select">
+							 <option value="0">전체</option>
+				         
+					         <c:if test="${!empty kindList }">
+						         <c:forEach var="kind" items="${kindList }" varStatus="vs">
+						            <option value="${kind.KNO }">${kind.KINDNAME }</option>
+						         </c:forEach>
+					         </c:if>
+						</select>
+					</td>
+					<td>
+						<input type="text" name="title" id="title" placeholder="강의명을 입력하세요" class="form-control" maxlength="10" />
+					</td>
+					<td>
+						<input type="text" name="leadername" id="leadername" placeholder="강사명을 입력하세요" class="form-control" maxlength="10"/>
+					</td>	
+					<td>
+						<select name="year" id="year" class="custom-select">
+							<option value="">년도를 선택하세요</option>
+							<c:forEach var="i" begin="2018" end="2022">
+								<option value="${i }">${i }년</option>
+							</c:forEach>
+						</select>
+					</td>	
+					<td>
+						<select name="status" id="status" class="custom-select">
+							<option value="전체">전체</option>
+							<option value="모집 중">모집중</option>
+							<option value="마감 임박">마감 임박</option>
+							<option value="모집 마감">모집 마감</option>
+							<option value="진행 중">진행 중</option>
+							<option value="스터디 종료">스터디 종료</option>
+						</select>
+					</td>	
+					<td>
+						<button type="button" id="searchBtn" class="btn btn-dark">필터 검색</button>	
+					</td>	
+				</tr>
+				<tr>
+					<td>
+						<select name="tno" id="town" class="custom-select">
+							<option value="0">전체</option>
+						</select>
+					</td>
+					<td>
+						<select name="subno" id="sub" class="custom-select">
+							<option value="0">전체</option>
+						</select>
+					</td>
+					<td>
+					<br /><br />                   
+					</td>
+					<td>
+					<br /><br />          
+					</td>
+					<td>
+						<select name="month" id="month" class="custom-select">
+							<option value="0">월을 선택하세요</option>
+							<c:forEach var="i" begin="1" end="12">
+								<option value="${i>10?'':'0' }${i}">${i }월</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td>
+						
+					</td>
+					<td>
+						<a href="#" id="reFilter">검색 조건 초기화</a>
+					</td>
+				</tr>
+			</table>
+	</div>
+	<div class="table-responsive">
 	
 		<!-- 삭제 버튼. -->
-		<button type='button' id="deleteLecturesBtn">강의 삭제</button>
+		<!-- <button type='button' id="deleteLecturesBtn">강의 삭제</button> -->
 	
 		<table class="table table-striped table-sm">
 			<thead>
@@ -108,7 +159,7 @@ $(function(){
 	
 	$("#town").hide(); 
 	$("#sub").hide(); 
-
+	$("select#month").hide();
 	//강의 클릭시 강의 상세보기 이동 이벤트
 	$("div#lecture-container").on("click","div.lectureOne",function(){
 		var sno = $(this).children("input").val();
@@ -178,6 +229,43 @@ $(function(){
 	
 	$("#searchBtn").click(function(){
 		searchAdminLecture(1, 5);
+	});
+	
+	$("select#month").hide();
+	$("select#year").on('change',function(){
+		console.log($(this).val());
+		if($(this).val()!=''){
+			$("select#month").show();
+		}else{
+			$("select#month").hide();
+		}
+		
+	});
+	
+	
+	//검색 필터 조건 초기화 하기
+	$("a#reFilter").click(function(){
+		$("#town").hide();
+		$("#subject").hide();
+		$("#month").hide();
+		$("#town").html("<option value='0'></option>");
+		$("#subject").html("<option value='0'></option>");
+		
+		
+		
+		$("#local option:eq(0)").prop("selected", true);
+		$("#kind option:eq(0)").prop("selected", true);
+		$("#status option:eq(0)").prop("selected", true);
+		
+		$('#leadername').val("");
+		$('#title').val("");
+		
+		
+		
+		console.log("검색 조건 초기화");
+		
+		
+		
 	});
 });// $(function(){});
 
