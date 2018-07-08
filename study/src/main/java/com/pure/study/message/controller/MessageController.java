@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.socket.WebSocketSession;
 
+import com.pure.study.common.websocket.EchoHandler;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.message.model.service.MessageService;
 
@@ -21,6 +23,12 @@ public class MessageController {
 	
 	@Autowired
 	MessageService messageService;
+	
+	@Autowired
+	EchoHandler echoHandler;
+	
+	@Autowired
+	WebSocketSession session;
 	
 	
 	@RequestMapping(value="/message/messageList", method=RequestMethod.GET)
@@ -37,6 +45,9 @@ public class MessageController {
 		if(m != null) {
 			queryMap.put("mno", String.valueOf(m.getMno()));
 		}
+		
+		
+		
 		
 		List<Map<String, String>> listAll = messageService.messageList();
 		System.out.println("+==========================================================+");
@@ -81,8 +92,25 @@ public class MessageController {
 		int result = messageService.messageWrite(queryMap);
 		
 		
+		
+		
+		
+		if(result > 0 ) {
+			
+
+			
+			mav.addObject("msg", "쪽지를 발송하였습니다.");
+			mav.addObject("loc", "/message/messageWrite");
+			mav.setViewName("common/msg");
+			return mav;
+		}else {
+			mav.addObject("msg", "발송에 실패 하였습니다.");
+			mav.addObject("loc", "message/messageWrite");
+			mav.setViewName("common/msg");
+		}
+		
 		mav.addObject("result", result);
-		mav.setViewName("message/messageList");
+		mav.setViewName("message/messageWrite");
 		return mav; 
 	}
 	

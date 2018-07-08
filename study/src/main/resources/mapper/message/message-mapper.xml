@@ -8,21 +8,23 @@
 			VALUES (SEQ_MESSAGE.NEXTVAL, #{sendermno}, #{receivermno}, <if test="sno != null and sno != '' ">#{sno},</if> #{content}, DEFAULT, DEFAULT)
 	</insert>
 	
+
+	
 	<select id="messageCount" resultType="_int">
-		SELECT COUNT(*) TOTALCOUNT FROM MESSAGE MSG, MEMBER M, STUDY S
+		SELECT COUNT(*) CNT FROM MESSAGE MSG, MEMBER RM, MEMBER SM
 		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
-			<if test="type != null and type != '' ">
-			AND TYPE = #{type}		
+			<if test="receivermno != null and receivermno != '' ">
+			AND MSG.RECEIVERMNO = #{receivermno}		
 			</if>
-			<if test="mno != null and mno != '' ">
-			AND MSG.MNO = #{mno}		
+			<if test="checkdate != null and checkdate != '' ">
+			AND MSG.CHECKDATE IS NULL
 			</if>
 			<if test="searchType != null and searchType != '' ">
 				<if test="searchKeyword != null and searchKeyword != '' ">
 				AND ${searchType} LIKE '%'||#{searchKeyword}||'%'		
 				</if>
 			</if>
-			AND MSG.MNO = M.MNO AND MSG.MNO = S.MNO
+			AND MSG.SENDERMNO = SM.MNO AND MSG.RECEIVERMNO = RM.MNO
 		</trim>
 	</select>
 	
@@ -31,8 +33,11 @@
 		SELECT MSG.*, RM.MNAME, SM.MNAME, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG
 		FROM MESSAGE MSG, MEMBER RM, MEMBER SM
 		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
-			<if test="mno != null and mno != '' ">
-			AND MSG.RECEIVERMNO = #{mno}		
+			<if test="receivermno != null and receivermno != '' ">
+			AND MSG.RECEIVERMNO = #{receivermno}
+			</if>
+			<if test="checkdate != null and checkdate != '' ">
+			AND MSG.CHECKDATE IS NULL
 			</if>
 			<if test="searchType != null and searchType != '' ">
 				<if test="searchKeyword != null and searchKeyword != '' ">
