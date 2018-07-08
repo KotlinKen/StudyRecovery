@@ -179,4 +179,6 @@ public interface MemberDAO {
 
 	int selectEvalCnt(Map<String, Object> map);
 
+	List<Map<String, String>> memberSearch(Map<String, String> queryMap);
+
 }

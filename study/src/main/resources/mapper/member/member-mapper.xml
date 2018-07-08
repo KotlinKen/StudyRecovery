@@ -1261,6 +1261,25 @@
 	</resultMap>
 	
 	<!-- 김률민 추가 끝 2018-06-23 10:19 -->
+	<!-- 김률민 추가     2018-07-08 04:51 -->
+	<select id="memberSearch" resultMap="memberSearch">
+		SELECT * FROM MEMBER
+		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
+			<if test="searchType != null and searchType != '' ">
+				<if test="mname != null and mname != '' ">
+				AND ${searchType} like '%'||#{mname}||'%'		
+				</if>
+			</if>
+			AND QDATE IS NULL
+		</trim>
+		ORDER BY REGDATE DESC
+	</select>
+	
+	<resultMap type="map" id="memberSearch">
+		<result property="content" column="content" jdbcType="CLOB" javaType="java.lang.String" />		<result column="FAVOR" property="FAVOR" typeHandler="strArrTypeHandler"/>
+	</resultMap>
+	<!-- 김률민 추가 끝 2018-07-08 04:51 -->
+	
 
 	<select id="instructorCheckO" resultType="_int">
 		SELECT COUNT(*) CNT FROM INSTRUCTOR WHERE MNO = #{mno} AND state = 'O'
@@ -1398,6 +1417,8 @@
 		update instructor set outdate = sysdate , state = 'X' where ino = #{ino} 
 	</update>
 	<!-- 장익순 작업 .... 끝 -->
+	
+	
 	
 
 </mapper>

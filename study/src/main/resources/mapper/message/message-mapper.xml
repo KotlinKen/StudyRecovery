@@ -30,7 +30,7 @@
 	
 
 	<select id="messageList" resultMap="messageMap">
-		SELECT MSG.*, RM.MNAME, SM.MNAME, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG
+		SELECT MSG.*, RM.MNAME RNAME, SM.MNAME SNAME, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG
 		FROM MESSAGE MSG, MEMBER RM, MEMBER SM
 		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
 			<if test="receivermno != null and receivermno != '' ">
@@ -46,7 +46,7 @@
 			</if>
 			AND MSG.SENDERMNO = SM.MNO AND MSG.RECEIVERMNO = RM.MNO
 		</trim>
-		ORDER BY REG DESC
+		ORDER BY MSG.REGDATE DESC
 	</select>
 	
 	
@@ -55,27 +55,14 @@
 		
 		SELECT MSG.*, RM.MNO, RM.MNAME, TO_CHAR(MSG.REGDATE , 'YYYY-MM-DD') REG, TO_CHAR(MSG.CHECKDATE , 'YYYY-MM-DD') CREG
 		FROM MESSAGE MSG, MEMBER RM, MEMBER SM
-		WHERE MSG.MESSAGENO = #{messagno}
+		WHERE MSG.MESSAGENO = #{messageNo}
 		AND MSG.SENDERMNO = SM.MNO AND MSG.RECEIVERMNO = RM.MNO
  	</select>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<update id="messageUpdate">
+	<update id="messageReadCheck">
 	  	UPDATE MESSAGE
-	    <trim prefix="SET" suffixOverrides=",">
-	      <if test="title != null"> TITLE=#{title},</if>
-	    </trim>
-	  	WHERE MSGNO = #{bno}
+	  	SET CHECKDATE = SYSDATE
+	  	WHERE MESSAGENO = #{messageNo}
 	</update>
 	<resultMap type="map" id="messageMap">
 		<result property="CONTENT" column="CONTENT" jdbcType="CLOB" javaType="java.lang.String" />

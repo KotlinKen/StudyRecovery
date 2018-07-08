@@ -15,4 +15,8 @@ public interface MessageDAO {
 
 	int messageCount(Map<String, String> queryMap);
 
+	Map<String, String> messageOne(Map<String, String> queryMap);
+
+	int messageReadCheck(Map<String, String> queryMap);
+
 }

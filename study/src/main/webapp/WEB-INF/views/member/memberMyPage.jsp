@@ -46,7 +46,7 @@
 		<a href="${rootPath }/member/searchMyPageEvaluation.do" >내 평가</a>
 	</li>
 	<li class='btn-page'>
-		<a href="${rootPath }/member/messageList" >쪽지</a>
+		<a href="${rootPath }/member/memberMessageList" >쪽지</a>
 	</li>
 </ul>
 	
@@ -68,7 +68,8 @@
 <script>
 $(document).ready(function(){
 	console.log("?")
-	instruct( ${memberLoggedIn.mno } );
+	//김률민 수정 2018 07 08 
+	instruct( "${memberLoggedIn.mno }" );
 });
 function instruct(mno) {
 	console.log(mno)
