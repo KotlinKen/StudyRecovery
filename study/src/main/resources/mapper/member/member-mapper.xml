@@ -1203,15 +1203,20 @@
 	
 	
 	<select id="memberCheckEmail" resultType="_int">
+		
 		select
 		sum(cnt) cnt
 		from
-		(select count(*) cnt from  member where email = #{emil}
-		union all
-		SELECT COUNT(*) cnt FROM MEMBER  WHERE EMAIL = #{emil} AND QDATE IS NULL)
+		
+		 (select count (*) cnt from(select count(*) cnt
+		 from  member
+		 where email = #{emil})where cnt>0
+				union all
+				SELECT COUNT(*) cnt FROM MEMBER  WHERE EMAIL = #{emil} AND QDATE IS NULL)
 	</select>
 	<select id="memberGetPoint" parameterType="member" resultMap="memberMap">
-		select * from member where email = #{email}
+		select * from member where mno=(
+			select max(mno) from member WHERE EMAIL = 'jjsk109@naver.com') 
 	</select>
 	<insert id="instructorEnrollEnd">
 		INSERT INTO INSTRUCTOR VALUES( SEQ_INSTRUCTOR.NEXTVAL,

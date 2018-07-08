@@ -80,7 +80,7 @@ function loadInstructor(cPage, pageBarSize, type){
 	    		var upfile = (data.list[index].UPFILE);
 	    			rmHtml += "<tr>"
 	    				rmHtml += "<td><input type=\"checkbox\" class = \"check\" /> <input type=\"hidden\" value=\" "+member.MNO+ " \" /></td>";
-		    			rmHtml += "<td><a href=\"${rootPath }/member/memberSelectONEView.do?mid="+member.MID+"\">" +member.MID +"</a></td>";
+		    			rmHtml += "<td><a href=\"${rootPath }/member/selectViewMember.do?mid="+member.MID+"\">" +member.MID +"</a></td>";
 		    			rmHtml += "<td>" +member.MNAME+"</td>";
 		    			rmHtml += "<td class=\"td1\" id=\"tdexp"+member.MNO+"\"> <input type=\"number\" value=\""+member.EXP+ "\" id=\"exp"+member.MNO+"\" class=\"number num1\" max=\"10000\" min=\"0\"  /> <br/><button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_expInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_expCancel('"+member.MNO+"','"+member.EXP+"');\">되돌리기</button></td>";
 		    			rmHtml += "<td class=\"td2\" id=\"tdpoint"+member.MNO+"\"> <input type=\"number\" value=\""+member.POINT+ "\" id=\"point"+member.MNO+"\" class=\"number num2\" max=\"100000\" min=\"-100000\"  /> <br/> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_pointInsert('"+member.MNO+"');\">변경</button> <button type=\"button\" id=\"insertIButton\" class=\"btn btn-outline-primary \" onclick=\"fn_pointCancel('"+member.MNO+"','"+member.POINT+"');\">되돌리기</button></td>";

@@ -30,7 +30,6 @@ div {
 
 div#enroll-container {
 	margin: auto;
-	background: rgb(235, 235, 235,0.8);
 	padding: 10px;
 }
 
@@ -83,7 +82,7 @@ div.blank-ik {
 	left: 71%;
 }
 
-body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-910261_1920.jpg") no-repeat fixed left;}
+body { background: #efefef;}
 
 #indivik {
 	border-radius: 5px;
@@ -221,7 +220,7 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 	<div id="enroll-container">
 	<div id="inindivik2"><a class="navbar-brand rm-custom-brand" href="${rootPath}"><jsp:include page="/WEB-INF/views/common/logo_blue.jsp"></jsp:include></a></div>
 		<br />
-		<h3 style="color:#0000ff;" >강사 신청</h3>
+		<h3  >강사 신청</h3>
 		<form action="instructorApplyEnd.do" method="post" name='mainForm'
 			id='mainForm' onsubmit="return validate();"
 			enctype="multipart/form-data">
@@ -233,11 +232,11 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 			<!-- 파일 올리기 -->
 	
 		
-			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br /><br />
+			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br />
 		
 			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br />
 			<br />
-			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br /><br />
+			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
 			
 			<span class="card-body text-secondary" >.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
 			<br />
@@ -257,7 +256,6 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 				<select name="sno" id="sub" required> <!-- ajax로 kind가져오기 -->
 					<option value="-1" >과목을 선택하세요.</option>
 				</select>
-				<br />
 				<br />
 				<br />
 			</div> 

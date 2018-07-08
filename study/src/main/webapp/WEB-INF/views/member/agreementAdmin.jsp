@@ -161,7 +161,7 @@
 	function fn_serviceInsert() {
 		console.log(cnt);
 		var html = "<textarea name='scontent' id='insertS"+cnt+"'class=\"form-control\" rows=\"5\"></textarea>"
-		html += "<button type='button' class='btn btn-outline-success' onclick=\"fn_serviceInsertEnd('"+cnt+"');\" >추가하기</button><br/><br/>"
+		html += "<button type='button' class='btn btn-outline-primary' onclick=\"fn_serviceInsertEnd('"+cnt+"');\" >추가하기</button><br/><br/>"
 		$("#insertSButton").before(html);
 		cnt++;
 	}
@@ -171,6 +171,37 @@
 		data.append("scontent", scontent);
 		$.ajax({
 			url : "serviceInsertEnd.do",
+			data : data,
+			contentType : false,
+			processData : false,
+			type : "POST",
+			dataType : "json",
+			success : function(date) {
+				location.reload();
+			},
+			error : function(jqxhr, textStatus,
+					errorThrown) {
+				console.log(jqxhr);
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+			cache : false,
+			processData : false
+		});
+	}
+	function fn_informationInsert() {
+		console.log(cnt);
+		var html = "<textarea name='icontent' id='insertI"+cnt+"'class=\"form-control\" rows=\"5\"></textarea>"
+		html += "<button type='button' class='btn btn-outline-primary' onclick=\"fn_informationInsertEnd('"+cnt+"');\" >추가하기</button><br/><br/>"
+		$("#insertIButton").before(html);
+		cnt++;
+	}
+	function fn_informationInsertEnd(e) {
+		var icontent = $("#insertI"+e).val();
+		var data = new FormData();
+		data.append("icontent", icontent);
+		$.ajax({
+			url : "informationInsertEnd.do",
 			data : data,
 			contentType : false,
 			processData : false,
