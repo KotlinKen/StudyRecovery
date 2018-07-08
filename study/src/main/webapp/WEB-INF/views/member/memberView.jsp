@@ -164,12 +164,17 @@
          		<th> 관심사</th>
          		<td>
          			<span>
+         			<c:if test="${!(memberLoggedIn.favor[0] eq 'no') }">
 	                  <c:forEach var="f" items="${memberLoggedIn.favor }" varStatus="vs">
 	                  <c:if test="${vs.index != 0 }">
 	                  ,
 	                  </c:if>
 	                  	${f }
 	                  </c:forEach>
+         			</c:if>
+         			<c:if test="${memberLoggedIn.favor[0] eq 'no' }">
+         			없음
+         			</c:if>
 	                 </span>
          			<%
                   	Member m = (Member)request.getAttribute("memberLoggedIn");

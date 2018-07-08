@@ -29,6 +29,23 @@
 	div.background{
 		background: #ffffff;
 	}
+	button.cancel, .apply, .like, .dislike{
+		border:1px solid #7d99ca; 
+		-webkit-border-radius: 3px; 
+		-moz-border-radius: 3px;
+		border-radius: 3px;
+		font-size:15px;
+		padding: 5px; 
+		text-decoration:none; 
+		display:inline-block;
+		font-weight:bold; 
+		color: #FFFFFF;
+		background-color: #A5B8DA; 
+	}
+	button:hover{
+		border:1px solid #5d7fbc;
+		background-color: #819bcb;
+	}
 </style>
 
 <div class="background">
@@ -502,7 +519,7 @@
 						dataType: "json",
 						//contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
 						success: function(data){
-							var html = "<table><tr><th>스터디명</th><th>팀장이름</th><th>작성자</th><th>평가할 팀원</th><th>평가</th><th>내용</th><th>보기</th></tr>";
+							var html = "<table><tr><th>스터디명</th><th>팀장이름</th><th>작성자</th><th>평가할 팀원</th><th>평가</th><th>내용</th></tr>";
 							var userId = $("input#hiddenUserId").val();
 							var mno = $("input#hiddenMno").val();
 							for(var i in data.list){
@@ -518,12 +535,11 @@
 									html += "<td>"+index.tmid+"("+index.tmname+")"; //평가할 id, name
 									html += "<input type='hidden' name='tmno' value='"+index.tmno+"'>"+"</td>";
 									html += "<td>";
-									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>";
+									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>&nbsp;";
 									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
 									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
 									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
-									html += "<td>보기 </td>";
 									html += "</tr>";
 								}  else if(userId!=index.tmid && <%="n"==leader%>){ //자기 자신이 아니면서 팀원인 경우
 									html += "<tr>";
@@ -535,12 +551,11 @@
 									html += "<td>"+index.tmid+"("+index.tmname+")"; //평가할 id, name
 									html += "<input type='hidden' name='tmno' value='"+index.tmno+"'>"+"</td>";
 									html += "<td>";
-									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>";
+									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>&nbsp;";
 									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
 									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
 									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
-									html += "<td>보기</td>";
 									html += "</tr>";
 								}
 							}
@@ -562,15 +577,15 @@
 							$(".like").on("click",function(){
 								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
-								$("#dislikeq"+tmno).attr("style","color: black");
-								$(this).attr("style","color: red");
+								$("#dislikeq"+tmno).attr("style","background-color: #A5B8DA");
+								$(this).attr("style","background: #819bcb");
 								$("#pointq"+tmno).val($(this).val());
 							});
 							$(".dislike").on("click",function(){
 								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
-								$("#likeq"+tmno).attr("style","color: black");
-								$(this).attr("style","color: red");
+								$("#likeq"+tmno).attr("style","background-color: #A5B8DA");
+								$(this).attr("style","background: #819bcb");
 								$("#pointq"+tmno).val($(this).val());
 							});
 						
