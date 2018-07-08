@@ -146,7 +146,8 @@ $(function(){
 							<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminLogin">관리자 로그인</a></li>
 						</c:if>
 						<c:if test="${memberLoggedIn != null }">
-							<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath }/member/memberView.do" style="cursor:pointer">${memberLoggedIn.mname }님</a></li>
+						<li class="messageBox"></li>
+							<li class="nav-item loginBox"><a class="nav-link loginId" href="${pageContext.request.contextPath }/member/memberView.do" style="cursor:pointer">${memberLoggedIn.mname }님</a></li>
 							<li class="nav-item"><a class="nav-link" onclick="location.href='${pageContext.request.contextPath}/member/memberLogout.do'" style="cursor:pointer">로그아웃</a></li>
 							<c:if test="${memberLoggedIn.mid eq 'manager' }">
 								<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminMain">관리자 메인</a></li>
@@ -308,15 +309,20 @@ function getCookie(cookieName) {
     }; */
     function sendMessage(){
             /*소켓으로 보내겠다.  */
-            var message = {type:'chat',sender:'${mber.mid}',recevier:'',msg:$('#message').val()};
+            var message = {type:'sendMessage',sender:'${mber.mno}', receiver:$('#receiver').val(), msg:$('#message').val() };
             console.log(message);
             sock.send(JSON.stringify(message));
+           
+            
+            
     }
     //evt 파라미터는 웹소켓을 보내준 데이터다.(자동으로 들어옴)
     function onMessage(evt){
         var data = evt.data;
         data = JSON.parse(data);
-        $("#data").append(data.msg+"<br/>");
+        console.log(data);
+        $(".messageBox").html(data.count);
+        //$("#data").append(data.msg+"<br/>");
         //sock.close();
     }
     

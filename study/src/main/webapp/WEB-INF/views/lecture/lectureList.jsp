@@ -115,6 +115,8 @@ div#enroll button#insertLectureBtn{
             success : function(data){
                var html="";
                
+               html += "<option value='0'>전체</option>";
+               
                for(var index in data){
                   html += "<option value='"+data[index].TNO +"'>" + data[index].TOWNNAME + "</option></br>";
                }            
@@ -140,6 +142,7 @@ div#enroll button#insertLectureBtn{
             dataType: "json",
             success : function(data){
                var html="";
+               html += "<option value='0'>전체</option>";
                
                for(var index in data){
                   html += "<option value='"+data[index].SUBNO +"'>" + data[index].SUBJECTNAME + "</option></br>";
@@ -316,6 +319,7 @@ div#enroll button#insertLectureBtn{
 					$("ul.list").html(html); 
 					$("input#total").val(data.total);
 					$("input#cPageNo").val(data.cPage);
+					$("span#totalcount").html(data.total);
 			 }
 			});
 		});
@@ -465,7 +469,9 @@ div#enroll button#insertLectureBtn{
 		//검색 필터 조건 초기화 하기
 		$("a#reFilter").click(function(){
 			$("#town").hide();
-			$("#subject").hide();
+			$("#sub").hide();
+			$("#town").html("<option value='0'></option>");
+			$("#subject").html("<option value='0'></option>");
 			$("button.sortBy").removeClass("clicked");
 			
 			
@@ -477,10 +483,7 @@ div#enroll button#insertLectureBtn{
 			
 			$("input[name=case]").val("none");
 			
-			console.log("검색 조건 초기화");
-			
-			
-			
+			console.log("검색 조건 초기화");		
 		});
 		
 		
@@ -570,9 +573,7 @@ div#enroll button#insertLectureBtn{
 					</td>
 					<td>
 						<a href="#" id="reFilter">검색 조건 초기화</a>
-					</td>
-					
-				
+					</td>				
 				</tr>
 			</table>
    </div>
