@@ -15,18 +15,28 @@ a#reFilter{
 	color:black;
 	text-shadow: 5px 5px 5px white;
 }
-input#btn-search{
+/* input#btn-search{
 	position:relative;
 	left:90%;
 	top:0px;
-}
+} */
 select#local, select#kind, select#subject, select#town, select#diff{
 	width:100px;
 }
-input#leadername{
+input#leadername, input#title{
 	width:200px;
 	display:inline-block;
 	padding:0.4rem 0.75rem;
+}
+div.btn-wrap{
+	text-align:right;
+	margin-bottom:5px;
+}
+button#btn-delete{
+	background:lightblue;
+	color:black;
+	border-radius: 10px;
+	padding:8px;
 }
 </style>
 <script>
@@ -80,6 +90,7 @@ $(function(){
 					data:{lno:$(this).val()},
 					dataType:"json",
 					success:function(data){
+						html += "<option value='0'>전체</option>";
 						for(var index in data){
 							html +="<option value='"+data[index].TNO+"'>"+data[index].TOWNNAME+"</option><br/>";
 						}
@@ -121,6 +132,7 @@ $(function(){
 					data:{kno:$(this).val()},
 					dataType:"json",
 					success:function(data){
+						html += "<option value='0'>전체</option>";
 						for(var index in data){
 							html +="<option value='"+data[index].SUBNO+"'>"+data[index].SUBJECTNAME+"</option><br/>";
 						}
@@ -159,6 +171,33 @@ $(function(){
 				
 			}
 		}); 
+	});
+	
+	
+	
+	//검색 필터 조건 초기화 하기
+	$("a#reFilter").click(function(){
+		$("#town").hide();
+		$("#subject").hide();
+		$("#month").hide();
+		$("#town").html("<option value='0'></option>");
+		$("#subject").html("<option value='0'></option>");
+		
+		
+		
+		$("#local option:eq(0)").prop("selected", true);
+		$("#kind option:eq(0)").prop("selected", true);
+		$("#status option:eq(0)").prop("selected", true);
+		
+		$('#leadername').val("");
+		$('#title').val("");
+		
+		
+		
+		console.log("검색 조건 초기화");
+		
+		
+		
 	});
 		
 
@@ -320,26 +359,26 @@ function SearchStudy(cPage, pageBarSize){
 					<th>스터디명</th>
 					<th>팀장명</th>
 					<th>스터디 시작일</th>
-					<th>스터디 상태<th>
-					<th>검색<th>
+					<th>스터디 상태</th>
+					<th>검색</th>
 				</tr>
 				<tr>
 					<td>
-						<select name="lno" id="local">
+						<select name="lno" id="local" class="custom-select">
 						</select>
 					</td>
 					<td>
-						<select name="kno" id="kind">
+						<select name="kno" id="kind" class="custom-select">
 						</select>
 					</td>
 					<td>
-						<input type="text" name="title" id="title" placeholder="스터디명을 입력하세요" />
+						<input type="text" name="title" id="title" placeholder="스터디명을 입력하세요" class="form-control" maxlength="10" />
 					</td>
 					<td>
 						<input type="text" name="leadername" id="leadername" placeholder="팀장명을 입력하세요" class="form-control" maxlength="10"/>
 					</td>	
 					<td>
-						<select name="year" id="year">
+						<select name="year" id="year" class="custom-select">
 							<option value="">년도를 선택하세요</option>
 							<c:forEach var="i" begin="2018" end="2022">
 								<option value="${i }">${i }년</option>
@@ -347,7 +386,7 @@ function SearchStudy(cPage, pageBarSize){
 						</select>
 					</td>	
 					<td>
-						<select name="status" id="status">
+						<select name="status" id="status" class="custom-select">
 							<option value="전체">전체</option>
 							<option value="모집 중">모집중</option>
 							<option value="마감 임박">마감 임박</option>
@@ -362,12 +401,12 @@ function SearchStudy(cPage, pageBarSize){
 				</tr>
 				<tr>
 					<td>
-						<select name="tno" id="town">
+						<select name="tno" id="town" class="custom-select">
 							<option value="0">전체</option>
 						</select>
 					</td>
 					<td>
-						<select name="subno" id="subject">
+						<select name="subno" id="subject" class="custom-select">
 							<option value="0">전체</option>
 						</select>
 					</td>
@@ -378,7 +417,7 @@ function SearchStudy(cPage, pageBarSize){
 					<br /><br />          
 					</td>
 					<td>
-						<select name="month" id="month">
+						<select name="month" id="month" class="custom-select">
 							<option value="0">월을 선택하세요</option>
 							<c:forEach var="i" begin="1" end="12">
 								<option value="${i>10?'':'0' }${i}">${i }월</option>
@@ -398,53 +437,10 @@ function SearchStudy(cPage, pageBarSize){
 	
 	
 	<div class="table-responsive">
-	
+		<div class="btn-wrap">
+			<button type='button' id="btn-delete">스터디 삭제</button>
+		</div>
 		
-		
-		
-<%-- 
-		
-		<label for="local">지역:</label>
-		<select name="lno" id="local">
-		
-		</select>
-		<select name="tno" id="town">
-			<option value="0">전체</option>
-		</select>
-		<label for="local">카테고리:</label>
-		<select name="kno" id="kind">
-		
-		</select>
-		<select name="subno" id="subject">
-			<option value="0">전체</option>
-		</select>
-		<input type="text" name="title" id="title" placeholder="강의/스터디명을 입력하세요" />
-		<input type="text" name="leadername" id="leadername" placeholder="팀장/강사명을 입력하세요" />
-		<label for="">스터디 시작일 : </label>
-		<select name="year" id="year">
-			<option value="">년도를 선택하세요</option>
-		<c:forEach var="i" begin="2018" end="2022">
-			<option value="${i }">${i }년</option>
-		</c:forEach>
-		</select>
-		<select name="month" id="month">
-			<option value="0">월을 선택하세요</option>
-		<c:forEach var="i" begin="1" end="12">
-			<option value="${i>10?'':'0' }${i}">${i }월</option>
-		</c:forEach>
-		</select>
-		<label for="status">스터디 상태 :</label>
-		<select name="status" id="status">
-			<option value="전체">전체</option>
-			<option value="모집 중">모집중</option>
-			<option value="마감 임박">마감 임박</option>
-			<option value="모집 마감">모집 마감</option>
-			<option value="진행 중">진행 중</option>
-			<option value="스터디 종료">스터디 종료</option>
-		</select>
-		
-		<button type="button" id="btn-search">검색</button><br /> --%>
-		<button type='button' id="btn-delete">스터디 삭제</button>
 		<table class="table table-striped table-sm">
 			<thead>
 				<tr>

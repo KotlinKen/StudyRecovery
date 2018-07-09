@@ -447,6 +447,10 @@ public class MemberServiceImpl implements MemberService {
 	public int selectPayListCnt(Map<String, Object> map) {
 		return memberDAO.selectPayList(map);
 	}
+	@Override
+	public List<Map<String, String>> memberSearch(Map<String, String> queryMap) {
+		return memberDAO.memberSearch(queryMap);
+	}
 
 	
 }

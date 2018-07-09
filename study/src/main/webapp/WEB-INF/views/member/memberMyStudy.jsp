@@ -10,7 +10,7 @@
 		background: #ffffff;
 	}
 	td{
-		max-width: 180;
+		max-width: 200;
 		word-break:break-all;
 		text-overflow:ellipsis; 
 		overflow:hidden;
@@ -228,7 +228,7 @@
 					</c:if>
 		
 					<!-- 스터디 진행 중 => 팀원 목록 분기 하기? -->
-					<c:if test="${((sysdate gt ms.sdate) or (sysdate eq ms.sdate) )and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) }">
+					<c:if test="${((sysdate gt ms.sdate) or (sysdate eq ms.sdate) )and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) and !(ms.sdate eq ms.ldate) }">
 						<button type=button id="crewList${ms.sno }" value="1" name="crewListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#crewListModal" >진행 중(팀원 목록)</button>						
 					</c:if>
 					
@@ -265,7 +265,7 @@
 					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set>
 					
 					<!-- 신청 중 & 신청 마감 & 스터디 진행 전 => 팀원 취소 하기 기능-->
-					<c:if test="${sysdate lt ms.sdate  }">
+					<c:if test="${(sysdate lt ms.sdate) or (sysdate eq ms.sdate)  }">
 						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal" >신청 현황</button>
 					</c:if>
 					
@@ -798,7 +798,7 @@
 					//console.log(data.applyList[i]);
 					html += "<tr id='amno"+data.applyList[i].mno+"'>";
 					html += "<td>";
-					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png'  style='width:100px;'/>";
+					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg'  style='width:100px;'/>";
 					html += "</td>";
 					html += "<td>";
 					html += data.applyList[i].grade;
@@ -824,8 +824,7 @@
 					html += "<button type=button class='apply' name='agree' id='agreeq"+data.applyList[i].mno+"'>수락</button>";
 					html += "</td>";
 					html += "</tr>";	
-					
-					$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+") 모집인원 : "+data.crewCnt+"/"+recruit);
+					$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+")<br/>모집인원 : "+data.crewCnt+"/"+recruit);
 				}
 				html += "</table>";
 				
@@ -842,7 +841,7 @@
 					//console.log(data.crewList[i]);
 					removehtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
 					removehtml += "<td>";
-					removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
+					removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg' style='width:100px;'/>";
 					removehtml += "</td>";
 					removehtml += "<td>";
 					removehtml += data.crewList[i].grade;
@@ -882,7 +881,7 @@
 					//console.log(data.crewList[i]);
 					crewhtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
 					crewhtml += "<td>";
-					crewhtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
+					crewhtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg' style='width:100px;'/>";
 					crewhtml += "</td>";
 					crewhtml += "<td>";
 					crewhtml += data.crewList[i].grade;
@@ -919,7 +918,7 @@
 						$("h5#modalLabel").html(data.studyName);
 					<%} else{%>
 						
-						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+") 모집인원 : "+data.crewCnt+"/"+recruit);
+						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+") <br/>모집인원 : "+data.crewCnt+"/"+recruit);
 					<%}%>
 					
 					<%if(("lecture").equals(type)){%>
@@ -1024,7 +1023,7 @@
 						//console.log(data.crewList[i]);
 						html += "<tr class='mno"+data.crewList[i].mno+"'>";
 						html += "<td>";
-						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
+						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg' style='width:100px;'/>";
 						html += "</td>";
 						html += "<td>";
 						html += data.crewList[i].grade;

@@ -108,7 +108,8 @@ $(function(){
             
             for(var index in data){
                html += "<option value='"+data[index].TNO +"'>" + data[index].TOWNNAME + "</option></br>";
-            }            
+            } 
+            
             $("#town").html(html);
          }         
       });

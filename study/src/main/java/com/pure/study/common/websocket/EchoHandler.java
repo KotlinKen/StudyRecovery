@@ -7,6 +7,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -66,11 +67,13 @@ public class EchoHandler extends TextWebSocketHandler {
 	        while(sessionIds.hasNext()){
 	        	sessionId = sessionIds.next();
 	        	int count = messageService.messageCount(queryMap);
-		        if(count>0) {
-		        	message = new Message("init", String.valueOf(member.getMno()), String.valueOf(member.getMno()), String.valueOf(count), count);
-		        	handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
-		        }
-	        }
+			        	message = new Message("init", String.valueOf(member.getMno()), String.valueOf(member.getMno()), String.valueOf(count), count);
+			        	if(message.getReceiver().equals(sessionId)){
+			   
+			        	//handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
+			        	sessions.get(sessionId).sendMessage(new TextMessage(mapper.writeValueAsString(message)));
+			            }
+	        	}
 	    	  }
 	        
 /*	        
@@ -147,10 +150,7 @@ public class EchoHandler extends TextWebSocketHandler {
 	            sessionId = sessionIds.next();
 	            System.out.println("세션아이디"+sessionId);
 		            if(ms.getReceiver().equals(sessionId)){
-		    	        int count = messageService.messageCount(queryMap);
-		    	        ms.setCount(count);
 		            	sessions.get(sessionId).sendMessage(new TextMessage(mapper.writeValueAsString(ms)));
-		            	System.out.println(ms);
 		            }else {
 		            	
 		            }

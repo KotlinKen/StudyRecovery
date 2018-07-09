@@ -15,6 +15,23 @@
 	select#subject{
 		display:none;
 	}
+	.btn-cancel{
+		width: auto;
+		height: auto;
+		font-size: 15px;
+		border-radius: 10px;
+		padding-left: 5px;
+		padding-right: 5px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		background: #ffffff;
+		border-style: solid ;
+		color: #666;
+	}
+	button.btn-cancel:hover{
+		background: #0056e9;
+		color: #ffffff;
+	}
 </style>
 <div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -154,7 +171,7 @@
 							<span> ${p.PSTATUS } </span>
 							</c:if>
 							<c:if test="${p.PSTATUS == '결제완료' && ( p.STATUS == '모집 마감' || p.STATUS == '마감 임박' || p.STATUS == '모집 중')}">
-							<button type='button' onclick='lectureAdminCancel(${p.SNO},${p.MNO},${p.PNO},${p.PRICE})'>결제 취소</button>
+							<button type='button' class="btn-cancel" onclick='lectureAdminCancel(${p.SNO},${p.MNO},${p.PNO},${p.PRICE})'>결제 취소</button>
 							</c:if>
 							<c:if test="${p.PSTATUS == '결제실패' }">
 							<span style='color:red;'>${p.PSTATUS }</span>
