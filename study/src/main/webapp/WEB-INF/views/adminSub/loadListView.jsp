@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="CATEGORY" name="pageTitle" /></jsp:include>
+<jsp:include page="/WEB-INF/views/common/admin_header.jsp"><jsp:param value="Location" name="pageTitle" /></jsp:include>
 <style>
 
 #kinddiv{display: block; position: absolute; top:0px; width: 500px;}
