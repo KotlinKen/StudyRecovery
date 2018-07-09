@@ -242,4 +242,16 @@ public class StudyDAOImpl implements StudyDAO {
 	public List<Map<String, Object>> selectRankList() {
 		return sqlSession.selectList("study.rankList");
 	}
+
+	@Override
+	public int preinsertApplyCrew(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("study.preinsertApplyCrew", map);
+	}
+
+	@Override
+	public int crewStudyDelete(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("study.crewStudyDelete", map);
+	}
 }

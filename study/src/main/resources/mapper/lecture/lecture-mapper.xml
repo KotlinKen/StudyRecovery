@@ -191,6 +191,10 @@
    <select id="selectLectureOne" resultMap="map">
       SELECT SNO,
             A.MNO AS MNO,
+             (SELECT M.MID AS MID FROM MEMBER M WHERE M.MNO = A.MNO) MID,
+             (SELECT M.POINT  FROM MEMBER M WHERE M.MNO = A.MNO) POINT,
+             (SELECT M.NPOINT FROM MEMBER M WHERE M.MNO = A.MNO) NPOINT,
+             (SELECT M.EXP  FROM MEMBER M WHERE M.MNO = A.MNO) EXP,
              (SELECT M.MNAME AS MNAME FROM MEMBER M WHERE M.MNO = A.MNO) MNAME,
              LNO,
              (SELECT L.LOCAL AS LOCAL FROM LOCAL L WHERE L.LNO = A.LNO) LOCAL, 
