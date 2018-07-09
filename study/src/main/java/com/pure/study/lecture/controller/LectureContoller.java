@@ -232,9 +232,13 @@ public class LectureContoller {
 	public ModelAndView lectureView(@RequestParam int sno, @RequestParam(required = false, defaultValue = "0") int mno,
 			HttpSession session) {
 		ModelAndView mav = new ModelAndView();
-
+		
+		// 실제 같은 맴버로 로그인한건지 검사
 		Member m = (Member) session.getAttribute("memberLoggedIn");
 		int realMNo = 0;
+		
+		// 현재 신청자가 있는지 검사
+		int peopleCnt = ls.peopleCnt(sno);
 
 		int insert = 0;
 		int wish = 0;
@@ -271,7 +275,14 @@ public class LectureContoller {
 
 			mav.setViewName("lecture/lectureView");
 		}
-
+		
+		// 강사에 대한 리뷰 가져오기.
+		List<Map<String, Object>> reviewList = ls.selectReviewList(sno);
+		
+		if( !reviewList.isEmpty() )
+			mav.addObject("reviewList", reviewList);
+		
+		mav.addObject("peopleCnt", peopleCnt);
 		mav.addObject("wish", wish);
 		mav.addObject("insert", insert);
 
@@ -670,7 +681,7 @@ public class LectureContoller {
 
 		// 아임포트에서 결제취소가 성공한 경우.
 		if (success == 1 || success == 0) {
-			msg = "결제취소";
+			msg = "결제를 취소했씁니다.";
 
 			ls.successAdminPayCancel(pno);
 		}
@@ -693,11 +704,12 @@ public class LectureContoller {
 	@ResponseBody
 	public ModelAndView selectLecturePageCount(@PathVariable(value = "count", required = false) int count,
 			@PathVariable(value = "cPage", required = false) int cPage) {
-
 		ModelAndView mav = new ModelAndView("jsonView");
+		
+		// 강의 list
 		List<Map<String, Object>> list = ls.selectLectureList(cPage, count);
 		int total = ls.selectTotalLectureCount();
-
+		
 		mav.addObject("list", list);
 		mav.addObject("numPerPage", count);
 		mav.addObject("cPage", cPage);
