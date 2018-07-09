@@ -10,7 +10,8 @@
 	//참여신청 버튼 클릭 이벤트
 	function lectureApply(){
 		
-		if(${memberLoggedIn==null}) $("a#btn-login").trigger('click');
+		if(${memberLoggedIn==null})
+			$("a#btn-login").trigger('click');
 		else{
 			// 결제 도전!
 			var IMP = window.IMP;
