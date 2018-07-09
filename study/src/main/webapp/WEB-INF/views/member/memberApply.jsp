@@ -22,13 +22,7 @@
 	select#subject{
 		display:none;
 	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
-	}
-	div.background{
-		background: #ffffff;
-	}
+	
 </style>
 <div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -381,7 +375,7 @@
 		})
 		
 		
-		//지역을 선택하면 그에 맞는 도시들을 가져온다.
+	//지역을 선택하면 그에 맞는 도시들을 가져온다.
 	$("select#local").on("change",function(){
 		
 		var lno=$("select#local option:selected").val();

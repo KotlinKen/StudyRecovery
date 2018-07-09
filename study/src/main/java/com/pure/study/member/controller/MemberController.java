@@ -41,6 +41,8 @@ import org.springframework.web.socket.TextMessage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pure.study.board.model.service.BoardService;
+import com.pure.study.board.model.service.ReplyService;
 import com.pure.study.common.crontab.dao.SchedulerDAO;
 import com.pure.study.common.websocket.EchoHandler;
 import com.pure.study.lecture.model.service.LectureService;
@@ -49,10 +51,15 @@ import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.member.model.vo.Review;
+import com.pure.study.message.model.service.MessageService;
 import com.pure.study.message.model.vo.Message;
 import com.pure.study.rest.RestMemberService;
 import com.pure.study.study.model.service.StudyService;
 import com.pure.study.study.model.vo.Study;
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
 
 @SessionAttributes({ "memberLoggedIn" })
 @Controller
@@ -76,15 +83,25 @@ public class MemberController {
 	private JavaMailSender mailSender;
 	
 	@Autowired
+	private ReplyService replyService;
+	
+	@Autowired
+	private BoardService boardService;
+	
+	@Autowired
 	private RestMemberService rs;
 	
 
 	@Autowired
 	private SchedulerDAO schedulerDAO;
 	
+	/*김률민 추가 20180708 메시징 추가  *************************************************/
+	@Autowired
+	private MessageService messageService;
+	
 	@Autowired
 	private EchoHandler echoHandler; 
-	
+	/*김률민 추가 20180708 메시징 추가  *************************************************/
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -125,7 +142,7 @@ public class MemberController {
 		System.out.println(c);
 		if (c != 23) {
 			String loc = "/member/memberAgreement.do";
-			String msg = "회원가입을 실패했습니다.";
+			String msg = "잘못된 경로 입니다. 관리자에게 문의 하세요.";
 			mav.addObject("msg", msg);
 			mav.addObject("loc", loc);
 			mav.setViewName("common/msg");
@@ -160,7 +177,7 @@ public class MemberController {
 		System.out.println("tomail"+tomail);
 		try {
 			int result = memberService.memberCheckEmail(tomail);
-			if(result >0) {
+			if(result >1) {
 				System.out.println("이미 가입?");
 				map.put("check", false);
 				return map;
@@ -308,6 +325,38 @@ public class MemberController {
 			}
 		} catch (Exception e) {
 		}
+		/**
+		 * 탈퇴 회원 여부 확인 탈퇴 회원일 경우 EXP/POINt/NPOINT 가져오고 set해준다
+		 */
+
+		try {
+			int memberCheckEmail = memberService.memberCheckEmail(email);
+			if (memberCheckEmail == 2) {
+				msg = "회원가입을 실패했습니다. 탈퇴 확인을 해주세요";
+				msg = "회원가입실패!";
+				model.addAttribute("loc", loc);
+				model.addAttribute("msg", msg);
+				return "common/msg";
+			} else if (memberCheckEmail == 1) {
+				Member memberGetPoint = memberService.memberGetPoint(email);
+				member.setExp(memberGetPoint.getExp());
+				member.setPoint(memberGetPoint.getPoint());
+				member.setNPoint(memberGetPoint.getNPoint());
+
+			} else {
+				member.setExp(0);
+				member.setPoint(0);
+				member.setNPoint(0);
+			}
+		} catch (Exception e) {
+			msg = "회원가입을 실패했습니다. 관리자에게 문의 하세요";
+			msg = "회원가입실패!";
+			model.addAttribute("loc", loc);
+			model.addAttribute("msg", msg);
+			return "common/msg";
+		}
+		System.out.println("member : " + member);
+		logger.debug(email);
 
 		String rawPassword = member.getPwd();
 		/******* password 암호화 시작 *******/
@@ -413,6 +462,8 @@ public class MemberController {
 				if(admin==null) {
 					if(prev.contains("memberSuccess")) {
 						mav.setViewName("redirect:/");
+					}else if(prev.contains("FindPage.do")||prev.contains("memberPwd.do")) {
+						mav.setViewName("redirect:/");
 					}else {
 						mav.setViewName("redirect:"+prev);
 					}
@@ -508,7 +559,7 @@ public class MemberController {
 		} else if (m == null && findType.equals("아이디")) {
 			msg = "존재 하지 않는 회원 입니다. ";
 			mav.addObject("msg", msg);
-			mav.addObject("loc", loc);
+			mav.addObject("loc", "/member/memberFindPage.do?findType=아이디");
 			mav.setViewName("common/msg");
 		} else if (findType.equals("비밀번호")) {
 
@@ -561,7 +612,7 @@ public class MemberController {
 
 						messageHelper.setFrom("kimemail2018@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
 						messageHelper.setTo(email); // 받는사람 이메일
-						messageHelper.setSubject("스터디 그룹 임시 비밀번호 발송"); // 메일제목은 생략이 가능하다
+						messageHelper.setSubject("스터디 그룹 비밀번호 변경"); // 메일제목은 생략이 가능하다
 
 						// 4. 인증키를 암호화 한다.
 						Member changeM = new Member();
@@ -577,7 +628,8 @@ public class MemberController {
 								"<form action='http://localhost:9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
 								.append("<input type='hidden' name='mid' value='" + mid + "'/>")
 								.append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
-								.append("<button type='submit'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
+								.append("<h4>Study Grooupt 비밀번호 변경</h4>")
+								.append("<button type='submit' style='background: #ffffff; color: #666; border: 1px solid #666; border-radius: 10px;'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
 
 						mailSender.send(message);
 					} catch (Exception e) {
@@ -586,6 +638,7 @@ public class MemberController {
 
 				} else {
 					msg = "일치하는 회원 정보가 없습니다.";
+					loc="/member/memberFindPage.do?findType=비밀번호";
 				}
 
 				mav.addObject("loc", loc);
@@ -598,7 +651,7 @@ public class MemberController {
 			
 		// 5. 암호화 한 인증키를 이동시켜준다.
 		@RequestMapping(value = "/member/memberPwd.do", method = RequestMethod.POST)
-		public ModelAndView pwd(String mid, String key) {
+		public ModelAndView pwd(@RequestParam(value="mid") String mid, @RequestParam(value="key") String key) {
 			ModelAndView mav = new ModelAndView();
 
 			// System.out.println("이동 중인 값 : "+ key);
@@ -765,8 +818,10 @@ public class MemberController {
 
 				if (!sessionStatus.isComplete())
 					sessionStatus.setComplete();
+				model.addAttribute("loc", "/");
+				model.addAttribute("msg", "비밀번호가 변경되었습니다. 다시 로그인 해주세요.");
 
-				return "redirect:/msg.do"; 
+				return "common/msg"; 
 			} else {
 				model.addAttribute("loc", "/member/memberView.do");
 				model.addAttribute("msg", "비밀번호가 변경되지 않았습니다.");
@@ -782,11 +837,16 @@ public class MemberController {
 	
 	//redirect:/사용하면서 msg 주기 위해 추가함.
 	@RequestMapping(value="/msg.do")
-	public String sendMsg(Model model) {
+	public String sendMsg(Model model, @ModelAttribute(value="memberLoggedIn") Member m) {
 		
 		model.addAttribute("loc", "/");
 		model.addAttribute("msg", "다시 로그인 해주세요.");
 		
+		if("manager".equals(m.getMid())) {
+			model.addAttribute("loc", "/admin/adminMember");
+			model.addAttribute("msg", "해당 회원을 탈퇴했습니다.");			
+		}
+		 
 		return "common/msg";
 	}
 	
@@ -798,7 +858,7 @@ public class MemberController {
 									@RequestParam(value="phone") String phone,
 									@RequestParam(value="preMprofile") String preMprofile,
 									@RequestParam(value="email") String email,
-									//@RequestParam(value="birth") Date birth,
+									//@RequestParam(value="newPwd", required=false, defaultValue="no") String newPwd,
 									//@RequestParam(value="gender") String gender,
 									@RequestParam(value="favor", required=false, defaultValue="no") String[] favor,
 									@RequestParam(value="cover", required=false) String cover,
@@ -844,6 +904,7 @@ public class MemberController {
 			
 			/*********** MultipartFile을 이용한 파일 업로드 처리 로직 끝 **********/
 			
+		  
 		  member.setMno(Integer.parseInt(mno));
 	      member.setMname(mname);
 	      member.setPhone(phone);
@@ -887,12 +948,15 @@ public class MemberController {
 		if (result > 0 && !"admin".equals(admin)) {
 			if (!sessionStatus.isComplete())
 				sessionStatus.setComplete();
-			return "redirect:/";
+				model.addAttribute("loc", "/");
+				model.addAttribute("msg", "탈퇴 되었습니다.");
 		} else if(result > 0 && "admin".equals(admin)) {
+			model.addAttribute("loc", "/admin/adminMember");
 			
-			return "redirect:/admin/adminMember";
+			return "redirect:/msg.do";
 		} else if(result <= 0 && "admin".equals(admin)) {
 			model.addAttribute("msg", "오류가 발생했습니다.");
+			
 			return "redirect:/member/adminMemberView.do?mno="+mno;
 		} else {
 			model.addAttribute("msg", "오류가 발생하였습니다.");
@@ -950,7 +1014,7 @@ public class MemberController {
 
 			messageHelper.setFrom("kimemail201807@gmail.com"); // 보내는사람 생략하거나 하면 정상작동을 안함
 			messageHelper.setTo(newEmail); // 받는사람 이메일
-			messageHelper.setSubject("스터디 그룹 이메일 인증 비밀번호 변경"); // 메일제목은 생략이 가능하다
+			messageHelper.setSubject("스터디 그룹 이메일 인증"); // 메일제목은 생략이 가능하다
 			messageHelper.setText("이메일 인증 번호는 [" + tempPwd + "] 입니다.");
 
 			mailSender.send(message);
@@ -1295,6 +1359,7 @@ public class MemberController {
 	public ModelAndView applyButton(@RequestParam("sno") String sno
 									, @RequestParam("mno")String mno
 									, @RequestParam("confirm") String confirm
+									, HttpServletRequest session
 									){ 
 		ModelAndView mav = new ModelAndView("jsonView"); 
 		Map<String, String> map = new HashMap<>();
@@ -1304,7 +1369,10 @@ public class MemberController {
 		
 		int resultDel = 0;
 		int result=0;
-		
+		/*김률민 추가 20180708 메시징 핸들러를 위해  스코프 범위 변경 *************************************************/
+		Study study = studyService.selectStudyByMnoTypeStudy(sno);
+		Member m = (Member) session.getSession().getAttribute("memberLoggedIn");
+		/*김률민 추가 20180708 메시징 핸들러를 위해  스코프 범위 변경 *************************************************/
 		if("agree".equals(confirm)) {
 
 		   Map<String, Object> key = new HashMap<>();
@@ -1312,7 +1380,6 @@ public class MemberController {
 	       key.put("key", "crew");
 	       //수락하려는 회원이 이미 포함되어있는 크루 검사. 
 		   List<Map<String, Object>> list = studyService.selectStudyListBySno(key);
-		   Study study = studyService.selectStudyByMnoTypeStudy(sno);
 		   System.out.println("agree에 들어오나요"+list);
 			
 		   try {
@@ -1324,11 +1391,21 @@ public class MemberController {
                   result = memberService.insertCrew(map);
                   /*김률민 추가 20180708 메시징 핸들러를 위해 *************************************************/
                   ObjectMapper mapper = new ObjectMapper();
-  				  Message message = new Message("insert:crew","45", map.get("mno"), map.get("studyNo")+"신청수락 되었습니다.", 0);
+                  map.put("sendermno", String.valueOf(m.getMno()));
+                  map.put("receivermno", mno);
+                  map.put("checkdate", "checkdate");
+                  map.put("content", study.getTitle()+"신청수락 되었습니다.");
 
-                  if(result > 0 ) {
+  				  //시스템 쪽지 발송
+  				  int messageResult = messageService.messageWrite(map);
+  				  int count = messageService.messageCount(map);
+  				  Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"신청수락 되었습니다.", count);
+
+                  
+  				  if(result > 0 && messageResult > 0) {
       				try {
-						echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(45)), new TextMessage(mapper.writeValueAsString(message)));
+						echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(m.getMno())), new TextMessage(mapper.writeValueAsString(message)));
+
 					} catch (JsonProcessingException e) {
 						e.printStackTrace();
 					} catch (Exception e) {
@@ -1336,6 +1413,9 @@ public class MemberController {
 					}
 
                   }
+
+  				  
+  				  
                   /*김률민 추가 20180708 메시징 핸들러를 위해 ***************************************************/
                } else {
                   //중복된게 있어서 회원을 팀원으로 수락 불가. 
@@ -1352,6 +1432,30 @@ public class MemberController {
 		}else if("cancel".equals(confirm)){
 			result = memberService.insertApply(map);
 			resultDel = memberService.deleteCrew(map);
+            /*김률민 추가 20180708 메시징 핸들러를 위해 *************************************************/
+            ObjectMapper mapper = new ObjectMapper();
+            map.put("sendermno", String.valueOf(m.getMno()));
+            map.put("receivermno", mno);
+            map.put("checkdate", "checkdate");
+            map.put("content", study.getTitle()+"신청 수락이 취소 되었습니다.");
+
+			  //시스템 쪽지 발송
+			  int messageResult = messageService.messageWrite(map);
+			  int count = messageService.messageCount(map);
+            
+		    Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"수락이 취소 되었습니다.", count);
+
+            if(resultDel > 0 && messageResult > 0 ) {
+				try {
+					echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(45)), new TextMessage(mapper.writeValueAsString(message)));
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+            }
+            /*김률민 추가 20180708 메시징 핸들러를 위해 ***************************************************/
 			
 		}
 		
@@ -1407,8 +1511,8 @@ public class MemberController {
 	                	  System.out.println("요일겹치기..");
 	                     // 등록이 가능한 경우.
 	                
-	                     if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
-	                           || eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
+	                     if (sHour > Integer.parseInt(list.get(i).get("ETIME").toString())
+	                           || eHour < Integer.parseInt(list.get(i).get("STIME").toString())) {
 	                        System.out.println("시간이 안겹쳐서 들어감");
 	                     }
 	                     // 불가능한 경우.
@@ -1430,9 +1534,13 @@ public class MemberController {
 	@RequestMapping(value="/member/searchMyPageEvaluation.do")
 	@ResponseBody 
 	public ModelAndView searchMyPageEvaluation( @RequestParam(value="myPage",required=false, defaultValue="exp") String eval 
-												, @RequestParam(value="cPage",required=false, defaultValue="1" ) int cPage
 												, @RequestParam(value="count",required=false, defaultValue="0" ) int count
+												, @RequestParam(value="cPage",required=false, defaultValue="1" ) int cPage
 												, @RequestParam(value="numPerPage",required=false, defaultValue="5" ) int numPerPage
+												, @RequestParam(value="bcPage",required=false, defaultValue="1" ) int bcPage
+												, @RequestParam(value="bnumPerPage",required=false, defaultValue="5" ) int bnumPerPage
+												, @RequestParam(value="rcPage",required=false, defaultValue="1" ) int rcPage
+												, @RequestParam(value="rnumPerPage",required=false, defaultValue="5" ) int rnumPerPage
 												, @RequestParam(value="kno",required=false, defaultValue="0" ) String kno
 												, @RequestParam(value="subno",required=false, defaultValue="0" ) String subno
 												, @RequestParam(value="point",required=false, defaultValue="0" ) String point
@@ -1463,6 +1571,18 @@ public class MemberController {
 		//카테고리 리스트
 		List<Map<String,Object>> kindList=studyService.selectKind();
 		
+		Map<String, String> queryMap = new HashMap<>();
+		queryMap.put("mno", String.valueOf(m.getMno()));
+		queryMap.put("searchKwd", searchKwd);
+		queryMap.put("kwd", kwd);
+		/*
+		//게시판 리스트
+		List<Map<String,String>> boardList = boardService.selectBoardList(cPage, numPerPage, queryMap);
+		int boardCount = boardService.selectCount();
+		*/
+		//리플 리스트
+		List<Map<String, String>> replyList = replyService.replyList(cPage, numPerPage, queryMap);
+		int replyCount = replyService.replyCount(queryMap);
 		
 		
 		//평가 관리 페이지로 이동
@@ -1478,10 +1598,16 @@ public class MemberController {
 		mav.addObject("gradeMax", gradeList.get(gradeList.size()-1)); 
 		mav.addObject("m", m); 
 		
-		//페이징
+		//평가 점수 페이징
 		mav.addObject("numPerPage", numPerPage);
 		mav.addObject("cPage", cPage);
 		mav.addObject("count", count);
+		/*
+		//지식 점수 게시판 페이징
+		mav.addObject("bnumPerPage", numPerPage);
+		mav.addObject("bcPage", cPage);
+		mav.addObject("bcount", count);
+		*/
 		
 		//카테고리
 		mav.addObject("kindList", kindList);
@@ -1494,13 +1620,145 @@ public class MemberController {
 		mav.addObject("point", point); // 검색할 키워드
 		
 		//지식 점수 리스트
+		/*mav.addObject("boardList", boardList); 
+		mav.addObject("boardCount", boardCount); */
+		mav.addObject("replyList", replyList); 
+		mav.addObject("replyCount", replyCount); 
 		
+		//지식 점수 댓글 페이징
+		mav.addObject("rnumPerPage", rnumPerPage);
+		mav.addObject("rcPage", rcPage);
+		mav.addObject("rcount", replyCount);
+		mav.addObject("kwd", kwd); // 검색할 키워드
+		mav.addObject("point", point); // 검색할 키워드
 	
 		mav.setViewName("member/MyEvaluation");
 		
 	return mav; 
 	}
+	@RequestMapping(value="/member/paymentList.do")
+	public ModelAndView paymentList(@ModelAttribute("memberLoggedIn") Member m
+									,@RequestParam(value="searchKwd", required=false, defaultValue="title") String searchKwd
+									,@RequestParam(value="kwd", required=false, defaultValue="") String kwd
+									,@RequestParam(value="myPage", required=false, defaultValue="") String myPage
+									,@RequestParam(value="lno", required=false, defaultValue="0") String lno 
+									,@RequestParam(value="tno",required=false,defaultValue="0") String tno 
+									,@RequestParam(value="kno",required=false,defaultValue="0") String kno 
+									,@RequestParam(value="subno",	required=false, defaultValue="0") String subno 						
+									,@RequestParam(value="cPage", required=false, defaultValue="1") int cPage									
+									) {
+		
+		ModelAndView mav = new ModelAndView();
+		lno = lno.split(",")[0];
+		tno = tno.split(",")[0];
+		kno = kno.split(",")[0];
+		subno = subno.split(",")[0];
+		
+		//지역 리스트
+		List<Map<String,Object>> localList=studyService.selectLocal();
+		
+		//카테고리 리스트
+		List<Map<String,Object>> kindList=studyService.selectKind();
+		
+		//난이도 리스트
+		List<Map<String,Object>> diffList=studyService.selectLv();
+		Map<String, Object> map = new HashMap<>();
+		map.put("mno", m.getMno());
+		map.put("lno", lno);
+		map.put("tno", tno);
+		map.put("kno", kno);
+		map.put("subno", subno);
+		map.put("searchKwd", searchKwd);
+		map.put("kwd", kwd);
+		if("term".equals(searchKwd)) { 
+			String[] termKwd = kwd.split(","); 
+			map.put("kwd", termKwd[0]); 
+			if(termKwd.length>1) { 
+				for(int i=1; i<termKwd.length; i++) {
+					map.put("kwd"+i, termKwd[i]); 
+					System.out.println(termKwd[i]); 
+				} 
+			} 
+		} else if(kwd==null ){ 
+			map.put("kwd", null); 
+		} else{ 
+			map.put("kwd", kwd); 
+		}
+		
+		int numPerPage = 5;
+		int count = memberService.selectPayListCnt(map);
+		
+		List<Map<String, String>> list = memberService.selectPayList(cPage, numPerPage, map);
+
+		System.out.println(list);
+
+		mav.addObject("list", list);
+		mav.addObject("cPage", cPage);
+		mav.addObject("numPerPage", numPerPage);
+		mav.addObject("count", count);
+		mav.addObject("localList", localList);
+		mav.addObject("kindList", kindList);
+		mav.addObject("diffList", diffList);
+		mav.addObject("lno",lno);//지역 리스트
+		mav.addObject("tno",tno);//지역 리스트
+		mav.addObject("kno",kno);//카테고리 리스트
+		mav.addObject("subno",subno);//과목 리스트
+		mav.addObject("searchKwd",searchKwd);
+		mav.addObject("kwd",kwd);
+		mav.setViewName("member/memberPaymentList");
+		
+		return mav;
+	}
 	
+	
+	@RequestMapping(value="/member/paymentCancel.do")
+	public String paymentcancel(@RequestParam int mno, 
+									@RequestParam int sno, 
+									@RequestParam long pno,
+									@RequestParam int price) {
+		
+		Map<String, Integer> map = new HashMap<>();
+
+		map.put("mno", mno);
+		map.put("sno", sno);
+
+		int result = 0;
+		result = ls.lectureCancel(map);
+
+		String originNo = "imp_" + String.valueOf(pno);
+		String api_key = "6308212829698507";
+		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
+
+		// 토큰 얻어오기.
+		IamportClient imp = new IamportClient(api_key, api_secret);
+		imp.getAuth();
+
+		IamportResponse<Payment> p = imp.cancelPaymentByImpUid(new CancelData(originNo, true));
+
+		int success = p.getCode();
+		String msg = "";
+		System.out.println("tokkens = " + success);
+
+		// 아임포트에서 결제취소가 성공한 경우.
+		if (success == 1 || success == 0) {
+			msg = "결제취소";
+
+			ls.successAdminPayCancel(pno);
+		}
+		// 이미 취소한 경우.
+		else if ( success == -1 ) {
+			msg = "이미 취소된 결제입니다.";
+			
+			ls.successAdminPayCancel(pno);
+		}
+		// 실패한 경우
+		else {
+			msg = "결제 취소가 실패했습니다. 관리자에게 문의하세요.";
+		}
+
+		
+		return msg;
+	}
 	
 	///////////////////////////////////////
 	//admin설정 시작
@@ -1525,7 +1783,7 @@ public class MemberController {
 										@RequestParam(value="phone") String phone,
 										@RequestParam(value="preMprofile") String preMprofile,
 										@RequestParam(value="email") String email,
-										//@RequestParam(value="birth") Date birth,
+										@RequestParam(value="newPwd", required=false, defaultValue="no") String newPwd,
 										//@RequestParam(value="gender") String gender,
 										@RequestParam(value="favor", required=false, defaultValue="no") String[] favor,
 										@RequestParam(value="cover", required=false) String cover,
@@ -1569,7 +1827,10 @@ public class MemberController {
 			}
 				
 				/*********** MultipartFile을 이용한 파일 업로드 처리 로직 끝 **********/
-				
+			if(!"no".equals(newPwd)) {
+				String encodedPassword = bcryptPasswordEncoder.encode(newPwd);
+				member.setPwd(encodedPassword);
+			  }
 			  member.setMno(Integer.parseInt(mno));
 		      member.setMname(mname);
 		      member.setPhone(phone);
@@ -1884,7 +2145,7 @@ public class MemberController {
 		if (result > 0)
 			msg = "강사신청이 됬습니다. 결과를 기다려 주세요";
 		else
-			msg = "회원가입실패!";
+			msg = "강사신청이 실패!";
 
 		mav.addObject("loc", loc);
 		mav.addObject("msg", msg);
@@ -2412,8 +2673,8 @@ public class MemberController {
 		map.put("list", list);
 		return map;
 	}
-	@RequestMapping("/member/memberSelectONEView.do")
-	public ModelAndView memberSelectONEView(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
+	@RequestMapping("/member/selectViewMember.do")
+	public ModelAndView selectViewMember(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
 		ModelAndView mav = new ModelAndView();
 		System.out.println(mid);
 		Member m = memberService.selectOneMember(mid);
@@ -2604,19 +2865,146 @@ public class MemberController {
 	
 	
 	
-	/*김률민 2018 07 07 추가 작업*/
-	
-	
-	@RequestMapping(value="/member/messageList", method=RequestMethod.GET)
+	/*김률민 2018 07 07 추가 작업**************************************************************************/
+	@RequestMapping(value="/member/memberMessageList", method=RequestMethod.GET)
 	@ResponseBody
-	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
+	public ModelAndView memberMessageList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
 										@RequestParam (required=false) Map<String, String> queryMap,
-										@PathVariable(value="location", required=false) String location, HttpServletRequest request){
+		 							@PathVariable(value="location", required=false) String location, HttpServletRequest request){
 		ModelAndView mav = new ModelAndView();
-	
+		int numPerPage = 10;
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
 		
+		if(m != null) {
+			queryMap.put("receivermno", String.valueOf(m.getMno()));
+			List<Map<String, String>> listAll = messageService.messageList();
+			List<Map<String, String>> listQuery = messageService.messageList(queryMap);
+			List<Map<String, String>> listQueryPage = messageService.messageList(cPage, numPerPage, queryMap);
+			
+			
+			int totalCount = messageService.messageCount(queryMap);
+			
+			mav.addObject("count", totalCount);
+			mav.addObject("numPerPage", numPerPage);
+			
+			mav.addObject("listAll", listAll);
+			mav.addObject("listQuery", listQuery);
+			mav.addObject("listQueryPage", listQueryPage);
+		}
+		
+		return mav; 
+	}
+
+	
+	
+
+	
+	/*****   장익순 작업 ****/
+	@RequestMapping("/member/selectViewInstructor.do")
+	public ModelAndView selectViewInstructor(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {
+		ModelAndView mav = new ModelAndView();
+		System.out.println(mid);
+		Member m = memberService.selectOneMember(mid);
+		List<Map<String,String>> reviewList = memberService.selectMemberReviewList(m.getMno());
+		
+		
+		Map <String,Object> map = new HashMap<>();
+		map.put("eval", "exp");
+		map.put("mno", m.getMno());
+		
+		Map<String, Object> list = memberService.searchEvaluation(map);
+		List<Map<String,Object>> gradeList = memberService.selectGradeList();
+		//경험치 및 포인트 등급 보여주기
+		List<Map<String,Object>> replyList = memberService.selectmemberReply(m.getMno());
+		Map<String,String> instruct = memberService.selectOneInstruct(m.getMno());
+		System.out.println("size = "+size);
+		if(size==10) {
+			mav.addObject("size",size);
+			List<Map<String, String>> category = memberService.selectCategory();
+			
+			System.out.println(category);
+			mav.addObject("category", category);
+		}
+		
+		//평가 관리 페이지로 이동
+		mav.addObject("instruct", instruct); 
+		mav.addObject("eval", "exp"); 
+		mav.addObject("list", list); 
+		mav.addObject("gradeList", gradeList); 
+		mav.addObject("gradeMin", gradeList.get(0)); 
+		mav.addObject("gradeMax", gradeList.get(gradeList.size()-1)); 
+		mav.addObject("replyList",replyList);
+		mav.addObject("m",m);
+		mav.addObject("reviewList", reviewList);
+		mav.setViewName("instructor/selectViewInstructor");
+		return mav;
+	}
+	
+	/*****장익순 작업 끝******/
+	@RequestMapping(value="/member/memberMessageView", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView memberMessageView(@RequestParam (value="messageNo", required=false, defaultValue="1") int messageNo, 
+										  @RequestParam (required=false) Map<String, String> queryMap,
+										  HttpServletRequest request){
+		ModelAndView mav = new ModelAndView("jsonView");
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
+		
+		
+		
+		
+		if(m != null) {
+/*			queryMap.put("mno", String.valueOf(m.getMno()));*/
+			queryMap.put("messageNo", String.valueOf(messageNo));
+			queryMap.put("receivermno", String.valueOf(m.getMno()));
+			queryMap.put("checkdate", "checkdate");
+			
+			Map<String, String> resultMap = messageService.messageOne(queryMap);
+			System.out.println(resultMap);
+			
+			if(resultMap.get("MESSAGENO") != null ) {
+				int readCheck = messageService.messageReadCheck(queryMap);
+				if(readCheck > 0 ) {
+				  resultMap = messageService.messageOne(queryMap);	
+	              ObjectMapper mapper = new ObjectMapper();
+	              int count = messageService.messageCount(queryMap);
+					  Message message = new Message("view:message", String.valueOf(m.getMno()), String.valueOf(m.getMno()), queryMap.get("messageNo")+"^"+String.valueOf(resultMap.get("CHECKDATE")), count);
+		  				try {
+							echoHandler.handleMessage(echoHandler.getSessions().get( String.valueOf(m.getMno())), new TextMessage(mapper.writeValueAsString(message)));
+						} catch (JsonProcessingException e) {
+							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+				}
+			}
+			mav.addObject("resultMap", resultMap);
+		}
 		
 		return mav; 
 	}
 	
+	@RequestMapping(value="/member/memberSearch", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView memberSearch(@RequestParam (value="searchType", required=false, defaultValue="") String searchType,
+									 @RequestParam (value="mname", required=false, defaultValue="") String mname,
+								     @RequestParam (required=false) Map<String, String> queryMap,
+										  HttpServletRequest request){
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
+		if(m != null) {
+			List<Map<String, String>> resultListMap = memberService.memberSearch(queryMap);
+			mav.addObject("resultListMap", resultListMap);
+		}else {
+			mav.addObject("msg", "로그인후 이용해 주세요");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
+		}
+		
+		return mav; 
+	}
+	
+	
+	/*김률민 2018 07 07 추가 작업**************************************************************************/
 }

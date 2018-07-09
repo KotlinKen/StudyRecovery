@@ -25,7 +25,7 @@
 
 	<div class="form-row">
 		<div class="form-group col-md-12">
-			<label for="content">광고 내용을 간략히 적어주세요.</label>
+			<label for="content"> 내용을 간략히 적어주세요.</label>
 			<textarea class="form-control summernote" name="content" id="summernote" rows="2" class="" required="required">${board.CONTENT}</textarea>
 		</div>
 	</div>

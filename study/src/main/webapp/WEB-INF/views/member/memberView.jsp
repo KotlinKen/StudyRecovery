@@ -28,14 +28,14 @@
 		text-align: center;
 		position: relative;
 		top: 0;
-		left: 680px;
+		left: 480px;
 		display: inline;
 	}
 	div.btn-center2{
 		text-align: center;
 		position: relative;
 		top: -43px;
-		left: 760px;
+		left: 560px;
 		display: inline;
 	}
 	/* 수정하기 버튼 css */
@@ -63,10 +63,6 @@
 		font-size: 20px;
 		display:none;
 	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
-	}
 	div.background{
 		background: #ffffff;
 	}
@@ -75,6 +71,9 @@
 		height: auto;
 	    display: inline-block;
 	    word-wrap: break-word;
+	}
+	input[type=file]{
+		background: white;
 	}
 </style>
 <div class="background">
@@ -101,6 +100,8 @@
          		<td>
          			<input type="text" class="hiddencss" name="mname" id="name" size="30px" maxlength="7" value="${memberLoggedIn.mname }" autocomplete="off" />
          			<span>${memberLoggedIn.mname }</span> 
+         			<p id="nameerr" class="name"></p> 
+					<p id="nameok" class="name"></p> <br /> 
          		</td>
          	</tr>
          	<tr>
@@ -144,7 +145,7 @@
                          data-toggle="modal" 
                          data-target="#emailUpdate">이메일 변경</button>
                   <span>${memberLoggedIn.email }</span> 
-                  <input type="email" class="hiddencss" name="email" id="email" value="${memberLoggedIn.email }" readonly /> 
+                  <input type="email" class="hiddencss" name="email" id="email" size="40px" autocomplete="off" value="${memberLoggedIn.email }" readonly /> 
          		</td>
          	</tr>
          	<tr>
@@ -164,12 +165,17 @@
          		<th> 관심사</th>
          		<td>
          			<span>
+         			<c:if test="${!(memberLoggedIn.favor[0] eq 'no') }">
 	                  <c:forEach var="f" items="${memberLoggedIn.favor }" varStatus="vs">
 	                  <c:if test="${vs.index != 0 }">
 	                  ,
 	                  </c:if>
 	                  	${f }
 	                  </c:forEach>
+         			</c:if>
+         			<c:if test="${memberLoggedIn.favor[0] eq 'no' }">
+         			없음
+         			</c:if>
 	                 </span>
          			<%
                   	Member m = (Member)request.getAttribute("memberLoggedIn");
@@ -253,19 +259,19 @@
             </div>
             <form action="${pageContext.request.contextPath }/member/newEmail.do" method="post" onsubmit="return emailDuplicateCheck();">
             <div class="modal-body">
-               <input type="email" class="form-control" name="email" id="newEmail" placeholder="이메일 변경" required/>
-               <button type="button" class="btn btn-outline-success" id="emailUpdate">인증번호 발송</button>
+               <input type="email" class="form-control" name="email" id="newEmail" placeholder="이메일 변경" autocomplete="off" required/>
+               <button type="button" class="btn btn-outline-success btncss" id="emailUpdate"  value="0">인증번호 발송</button>
                <br />
                <input type="hidden" id="send" value="duplication" />
-               <input type="text" class="form-control" id="key" style="width:200px; display:inline" placeholder="인증키 입력" />
+               <input type="text" class="form-control" id="key" style="width:200px; display:inline" autocomplete="off" placeholder="인증키 입력" />
                <input type="hidden" id="keyCheck" value="check" />
-               <button type="button" class="btn btn-outline-success" id="emailUpdateCheck">인증번호 확인</button>
+               <button type="button" class="btn btn-outline-success btncss" id="emailUpdateCheck">인증번호 확인</button>
                <span class="check-no" >불일치</span>
             <span class="check-yes" >일치</span>
             <input type="hidden" id="email-ok" value="1" />
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-outline-success">변경</button>
+              <button type="submit" class="btn btn-outline-success btncss">변경</button>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
             </form>
@@ -301,16 +307,21 @@
 		//이메일 변경
 		$("[type=button]#emailUpdate").click(function() {
 			var newEmail = $("#newEmail").val().trim();
-			
-			if ($("#newEmail").val().trim() == "") {
-				alert("새로 변경할 이메일을 입력해주세요.");
-			}
-			if ($("input#send").val() == "duplication") { //이메일이 중복되는지 체크하기
-				emailDuplication(newEmail);
-			}
-			if ($("input#send").val() == "keySend") { //조건문 바꿔야함.
-				//console.log("확인"+$("#send").val());
-				emailSendKey(newEmail);
+			var once = $(this).val();
+			if(once=='0'){
+				if ($("#newEmail").val().trim() == "") {
+					alert("새로 변경할 이메일을 입력해주세요.");
+				}
+				if ($("input#send").val() == "duplication") { //이메일이 중복되는지 체크하기
+					emailDuplication(newEmail);
+				}
+				if ($("input#send").val() == "keySend") { //조건문 바꿔야함.
+					//console.log("확인"+$("#send").val());
+					emailSendKey(newEmail);
+				}
+				$(this).val("1");
+			} else{
+				alert("새로고침을 하고 다시 시도 해주세요.");
 			}
 		});
 

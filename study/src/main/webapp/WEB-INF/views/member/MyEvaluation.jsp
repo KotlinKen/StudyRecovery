@@ -32,12 +32,11 @@
 	select#subject{
 		display:none;
 	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
-	}
 	div.background{
 		background: #ffffff;
+	}
+	h5.npoint{
+		margin-top: 50px;
 	}
 </style>
 <div class="background">
@@ -70,7 +69,7 @@
 				  <input type="range" min="${gradeMin.POINT }" max="${gradeMax.POINT }" value="${list.point }" class="slider" id="myRange" disabled>
 				</div>
 				<c:forEach var="g" items="${gradeList }" varStatus="vs">
-				<span style="position:absolute; left: ${((37*(vs.index))/2)*0.77+16}%;">
+				<span style="position:absolute; left: ${((28*(vs.index))/2)*0.77+24}%;">
 				${g.STATUS } 
 				</span>
 				</c:forEach>
@@ -148,12 +147,6 @@
 					String myPage = String.valueOf(request.getAttribute("myPage"));
 					String searchKwd = String.valueOf(request.getAttribute("searchKwd"));
 					String kwd = String.valueOf(request.getAttribute("kwd"));
-					/* 
-					String type = String.valueOf(request.getAttribute("type"));
-					String applyDate = String.valueOf(request.getAttribute("applyDate"));
-					String lno = String.valueOf(request.getAttribute("lno"));
-					String tno = String.valueOf(request.getAttribute("tno"));
-					String dno = String.valueOf(request.getAttribute("dno")); */
 					
 					int cPage = 1;
 					try{
@@ -166,50 +159,67 @@
 	
 		</c:if>
 		<c:if test="${myPage eq 'npoint' }">
-			<h5>당신의 지식 점수는 ${list.NPOINT }입니다.</h5>
-			
+			<h5 class="npoint">당신의 지식 점수는 <strong style="font-size: 30px;">${list.NPOINT }</strong>입니다.</h5>
+			<br />
 			<!-- 
 				게시판 내가쓴 글..
-					번호, 타입(1:1), 제목, 내용, 댓글 수, 등록일, 채택 여부, 자세히 버튼	
+					번호, 제목, 내용, 댓글 수, 등록일, 채택 여부, 자세히 버튼	
 				게시판 채택된 글..
-					번호, 타입(1:1), 게시판 제목, 게시판 내용, 채택 여부, 자세히 버튼
+					번호, 게시판 제목, 게시판 내용, 채택 여부, 자세히 버튼
 			 -->
-			<%-- 
+			 <form action="searchMyPageEvaluation.do" id="formSearch" autocomplete="off" style="display: inline">
+					<select name="searchKwd">
+						<option value="title" ${searchKwd eq 'title'?'selected':'' }>제목</option>
+						<option value="captain" ${searchKwd eq 'captain'?'selected':'' }>내용</option>
+					</select>
+					<input type="text" name="kwd" value="${kwd eq ''?'':kwd }"/>
+					<input type="hidden" name="myPage" value="npoint" />
+					<button type='submit' id='btn-search'><span class='icon'><i class='fa fa-search'></i></span></button>
+				</form> 
 			<table>
 				<tr>
-					<td>번호</td>
-					<td>타입</td>
-					<td>제목</td>
-					<td>내용</td>
-					<td>댓글 수</td>
-					<td>등록일</td>
-					<td>채택 여부</td>
-					<td>보기</td>
+					<th>번호</th>
+					<th>제목</th>
+					<th>내용</th>
+					<th>등록일</th>
+					<th>채택 여부</th>
+					<th>보기</th>
 				</tr>
-				<c:forEach var="ms" items="${pointList}" varStatus="vs" >
+				<c:forEach var="ms" items="${replyList}" varStatus="vs" >
 						<tr>
 							<td>${(numPerPage*cPage)-(numPerPage-1)+vs.index }</td>
-							<td>${ms.title }</td>
-							<td>${ms.captain}</td>
-							<td>${ms.type }</td>
-							<td>${ms.subjectname }</td>
-							<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
+							<td>${ms.TITLE }</td>
+							<td>${ms.CONTENT }</td>
+							<td>${ms.REGDATE }</td>
 							<td>
-								<c:if test="${ms.point eq '1000' }">
-									좋아요
-								</c:if>
-								<c:if test="${ms.point eq '-1000' }">
-									싫어요
-								</c:if>
+							<c:if test="${(ms.FORK eq '0') or (ms.FORK == null) }">
+							x
+							</c:if>
+							<c:if test="${!((ms.FORK eq '0') or (ms.FORK == null)) }">
+							O
+							</c:if>
 							</td>
-							<td>${ms.content }</td>
 							<td>
-								<button type=button class="btn btn-outline-success btncss btn-detail " value="${ms.type },${ms.sno }">자세히</button>
+								<button type=button class="btn btn-outline-success btncss btn-detail " value="${ms.BNO }">자세히</button>
 							</td>					
 						</tr>
 					</c:forEach>
 			</table>
-			 --%>
+			<%
+					int rtotalContents = Integer.parseInt(String.valueOf(request.getAttribute("rcount")));
+					int rnumPerPage = Integer.parseInt(String.valueOf(request.getAttribute("rnumPerPage")));
+					String myPage = String.valueOf(request.getAttribute("myPage"));
+					String searchKwd = String.valueOf(request.getAttribute("searchKwd"));
+					String kwd = String.valueOf(request.getAttribute("kwd"));
+					
+					int rcPage = 1;
+					try{
+						rcPage = Integer.parseInt(request.getParameter("cPage"));
+					}catch(NumberFormatException e){
+						
+					}
+				%>
+			<%=com.pure.study.common.util.MyPageUtil.getPageBar(rtotalContents, rcPage, rnumPerPage,"searchMyPageEvaluation.do?", myPage) %>
 		</c:if>
 	</div>
 	<br />
@@ -314,9 +324,9 @@
 		
 		//스터디 자세히 보기
 		$(".btn-detail ").click(function(){
-			var sno = $(this).val();
+			var bno = $(this).val();
 			
-			location.href="${rootPath}/study/studyView.do?sno="+sno;
+			location.href="${rootPath}/board/boardView?type=일반&bno="+bno;
 		});
 	</script>
 	

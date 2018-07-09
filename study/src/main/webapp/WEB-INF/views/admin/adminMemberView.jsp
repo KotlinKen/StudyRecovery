@@ -70,7 +70,7 @@
          	<tr>
          		<th>비밀번호 변경</th>
          		<td>
-         			어떻게 할까~?
+         			<input type="password" name="newPwd" id="newPwd" size="30px"  value="" autocomplete="off" />
          		</td>
          	</tr>
          	<tr>
@@ -101,14 +101,14 @@
          		<th>이메일 변경</th>
          		<td>
          			 <span>${member.email }</span> 
-                  <input type="email" name="email" id="email" value="${member.email }" readonly /> 
+                  <input type="email" name="email" id="email" value="${member.email }" autocomplete="off" /> 
          		</td>
          	</tr>
          	<tr>
          		<th>생년월일</th>
          		<td>
          			 <span>${member.birth }</span> 
-         			<input type="date" name="birth" id="birth" value="${member.birth }" readonly />
+         			<input type="date" name="birth" id="birth" value="${member.birth }" />
          		</td>
          	</tr>
          	<tr>
@@ -121,9 +121,14 @@
          		<th> 관심사</th>
          		<td>
                   <span>
+                  <c:if test="${!(member.favor[0] eq 'no') }">
                   <c:forEach var="f" items="${member.favor }">
                   	${f }
                   </c:forEach>
+                  </c:if>
+                  <c:if test="${member.favor[0] eq 'no' }">
+         			없음
+         		  </c:if>
                   </span>
                   <%
                   	Member m = (Member)request.getAttribute("member");
@@ -182,6 +187,27 @@
 					}
 				}
 			});
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = new String(date.getMonth()+1);
+			var day = new String(date.getDate());
+			
+			if(month.length == 1 )
+				month = "0" + month;
+			if( day.length == 1 )
+				day = "0" + day;
+			
+			var today = year + "-" + month + "-" + day;
+			
+			$("#birth").attr("min", "");
+			$("#birth").attr("max", today);
+			$("#birth").blur(function(){
+				var birth = $(this).val();
+				if(birth>today){
+					alert("생년월일이 오늘보다 빠를 수 없습니다.");
+					this.value = this.defaultValue;
+				}
+			});
 		})
 		$("#updateForm").click(function(){
 			$("input").attr("style","display: inline-block");
@@ -191,7 +217,6 @@
 			$("#cover").attr("style","display: block");
 			$("p#length").attr("style","display: block");
 		});
-		
 	</script>
 	<%-- 
 	<form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >

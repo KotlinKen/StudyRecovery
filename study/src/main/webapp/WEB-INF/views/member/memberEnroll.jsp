@@ -24,7 +24,7 @@
 <script src="${rootPath}/resources/js/member/enroll.js"></script>
 <link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/enroll.css" />
 <style type="text/css">
-body {background: lightblue url("${rootPath}/resources/images/laptop.jpg") no-repeat fixed center;}
+body { background: #efefef;}
 #upFile{width: 0px; height: 0px; position: absolute; left: -100px;}
 </style>
 </head>
@@ -54,6 +54,7 @@ body {background: lightblue url("${rootPath}/resources/images/laptop.jpg") no-re
 					<input type="password" name="pwd" id="password_"  maxlength="15" placeholder="비밀번호(필수)" required autocomplete="off"  /> <br /> 
 					<span id="pwd"></span>  
 					<span id="pwdok"></span>  
+					<br />
 					<input type="password" id="password2" placeholder="비밀번호 확인(필수)"  maxlength="15"  required autocomplete="off"  /> <br /> 
 					<span id="pwd2"></span> 
 					<span id="pwd2ok"></span> 
@@ -67,7 +68,7 @@ body {background: lightblue url("${rootPath}/resources/images/laptop.jpg") no-re
 			
 			<!-- 이름 -->
 			<div>
-				<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off"  />
+				<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off"  /><br />
 				<span id="nameerr" class="name"></span> 
 				<span id="nameok" class="name"></span> <br /> 
 			</div>
@@ -83,14 +84,15 @@ body {background: lightblue url("${rootPath}/resources/images/laptop.jpg") no-re
 			<input type="text" name="email" id="emailaddr" placeholder="직접입력"  maxlength="20" required  autocomplete="off"  />
 			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-primary"/> 
 			<input type="hidden" id="checkcertification" value="0" /> 
+			<br /><br />
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
 			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-primary" /> 
 			<span id="countDown"></span>
 			<input type="hidden" id="checkPoint" value="0" /> <br />
-			
+			<br />
 			<!-- 생일 -->
 			<p class="textP">생년월일(필수)</p><input type="date" name="birth" id="birth" placeholder="생년월일" required/><br />
-			
+			<br />
 			<!-- 성별 -->
 			<span class="jender">
 			<input type="radio" name="gender" value="M" id="male" checked /> <label for="male">남</label> 

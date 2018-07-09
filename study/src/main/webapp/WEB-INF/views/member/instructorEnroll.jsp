@@ -24,7 +24,7 @@
 <script src="${rootPath}/resources/js/member/enroll.js"></script>
 <link type="text/css"  rel="stylesheet" href="${rootPath}/resources/css/member/enroll.css" /><base>
 <style type="text/css">
-body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-910261_1920.jpg") no-repeat fixed left;}
+body { background: #efefef;}
 </style>
 </head>
 <body>
@@ -53,6 +53,7 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 					<input type="password" name="pwd" id="password_" placeholder="비밀번호(필수)"  maxlength="15" required autocomplete="off"  /> <br /> 
 					<span id="pwd"></span>  
 					<span id="pwdok"></span>  
+					<br />
 					<input type="password" id="password2" placeholder="비밀번호 확인(필수)"  maxlength="15"  required autocomplete="off"  /> <br /> 
 					<span id="pwd2"></span> 
 					<span id="pwd2ok"></span> 
@@ -64,7 +65,7 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 			<div id="name-phone-email-gender-div-ik">
 			
 			<!-- 이름 -->
-			<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off"  />
+			<input type="text" name="mname" id="name" placeholder="이름(필수)"  maxlength="7" required  autocomplete="off"  /><br />
 			<span id="nameerr" class="name"></span> 
 			<span id="nameok" class="name"></span> <br /> 
 			
@@ -76,14 +77,15 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 			<input type="text" name="email" id="email" placeholder="이메일(필수)" required  maxlength="15"  autocomplete="off"  /> @ 
 			<input type="text" name="email" id="emailaddr" placeholder="직접입력" required  maxlength="20"  autocomplete="off"  />
 			<input type="button" value="인증번호" onclick="fn_certification();" class="btn btn-primary"/> 
-			<input type="hidden" id="checkcertification" value="0" /> 
+			<input type="hidden" id="checkcertification" value="0" /> <br /><br />
 			<input type="text" id="inputCode" placeholder="인증번호를 입력하세요" required autocomplete="off"/>
-			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-primary" /> 
+			<input type="button" value="확인" onclick="checkJoinCode();" class="btn btn-primary" />  <br />
 			<span id="countDown"></span>
 			<input type="hidden" id="checkPoint" value="0" /> <br />
 			
 			<!-- 생년월일 -->
 			<label for="birth" class="textP">생년월일(필수)</label><input type="date" name="birth" id="birth" required/><br />
+				<br />
 			<span class="jender">
 			<input type="radio" name="gender" value="M" id="male" checked /> <label for="male">남</label> 
 			</span>
@@ -91,11 +93,11 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 			<input type="radio" name="gender" value="F"id="fmale" /> <label for="fmale">여</label> <br /> 
 			</span><br /><br />
 			</div>
-			<div class="blank-ik"></div>
-			<br /><br />
+			<br />
 
 			<!-- 사진 올리기 -->
 			<label for="upFile" class="textP">프로필사진(필수)</label><input type="file" name="upFile" id="upFile" accept="image/*" /> 
+				<button type="button" class="btn btn-primary" id="btn_noFile">취소</button> 
 			<input type='hidden' name='mprofile' id="mprofile" value='noprofile.jpg' />
 			<div id="div-img-ik"></div>
 			<br />
@@ -110,7 +112,7 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 			<!-- 카테고리 설정 -->
 			<div class="form-check-inline form-check">
 				<label for="kind">카테고리</label>
-				<select name="kno" id="kind"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
+				<select name="kno" id="kind" class="custom-select"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
 					<option value="-1">과목을 선택하세요.</option>
 					
 					<c:if test="${!empty kindList }">
@@ -119,9 +121,7 @@ body {background: lightblue url("${rootPath}/resources/images/birger-kollmeier-9
 					</c:forEach>
 					</c:if>
 				</select>
-				<select name="sno" id="sub"> <!-- ajax로 kind가져오기 -->
 				
-				</select>
 			</div>
 
 			<br />  <br />
