@@ -427,20 +427,20 @@ $(function(){
 		</select>
 		<select name="tno" id="town">
 		</select>	
-		<label for="title">스터디 제목 : </label><input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
+		<input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
 		<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
 		<label for="depart">카테고리</label>
 		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
 		<select name="subno" id="subject"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
 		</select>
-		<label for="diff">난이도 : </label>
+		<label for="diff">난이도  </label>
 		<select name="dno" id="diff">
 			<option value="1">입문</option>
 		</select><br />
-		<label for="ldate">신청마감 : </label><input type="date" name="ldate" id="ldate" />
+		<label for="ldate">신청마감  </label><input type="date" name="ldate" id="ldate" />
 		<label for="schedule">스터디 일정 : </label><input type="date" name="sdate" id="sdate" class="changeDate"/>~<input type="date" name="edate" id="edate" class="changeDate" /><br />
-		<label for="freq">스터디빈도 : </label>
+		<label for="freq">스터디빈도  </label>
 		<label>일 </label><input type="checkbox" name="freq" class="day" value="일"/>
 		<label>월 </label><input type="checkbox" name="freq" class="day" value="월"/>
 		<label>화 </label><input type="checkbox" name="freq" class="day" value="화"/>

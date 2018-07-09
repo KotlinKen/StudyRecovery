@@ -269,6 +269,9 @@ section.leader-information{
 	position:relative;
 	background:white;
 	overflow: hidden;
+	width: 700px;
+    height: 400px;
+	
 }
 div.introduce-wrap{
 	overflow: hidden;
@@ -491,16 +494,52 @@ li.review-one{
 	<div class="leader-wrap">
 		<header class="front-leader section-label" style="
     margin-bottom: 20px;">
-			
+		<c:set value="${study.POINT/memberAvg.AVGPOINT }"/>
 		<h3 class="leader-label">리더소개</h3>
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 		<div class="pointrange" id="pointrange">
 			<label for="">포인트 </label><br /> 
-			<p class="score">${study.POINT }/${memberAvg.AVGPOINT }</p>
+			<p></p>/<p></p>
+			<%-- <c:if test="${study.POINT/memberAvg.AVGPOINT=>1 }">
+				<p style="style:'color:green'">${study.POINT }</p>
+			</c:if>
+			<c:if test="${study.POINT/memberAvg.AVGPOINT>=0.4||study.POINT/memberAvg.AVGPOINT<1 }">
+				<p style="style:'color:orange'">${study.POINT }</p>
+			</c:if>
+			<c:if test="${study.POINT/memberAvg.AVGPOINT<0.4}">
+				<p style="style:'color:red'">${study.POINT }</p>
+			</c:if>
+			/<p class="score">${memberAvg.AVGPOINT }</p>
+			
+			
+			<c:if test="${study.NPOINT/memberAvg.AVGNPOINT=>1 }">
+				<p style="style:'color:green'">${study.NPOINT }</p>
+			</c:if>
+			<c:if test="${study.NPOINT/memberAvg.AVGNPOINT>=0.4||study.NPOINT/memberAvg.AVGNPOINT<1 }">
+				<p style="style:'color:orange'">${study.NPOINT }</p>
+			</c:if>
+			<c:if test="${study.NPOINT/memberAvg.AVGNPOINT<0.4}">
+				<p style="style:'color:red'">${study.NPOINT }</p>
+			</c:if>
+			/<p class="score">${memberAvg.AVGNPOINT }</p>
+			
+			
+			
+			<c:if test="${(study.EXP/memberAvg.AVGNEXP)=>1 }">
+				<p style="style:'color:green'">${study.EXP }</p>
+			</c:if>
+			<c:if test="${(study.EXP/memberAvg.AVGNEXP)>=0.4||(study.EXP/memberAvg.AVGEXP)<1 }">
+				<p style="style:'color:orange'">${study.EXP }</p>
+			</c:if>
+			<c:if test="${(study.EXP/memberAvg.AVGEXP)<0.4}">
+				<p style="style:'color:red'">${study.EXP }</p>
+			</c:if>
+			/<p>${study.EXP }</p>/<p class="score">${memberAvg.AVGEXP }</p> --%>
+		<%-- 	
 			<label for="">지식포인트 </label><br /> 
-			<p class="score">${study.NPOINT }/${memberAvg.AVGNPOINT }</p>
-			<label for="">경험치 </label><br /> 
-			<p class="score">${study.EXP }/${memberAvg.AVGEXP }</p>
+			<p>${study.NPOINT }</p>/<p class="score">${memberAvg.AVGNPOINT }</p>
+			<label for="">경험치 </label><br />  --%>
+			
 		</div>
 		</header>
 	

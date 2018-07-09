@@ -159,10 +159,15 @@ public class StudyController {
 		System.out.println("eHour="+eHour);
 		String msg="";
 		String loc="/";
+		
+		Map<String,Object> map = new HashMap<>();
+		map.put("mno",m.getMno());
+		map.put("key", "crew");
 		// 같은 날짜, 요일, 시간에 있는지를 검사해봅시다..
-		List<Map<String,Object>> ownStudyList=studyService.selectOwnStudyList(m.getMno());
+		List<Map<String,Object>> ownStudyList=studyService.selectStudyListBySno(map);
 	      long lectureSdate = study.getSdate().getTime();
 	      long lectureEdate = study.getEdate().getTime();
+	      System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 	      
 	      for(int j = 0; j < ownStudyList.size(); j++) {
 	         Date sdate =(Date) ownStudyList.get(j).get("SDATE");
@@ -177,13 +182,12 @@ public class StudyController {
 		        	 System.out.println("포함되는 경우");
 		            // 요일을 검사해보자...
 		        	for(int k=0;k<freq.length;k++) {
-		        		System.out.println("####### k freq.length"+k);
-		        		if(ownStudyList.get(j).containsValue(freq[k])) {
-		        			System.out.println("ddddddd"+Integer.parseInt(ownStudyList.get(j).get("STARTTIME").toString()));
-		        			
+		        		System.out.println("####### map "+ownStudyList.get(j).get("FREQ"));
+		        		if(ownStudyList.get(j).get("FREQ").toString().contains(freq[k])/* containsValue(freq[k])*/) {
+		        			System.out.println("ddddddd"+Integer.parseInt(ownStudyList.get(j).get("STIME").toString()));
 		        			
 		        			//등록된 시간에 포함되지 않는 경우
-		        			if(Integer.parseInt(ownStudyList.get(j).get("STARTTIME").toString()) > eHour || sHour > Integer.parseInt(ownStudyList.get(j).get("ENDTIME").toString()) ) {
+		        			if(Integer.parseInt(ownStudyList.get(j).get("STIME").toString()) > eHour || sHour > Integer.parseInt(ownStudyList.get(j).get("ETIME").toString()) ) {
 		        				 System.out.println("등록된 시간에 포함되지 않는 경우");
 		        			}else {
 		        				System.out.println("등록된 시간에 포함되는 경우 중복이다!!!!!!!!!!!!!!!!");
