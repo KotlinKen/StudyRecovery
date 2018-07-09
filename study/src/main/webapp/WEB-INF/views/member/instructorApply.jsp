@@ -232,13 +232,13 @@ body { background: #efefef;}
 			<!-- 파일 올리기 -->
 	
 		
-			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/> <br />
+			포트폴리오(필수) : <input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
 		
-			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br />
+			<span  class="text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br />
 			<br />
 			자기소개서(필수) : <input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
 			
-			<span class="card-body text-secondary" >.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
+			<span class="text-secondary" >.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span>
 			<br />
 			<br />
 			

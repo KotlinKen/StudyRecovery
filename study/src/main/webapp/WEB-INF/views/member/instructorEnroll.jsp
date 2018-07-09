@@ -105,9 +105,9 @@ body { background: #efefef;}
 			
 			<!-- 파일 올리기 -->
 			<label for="port" class="textP">포트폴리오(필수)</label><input type="file" name="psFile" id="port" required  accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls"/><br />
-			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
+			<span  class="text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
 			<label for="self" class="textP">자기소개서(필수)</label><input type="file" name="psFile" id="self" required accept=".txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls" /> <br />
-			<span  class="card-body text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
+			<span  class="text-secondary">.txt, .hwp, .docx , .pptx ,.ppt , xlsx ,.xls 형식 파일만 가능 합니다.</span><br /><br />
 			
 			<!-- 카테고리 설정 -->
 			<div class="form-check-inline form-check">
