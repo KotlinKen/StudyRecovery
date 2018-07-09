@@ -150,6 +150,34 @@ $(function(){
 		}
 		
 	});
+	
+	
+	if(Number($("span.score-point").text())>Number($("span.score-point").next().text())){
+		console.log($("span.score-point").text());
+		$("span.score-point").css("color","green");
+	}else if(Number($("span.score-point").text())<Number($("span.score-point").next().text())){
+		$("span.score-point").css("color","red");
+	}else{
+		$("span.score-point").css("color","orange");
+	}
+	
+	if(Number($("span.score-npoint").text())>Number($("span.score-npoint").next().text())){
+		$("span.score-npoint").css("color","green");
+	}else if(Number($("span.score-npoint").text())<Number($("span.score-npoint").next().text())){
+		$("span.score-npoint").css("color","red");
+	}else{
+		$("span.score-npoint").css("color","orange");
+	}
+	
+	
+	if(Number($("span.score-exp").text())>Number($("span.score-exp").next().text())){
+		$("span.score-exp").css("color","green");
+	}else if(Number($("span.score-exp").text())<Number($("span.score-exp").next().text())){
+		$("span.score-exp").css("color","red");
+	}else{
+		$("span.score-exp").css("color","orange");
+	}
+	
 });
 	
 </script>
@@ -399,6 +427,9 @@ li.review-one{
    cursor: pointer;
    transform: translateY(11px);
 }
+p.rContent{
+	margin-top:10px;
+}
 
 
 </style>
@@ -494,51 +525,13 @@ li.review-one{
 	<div class="leader-wrap">
 		<header class="front-leader section-label" style="
     margin-bottom: 20px;">
-		<c:set value="${study.POINT/memberAvg.AVGPOINT }"/>
 		<h3 class="leader-label">리더소개</h3>
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 		<div class="pointrange" id="pointrange">
 			<label for="">포인트 </label><br /> 
-			<p></p>/<p></p>
-			<%-- <c:if test="${study.POINT/memberAvg.AVGPOINT=>1 }">
-				<p style="style:'color:green'">${study.POINT }</p>
-			</c:if>
-			<c:if test="${study.POINT/memberAvg.AVGPOINT>=0.4||study.POINT/memberAvg.AVGPOINT<1 }">
-				<p style="style:'color:orange'">${study.POINT }</p>
-			</c:if>
-			<c:if test="${study.POINT/memberAvg.AVGPOINT<0.4}">
-				<p style="style:'color:red'">${study.POINT }</p>
-			</c:if>
-			/<p class="score">${memberAvg.AVGPOINT }</p>
-			
-			
-			<c:if test="${study.NPOINT/memberAvg.AVGNPOINT=>1 }">
-				<p style="style:'color:green'">${study.NPOINT }</p>
-			</c:if>
-			<c:if test="${study.NPOINT/memberAvg.AVGNPOINT>=0.4||study.NPOINT/memberAvg.AVGNPOINT<1 }">
-				<p style="style:'color:orange'">${study.NPOINT }</p>
-			</c:if>
-			<c:if test="${study.NPOINT/memberAvg.AVGNPOINT<0.4}">
-				<p style="style:'color:red'">${study.NPOINT }</p>
-			</c:if>
-			/<p class="score">${memberAvg.AVGNPOINT }</p>
-			
-			
-			
-			<c:if test="${(study.EXP/memberAvg.AVGNEXP)=>1 }">
-				<p style="style:'color:green'">${study.EXP }</p>
-			</c:if>
-			<c:if test="${(study.EXP/memberAvg.AVGNEXP)>=0.4||(study.EXP/memberAvg.AVGEXP)<1 }">
-				<p style="style:'color:orange'">${study.EXP }</p>
-			</c:if>
-			<c:if test="${(study.EXP/memberAvg.AVGEXP)<0.4}">
-				<p style="style:'color:red'">${study.EXP }</p>
-			</c:if>
-			/<p>${study.EXP }</p>/<p class="score">${memberAvg.AVGEXP }</p> --%>
-		<%-- 	
-			<label for="">지식포인트 </label><br /> 
-			<p>${study.NPOINT }</p>/<p class="score">${memberAvg.AVGNPOINT }</p>
-			<label for="">경험치 </label><br />  --%>
+			<span class="score-point">${study.POINT }</span>/<span>${memberAvg.AVGPOINT }</span><br />
+			<span class="score-npoint">${study.NPOINT }</span>/<span>${memberAvg.AVGNPOINT }</span><br />
+			<span class="score-exp">${study.EXP }</span>/<span>${memberAvg.AVGEXP }</span>
 			
 		</div>
 		</header>
@@ -567,8 +560,15 @@ li.review-one{
 					
 				</div>
 				<div class="review-detail section-content">
-					<span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
-					<pre>${r.CONTENT }</pre>
+					<span>${r.MNAME }</span>&nbsp;|&nbsp;
+					<c:if test="${r.POINT eq '1000' }">
+						<span style="color:blue;">${r.POINT }</span>점
+					</c:if>
+					<c:if test="${r.POINT ne '1000' }">
+						<span style="color:red;">${r.POINT }</span>점
+					</c:if>
+					
+					<p class="rContent">${r.CONTENT }</p>
 					<a href="studyView.do?sno=${r.SNO }">${r.TITLE }</a>
 					<p><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></p>
 				

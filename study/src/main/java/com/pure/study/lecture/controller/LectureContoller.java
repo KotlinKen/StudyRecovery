@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.lecture.model.vo.Lecture;
 import com.pure.study.member.model.vo.Member;
+import com.pure.study.study.model.service.StudyService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -37,6 +38,9 @@ public class LectureContoller {
 
 	@Autowired
 	private LectureService ls;
+	
+	@Autowired
+	private StudyService studyService;
 
 	private int numPerPage = 6;
 
@@ -270,7 +274,15 @@ public class LectureContoller {
 			}
 
 			Map<String, String> lecture = ls.selectLectureOne(sno);
-
+			
+			Map<String,Object> memberAvg = studyService.selectMemberAvg();
+			System.out.println("%%%%%%%%%%%%memberAvg"+memberAvg);
+			
+			
+			mav.addObject("memberAvg", memberAvg);
+			
+			
+			
 			mav.addObject("lecture", lecture);
 
 			mav.setViewName("lecture/lectureView");

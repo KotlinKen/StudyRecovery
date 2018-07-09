@@ -10,6 +10,26 @@
 div.forCopy{
 	display:none;
 }
+div.btn-form{
+	text-align:center;
+}
+div.btn-form input[type=submit]{
+	background:#0056e9;
+	color:white;
+}
+div.btn-form input[type=reset]{
+	background:black;
+	color:white;
+	opacity: 0.6;
+}
+button.btn-upfile{
+	background:black;
+	color:white;
+	opacity: 0.6;
+}
+select#local, select#kind, select#subject, select#town, select#diff, select#endtime, select#starttime, select#recruit{
+	width:150px;
+}
 </style>
 		
 <script>
@@ -190,7 +210,7 @@ $(function(){
 		url:"selectLocal.do",
 		dataType:"json",
 		success:function(data){
-			var html="<option>선택하세요</option>";
+			var html="<option value='0'>선택하세요</option>";
 			for(var index in data){
 				html +="<option value='"+data[index].LNO+"'>"+data[index].LOCAL+"</option><br/>";
 			}
@@ -205,7 +225,7 @@ $(function(){
 	 $("select#local").on("change",function(){
 		 var lno=$("select#local option:selected").val();
 
-		if(lno == ""){
+		if(lno == "0"){
 			$("#town").hide();
 			return;
 		}
@@ -423,19 +443,19 @@ $(function(){
 	<form action="studyFormEnd.do" name="studyFrm" method="post" onsubmit="return validate();" enctype="multipart/form-data">
 		
 		<label for="local">지역 : </label>
-		<select name="lno" id="local">
+		<select name="lno" id="local" class="custom-select">
 		</select>
-		<select name="tno" id="town">
-		</select>	
+		<select name="tno" id="town" class="custom-select">
+		</select>
 		<input type="text" name="title" id="title" placeholder="제목" maxlength="100" class="form-control" required /><br />
 		<textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
 		<label for="depart">카테고리</label>
-		<select name="kno" id="kind"> <!-- ajax로 kind가져오기 -->
+		<select name="kno" id="kind" class="custom-select"> <!-- ajax로 kind가져오기 -->
 		</select>&nbsp;&nbsp;&nbsp;
-		<select name="subno" id="subject"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
+		<select name="subno" id="subject" class="custom-select"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
 		</select>
 		<label for="diff">난이도  </label>
-		<select name="dno" id="diff">
+		<select name="dno" id="diff" class="custom-select">
 			<option value="1">입문</option>
 		</select><br />
 		<label for="ldate">신청마감  </label><input type="date" name="ldate" id="ldate" />
@@ -450,14 +470,14 @@ $(function(){
 		<label>토 </label><input type="checkbox" name="freq" class="day" value="토"/> 
 		
 		<label for="starttime">스터디 시간</label>
-		<select name="starttime" id="starttime" class="time">
+		<select name="starttime" id="starttime" class="time custom-select">
 			<c:forEach var="i" begin="6" end="23">
 			<option value="${i }:00">${i }:00</option>
 			
 			</c:forEach>
 		</select>
 		
-		<select name="endtime" id="endtime" class="time">
+		<select name="endtime" id="endtime" class="time custom-select">
 			<c:forEach var="j" begin="7" end="24">
 			<c:if test="${j < 24}">
 				<option value="${j }:00">${j }:00</option>	
@@ -475,7 +495,7 @@ $(function(){
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>
-		<select name="recruit" id="recruit">
+		<select name="recruit" id="recruit" class="custom-select">
 			<c:forEach var="i" begin="2" end="10">
 				<option value="${i }">${i }명</option>
 			</c:forEach>
@@ -493,13 +513,15 @@ $(function(){
 			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
 			    <label class="custom-file-label">파일을 선택하세요</label>
 			  </div>
-			  <button type="button" class="addFile">+</button>
-			  <button type="button" class="removeFile">-</button>
+			  &nbsp;<button type="button" class="addFile btn-upfile btn">+</button>&nbsp;
+			  <button type="button" class="removeFile btn-upfile btn">-</button>
 		</div>
 		
-	
-		<input type="reset" value="취소하기" />
-		<input type="submit" value="등록하기" />
+		<div class="btn-form">
+			<input type="reset" class="btn" value="취소하기" />
+			<input type="submit" class="btn" value="등록하기" />
+		</div>
+		
 		
 			<!-- 테스트용 -->
 		<div id="output"></div>
@@ -515,8 +537,8 @@ $(function(){
 		    <label class="custom-file-label" >파일을 선택하세요</label>
 		  </div>
 		  
-		  <button type="button" class="addFile">+</button>
-		  <button type="button" class="removeFile">-</button>
+		  <button type="button" class="addFile btn-upfile btn">+</button>
+		  <button type="button" class="removeFile btn-upfile btn">-</button>
 	</div>
 </div>
 </div>

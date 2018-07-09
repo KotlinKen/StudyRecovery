@@ -199,6 +199,33 @@
          
       });
       
+      /* 강사의 포인트 점수 나타내기ㄷ*/
+      if(Number($("span.score-point").text())>Number($("span.score-point").next().text())){
+  		console.log($("span.score-point").text());
+  		$("span.score-point").css("color","green");
+  	}else if(Number($("span.score-point").text())<Number($("span.score-point").next().text())){
+  		$("span.score-point").css("color","red");
+  	}else{
+  		$("span.score-point").css("color","orange");
+  	}
+  	
+  	if(Number($("span.score-npoint").text())>Number($("span.score-npoint").next().text())){
+  		$("span.score-npoint").css("color","green");
+  	}else if(Number($("span.score-npoint").text())<Number($("span.score-npoint").next().text())){
+  		$("span.score-npoint").css("color","red");
+  	}else{
+  		$("span.score-npoint").css("color","orange");
+  	}
+  	
+  	
+  	if(Number($("span.score-exp").text())>Number($("span.score-exp").next().text())){
+  		$("span.score-exp").css("color","green");
+  	}else if(Number($("span.score-exp").text())<Number($("span.score-exp").next().text())){
+  		$("span.score-exp").css("color","red");
+  	}else{
+  		$("span.score-exp").css("color","orange");
+  	}
+      
       
       
    });
@@ -431,6 +458,10 @@ ul.reviews{
 li.review-one{
    overflow:hidden;
 }
+p.rContent{
+	margin-top:10px;
+}
+
 </style>
 <c:set var="imgs" value="${fn:split(lecture.UPFILE,',')}"/>
 <div class="leader-btn-wrap">   
@@ -524,6 +555,13 @@ li.review-one{
          
       <h3 class="leader-label">강사 소개</h3>
       <img src="${pageContext.request.contextPath }/resources/upload/member/${lecture.PROFILE}" alt="" class="leader-profile-image" />
+      <div class="pointrange" id="pointrange">
+			<label for="">포인트 </label><br /> 
+			<span class="score-point">${lecture.POINT }</span>/<span>${memberAvg.AVGPOINT }</span><br />
+			<span class="score-npoint">${lecture.NPOINT }</span>/<span>${memberAvg.AVGNPOINT }</span><br />
+			<span class="score-exp">${lecture.EXP }</span>/<span>${memberAvg.AVGEXP }</span>
+			
+		</div>
       </header>
    
       <div class="center-leader section-content">
@@ -549,8 +587,14 @@ li.review-one{
                <img src="${pageContext.request.contextPath }/resources/upload/member/${r.MPROFILE!=null? r.MPROFILE:'basicprofile.png'}" alt="" />
             </div>
             <div class="review-detail section-content">
-               <span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
-               <pre>${r.CONTENT }</pre>
+               <span>${r.MNAME }</span>&nbsp;|&nbsp;
+               <c:if test="${r.POINT eq '1000' }">
+						<span style="color:blue;">${r.POINT }</span>점
+					</c:if>
+					<c:if test="${r.POINT ne '1000' }">
+						<span style="color:red;">${r.POINT }</span>점
+				</c:if>
+               <p class="rContent">${r.CONTENT }</p>
                <a href="lectureView.do?sno=${r.SNO }">${r.TITLE }</a>
                <p><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></p>
             
@@ -584,18 +628,18 @@ li.review-one{
          <c:if test="${insert eq 0}">
          
             <c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
-               <button type="button" class="btn btn-apply" style="background:orange;" onclick="lectureApply();" >참여 신청하기</button>
+               <button type="button" class="btn btn-apply" onclick="lectureApply();" >참여 신청하기</button><br /><br />
                
                <!-- 찜 -->
                <c:if test="${wish eq 0}">
-                  <button type="button" class="btn btn-wish" onclick="lectureWish();">찜하기</button>
+                  <button type="button" class="btn btn-wish" onclick="lectureWish();">찜하기</button><br />
                </c:if>
                <c:if test="${wish ne 0}">
-                  <button type="button" class="btn btn-wish" onclick="lectureWishCancel();">찜 취소</button>
+                  <button type="button" class="btn btn-wish" onclick="lectureWishCancel();">찜 취소</button><br />
                </c:if>
             </c:if>         
             <c:if test="${lecture.STATUS == '모집 마감' || lecture.STATUS == '진행 중' || lecture.STATUS == '강의 종료'}">
-               <button type="button" class="btn btn-apply" onclick="lectureApply();" disabled>참여 신청하기</button>
+               <button type="button" class="btn btn-apply" onclick="lectureApply();" disabled>참여 신청하기</button><br /><br />
                
                <!-- 찜 -->
                <c:if test="${wish eq 0}">
@@ -610,10 +654,10 @@ li.review-one{
          <!-- 신청 취소 -->
          <c:if test="${insert ne 0}">
          <c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
-            <button type="button" class="btn btn-apply" onclick="lectureCancel();">신청 취소</button>
+            <button type="button" class="btn btn-apply" onclick="lectureCancel();">신청 취소</button><br /><br />
          </c:if>
          <c:if test="${lecture.STATUS == '모집 마감' || lecture.STATUS == '진행 중' || lecture.STATUS == '강의 종료'}">
-            <button type="button" class="btn btn-apply" onclick="lectureCancel();" disabled>신청 취소</button>
+            <button type="button" class="btn btn-apply" onclick="lectureCancel();" disabled>신청 취소</button><br /><br />
          </c:if>         
          </c:if>
       </c:if>
