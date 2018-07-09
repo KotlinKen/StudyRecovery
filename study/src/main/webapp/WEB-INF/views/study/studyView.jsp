@@ -55,7 +55,7 @@ function studyWish(sno){
 				success:function(data){
 					console.log("찜했다");
 					$("button#btn-wish").val("찜취소");
-					if(confirm("찜했습니다. 찜 장바구니로 가시겠습니까?")){
+					if(confirm("찜했하시겠습니까?")){
 						
 						location.href="${pageContext.request.contextPath}/member/searchMyPageKwd.do?myPage=wish";
 					}
@@ -354,6 +354,7 @@ li.review-one{
 }
 
 </style>
+<c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
 <div class="leader-btn-wrap">
 		<c:if test="${memberLoggedIn!=null }">
 		<c:if test="${memberLoggedIn.getMno()==study.MNO }">
@@ -369,7 +370,6 @@ li.review-one{
 </c:if>	
 </div>
 <div class="studyView-container">
-
 <div id="study-detail">
 	<div class="study-wrap">
 	
@@ -503,6 +503,7 @@ li.review-one{
 	<label for="">신청 기간 : </label> <span class="side-info">~${study.LDATE }</span><br />
 	<label for="">스터디일정 : </label> <span class="side-info">${study.SDATE }~${study.EDATE }</span><br />
 	<label for="">회비 : </label> <span class="price side-info">${study.PRICE }원</span><br />
+	<label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${study.APPLYCNT }</span>/<span>${study.RECRUIT }명</span>
 	<c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
 		<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
 			<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button><br /><br />
