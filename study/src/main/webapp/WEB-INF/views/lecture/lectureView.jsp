@@ -435,7 +435,7 @@ li.review-one{
 	
 		<c:if test="${memberLoggedIn!=null }">
 			<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-				<c:if test="${lecutre.STATUS=='모집 중'||lecutre.STATUS=='마감 임박'}">
+				<c:if test="${lecture.STATUS=='모집 중'||lecture.STATUS=='마감 임박'}">
 					<button type="button" class="removeStudy btn" onclick="deleteLecture();">강의 삭제</button>
 				</c:if>
 		      
@@ -579,6 +579,7 @@ li.review-one{
 		<label for="">신청 기간 : </label> <span class="side-info">~${lecture.LDATE }</span><br />
 		<label for="">스터디일정 : </label> <span class="side-info">${lecture.SDATE }~${lecture.EDATE }</span><br />
 		<label for="">강의료 : </label> <span class="price side-info">${lecture.PRICE }원</span><br />
+		<label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${lecture.CNT }</span>/<span>${lecture.RECRUIT }명</span>
 		  <c:if test="${memberLoggedIn== null || memberLoggedIn.getMno() ne lecture.MNO  }">
 	      <!-- 참여, 찜 -->
 	      <c:if test="${insert eq 0}">
