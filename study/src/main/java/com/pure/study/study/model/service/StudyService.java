@@ -71,6 +71,14 @@ public interface StudyService {
 
 	int deleteWish(Map<String, Integer> map);
 
+	Map<String, Object> selectMemberAvg();
+
+	int isCrewStudy(Map<String, Integer> map);
+
+	int isApplyStudy(Map<String, Integer> map);
+
+	int applyStudyDelete(Map<String, Object> map);
+
 	
 
 

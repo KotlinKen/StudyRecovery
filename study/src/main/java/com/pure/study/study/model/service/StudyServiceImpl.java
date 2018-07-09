@@ -203,6 +203,30 @@ public class StudyServiceImpl implements StudyService {
 		return studyDAO.deleteWish(map);
 	}
 
+	@Override
+	public Map<String, Object> selectMemberAvg() {
+		// TODO Auto-generated method stub
+		return studyDAO.selectMemberAvg();
+	}
+
+	@Override
+	public int isCrewStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.isCrewStudy(map);
+	}
+
+	@Override
+	public int isApplyStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.isApplyStudy(map);
+	}
+
+	@Override
+	public int applyStudyDelete(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.applyStudyDelete(map);
+	}
+
 	
 
 

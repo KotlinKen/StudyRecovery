@@ -112,7 +112,7 @@
   	select  s.sno,s.mno,s.subno,s.tno,t.lno,s.dno,k.kno,l.lno,s.title,s.freq,s.content,s.price,s.upfile,s.recruit,s.status,s.time,s.type,s.etc,
   		to_char(s.ldate,'yyyy-mm-dd') ldate,to_char(s.sdate,'yyyy-mm-dd') sdate, to_char(s.edate,'yyyy-mm-dd') edate,
   		to_char(s.regdate,'yyyy-mm-dd') regdate,m.mprofile,l.lno,l.local lname,t.townname tname, sb.subjectname subname, k.kindname kname, d.DIFFICULTNAME dname,
-  		m.mname mname,m.cover,m.exp,m.point,m.npoint,(select count(*) cnt from apply where sno=#{sno}) cnt
+  		m.mname mname,m.cover,m.exp,m.point,m.npoint,(select count(*) cnt from apply where sno=#{sno}) applycnt
   	from study s join diff d on s.dno=d.dno join town t on s.tno=t.tno join local l on t.lno=l.lno 
   		  join subject sb on s.subno=sb.subno join kind k on sb.kno=k.kno  join member m on s.mno=m.mno
   	where s.type='study' and s.sno=#{sno}	  
@@ -420,5 +420,23 @@
    <delete id="deleteWish">
    	delete from wish where mno=#{mno} and sno=#{sno}
    </delete>
+   
+   <select id="selectMemberAvg" resultMap="mapForStudy">
+   		select floor(avg(point)) avgpoint,floor(avg(npoint)) avgnpoint,floor(avg(exp)) avgexp from member
+   </select>
+   
+   
+   <select id="isCrewStudy" resultType="_int">
+   	select count(*) from crew where sno=#{sno} and mno=#{mno}
+   </select>
+   
+   <select id="isApplyStudy" resultType="_int">
+   select count(*) from apply where sno=#{sno} and mno=#{mno}
+   </select>
+   
+   <delete id="applyStudyDelete">
+   	 delete from apply where sno=#{sno} and mno=#{mno}
+   </delete>
+   
   
 </mapper>
