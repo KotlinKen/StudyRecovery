@@ -32,6 +32,7 @@
 		background: #0056e9;
 		color: #ffffff;
 	}
+
 </style>
 <div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
@@ -40,7 +41,7 @@
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
 	<br />
 	<br />
-<div class="page">
+<div class="container page">
 	<label for="local">지역:</label>
 	<select name="lno" id="local" >
 	<option value="0">전체</option>
@@ -132,21 +133,21 @@
 	%>
 
 			<!-- 리스트 -->
-			<table>
+			<table class="rm_touchTable">
 				<thead>
 					<tr>
-						<th>No</th>
-						<th>제목</th>
-						<th>등록일</th>
-						<th>시작 일자</th>
-						<th>강의 요일</th>
-						<th>시간</th>
-						<th>강의 비용</th>
-						<th>지역</th>
-						<th>과목</th>
-						<th>상태</th>
-						<th>결제 상태</th>
-						<th>비고</th>
+						<th class="text-center">No</th>
+						<th class="text-center">제목</th>
+						<th class="text-center">등록일</th>
+						<th class="text-center">시작 일자</th>
+						<th class="text-center">강의 요일</th>
+						<th class="text-center">시간</th>
+						<th class="text-center">강의 비용</th>
+						<th class="text-center">지역</th>
+						<th class="text-center">과목</th>
+						<th class="text-center">상태</th>
+						<th class="text-center">결제 상태</th>
+						<th class="text-center">비고</th>
 					</tr>
 				</thead>			
 				<tbody>
@@ -165,19 +166,19 @@
 							<td>${p.PSTATUS }</td>
 							<td>
 							<c:if test="${p.PSTATUS == '결제실패'}">
-							<span style='color:red;'>${p.PSTATUS}</span>
+							<span style="color:red;">${p.PSTATUS}</span>
 							</c:if>
 							<c:if test="${!(p.PSTATUS == '결제실패')}">
 							<span> ${p.PSTATUS } </span>
 							</c:if>
 							<c:if test="${p.PSTATUS == '결제완료' && ( p.STATUS == '모집 마감' || p.STATUS == '마감 임박' || p.STATUS == '모집 중')}">
-							<button type='button' class="btn-cancel" onclick='lectureAdminCancel(${p.SNO},${p.MNO},${p.PNO},${p.PRICE})'>결제 취소</button>
+							<button type="button" class="btn-cancel" onclick='lectureAdminCancel(${p.SNO},${p.MNO},${p.PNO},${p.PRICE})'>결제 취소</button>
 							</c:if>
 							<c:if test="${p.PSTATUS == '결제실패' }">
-							<span style='color:red;'>${p.PSTATUS }</span>
+							<span style="color:red;">${p.PSTATUS }</span>
 							</c:if>
 							<c:if test="${p.PSTATUS == '결제취소' }">
-							<span style='color:mediumseagreen;'>취소완료</span>
+							<span style="color:mediumseagreen;">취소완료</span>
 							</c:if>
 							</td>
 						</tr>

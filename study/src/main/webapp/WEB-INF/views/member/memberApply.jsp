@@ -15,6 +15,7 @@
 		text-overflow:ellipsis; 
 		overflow:hidden;
 		white-space:nowrap;
+		padding:15px 5px; 
 	}
 	select#town{
 		display:none;
@@ -30,10 +31,10 @@
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
 	<br />
-<div class="page">
+<div class="container page">
 	<%-- <input type="radio" name="type" id="study" ${(type eq 'study') or (type == null)?'checked':'' }/>
 	<label for="study">study</label> --%>
-	<h4>스터디 신청 목록</h4>
+	<h3>스터디 신청 목록</h3>
 	<br />
 	<input type="radio" name="applyDate" id="present" value="present" ${(applyDate eq 'present') or (applyDate == null)?'checked':'' }/>
 	<label for="present">

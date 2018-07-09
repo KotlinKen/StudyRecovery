@@ -24,14 +24,17 @@
 	div.background{
 		background: #ffffff;
 	}
+	div.page{padding-top:30px;}
 </style>
 <div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="내 찜 목록" name="pageTitle"/>
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
+
+<div class="container page">
+	<h3>스터디/강의 찜 목록</h3>
 	<br />
-<div class="page">
 	<input type="radio" name="type" id="study" ${(type eq 'study') or (type == null)?'checked':'' }/>
 	<label for="study">study</label>
 	<input type="radio" name="type" id="lecture"  ${type eq 'lecture'?'checked':'' } />

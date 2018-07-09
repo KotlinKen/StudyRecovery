@@ -15,6 +15,8 @@
 		text-overflow:ellipsis; 
 		overflow:hidden;
 		white-space:nowrap;
+		padding:15px 5px;
+		border-bottom:1px solid #efefef;
 	}
 	select#town{
 		display:none;
@@ -39,9 +41,14 @@
 		color: #666;
 	}
 	.leader{
-		padding: 5px;
-		border-radius: 10px;
-		border: 1px solid #666;
+		padding: 15px;
+		border-radius: 0.1rem;
+	}
+	.leader:hover{
+		padding: 15px;
+		border-radius: 0.1rem;
+		background: #0056e9;
+		color:#fff;		
 	}
 	button.apply:hover, .cancel:hover{
 		background: #0056e9;
@@ -55,7 +62,9 @@
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp" />
 	<br />
-<div class="page">
+<div class="container page">
+	<h3>내 스터디/강의</h3>
+	<br />
 	<input type="hidden" id="hiddenUserId" value="${memberLoggedIn.mid }" />
 	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
 	
@@ -176,18 +185,17 @@
 		<!-- 팀장/팀원으로서의 스터디 목록이 존재하면 컬럼명을 쓴다. -->
 		<c:if test="${count != 0 or leaderCount != 0 }">
 			<tr>
-				<th>번호</th>
-				<th>강의/스터디명</th>
-				<th>팀장/강사명</th>
-				<th>분류</th>
-				<th>과목</th>
-				<th>스터디 장소</th>
-				<th>난이도</th>
-				<th>수업일정(주기)</th>
-				<th>스터디 마감일</th>
-				<th>스터디 기간 및 시간</th> <!-- 18/5/6 ~ 18/6/6(시간) -->
-				<th>보기</th>
-				<th>평가</th>
+				<th class="text-center">번호</th>
+				<th class="text-center">강의/스터디명</th>
+				<th class="text-center">팀장/강사명</th>
+				<th class="text-center">과목</th>
+				<th class="text-center">장소</th>
+				<th class="text-center">난이도</th>
+				<th class="text-center">수업 주기</th>
+				<th class="text-center">마감일</th>
+				<th class="text-center">기간 및 시간</th> <!-- 18/5/6 ~ 18/6/6(시간) -->
+				<th class="text-center">보기</th>
+				<th class="text-center">평가</th>
 			</tr>
 		</c:if>
 		<!--  -->
@@ -201,8 +209,7 @@
 				<tr>
 					<td>${(numPerPage*cPage)-(numPerPage-1)+vs.index }</td>
 					<td>${ms.title }</td>
-					<td>${ms.captain}</td>
-					<td>${ms.type }</td>
+					<td>${ms.mname }</td>
 					<td>${ms.subject }</td>
 					<td>${ms.place}</td>
 					<td>${ms.diff}</td>
@@ -242,21 +249,21 @@
 				</tr>
 			</c:forEach>
 		</c:if>
-		
+
 		<!-- 팀장일때 스터디 목록 -->
 		<c:if test="${leaderList != null and leader eq 'y'}">
 			<c:forEach var="ms" items="${leaderList}" varStatus="vs" >
+					
 				<tr>
 					<td>${(numPerPage*cPage)-(numPerPage-1)+vs.index }</td>
 					<td>${ms.title }</td>
-					<td>${ms.captain}</td>
-					<td>${ms.type }</td>
+					<td>${ms.mname }</td>
 					<td>${ms.subject }</td>
 					<td>${ms.place}</td>
 					<td>${ms.diff}</td>
 					<td>${ms.freq}</td>
 					<td>${ms.ldate}</td>
-					<td>${ms.sdate} ~ ${ms.edate}(${ms.time })</td>
+					<td>${ms.sdate} ~ <br> ${ms.edate} <br> ${ms.time }</td>
 					<td>
 						<button type=button class="btn btn-outline-success btncss btn-detail " value="${ms.type },${ms.sno }">자세히</button>
 					</td>
@@ -266,7 +273,7 @@
 					
 					<!-- 신청 중 & 신청 마감 & 스터디 진행 전 => 팀원 취소 하기 기능-->
 					<c:if test="${(sysdate lt ms.sdate) or (sysdate eq ms.sdate)  }">
-						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal" >신청 현황</button>
+						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal" style="margin-bottom:10px;" >신청 현황</button> <br />
 					</c:if>
 					
 					<!-- 스터디 진행 중 => 팀원 목록 분기하기(신청현황에서) -->

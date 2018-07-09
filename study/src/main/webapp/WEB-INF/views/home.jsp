@@ -245,16 +245,16 @@ function categoryList(type, status, rownum, order, desc){
         		if(type == "study"){       		
 	       			rmHtml += "<a href='${rootPath}/study/studyView.do?sno="+study.SNO+"'>";
 	   				rmHtml += "<div class='photoSection'>";
-   					rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+"), url(${rootPath}/resources/images/nones.gif)'></div>";
+   					rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/study/"+upfile[0]+")'></div>";
    				}else{
 	       			rmHtml += "<a href='${rootPath}/lecture/lectureView.do?sno="+study.SNO+"&mno=" + ${memberLoggedIn != null ? memberLoggedIn.getMno():"0"} +"'>";
 	  				rmHtml += "<div class='photoSection'>";	
-	   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[0]+"), url(${rootPath}/resources/images/nones.gif)'></div>";
+	   				rmHtml += 	"<div style='background-image:url(${rootPath}/resources/upload/lecture/"+upfile[0]+")'></div>";
    				}
         		
    				rmHtml += "</div>";
 				rmHtml += "<div class='inforSection'>";
-  				rmHtml += 	"<h4>"+data.list[index].TITLE.substring(0, 18)+"</h4>";
+  				rmHtml += 	"<h4 style='overflow:hidden;'>"+data.list[index].TITLE.substring(0, 15)+"</h4>";
 /*   				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/study/20180625_215620103_62.gif' /></div>"; */
   				rmHtml += 	"<div class='profile'><img src='${rootPath}/resources/upload/member/"+study.MPROFILE+"' onerror='this.src=\"${rootPath}/resources/images/noprofile.jpg\"' /></div>";
   				rmHtml += 	"<div class='profileName'>"+study.MID+"</div>";
@@ -266,7 +266,7 @@ function categoryList(type, status, rownum, order, desc){
   				
    				rmHtml += "</div>";
 				rmHtml += "<div class='metaSection'>";
-  				rmHtml += 	"<p>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 18)+"</p>";
+  				rmHtml += 	"<p style='overflow:hidden;'>"+study.CONTENT.replace(/(<([^>]+)>)/ig,"").replace("&nbsp;","").substring(0, 15)+"</p>";
   				/* rmHtml += 	"<p>"+ "내용이 없네 정말.."+"</p>"; */
    				rmHtml += "</div>";
 				rmHtml += "<div class='localSection'>";
@@ -287,12 +287,12 @@ function categoryList(type, status, rownum, order, desc){
   				rmHtml += "<div class='ldate'>"+formatDate(new Date(study.LDATE))+"</div>";
   				rmHtml += "<div class='term'>"+formatDate(new Date(study.SDATE))+" ~ "+formatDate(new Date(study.EDATE)) +"</div>";
    				rmHtml += "</div>";
-   				rmHtml += "</a>"
-        		rmHtml += "</div>"
-        		rmHtml += "</li>"
+   				rmHtml += "</a>";
+        		rmHtml += "</div>";
+        		rmHtml += "</li>";
         		}
         	}
-        	if(type =='lecture'){
+        	if(type =="lecture"){
 				$(".lectures .list").html(rmHtml);
         	}else{
 				$(".studies .list").html(rmHtml);

@@ -1447,7 +1447,7 @@ public class MemberController {
 
             if(resultDel > 0 && messageResult > 0 ) {
 				try {
-					echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(45)), new TextMessage(mapper.writeValueAsString(message)));
+					echoHandler.handleMessage(echoHandler.getSessions().get( String.valueOf(m.getMno())), new TextMessage(mapper.writeValueAsString(message)));
 				} catch (JsonProcessingException e) {
 					e.printStackTrace();
 				} catch (Exception e) {

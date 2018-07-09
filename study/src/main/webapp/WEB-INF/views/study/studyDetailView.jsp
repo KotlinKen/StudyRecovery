@@ -94,11 +94,12 @@ $(window).scroll(function(){
 	$scrollTop = $(this).scrollTop();
 	$wingSection = $(".wingSection"); 
 	
+	console.log($scrollTop);
 	if($("#studyDetails").height() > $(".wingSection").height()+$scrollTop){
-	if($scrollTop > 60){
+	if($scrollTop > 100){
 		$wingSection.stop().animate({top: $scrollTop - 145});  
-	}else{
-		$wingSection.stop().animate({top: $scrollTop});
+	}else if($scrollTop <= 100 ){
+		$wingSection.stop().animate({top: 0});
 	}
 	console.log($(".container").height());
 	
@@ -125,21 +126,24 @@ $(window).scroll(function(){
 .baseColor:hover{background:#fff; color:#0056e9; border:1px solid #0056e9;}
 .baseColorRefelct{background:#fff; color:#0056e9; border:1px solid #0056e9;} 
 .baseColorRefelct:hover{background:#0056e9; color:#fff;} 
+.levelBox{position:relative;height:100px; }
+.levelBox .levelWrap{padding:20px; background:#0056e9; position:absolute;top:-2.4rem; left:2.5rem;text-align:center;}
+.levelBox .levelWrap span{}
+.levelBox .levelWrap .naming{color:#fff}
+.levelBox .levelWrap .levels{color:#fff; font-size:1.6rem;}
+.informBox{text-align:center;}
 </style>
 
 <div id="studyDetails">
 	<div class="container">
 		<div class="content">
+	
 			<div class="sliderSection">
-				<div class="levelBox">
-					<span class="naming">LEVEL</span> <br /> <span class="levels"> ${study.DNAME }</span>
-				</div>
-
 				<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
 					<div class="carousel-inner">
 						<c:forEach var="img" items="${imgs }" varStatus="vs">
-							<div class="carousel-item ${vs.first? 'active':'' }">
-								<img class="d-block w-100 rm_cover_img" src="${pageContext.request.contextPath }/resources/upload/study/${img }" alt="Second slide">
+							<div class="carousel-item ${vs.first ? 'active':'' }">
+								<img class="d-block w-100 rm_cover_img" src="${rootPath }/resources/upload/study/${img }" alt="slide">
 							</div>
 						</c:forEach>
 					</div>
@@ -150,6 +154,23 @@ $(window).scroll(function(){
 
 				</div>
 			</div>
+			<div class="levelBox">
+				<div class="levelWrap">
+					<span class="naming">LEVEL</span> <br /> <span class="levels"> ${study.DNAME }</span>
+				</div>
+			</div>		
+			<div class="informBox">
+				<div>${study.LNAME } ${study.TNAME }</div>	
+				<div><h1 class="title">${study.TITLE }</h1></div>
+			</div>
+			<div class="contentBox">
+				<div></div>
+				<div>${study.CONTENT }</div>
+			
+			</div>
+			
+			
+			
 
 		</div>
 		<div class="wingSection"> 

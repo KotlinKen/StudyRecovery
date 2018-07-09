@@ -81,14 +81,13 @@
       <jsp:param value="내 정보 보기" name="pageTitle"/>
    </jsp:include>
          <jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
-         <br />
-	<div class="page">
+	<div class="container page">
          
          <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >
             <c:if test="${memberLoggedIn != null }">
          <table>
          	<tr>
-         		<th>회원 아이디</th>
+         		<th style="width:30%">회원 아이디</th>
          		<td>
 	                <input type="hidden" name="mno" id="mno" value="${memberLoggedIn.mno }" />
 	                <input type="text" class="hiddencss" name="mid" id="mid" value="${memberLoggedIn.mid }" readonly/>       

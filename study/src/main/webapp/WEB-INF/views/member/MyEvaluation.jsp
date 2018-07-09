@@ -38,13 +38,20 @@
 	h5.npoint{
 		margin-top: 50px;
 	}
+	
+	.rm_touchTable{}
+	.rm_touchTable td, .rm_touchTable th{
+		padding:15px 5px; 
+	}
 </style>
 <div class="background">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="" name="pageTitle"/>
 	</jsp:include>
 	<jsp:include page="/WEB-INF/views/member/memberMyPage.jsp"/>
-<div class="page">
+<div class="container page">
+	<br />
+	<h3>내 평가점수</h3>
 	<br />
 	<form action="${rootPath }/member/searchMyPageEvaluation.do" id="form-eval">
 		<input type="radio" name="myPage" id="exp" value="exp" ${myPage eq 'exp'?'checked':'' }/>
@@ -106,7 +113,7 @@
 				
 				<!-- 평가 리스트 -->
 				<p>총 ${count }건의 평가가 있습니다.</p>
-				<table>
+				<table class="rm_rm_touchTable">
 					<tr>
 						<th>번호</th>
 						<th>강의/스터디명</th>

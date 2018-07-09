@@ -14,7 +14,7 @@
 		
 		<div class="form-row">
 			<div class="form-group col-md-12">
-				 <input type="text" class="form-control" id="title" name="title" id="title" placeholder="제목을 입력해주세요" autocomplete="off">
+				 <input type="text" class="form-control"  name="title" id="title" placeholder="제목을 입력해주세요" autocomplete="off">
 			</div>
 		</div>
 	
@@ -171,9 +171,8 @@ $(".input_fields_wrap").on("change",".upfile_name",  function(){
 
 	$(document).ready(function() {
 	      $('#title').keydown(function(e){
-	    	  console.log("test");
 	          var content = $(this).val();
-	          $(this).height(((content.split('\n').length + 1) * 1.5) + 'em');
+	          /* $(this).height(((content.split('\n').length + 1) * 1.5) + 'em'); */
 	          $('#txtcounter').html(content.length + '/300');
 	      });
 	      $('#title').keyup();

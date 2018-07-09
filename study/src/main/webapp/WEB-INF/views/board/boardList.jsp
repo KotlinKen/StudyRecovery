@@ -79,11 +79,11 @@
 <thead>
 	<tr>
 		<th width="5%">번호</th>
-		<th width="20%">제목</th>
-		<th width="25%">내용</th>
+		<th width="10%">제목</th>
+		<th width="18%">내용</th>
 		<th width="7%">채택</th>
 		<th width="10%">작성자</th>
-		<th width="6%">등록일</th> 
+		<th width="10%">등록일</th> 
 	</tr>
 </thead>
 <tbody>
@@ -93,10 +93,10 @@
 			<td class="first_col">${list.BNO}</td>
 			<td class="boardTitle">
 				
-				${pastDate <= (list.REG) ? "<span class='circle circleBlue'></span>" : "" } ${fn:substring(list.TITLE, 0, 18)}
+				${pastDate <= (list.REG) ? "<span class='circle circleBlue'></span>" : "" } ${fn:substring(list.TITLE, 0, 9)}
 			</td>
 			<td class="boartContent">
-				${fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 20) eq "" ? "내용이 없습니다." : fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 20) }
+				${fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 17) eq "" ? "내용이 없습니다." : fn:substring(list.CONTENT.replaceAll("<(/)?([a-zA-Z]*)(\\s[a-zA-Z]*=[^>]*)?(\\s)*(/)?>", ""), 0, 17) }
 				<c:if test="${list.CNT > 0}"><span class="replyCounter"> ${list.CNT }</span> </c:if>
 			</td>
 			<td class="boardFork text-center">
