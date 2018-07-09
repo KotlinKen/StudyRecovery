@@ -492,8 +492,13 @@ li.review-one{
 	<hr />
 	<div class="leader-wrap">
 		<header class="front-leader section-label" style="margin-bottom: 20px;">
-			
-		<h3 class="leader-label">리더소개</h3>
+		
+		<c:if test="${ratio <= 10}">
+			<h3 class="leader-label">리더소개(상위  ${ratio }% 회원)</h3>
+		</c:if> 
+		<c:if test="${ratio > 10}">
+			<h3 class="leader-label">리더소개</h3>
+		</c:if> 
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 		<div class="pointrange" id="pointrange">
 			<label for="">포인트 </label>

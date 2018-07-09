@@ -79,6 +79,8 @@ public interface StudyService {
 
 	int applyStudyDelete(Map<String, Object> map);
 
+	List<Map<String, Object>> selectRankList();
+
 	
 
 
