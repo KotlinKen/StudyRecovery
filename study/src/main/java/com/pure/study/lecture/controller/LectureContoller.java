@@ -322,6 +322,8 @@ public class LectureContoller {
 	public String findLecture(@RequestParam int sno, @RequestParam int mno) {
 		int result = 0;
 		String msg = "";
+		
+		System.out.println("mno=" + mno);
 
 		Map<String, Integer> preCheck = new HashMap<>();
 
@@ -815,8 +817,8 @@ public class LectureContoller {
 					for (int j = 0; j < freqs.length; j++) {
 						if (list.get(i).containsValue(freqs[j])) {
 							// 등록이 가능한 경우.
-							if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
-									|| eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
+							if (sHour > Integer.parseInt(list.get(i).get("ETIME").toString())
+									|| eHour < Integer.parseInt(list.get(i).get("STIME").toString())) {
 								System.out.println("시간이 안겹쳐서 들어감");
 							}
 							// 불가능한 경우.
