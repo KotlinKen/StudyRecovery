@@ -40,4 +40,14 @@ public class MessageServiceImpl implements MessageService{
 		return messageDAO.messageCount(queryMap);
 	}
 
+	@Override
+	public Map<String, String> messageOne(Map<String, String> queryMap) {
+		return messageDAO.messageOne(queryMap);
+	}
+
+	@Override
+	public int messageReadCheck(Map<String, String> queryMap) {
+		return messageDAO.messageReadCheck(queryMap);
+	}
+
 }

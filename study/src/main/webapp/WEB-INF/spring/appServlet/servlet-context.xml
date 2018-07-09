@@ -74,6 +74,9 @@
 			<mapping path="/member/applyListView.do"/>
 			<mapping path="/member/reviewFinish.do"/>
 			<mapping path="/member/reviewEnroll.do"/>
+			<mapping path="/member/memberMessageList"/>
+			<mapping path="/member/memberMessageWriteEnd"/>
+			<mapping path="/member/memberMessageView"/>
 			
 			
 			<beans:bean class="com.pure.study.common.interceptor.LoginCheckInterceptor" id="loginCheck"/>

@@ -37,15 +37,20 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.socket.TextMessage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pure.study.common.crontab.dao.SchedulerDAO;
+import com.pure.study.common.websocket.EchoHandler;
 import com.pure.study.lecture.model.service.LectureService;
 import com.pure.study.member.model.exception.MemberException;
 import com.pure.study.member.model.service.MemberService;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
 import com.pure.study.member.model.vo.Review;
+import com.pure.study.message.model.service.MessageService;
+import com.pure.study.message.model.vo.Message;
 import com.pure.study.rest.RestMemberService;
 import com.pure.study.study.model.service.StudyService;
 import com.pure.study.study.model.vo.Study;
@@ -78,6 +83,13 @@ public class MemberController {
 	@Autowired
 	private SchedulerDAO schedulerDAO;
 	
+	/*김률민 추가 20180708 메시징 추가  *************************************************/
+	@Autowired
+	private MessageService messageService;
+	
+	@Autowired
+	private EchoHandler echoHandler; 
+	/*김률민 추가 20180708 메시징 추가  *************************************************/
 	
 	Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -1333,6 +1345,7 @@ public class MemberController {
 	public ModelAndView applyButton(@RequestParam("sno") String sno
 									, @RequestParam("mno")String mno
 									, @RequestParam("confirm") String confirm
+									, HttpServletRequest session
 									){ 
 		ModelAndView mav = new ModelAndView("jsonView"); 
 		Map<String, String> map = new HashMap<>();
@@ -1342,7 +1355,10 @@ public class MemberController {
 		
 		int resultDel = 0;
 		int result=0;
-		
+		/*김률민 추가 20180708 메시징 핸들러를 위해  스코프 범위 변경 *************************************************/
+		Study study = studyService.selectStudyByMnoTypeStudy(sno);
+		Member m = (Member) session.getSession().getAttribute("memberLoggedIn");
+		/*김률민 추가 20180708 메시징 핸들러를 위해  스코프 범위 변경 *************************************************/
 		if("agree".equals(confirm)) {
 
 		   Map<String, Object> key = new HashMap<>();
@@ -1350,7 +1366,6 @@ public class MemberController {
 	       key.put("key", "crew");
 	       //수락하려는 회원이 이미 포함되어있는 크루 검사. 
 		   List<Map<String, Object>> list = studyService.selectStudyListBySno(key);
-		   Study study = studyService.selectStudyByMnoTypeStudy(sno);
 		   System.out.println("agree에 들어오나요"+list);
 			
 		   try {
@@ -1360,6 +1375,22 @@ public class MemberController {
                if (cnt == 0) {
                   System.out.println("###########중복이 없음##########");
                   result = memberService.insertCrew(map);
+                  /*김률민 추가 20180708 메시징 핸들러를 위해 *************************************************/
+                  ObjectMapper mapper = new ObjectMapper();
+                  
+  				  Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"신청수락 되었습니다.", 0);
+
+                  if(result > 0 ) {
+      				try {
+						echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(m.getMno())), new TextMessage(mapper.writeValueAsString(message)));
+					} catch (JsonProcessingException e) {
+						e.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+                  }
+                  /*김률민 추가 20180708 메시징 핸들러를 위해 ***************************************************/
                } else {
                   //중복된게 있어서 회원을 팀원으로 수락 불가. 
                   System.out.println("&&&&&&&&&&&중복이 있음&&&&&&&&&&&");
@@ -1375,6 +1406,21 @@ public class MemberController {
 		}else if("cancel".equals(confirm)){
 			result = memberService.insertApply(map);
 			resultDel = memberService.deleteCrew(map);
+            /*김률민 추가 20180708 메시징 핸들러를 위해 *************************************************/
+            ObjectMapper mapper = new ObjectMapper();
+		    Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"수락이 취소 되었습니다.", 0);
+
+            if(resultDel > 0 ) {
+				try {
+					echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(45)), new TextMessage(mapper.writeValueAsString(message)));
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+            }
+            /*김률민 추가 20180708 메시징 핸들러를 위해 ***************************************************/
 			
 		}
 		
@@ -2630,24 +2676,42 @@ public class MemberController {
 	
 	
 	
-	/*김률민 2018 07 07 추가 작업*/
-	
-	/*
-	@RequestMapping(value="/member/messageList", method=RequestMethod.GET)
+
+	/*김률민 2018 07 07 추가 작업**************************************************************************/
+	@RequestMapping(value="/member/memberMessageList", method=RequestMethod.GET)
 	@ResponseBody
-	public ModelAndView selectBoardList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
+	public ModelAndView memberMessageList(@RequestParam (value="cPage", required=false, defaultValue="1") int cPage, 
 										@RequestParam (required=false) Map<String, String> queryMap,
 		 							@PathVariable(value="location", required=false) String location, HttpServletRequest request){
 		ModelAndView mav = new ModelAndView();
-	
+		int numPerPage = 10;
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
 		
-		 
+
+		if(m != null) {
+			queryMap.put("receivermno", String.valueOf(m.getMno()));
+			List<Map<String, String>> listAll = messageService.messageList();
+			List<Map<String, String>> listQuery = messageService.messageList(queryMap);
+			List<Map<String, String>> listQueryPage = messageService.messageList(cPage, numPerPage, queryMap);
+			
+			
+			int totalCount = messageService.messageCount(queryMap);
+			
+			mav.addObject("count", totalCount);
+			mav.addObject("numPerPage", numPerPage);
+			
+			mav.addObject("listAll", listAll);
+			mav.addObject("listQuery", listQuery);
+			mav.addObject("listQueryPage", listQueryPage);
+		}
+		
+
 		return mav; 
 	}
-	*/  
+
 	
 	
-	
+
 	
 	
 	
@@ -2728,4 +2792,66 @@ public class MemberController {
 	}
 	
 	/*****장익순 작업 끝******/
+
+	@RequestMapping(value="/member/memberMessageView", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView memberMessageView(@RequestParam (value="messageNo", required=false, defaultValue="1") int messageNo, 
+										  @RequestParam (required=false) Map<String, String> queryMap,
+										  HttpServletRequest request){
+		ModelAndView mav = new ModelAndView("jsonView");
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
+		
+		
+		
+		
+		if(m != null) {
+/*			queryMap.put("mno", String.valueOf(m.getMno()));*/
+			queryMap.put("messageNo", String.valueOf(messageNo));
+			queryMap.put("receivermno", String.valueOf(m.getMno()));
+			queryMap.put("checkdate", "checkdate");
+			
+			Map<String, String> resultMap = messageService.messageOne(queryMap);
+			System.out.println(resultMap);
+			
+			if(resultMap.get("MESSAGENO") != null ) {
+				int readCheck = messageService.messageReadCheck(queryMap);
+				if(readCheck > 0 ) {
+				  resultMap = messageService.messageOne(queryMap);	
+	              ObjectMapper mapper = new ObjectMapper();
+	              int count = messageService.messageCount(queryMap);
+					  Message message = new Message("view:message", String.valueOf(m.getMno()), String.valueOf(m.getMno()), queryMap.get("messageNo")+"^"+String.valueOf(resultMap.get("CHECKDATE")), count);
+		  				try {
+							echoHandler.handleMessage(echoHandler.getSessions().get( String.valueOf(m.getMno())), new TextMessage(mapper.writeValueAsString(message)));
+						} catch (JsonProcessingException e) {
+							e.printStackTrace();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+				}
+			}
+			mav.addObject("resultMap", resultMap);
+		}
+		
+		return mav; 
+	}
+	
+	@RequestMapping(value="/member/memberSearch", method=RequestMethod.GET)
+	@ResponseBody
+	public ModelAndView memberSearch(@RequestParam (value="searchType", required=false, defaultValue="") String searchType,
+									 @RequestParam (value="mname", required=false, defaultValue="") String mname,
+								     @RequestParam (required=false) Map<String, String> queryMap,
+										  HttpServletRequest request){
+		ModelAndView mav = new ModelAndView("jsonView");
+		
+		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
+		if(m != null) {
+			List<Map<String, String>> resultListMap = memberService.memberSearch(queryMap);
+			mav.addObject("resultListMap", resultListMap);
+		}
+		
+		return mav; 
+	}
+	
+	
+	/*김률민 2018 07 07 추가 작업**************************************************************************/
 }

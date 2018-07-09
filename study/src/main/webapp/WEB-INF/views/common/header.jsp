@@ -19,7 +19,8 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 <script src="${rootPath}/resources/js/common.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.9/summernote-bs4.js"></script>
-
+<style>
+</style>
 <!-- 사용자작성 css -->
 <link rel="stylesheet" href="${rootPath}/resources/css/style.css" />
 <script>
@@ -146,9 +147,18 @@ $(function(){
 							<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminLogin">관리자 로그인</a></li>
 						</c:if>
 						<c:if test="${memberLoggedIn != null }">
-						<li class="messageBox"></li>
+
+							
 							<li class="nav-item loginBox"><a class="nav-link loginId" href="${pageContext.request.contextPath }/member/memberView.do" style="cursor:pointer">${memberLoggedIn.mname }님</a></li>
+							<!-- 메시지 알람 -->
+							<li class="messageBox"style="padding:5px 10px 10px 0px;" >
+								<a href="${rootPath }/member/memberMessageList" style="padding:5px 10px; background:#0056e9; color:#fff; font-size:0.9rem; border-radius:30px;">
+								 0
+								</a>							
+							</li>
+							
 							<li class="nav-item"><a class="nav-link" onclick="location.href='${pageContext.request.contextPath}/member/memberLogout.do'" style="cursor:pointer">로그아웃</a></li>
+							
 							<c:if test="${memberLoggedIn.mid eq 'manager' }">
 								<li class="nav-item"><a class="nav-link" href="${rootPath }/admin/adminMain">관리자 메인</a></li>
 							</c:if>
@@ -321,7 +331,30 @@ function getCookie(cookieName) {
         var data = evt.data;
         data = JSON.parse(data);
         console.log(data);
-        $(".messageBox").html(data.count);
+        if(data.type == "insert:crew"){
+        	console.log(data.msg);
+        	alert(data.msg);
+        }else if(data.type=="view:message"){
+        	msgs = data.msg.split("^");
+        	console.log(msgs);
+
+        	
+        	$tds = $(".rm_table td");
+        	for(var i=0; i<$tds.length; i++){
+        		if($($tds[i]).text() == msgs[0]){
+        		console.log($($tds[i]).siblings(":last").text(msgs[1]));
+        		}
+        	}
+        	
+        	
+        	console.log($(".rm_table td").length);
+        	
+ 
+        	
+        }else{
+        	$(".messageBox a").html(data.count);
+        }
+        
         //$("#data").append(data.msg+"<br/>");
         //sock.close();
     }

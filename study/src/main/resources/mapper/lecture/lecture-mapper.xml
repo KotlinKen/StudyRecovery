@@ -227,6 +227,22 @@
       ORDER BY SNO DESC
    </select>
    
+   <select id="selectReviewList" resultType="map">
+   		SELECT R.RNO AS RNO,
+		       R.MNO AS MNO,
+		       M.MNAME AS MNAME,
+		       R.TMNO AS TMNO,
+		       (SELECT M.MNAME AS TMNAME FROM MEMBER M WHERE M.MNO = R.TMNO) TMNAME, 
+		       R.POINT AS POINT,
+		       R.CONTENT AS CONTENT,
+		       R.REGDATE AS REGDATE
+		FROM STUDY S, REVIEW R, MEMBER M 
+		WHERE S.SNO = R.SNO
+		AND R.MNO = M.MNO
+		AND S.SNO = #{sno}
+		ORDER BY RNO
+   </select>
+   
    <select id="selectLectureByMnoTypeLecture" resultType="lecture">
       SELECT * FROM STUDY WHERE SNO = #{sno}
    </select>
@@ -344,6 +360,7 @@
       FROM CREW C JOIN STUDY S ON C.SNO = S.SNO
       </if>
       WHERE S.MNO = #{mno}
+      ORDER BY SNO
    </select>
    
    <select id="searchAdminLectureList" resultMap="map">
@@ -398,7 +415,7 @@
 		      <if test="status!='전체'">
 		      AND S.STATUS = #{status}
 		      </if>		      
-		ORDER BY REGDATE
+		ORDER BY SNO
    </select>
    
    <select id="selectTotalAdminLectureCount" resultType="_int">

@@ -449,6 +449,11 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.selectOne("member.selectEvalCnt",map);
 	}
 
+	@Override
+	public List<Map<String, String>> memberSearch(Map<String, String> queryMap) {
+		return sqlSession.selectList("member.memberSearch", queryMap);
+	}
+
 	
 	
 }

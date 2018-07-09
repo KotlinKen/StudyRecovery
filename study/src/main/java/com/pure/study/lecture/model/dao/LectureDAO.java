@@ -81,4 +81,6 @@ public interface LectureDAO {
 
 	int recruitCnt(int sno);
 
+	List<Map<String, Object>> selectReviewList(int sno);
+
 }
