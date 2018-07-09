@@ -214,6 +214,30 @@ public class StudyDAOImpl implements StudyDAO {
 		return sqlSession.delete("study.deleteWish", map);
 	}
 
+	@Override
+	public Map<String, Object> selectMemberAvg() {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("study.selectMemberAvg");
+	}
+
+	@Override
+	public int isCrewStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("study.isCrewStudy",map);
+	}
+
+	@Override
+	public int isApplyStudy(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.selectOne("study.isApplyStudy", map);
+	}
+
+	@Override
+	public int applyStudyDelete(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return sqlSession.delete("study.applyStudyDelete",map);
+	}
+
 
 
 

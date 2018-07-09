@@ -279,136 +279,138 @@ $(function(){
 </script>
 
 <jsp:include page="/WEB-INF/views/common/header.jsp"/>
-<div id="lecture-container">
-   <form action="lectureFormEnd.do" id="lectureFrm" name="lectureFrm" method="post" enctype="multipart/form-data" onsubmit="return validate();">
-   <input type="hidden" name="mno" value="${memberLoggedIn.getMno()}"/>
-   <!-- 지역 -->
-   <label for="local">지역 : </label>
-   <select name="local" id="local">
-      <option value="" selected>지역</option>
-      <c:if test="${!empty locList}">
-         <c:forEach var="loc" items="${locList }" varStatus="vs">
-            <option value="${loc.LNO }">${loc.LOCAL }</option>
-         </c:forEach>      
-      </c:if>
-   </select>
-   
-   <!-- 시,군,구 -->
-   <select name="tno" id="town">
-   
-   </select>   
-   <!-- 지역 end -->   
-   
-   <label for="title">스터디 제목 : </label>
-   <input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
-   <label for="content">스터디 내용 : </label>
-   <textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
-   <br />
-
-   <!-- 카테고리 -->
-   <label for="kind">카테고리</label>
-   <select name="kind" id="kind"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
-      <option value="">과목을 선택하세요.</option>
-      
-      <c:if test="${!empty kindList }">
-      <c:forEach var="kind" items="${kindList }" varStatus="vs">
-         <option value="${kind.KNO }">${kind.KINDNAME }</option>
-      </c:forEach>
-      </c:if>
-   </select>
-   <select name="subno" id="sub"> <!-- ajax로 kind가져오기 -->
-   
-   </select>
-   <!-- 카테고리 end -->
-   &nbsp;&nbsp;&nbsp;
-   
-   <label for="diff">난이도 : </label>
-   <select name="dno" id="diff">
-      <option value="">난이도를 선택하세요</option>
-      
-      <c:if test="${!empty diffList }">
-      <c:forEach var="diff" items="${diffList }" varStatus="vs">
-         <option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
-      </c:forEach>
-      </c:if>
-   </select>
-   <br />
-   
-   <label for="ldate">신청마감 : </label><input type="date" name="ldate" id="ldate" />
-   <label for="schedule">스터디 일정 : </label><input type="date" name="sdate" id="sdate" class="changeDate"/>~<input type="date" name="edate" id="edate" class="changeDate"/><br />
-
-   <label for="freq">스터디빈도 : </label>
-    <label>일 </label><input type="checkbox" class="day" name="freqs" value="일" /> 
-    <label>월 </label><input type="checkbox" class="day" name="freqs" value="월" />
-    <label>화 </label><input type="checkbox" class="day" name="freqs" value="화" />
-    <label>수 </label><input type="checkbox" class="day" name="freqs" value="수" />
-    <label>목 </label><input type="checkbox" class="day" name="freqs" value="목" />
-    <label>금 </label><input type="checkbox" class="day" name="freqs" value="금" />
-    <label>토 </label><input type="checkbox" class="day" name="freqs" value="토" />
-	    
-	<label for="starttime">스터디 시간</label>
-	<select name="startTime" id="startTime" class="time">
-		<c:forEach var="i" begin="6" end="23">
-			<option value="${i }:00">${i }:00</option>		
-		</c:forEach>
-	</select>
-	<select name="endTime" id="endTime" class="time">
-		<c:forEach var="j" begin="7" end="24">
-			<c:if test="${j < 24}">
-				<option value="${j }:00">${j }:00</option>	
-			</c:if>
-			 <c:if test="${j == 24 }">
-				<option value="${j }:00" selected>${j }:00</option>		 
-			 </c:if>
-		</c:forEach>
-	</select>
+<div class="container">
+	<div id="lecture-container">
+	   <form action="lectureFormEnd.do" id="lectureFrm" name="lectureFrm" method="post" enctype="multipart/form-data" onsubmit="return validate();">
+	   <input type="hidden" name="mno" value="${memberLoggedIn.getMno()}"/>
+	   <!-- 지역 -->
+	   <label for="local">지역 : </label>
+	   <select name="local" id="local">
+	      <option value="" selected>지역</option>
+	      <c:if test="${!empty locList}">
+	         <c:forEach var="loc" items="${locList }" varStatus="vs">
+	            <option value="${loc.LNO }">${loc.LOCAL }</option>
+	         </c:forEach>      
+	      </c:if>
+	   </select>
+	   
+	   <!-- 시,군,구 -->
+	   <select name="tno" id="town">
+	   
+	   </select>   
+	   <!-- 지역 end -->   
+	   
+	   <input type="text" name="title" id="title" placeholder="제목" class="form-control" required /><br />
+	   <label for="content">스터디 내용 : </label>
+	   <textarea id="summernote" name="content" cols="30" rows="10" placeholder="내용을 입력해주세요"></textarea>
+	   <br />
 	
-	<input type="hidden" name="time" id="time" />
-	<br />
+	   <!-- 카테고리 -->
+	   <label for="kind">카테고리</label>
+	   <select name="kind" id="kind"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
+	      <option value="">과목을 선택하세요.</option>
+	      
+	      <c:if test="${!empty kindList }">
+	      <c:forEach var="kind" items="${kindList }" varStatus="vs">
+	         <option value="${kind.KNO }">${kind.KINDNAME }</option>
+	      </c:forEach>
+	      </c:if>
+	   </select>
+	   <select name="subno" id="sub"> <!-- ajax로 kind가져오기 -->
+	   
+	   </select>
+	   <!-- 카테고리 end -->
+	   &nbsp;&nbsp;&nbsp;
+	   
+	   <label for="diff">난이도 : </label>
+	   <select name="dno" id="diff">
+	      <option value="">난이도를 선택하세요</option>
+	      
+	      <c:if test="${!empty diffList }">
+	      <c:forEach var="diff" items="${diffList }" varStatus="vs">
+	         <option value="${diff.DNO }">${diff.DIFFICULTNAME }</option>
+	      </c:forEach>
+	      </c:if>
+	   </select>
+	   <br />
+	   
+	   <label for="ldate">신청마감 : </label><input type="date" name="ldate" id="ldate" />
+	   <label for="schedule">스터디 일정 : </label><input type="date" name="sdate" id="sdate" class="changeDate"/>~<input type="date" name="edate" id="edate" class="changeDate"/><br />
 	
-	<label for="price">수강료 : </label>
-	<input type="number" name="price" id="price" class="form-control" min="1000" max="10000000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
-	<br />
-	
-	<label for="recruit">모집 인원 : </label>
-	<select name="recruit" id="recruit">
-		<c:forEach var="i" begin="2" end="10">
-			<option value="${i }">${i }명</option>
-		</c:forEach>
-	</select>
-	<br /> 
-	
-	<label for="etc">기타 : </label>
-	<textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea>
-	<br /> 
-	
-	<div class="input-group mb-3 fileWrapper" style="padding:0px">
-		  <div class="input-group-prepend" style="padding:0px">
-		    <span class="input-group-text">첨부파일</span>
-		  </div>
-		  <div class="custom-file">
-		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
-		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-		  </div>
-		  <button type="button" class="addFile">+</button>
-		  <button type="button" class="removeFile">-</button>
-	</div>
-	
-	
-	<input type="reset" value="취소하기" />
-	<input type="submit" value="등록"/>
-	</form>
+	   <label for="freq">스터디빈도 : </label>
+	    <label>일 </label><input type="checkbox" class="day" name="freqs" value="일" /> 
+	    <label>월 </label><input type="checkbox" class="day" name="freqs" value="월" />
+	    <label>화 </label><input type="checkbox" class="day" name="freqs" value="화" />
+	    <label>수 </label><input type="checkbox" class="day" name="freqs" value="수" />
+	    <label>목 </label><input type="checkbox" class="day" name="freqs" value="목" />
+	    <label>금 </label><input type="checkbox" class="day" name="freqs" value="금" />
+	    <label>토 </label><input type="checkbox" class="day" name="freqs" value="토" />
+		    
+		<label for="starttime">스터디 시간</label>
+		<select name="startTime" id="startTime" class="time">
+			<c:forEach var="i" begin="6" end="23">
+				<option value="${i }:00">${i }:00</option>		
+			</c:forEach>
+		</select>
+		<select name="endTime" id="endTime" class="time">
+			<c:forEach var="j" begin="7" end="24">
+				<c:if test="${j < 24}">
+					<option value="${j }:00">${j }:00</option>	
+				</c:if>
+				 <c:if test="${j == 24 }">
+					<option value="${j }:00" selected>${j }:00</option>		 
+				 </c:if>
+			</c:forEach>
+		</select>
 		
-	<div class="input-group mb-3 forCopy" style="padding:0px">
-		  <div class="input-group-prepend" style="padding:0px">
-		    <span class="input-group-text">첨부파일</span>
-		  </div>
-		  <div class="custom-file">
-		    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required>
-		    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
-		  </div>
-		  <button type="button" class="addFile">+</button>
-		  <button type="button" class="removeFile">-</button>
+		<input type="hidden" name="time" id="time" />
+		<br />
+		
+		<label for="price">수강료 : </label>
+		<input type="number" name="price" id="price" class="form-control" min="1000" max="10000000" step="1000" placeholder="협의 - 스터디 카페 대여비 - 6000원, 1000원 단위로 입력해주세요." required/>
+		<br />
+		
+		<label for="recruit">모집 인원 : </label>
+		<select name="recruit" id="recruit">
+			<c:forEach var="i" begin="2" end="10">
+				<option value="${i }">${i }명</option>
+			</c:forEach>
+		</select>
+		<br /> 
+		
+		<label for="etc">기타 : </label>
+		<textarea name="etc" id="etc" cols="30" rows="10" class="form-control"></textarea>
+		<br /> 
+		
+		<div class="input-group mb-3 fileWrapper" style="padding:0px">
+			  <div class="input-group-prepend" style="padding:0px">
+			    <span class="input-group-text">첨부파일</span>
+			  </div>
+			  <div class="custom-file">
+			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
+			    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
+			  </div>
+			  <button type="button" class="addFile btn btn-primary">+</button>
+			  <button type="button" class="removeFile btn btn-primary">-</button>
+		</div>
+		
+		<div style="text-align:center;" >
+			<input type="submit" class="btn btn-primary btn-lg" value="등록"/>
+			<input type="reset" class="btn btn-primary btn-lg"value="취소하기" />
+		</div>
+		</form>
+			
+		<div class="input-group mb-3 forCopy" style="padding:0px">
+			  <div class="input-group-prepend" style="padding:0px">
+			    <span class="input-group-text">첨부파일</span>
+			  </div>
+			  <div class="custom-file">
+			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required>
+			    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
+			  </div>
+			  <button type="button" class="addFile btn btn-dark">+</button>
+			  <button type="button" class="removeFile btn btn-dark">-</button>
+		</div>
 	</div>
 </div>
 <jsp:include page="/WEB-INF/views/common/footer.jsp"/>

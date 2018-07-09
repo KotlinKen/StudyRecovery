@@ -14,26 +14,49 @@ function studyApply(sno){
 	//임시로 confirm. 계획은 부트스트랩 모달창에 주요 정보 나열 후 확인버튼누르면 아작스 실행.
 	var mno=${memberLoggedIn!=null? memberLoggedIn.getMno():"0"};
 	if(${memberLoggedIn!=null}){
-	
-		if(confirm("신청하시겠습니까")) {
-			$.ajax({
-				url:"applyStudy.do",
-				data:{sno:sno,mno:mno},
-				success:function(data){
-					if(data==-1){
-						alert("신청인원 최대 인원 100명을 넘었습니다.");
+		if(${isApply eq 0}){
+			if(confirm("신청하시겠습니까")) {
+				$.ajax({
+					url:"applyStudy.do",
+					data:{sno:sno,mno:mno},
+					success:function(data){
+						if(data==-1){
+							alert("신청인원 최대 인원 100명을 넘었습니다.");
+						}
+						else if(data==0){
+							alert("이미 신청한 스터디입니다.");
+						}else{
+							alert("신청되었습니다.");
+							window.location.reload(true);
+						}
+						//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
+					},error:function(){
+						
 					}
-					else if(data==0){
-						alert("이미 신청한 스터디입니다.");
-					}else{
-						alert("신청되었습니다.");
+				});
+			}
+		}else{
+			if(confirm("신청취소하겠습니까")) {
+				$.ajax({
+					url:"applyStudyDelete.do",
+					data:{sno:sno,mno:mno},
+					success:function(data){
+						if(data>0){
+							alert("신청취소되었습니다.");
+							window.location.reload(true);
+						}else{
+							
+						}
+				
+					},error:function(){
+						
 					}
-					//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
-				},error:function(){
-					
-				}
-			});
+				});
+			}
+			
 		}
+	
+		
 	}else{
 		//alert("로그인 후 이용하세요");
 		$("a#btn-login").trigger('click');
@@ -46,9 +69,12 @@ function studyWish(sno){
 	//세션에서 멤버의 mno 받아옴 로그인 안한상태에 대해서도 분기 처리.
 	//찜하기를 이미 선택했다면 다시 누르면 찜하기에서 삭제됨.
 	var mno=${memberLoggedIn!=null? memberLoggedIn.getMno():"0"};
+	console.log("######");
+	console.log(sno);
+	console.log(mno);
 	if(${memberLoggedIn!=null}){//로그인을 한 상황..
 		
-		if($("input#isWish").val()==0){//사용자는 전에 찜하지 않았음.
+		if(${isWish eq 0}){//사용자는 전에 찜하지 않았음.
 			$.ajax({
 				url:"wishStudy.do",
 				data:{sno:sno,mno:mno},
@@ -59,7 +85,7 @@ function studyWish(sno){
 						
 						location.href="${pageContext.request.contextPath}/member/searchMyPageKwd.do?myPage=wish";
 					}
-					$("input#isWish").val("1");//찜했음을 저장
+					
 				},error:function(){
 					
 				}
@@ -68,10 +94,13 @@ function studyWish(sno){
 			if(confirm("이미 찜했습니다. 취소하겠습니까?")){
 				$.ajax({
 					url:"deletewishStudy.do",
+					dataType:"json",
 					data:{sno:sno,mno:mno},
 					success:function(data){
+						alert("정상적으로 취소 되었습니다.");
 						$("img.wish").attr("src","${pageContext.request.contextPath }/resources/upload/study/wish.png");
 						$("input#isWish").val("0");//찜취소한거 저장
+						window.location.reload(true);
 					},error:function(){
 						
 					}
@@ -121,13 +150,8 @@ $(function(){
 		}
 		
 	});
-		
-	
-	
-	
 });
-
-
+	
 </script>
 <style>
 .notLeader{
@@ -352,6 +376,27 @@ ul.reviews{
 li.review-one{
 	overflow:hidden;
 }
+.slider {
+    -webkit-appearance: none;
+    width: 80%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+}
+.slider::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 0px;
+   height: 0px;
+   border-top: 20px solid none;
+   border-bottom: 20px solid #0056e9;
+   border-right: 20px solid transparent;
+   border-left: 20px solid transparent;
+   background: transparent;
+   cursor: pointer;
+   transform: translateY(11px);
+}
+
 
 </style>
 <c:set var="imgs" value="${fn:split(study.UPFILE,',')}"/>
@@ -449,6 +494,14 @@ li.review-one{
 			
 		<h3 class="leader-label">리더소개</h3>
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
+		<div class="pointrange" id="pointrange">
+			<label for="">포인트 </label><br /> 
+			<p class="score">${study.POINT }/${memberAvg.AVGPOINT }</p>
+			<label for="">지식포인트 </label><br /> 
+			<p class="score">${study.NPOINT }/${memberAvg.AVGNPOINT }</p>
+			<label for="">경험치 </label><br /> 
+			<p class="score">${study.EXP }/${memberAvg.AVGEXP }</p>
+		</div>
 		</header>
 	
 		<div class="center-leader section-content">
@@ -472,6 +525,7 @@ li.review-one{
 			<li class="review-one">
 				<div class="member-photo section-label">
 					<img src="${pageContext.request.contextPath }/resources/upload/member/${r.MPROFILE!=null? r.MPROFILE:'basicprofile.png'}" alt="" />
+					
 				</div>
 				<div class="review-detail section-content">
 					<span>${r.MNAME }</span>&nbsp;|&nbsp;<span>${r.POINT }점</span>
@@ -506,8 +560,19 @@ li.review-one{
 	<label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${study.APPLYCNT }</span>/<span>${study.RECRUIT }명</span>
 	<c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
 		<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
-			<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여신청하기</span></button><br /><br />
-			<button type="button" id="btn-wish"  class="btn" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button>
+			<c:if test="${isApply eq 0}">
+				<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여 신청하기</span></button><br /><br />
+			</c:if>
+			<c:if test="${isApply ne 0 }">
+				<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여 취소하기</span></button><br /><br />
+			</c:if>
+			<c:if test="${isWish eq 0 }"> 
+				<button type="button" id="btn-wish" class="btn" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button><br /><br />
+			</c:if>
+			<c:if test="${isWish ne 0 }"> 
+				<button type="button" id="btn-wish" class="btn" onclick="studyWish('${study.SNO}');"><span>찜취소</span></button><br /><br />
+			</c:if>
+		
 		</c:if>
 </c:if>	
 </div>

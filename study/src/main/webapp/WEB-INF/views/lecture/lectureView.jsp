@@ -10,7 +10,9 @@
 	//참여신청 버튼 클릭 이벤트
 	function lectureApply(){
 		
-		if(${memberLoggedIn==null}) $("a#btn-login").trigger('click');
+		if(${memberLoggedIn==null}){
+			$("a#btn-login").trigger('click');			
+		}
 		else{
 			// 결제 도전!
 			var IMP = window.IMP;
@@ -431,18 +433,15 @@ li.review-one{
 }
 </style>
 <c:set var="imgs" value="${fn:split(lecture.UPFILE,',')}"/>
-<div class="leader-btn-wrap">
-	
-		<c:if test="${memberLoggedIn!=null }">
-			<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-				<c:if test="${lecutre.STATUS=='모집 중'||lecutre.STATUS=='마감 임박'}">
-					<button type="button" class="removeStudy btn" onclick="deleteLecture();">강의 삭제</button>
-				</c:if>
-		      
-		      <br />
-		   </c:if>
-		</c:if>
-
+<div class="leader-btn-wrap">	
+	<c:if test="${memberLoggedIn!=null }">
+		<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }"><
+			<c:if test="${lecture.STATUS=='모집 중'||lecture.STATUS=='마감 임박'}">
+				<button type="button" class="removeStudy btn" onclick="deleteLecture();">강의 삭제</button>
+			</c:if>		      
+	      <br />
+	   </c:if>
+	</c:if>
 </div>
 <div class="studyView-container">
 	
@@ -579,12 +578,13 @@ li.review-one{
 		<label for="">신청 기간 : </label> <span class="side-info">~${lecture.LDATE }</span><br />
 		<label for="">스터디일정 : </label> <span class="side-info">${lecture.SDATE }~${lecture.EDATE }</span><br />
 		<label for="">강의료 : </label> <span class="price side-info">${lecture.PRICE }원</span><br />
+		<label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${lecture.CNT }</span>/<span>${lecture.RECRUIT }명</span>
 		  <c:if test="${memberLoggedIn== null || memberLoggedIn.getMno() ne lecture.MNO  }">
 	      <!-- 참여, 찜 -->
 	      <c:if test="${insert eq 0}">
 	      
 	      	<c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
-		         <button type="button" class="btn btn-apply" onclick="lectureApply();" >참여 신청하기</button>
+		         <button type="button" class="btn btn-apply" style="background:orange;" onclick="lectureApply();" >참여 신청하기</button>
 		         
 		         <!-- 찜 -->
 		         <c:if test="${wish eq 0}">

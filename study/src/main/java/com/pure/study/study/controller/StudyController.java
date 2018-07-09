@@ -177,6 +177,7 @@ public class StudyController {
 		        	 System.out.println("포함되는 경우");
 		            // 요일을 검사해보자...
 		        	for(int k=0;k<freq.length;k++) {
+		        		System.out.println("####### k freq.length"+k);
 		        		if(ownStudyList.get(j).containsValue(freq[k])) {
 		        			System.out.println("ddddddd"+Integer.parseInt(ownStudyList.get(j).get("STARTTIME").toString()));
 		        			
@@ -401,23 +402,39 @@ public class StudyController {
 		
 		Member  m= (Member)session.getAttribute("memberLoggedIn");
 		int isWish=0;
+		int isCrew=0;
+		int isApply=0;
 		if(m!=null) {
 			//이미 찜했는지 여부 검사 
 			Map<String,Integer> map = new HashMap<>();
 			map.put("mno", m.getMno());
 			map.put("sno", sno);
 			isWish = studyService.isWishStudy(map);
+			isCrew = studyService.isCrewStudy(map);
+			if(isCrew==0) {
+				isApply = studyService.isApplyStudy(map);
+			}
+			mav.addObject("isApply",isApply);
 			
 		}
+		
+		
+		
 		
 		
 		//팀장에 리뷰 가져오기.
 		List<Map<String,Object>> reviewList= studyService.selectReview(sno);
 		if(!reviewList.isEmpty()) mav.addObject("reviewList",reviewList);
 		
+		Map<String,Object> memberAvg = studyService.selectMemberAvg();
+		System.out.println("%%%%%%%%%%%%memberAvg"+memberAvg);
+		
+		
+		mav.addObject("memberAvg", memberAvg);
 		mav.addObject("study", study);
 		mav.addObject("memberLoggedIn", m);
 		mav.addObject("isWish",isWish);	
+		
 		mav.setViewName("study/studyView");
 		return mav;
 	}
@@ -747,6 +764,21 @@ public class StudyController {
 		cnt = studyService.selectApplyCount(sno);
 		
 		return cnt;
+	}
+	
+	@RequestMapping("/study/applyStudyDelete.do")
+	@ResponseBody
+	public int applyStudyDelete(@RequestParam(value="sno") int sno,@RequestParam(value="mno") int mno) {
+		
+		int result =0;
+		Map<String,Object> map = new HashMap<>();
+		map.put("sno", sno);
+		map.put("mno", mno);
+		result = studyService.applyStudyDelete(map);
+		
+		return result;
+		
+		
 	}
 	
 	
