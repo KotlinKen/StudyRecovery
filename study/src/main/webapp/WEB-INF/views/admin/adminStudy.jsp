@@ -474,6 +474,6 @@ function SearchStudy(cPage, pageBarSize){
 	  <strong>Success!</strong> 스터디 삭제 성공
 	</div>
 </div>
-<a class="btn btn-primary btn-lg" style="font-size: 12px;color: white;" href="${rootPath}/adminSub/kindListView.do">지역 관리</a>
+<a class="btn btn-primary btn-lg" style="font-size: 12px;color: white;" href="${rootPath}/adminSub/loadListView.do">지역 관리</a>
 <a class="btn btn-primary btn-lg" style="font-size: 12px;color: white;" href="${rootPath}/adminSub/kindListView.do">카테고리 관리</a>
 <jsp:include page ="/WEB-INF/views/common/admin_footer.jsp" />

@@ -153,7 +153,7 @@ input#leadername, input#title{
 	  </ul>
 	</nav>
 </div>
-<a class="btn btn-primary btn-lg" style="font-size: 12px;color: white;" href="${rootPath}/adminSub/kindListView.do">지역 관리</a>
+<a class="btn btn-primary btn-lg" style="font-size: 12px;color: white;" href="${rootPath}/adminSub/loadListView.do">지역 관리</a>
 <a class="btn btn-primary btn-lg" style="font-size: 12px;color: white;" href="${rootPath}/adminSub/kindListView.do">카테고리 관리</a>
 <script>
 $(function(){
