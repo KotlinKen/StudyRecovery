@@ -203,7 +203,7 @@ table {
 					</th>
 				</tr>
 				<tr>
-					<th>자기소계서</th>
+					<th>자기소개서</th>
 					<th>
 
 						<button type="button" class="btn btn-outline-primary btn-block"
@@ -309,26 +309,26 @@ table {
 		var url = "";
 		if(e == 0){
 			url="changPOINTPLUS.do";
-			if(${m.point}+1000>100000){
+			if(${m.point}+1000>100001){
 				return false;
 			}
 			
 		} 
 		if(e == 1){
 			url="changPOINTMINUS.do";
-			if(${m.point}-1000<-100000){
+			if(${m.point}-1000<-100001){
 				return false;
 			}
 		}
 		if(e == 2){
 			url="changNPOINTPLUS.do";
-			if(${m.NPoint}+1000>100000){
+			if(${m.NPoint}+1000>100001){
 				return false;
 			}
 		}
 		if(e == 3){
 			url="changNPOINTMINUS.do";
-			if(${m.NPoint}-1000 < 0){
+			if(${m.NPoint}-1000 < -1){
 				return false;
 			}
 		}
@@ -345,15 +345,19 @@ table {
 			success : function(date) {
 				console.log(date.list[0]);
 				if(e == 0){
+					console.log(date.list[0].POINT);
 					point(date.list[0].POINT,${m.NPoint});
 				} 
 				if(e == 1){
+					console.log(date.list[0].POINT);
 					point(date.list[0].POINT,${m.NPoint});
 				}
 				if(e == 2){
+					console.log(date.list[0].NPOINT);;
 					point(${m.point},date.list[0].NPOINT);
 				}
 				if(e == 3){
+					console.log(date.list[0].NPOINT);;
 					point(${m.point},date.list[0].NPOINT);
 				}
 				

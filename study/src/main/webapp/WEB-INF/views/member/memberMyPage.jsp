@@ -20,8 +20,8 @@
 		color: #666;
 	}
 	div.ulpage{
-		margin-left: 10%;
-		margin-right: 10%;
+		margin-left: 20%;
+		margin-right: 20%;
 	}
 </style>
 <br />
@@ -37,7 +37,7 @@
 		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=apply">스터디 신청 목록</a>
 	</li>
 	<li class='btn-page'>
-		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=wish">스터디/강의 관심 목록</a>
+		<a href="${rootPath }/member/searchMyPageKwd.do?myPage=wish">스터디/강의 찜 목록</a>
 	</li>
 	<li class='btn-page' id="insetruct">
 		<a href="#" onclick="javascript:document.myForm.submit();" >강사신청</a>
@@ -46,7 +46,10 @@
 		<a href="${rootPath }/member/searchMyPageEvaluation.do" >내 평가</a>
 	</li>
 	<li class='btn-page'>
-		<a href="${rootPath }/member/messageList" >쪽지</a>
+		<a href="${rootPath }/member/memberMessageList" >쪽지</a>
+	</li>
+	<li class='btn-page'>
+		<a href="${rootPath }/member/paymentList.do" >결제</a>
 	</li>
 </ul>
 	
@@ -68,7 +71,8 @@
 <script>
 $(document).ready(function(){
 	console.log("?")
-	instruct( ${memberLoggedIn.mno } );
+	//김률민 수정 2018 07 08 
+	instruct( "${memberLoggedIn.mno }" );
 });
 function instruct(mno) {
 	console.log(mno)

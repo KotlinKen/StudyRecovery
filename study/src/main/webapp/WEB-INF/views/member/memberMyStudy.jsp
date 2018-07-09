@@ -10,7 +10,7 @@
 		background: #ffffff;
 	}
 	td{
-		max-width: 180;
+		max-width: 200;
 		word-break:break-all;
 		text-overflow:ellipsis; 
 		overflow:hidden;
@@ -22,12 +22,30 @@
 	select#subject{
 		display:none;
 	}
-	div.page{
-		margin-left: 10%;
-		margin-right: 10%;
-	}
 	div.background{
 		background: #ffffff;
+	}
+	button.cancel, .apply, .like, .dislike{
+		width: auto;
+		height: auto;
+		font-size: 15px;
+		border-radius: 10px;
+		padding-left: 5px;
+		padding-right: 5px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+		background: #ffffff;
+		border-style: solid ;
+		color: #666;
+	}
+	.leader{
+		padding: 5px;
+		border-radius: 10px;
+		border: 1px solid #666;
+	}
+	button.apply:hover, .cancel:hover{
+		background: #0056e9;
+		color: #ffffff;
 	}
 </style>
 
@@ -42,8 +60,9 @@
 	<input type="hidden" id="hiddenMno" value="${memberLoggedIn.mno }" />
 	
 	<!-- 팀장/팀원 구분 -->
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=y&type=${type}" ${leader eq 'y' ? "style='color:#007bff'" :'' }>팀장</a>|
-	<a href="${rootPath }/member/searchMyPageKwd.do?leader=n&type=${type}" ${leader eq 'n' ? "style='color:#007bff'" :'' }>팀원</a>
+	<a class="leader" href="${rootPath }/member/searchMyPageKwd.do?leader=y&type=${type}" ${leader eq 'y' ? "style='background:#007bff; color: white;'" :'' }>팀장</a>
+	<a class="leader" href="${rootPath }/member/searchMyPageKwd.do?leader=n&type=${type}" ${leader eq 'n' ? "style='background:#007bff; color: white;'" :'' }>팀원</a>
+	<br />
 	<br />
 	
 	<!-- 스터디/강의 구분 -->
@@ -209,7 +228,7 @@
 					</c:if>
 		
 					<!-- 스터디 진행 중 => 팀원 목록 분기 하기? -->
-					<c:if test="${((sysdate gt ms.sdate) or (sysdate eq ms.sdate) )and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) }">
+					<c:if test="${((sysdate gt ms.sdate) or (sysdate eq ms.sdate) )and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) and !(ms.sdate eq ms.ldate) }">
 						<button type=button id="crewList${ms.sno }" value="1" name="crewListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#crewListModal" >진행 중(팀원 목록)</button>						
 					</c:if>
 					
@@ -246,7 +265,7 @@
 					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set>
 					
 					<!-- 신청 중 & 신청 마감 & 스터디 진행 전 => 팀원 취소 하기 기능-->
-					<c:if test="${sysdate lt ms.sdate  }">
+					<c:if test="${(sysdate lt ms.sdate) or (sysdate eq ms.sdate)  }">
 						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal" >신청 현황</button>
 					</c:if>
 					
@@ -502,7 +521,7 @@
 						dataType: "json",
 						//contentType: "application/x-www-form-urlencoded; charset=UTF-8", 
 						success: function(data){
-							var html = "<table><tr><th>스터디명</th><th>팀장이름</th><th>작성자</th><th>평가할 팀원</th><th>평가</th><th>내용</th><th>보기</th></tr>";
+							var html = "<table><tr><th>스터디명</th><th>팀장이름</th><th>작성자</th><th>평가할 팀원</th><th>평가</th><th>내용</th></tr>";
 							var userId = $("input#hiddenUserId").val();
 							var mno = $("input#hiddenMno").val();
 							for(var i in data.list){
@@ -518,12 +537,11 @@
 									html += "<td>"+index.tmid+"("+index.tmname+")"; //평가할 id, name
 									html += "<input type='hidden' name='tmno' value='"+index.tmno+"'>"+"</td>";
 									html += "<td>";
-									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>";
+									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>&nbsp;";
 									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
 									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
-									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
-									html += "<td>보기 </td>";
+									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' autocomplete='off' required/></td>";
 									html += "</tr>";
 								}  else if(userId!=index.tmid && <%="n"==leader%>){ //자기 자신이 아니면서 팀원인 경우
 									html += "<tr>";
@@ -535,12 +553,11 @@
 									html += "<td>"+index.tmid+"("+index.tmname+")"; //평가할 id, name
 									html += "<input type='hidden' name='tmno' value='"+index.tmno+"'>"+"</td>";
 									html += "<td>";
-									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>";
+									html += "<button type='button' class='like' id='likeq"+index.tmno+"' value='1000'>좋아요</button>&nbsp;";
 									html += "<button type='button' class='dislike' id='dislikeq"+index.tmno+"' value='-1000'>싫어요</button>";
 									html += "<input type='hidden' name='point' id='pointq"+index.tmno+"' value='0'>";
 									html += "</td>";
-									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' required/></td>";
-									html += "<td>보기</td>";
+									html += "<td><input type='text' name='content' size='50' placeholder='평가 내용을 적어 주세요' autocomplete='off' required/></td>";
 									html += "</tr>";
 								}
 							}
@@ -562,15 +579,15 @@
 							$(".like").on("click",function(){
 								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
-								$("#dislikeq"+tmno).attr("style","color: black");
-								$(this).attr("style","color: red");
+								$("#dislikeq"+tmno).attr("style","background-color: #ffffff");
+								$(this).attr("style","background: #0056e9");
 								$("#pointq"+tmno).val($(this).val());
 							});
 							$(".dislike").on("click",function(){
 								//console.log($(this).val());
 								var tmno = this.id.split("q")[1].toString();
-								$("#likeq"+tmno).attr("style","color: black");
-								$(this).attr("style","color: red");
+								$("#likeq"+tmno).attr("style","background-color: #ffffff");
+								$(this).attr("style","background: #0056e9");
 								$("#pointq"+tmno).val($(this).val());
 							});
 						
@@ -781,7 +798,7 @@
 					//console.log(data.applyList[i]);
 					html += "<tr id='amno"+data.applyList[i].mno+"'>";
 					html += "<td>";
-					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png'  style='width:100px;'/>";
+					html += "<img src='${rootPath}/resources/upload/member/"+data.applyList[i].mprofile+"' alt='회원 "+data.applyList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg'  style='width:100px;'/>";
 					html += "</td>";
 					html += "<td>";
 					html += data.applyList[i].grade;
@@ -807,8 +824,7 @@
 					html += "<button type=button class='apply' name='agree' id='agreeq"+data.applyList[i].mno+"'>수락</button>";
 					html += "</td>";
 					html += "</tr>";	
-					
-					$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+") 모집인원 : "+data.crewCnt+"/"+recruit);
+					$("h5#modalLabel").html("스터디 신청 현황("+data.applyList[0].title+")<br/>모집인원 : "+data.crewCnt+"/"+recruit);
 				}
 				html += "</table>";
 				
@@ -825,7 +841,7 @@
 					//console.log(data.crewList[i]);
 					removehtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
 					removehtml += "<td>";
-					removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
+					removehtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg' style='width:100px;'/>";
 					removehtml += "</td>";
 					removehtml += "<td>";
 					removehtml += data.crewList[i].grade;
@@ -865,7 +881,7 @@
 					//console.log(data.crewList[i]);
 					crewhtml += "<tr id='cmno"+data.crewList[i].mno+"'>";
 					crewhtml += "<td>";
-					crewhtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
+					crewhtml += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg' style='width:100px;'/>";
 					crewhtml += "</td>";
 					crewhtml += "<td>";
 					crewhtml += data.crewList[i].grade;
@@ -902,7 +918,7 @@
 						$("h5#modalLabel").html(data.studyName);
 					<%} else{%>
 						
-						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+") 모집인원 : "+data.crewCnt+"/"+recruit);
+						$("h5#modalLabel").html("스터디 신청 현황("+data.studyName+") <br/>모집인원 : "+data.crewCnt+"/"+recruit);
 					<%}%>
 					
 					<%if(("lecture").equals(type)){%>
@@ -1007,7 +1023,7 @@
 						//console.log(data.crewList[i]);
 						html += "<tr class='mno"+data.crewList[i].mno+"'>";
 						html += "<td>";
-						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/basicprofile.png' style='width:100px;'/>";
+						html += "<img src='${rootPath}/resources/upload/member/"+data.crewList[i].mprofile+"' alt='회원 "+data.crewList[i].mid+"의 프로필 사진'  onerror=src='/study/resources/upload/member/noprofile.jpg' style='width:100px;'/>";
 						html += "</td>";
 						html += "<td>";
 						html += data.crewList[i].grade;

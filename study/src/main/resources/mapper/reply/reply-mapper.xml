@@ -13,12 +13,23 @@
 	
 	
 	<select id="replyCount" resultType="_int">
-		SELECT COUNT(*) TOTALCOUNT FROM REPLY
+		SELECT COUNT(*) TOTALCOUNT 
+		FROM REPLY R INNER JOIN BOARD  B ON R.BNO = B.BNO
+			         INNER JOIN MEMBER M ON R.MNO = M.MNO
 		<trim prefix="WHERE" prefixOverrides ="AND | OR ">
 			<if test="bno != null and bno != '' ">
-			AND BNO = #{bno}		
+			AND r.BNO = #{bno}		
 			</if>
-			AND STATUS ='Y'
+			<if test="mno != null and mno != ''">
+			and r.mno=#{mno}
+			</if>
+			<if test="searchKwd== 'title' and (kwd != null and kwd != '')">
+			and b.title like '%'||#{kwd}||'%'
+			</if>
+			<if test="searchKwd== 'captain' and (kwd != null and kwd != '')">
+			and r.content like '%'||#{kwd}||'%'
+			</if>
+			AND r.STATUS ='Y'
 		</trim>
 	</select>
 	
@@ -33,6 +44,15 @@
 			
 			<if test="bno != null and bno != '' ">
 			AND R.BNO = #{bno}		
+			</if>
+			<if test="mno != null and mno != ''">
+			and r.mno=#{mno}
+			</if>
+			<if test="searchKwd== 'title' and (kwd != null and kwd != '')">
+			and b.title like '%'||#{kwd}||'%'
+			</if>
+			<if test="searchKwd== 'captain' and (kwd != null and kwd != '')">
+			and r.content like '%'||#{kwd}||'%'
 			</if>
 			AND R.STATUS ='Y'
 		</trim>

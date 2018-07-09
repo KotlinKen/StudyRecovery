@@ -53,7 +53,6 @@ public class MessageController {
 		
 		
 		List<Map<String, String>> listAll = messageService.messageList();
-		System.out.println("+==========================================================+");
 		List<Map<String, String>> listQuery = messageService.messageList(queryMap);
 		List<Map<String, String>> listQueryPage = messageService.messageList(cPage, numPerPage, queryMap);
 		
@@ -71,22 +70,36 @@ public class MessageController {
 		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
 		
 		if(m != null) {
-			queryMap.put("mno", String.valueOf(m.getMno()));
+			queryMap.put("sendermno", String.valueOf(m.getMno()));
 		}
+		
+		
+		
 		return mav; 
 	}
 	@RequestMapping(value="/message/messageWriteEnd", method=RequestMethod.POST)
-	public ModelAndView messageWriteEnd(@RequestParam(value="receivermno", required = true, defaultValue="") int receivermno,
+	@ResponseBody
+	public ModelAndView messageWriteEnd(@RequestParam(value="receivermno", required = true, defaultValue="") String receivermno,
 			@RequestParam Map<String, String> queryMap, HttpServletRequest request){
-		ModelAndView mav = new ModelAndView();
+		ModelAndView mav = new ModelAndView("jsonView");
 		
 		Member m = (Member)request.getSession().getAttribute("memberLoggedIn");
 		
 		if(m != null) {
 			queryMap.put("sendermno", String.valueOf(m.getMno()));
 		}else {
-			//널이면 접근 불가하게
+			
 		}
+		
+		if( String.valueOf(receivermno).equals("")) {
+			mav.addObject("msg", "해당되는 인원이 없습니다.");
+			mav.addObject("loc", "/member/memberMessageList");
+			mav.setViewName("common/msg");
+			
+			return mav;
+		}
+		
+		
 		
 		if(queryMap.get("sno") == null) {
 			queryMap.put("sno", null);
@@ -99,6 +112,7 @@ public class MessageController {
 		
 		if(result > 0 ) {
 			queryMap.put("receivermno", String.valueOf(receivermno));
+	        queryMap.put("checkdate", "checkdate");
 			int count = messageService.messageCount(queryMap);
 			ObjectMapper mapper = new ObjectMapper();
 			try {
@@ -114,17 +128,17 @@ public class MessageController {
 			}
 			
 			mav.addObject("msg", "쪽지를 발송하였습니다.");
-			mav.addObject("loc", "/message/messageWrite");
+			mav.addObject("loc", "/member/memberMessageList");
 			mav.setViewName("common/msg");
 			return mav;
 		}else {
 			mav.addObject("msg", "발송에 실패 하였습니다.");
-			mav.addObject("loc", "message/messageWrite");
+			mav.addObject("loc", "/member/memberMessageList");
 			mav.setViewName("common/msg");
 		}
 		
 		mav.addObject("result", result);
-		mav.setViewName("message/messageWrite");
+		mav.setViewName("/member/memberMessageList");
 		return mav; 
 	}
 	

@@ -449,6 +449,20 @@ public class MemberDAOImpl implements MemberDAO {
 		return sqlSession.selectOne("member.selectEvalCnt",map);
 	}
 
+	@Override
+	public List<Map<String, String>> selectPayList(Map<String, Object> map, int numPerPage, int cPage) {
+		return sqlSession.selectList("member.selectPayList",map, new RowBounds(numPerPage*(cPage-1),numPerPage));
+	}
+
+	@Override
+	public int selectPayList(Map<String, Object> map) {
+		return sqlSession.selectOne("member.selectPayListCnt",map);
+	}
+	@Override
+	public List<Map<String, String>> memberSearch(Map<String, String> queryMap) {
+		return sqlSession.selectList("member.memberSearch", queryMap);
+	}
+
 	
 	
 }

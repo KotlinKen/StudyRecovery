@@ -69,7 +69,7 @@ function loadInstructor(){
 	    		if(member.STATE.trim() =='X'){
 	    			rmHtml1 += "<tr>"
     				rmHtml1 += "<td>"+member.MNO+"</td>";
-	    			rmHtml1 += "<td><a href=\"${rootPath }/member/memberSelectONEView.do?size=10&mid="+member.MID+"\">" +member.MID +"</a></td>";
+	    			rmHtml1 += "<td><a href=\"${rootPath }/member/selectViewInstructor.do?size=10&mid="+member.MID+"\">" +member.MID +"</a></td>";
 	    			rmHtml1 += "<td>" +member.MNAME+"</td>";
 	    			rmHtml1 += "<td>" +member.PHONE+"</td>";
 	    			rmHtml1 += "<td>" +member.POINT+"</td>";
@@ -131,7 +131,7 @@ function loadInstructor(){
 	    		}else{
 	    			rmHtml2 += "<tr>"
 	    				rmHtml2 += "<td>"+member.MNO+"</td>";
-		    			rmHtml2 += "<td><a href=\"${rootPath }/member/memberSelectONEView.do?size=10&mid="+member.MID+"\"&&size=10>" +member.MID +"</a></td>";
+		    			rmHtml2 += "<td><a href=\"${rootPath }/member/selectViewInstructor.do?size=10&mid="+member.MID+"\"&&size=10>" +member.MID +"</a></td>";
 		    			rmHtml2 += "<td>" +member.MNAME+"</td>";
 		    			rmHtml2 += "<td>" +member.PHONE+"</td>";
 		    			rmHtml2 += "<td>" +member.POINT+"</td>";

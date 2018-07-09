@@ -133,7 +133,7 @@
 					dataType : "json",
 					success : function(date) {
 						var html = "";
-						html += "<img class ='call_img'   src='${pageContext.request.contextPath }/resources/upload/member/"+date.renamedFileName+"'>";
+						html += "<img class ='call_img'   src='${rootPath }/resources/upload/member/"+date.renamedFileName+"'>";
 						$("#div-img-ik").html(html);
 						$("#div-img-ik").css({"display":"inline-block"});
 						$("#mprofile").val(date.renamedFileName);
@@ -509,6 +509,7 @@
 				alert("이메일 인증을 바랍니다");
 				emailaddr.focus();
 				return false;
+				console.log("불")
 			}
 		
 			return true;
@@ -645,13 +646,13 @@
 					data: {kindNo : kindNo},
 					dataType: "json",
 					success : function(data){
-						var html="<option value='-1'>세부 과목을 선택하세요</option>";
+						var html="<select name=\"sno\" id=\"sub\" class=\"custom-select\"><option value='-1'>세부 과목을 선택하세요</option>";
 						
 						for(var index in data){
 							html += "<option value='"+data[index].SUBNO +"'>" + data[index].SUBJECTNAME + "</option></br>";
 						}
-						
-						$("#sub").html(html);
+						html+="</select>"
+						$("#kind").after(html);
 					}			
 				});
 			});	

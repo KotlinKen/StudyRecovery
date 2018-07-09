@@ -238,7 +238,8 @@ public class StudyDAOImpl implements StudyDAO {
 		return sqlSession.delete("study.applyStudyDelete",map);
 	}
 
-
-
-
+	@Override
+	public List<Map<String, Object>> selectRankList() {
+		return sqlSession.selectList("study.rankList");
+	}
 }

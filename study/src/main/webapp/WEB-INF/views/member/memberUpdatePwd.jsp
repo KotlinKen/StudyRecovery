@@ -15,7 +15,7 @@
 	}
 	.id-pwd{
 		width: 40%;
-		height: 40%;
+		height: 30%;
 		background: #ebebee;
 		position: relative;
 		top: 0;
@@ -23,7 +23,7 @@
 		z-index: 100;
 		border-radius: 5px;
 	}
-	input[type=password] {
+	input[type=password].pwd {
 	    width: 100%;
 	    padding: 12px 20px;
 	    margin: 8px 0;
@@ -31,23 +31,35 @@
 	    border: none;
 	    border-bottom: 1px solid #cccccc;
 	}
+	div#page-all{
+		background: #ffffff;
+	}
+	.spanidpass{
+		font-size: 25px;
+		width: 100px;
+		position: relative;
+		top: 70px;
+		left: 43%;
+	}
 </style>
+<div id="page-all">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="비밀번호 변경" name="pageTitle"/>
 	</jsp:include>
 	<c:if test="${memberLoggedIn==null }">
+		<span id="idServiceLogo" class="spanidpass"><b>비밀번호 변경</b></span>
 		<form class="find" action="${pageContext.request.contextPath }/member/memberUpdatePwd.do" method="post" onsubmit="return pwdDuplicateCheck();">
 			<table class="id-pwd">
 				<tr class="id-pwd">
 					<td class="id-pwd">
-						<input type="password" name="pwd" id="password_" maxlength="15" placeholder="비밀번호" required autocomplete="off"  />
+						<input type="password" class="pwd" name="pwd" id="password_" maxlength="15" placeholder="비밀번호" required autocomplete="off"  />
 						<span id="pwd"></span>  
 						<span id="pwdok"></span>  
 					</td>
 				</tr>
 				<tr class="id-pwd">
 					<td class="id-pwd">
-						<input type="password" id="password2"  placeholder="비밀번호 확인" required autocomplete="off"  />
+						<input type="password" class="pwd" id="password2"  placeholder="비밀번호 확인" required autocomplete="off"  />
 						<span id="pwd2"></span> 
 						<span id="pwd2ok"></span> 
 					</td>
@@ -66,4 +78,4 @@
 	</c:if>
 
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
-	
+</div>

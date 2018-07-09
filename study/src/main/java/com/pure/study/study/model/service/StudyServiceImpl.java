@@ -227,6 +227,11 @@ public class StudyServiceImpl implements StudyService {
 		return studyDAO.applyStudyDelete(map);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectRankList() {
+		return studyDAO.selectRankList();
+	}
+
 	
 
 

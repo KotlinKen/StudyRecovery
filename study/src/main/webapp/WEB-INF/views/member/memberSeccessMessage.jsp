@@ -54,6 +54,7 @@ img{width: 50%;}
 			</div>
 		</form>
 	</div>
+	<br /><br />
 	<a  href="${rootPath }/study/studyList.do" style="color: white;" class="button">스터디 둘러보기</a> &nbsp;&nbsp;
 	<a  href="${rootPath }/lecture/lectureList.do" style="color: white;" class="button">강의 둘러보기</a> &nbsp;&nbsp;
 	<a id="headaik" href="${pageContext.request.contextPath}" style="color: white;" class="button">홈으로</a>

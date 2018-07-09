@@ -1,6 +1,5 @@
 package com.pure.study.member.model.service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.pure.study.member.model.dao.MemberDAO;
 import com.pure.study.member.model.vo.Instructor;
 import com.pure.study.member.model.vo.Member;
-import com.pure.study.member.model.vo.Review;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -438,6 +436,20 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int selectEvalCnt(Map<String, Object> map) {
 		return memberDAO.selectEvalCnt(map);
+	}
+
+	@Override
+	public List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> map) {
+		return memberDAO.selectPayList(map, numPerPage, cPage);
+	}
+
+	@Override
+	public int selectPayListCnt(Map<String, Object> map) {
+		return memberDAO.selectPayList(map);
+	}
+	@Override
+	public List<Map<String, String>> memberSearch(Map<String, String> queryMap) {
+		return memberDAO.memberSearch(queryMap);
 	}
 
 	

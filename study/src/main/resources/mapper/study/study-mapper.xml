@@ -425,6 +425,16 @@
    		select floor(avg(point)) avgpoint,floor(avg(npoint)) avgnpoint,floor(avg(exp)) avgexp from member
    </select>
    
+   <select id="rankList" resultMap="mapList">
+   		SELECT ROWNUM, 
+   			   MNO, 
+   			   POINT, 
+   			   ROUND(ROWNUM/(SELECT COUNT(*) FROM MEMBER)* 100) AS PER
+		FROM
+		(SELECT POINT, MNO
+		FROM MEMBER
+		ORDER BY POINT DESC)
+   </select>   
    
    <select id="isCrewStudy" resultType="_int">
    	select count(*) from crew where sno=#{sno} and mno=#{mno}

@@ -67,14 +67,12 @@ public class EchoHandler extends TextWebSocketHandler {
 	        while(sessionIds.hasNext()){
 	        	sessionId = sessionIds.next();
 	        	int count = messageService.messageCount(queryMap);
-			        if(count>0) {
 			        	message = new Message("init", String.valueOf(member.getMno()), String.valueOf(member.getMno()), String.valueOf(count), count);
 			        	if(message.getReceiver().equals(sessionId)){
 			   
 			        	//handleTextMessage(session, new TextMessage(mapper.writeValueAsString(message)));
 			        	sessions.get(sessionId).sendMessage(new TextMessage(mapper.writeValueAsString(message)));
 			            }
-			        }
 	        	}
 	    	  }
 	        
