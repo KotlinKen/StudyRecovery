@@ -1332,12 +1332,21 @@ public class MemberController {
                   result = memberService.insertCrew(map);
                   /*김률민 추가 20180708 메시징 핸들러를 위해 *************************************************/
                   ObjectMapper mapper = new ObjectMapper();
-                  
-  				  Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"신청수락 되었습니다.", 0);
+                  map.put("sendermno", String.valueOf(m.getMno()));
+                  map.put("receivermno", mno);
+                  map.put("checkdate", "checkdate");
+                  map.put("content", study.getTitle()+"신청수락 되었습니다.");
 
-                  if(result > 0 ) {
+  				  //시스템 쪽지 발송
+  				  int messageResult = messageService.messageWrite(map);
+  				  int count = messageService.messageCount(map);
+  				  Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"신청수락 되었습니다.", count);
+
+                  
+  				  if(result > 0 && messageResult > 0) {
       				try {
 						echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(m.getMno())), new TextMessage(mapper.writeValueAsString(message)));
+
 					} catch (JsonProcessingException e) {
 						e.printStackTrace();
 					} catch (Exception e) {
@@ -1345,6 +1354,9 @@ public class MemberController {
 					}
 
                   }
+
+  				  
+  				  
                   /*김률민 추가 20180708 메시징 핸들러를 위해 ***************************************************/
                } else {
                   //중복된게 있어서 회원을 팀원으로 수락 불가. 
@@ -1363,9 +1375,18 @@ public class MemberController {
 			resultDel = memberService.deleteCrew(map);
             /*김률민 추가 20180708 메시징 핸들러를 위해 *************************************************/
             ObjectMapper mapper = new ObjectMapper();
-		    Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"수락이 취소 되었습니다.", 0);
+            map.put("sendermno", String.valueOf(m.getMno()));
+            map.put("receivermno", mno);
+            map.put("checkdate", "checkdate");
+            map.put("content", study.getTitle()+"신청 수락이 취소 되었습니다.");
 
-            if(resultDel > 0 ) {
+			  //시스템 쪽지 발송
+			  int messageResult = messageService.messageWrite(map);
+			  int count = messageService.messageCount(map);
+            
+		    Message message = new Message("insert:crew", String.valueOf(m.getMno()), map.get("mno"), study.getTitle()+"수락이 취소 되었습니다.", count);
+
+            if(resultDel > 0 && messageResult > 0 ) {
 				try {
 					echoHandler.handleMessage(echoHandler.getSessions().get(String.valueOf(45)), new TextMessage(mapper.writeValueAsString(message)));
 				} catch (JsonProcessingException e) {
@@ -1431,8 +1452,8 @@ public class MemberController {
 	                	  System.out.println("요일겹치기..");
 	                     // 등록이 가능한 경우.
 	                
-	                     if (sHour > Integer.parseInt(list.get(j).get("ETIME").toString())
-	                           || eHour < Integer.parseInt(list.get(j).get("STIME").toString())) {
+	                     if (sHour > Integer.parseInt(list.get(i).get("ETIME").toString())
+	                           || eHour < Integer.parseInt(list.get(i).get("STIME").toString())) {
 	                        System.out.println("시간이 안겹쳐서 들어감");
 	                     }
 	                     // 불가능한 경우.
@@ -2713,6 +2734,11 @@ public class MemberController {
 		if(m != null) {
 			List<Map<String, String>> resultListMap = memberService.memberSearch(queryMap);
 			mav.addObject("resultListMap", resultListMap);
+		}else {
+			mav.addObject("msg", "로그인후 이용해 주세요");
+			mav.addObject("loc", "/");
+			mav.setViewName("common/msg");
+			return mav;
 		}
 		
 		return mav; 

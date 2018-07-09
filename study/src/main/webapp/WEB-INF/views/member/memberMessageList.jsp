@@ -33,7 +33,7 @@
 		<th>보낸이</th>	
 		<th>받는이</th>	
 		<th>발송날짜</th>
-		<th>수신날짜</th>
+		<th>확인날짜</th>
 	</tr>	
 	<c:forEach var="message" items="${listQueryPage }">
 	<tr onclick="messageView(${message.MESSAGENO}, ${message.SENDERMNO}, '${message.SNAME }')" data-toggle="modal"  data-target="#messageViewModal" >
@@ -79,7 +79,7 @@
 						<div class="modal-body">
                            <input type="text" class="form-control" id="searchMember" placeholder="받는이" required />
                            
-                           <div class="memberlist" style="max-height:150px; overflow-y:scroll; margin:10px 0px;" autocomplete="off" >
+                           <div class="memberlist" style="max-height:150px; overflow-y:scroll; margin:10px 0px;"  autocomplete="off" >
                            
                            </div>
                            
@@ -91,10 +91,10 @@
 							<div class="container">
 								<div class="row">
 									<div class="col-md-6" style="padding-left:0px;">
-										<button type="submit" class="btn btn-outline-success btn-lg btn-block">전송</button>
+										<button type="submit" class="btn btn-outline-success btn-lg btn-block" onclick="return checkWrite()" >전송</button>
 									</div>
 									<div class="col-md-6" style="padding-right:0px;">
-										<button type="button" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">취소</button>
+										<button type="button" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal" >취소</button>
 									</div>
 								</div>
 								<div class="row text-center">
@@ -179,7 +179,7 @@
 										<button type="submit" class="btn btn-outline-success btn-lg btn-block">전송</button>
 									</div>
 									<div class="col-md-6" style="padding-right:0px;">
-										<button type="button" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal">취소</button>
+										<button type="button" class="btn btn-secondary btn-lg btn-block"  data-dismiss="modal">취소</button>
 									</div>
 								</div>
 								<div class="row text-center">
@@ -210,6 +210,21 @@
 
 
 <script>
+
+
+
+//글쓰기 체크
+
+function checkWrite(){
+	$recivermno = $("#receivermno").val();
+	
+	if($recivermno == null || $recivermno == ""){
+		alert("회원을 검색후 선택해주세요");
+		return false;
+	}
+	
+	
+}
 
 function setMember(receiverMno, receiverName){
 	console.log(receiverMno);
