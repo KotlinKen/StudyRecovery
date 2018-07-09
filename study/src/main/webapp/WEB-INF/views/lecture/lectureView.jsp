@@ -584,7 +584,7 @@ li.review-one{
 	      <c:if test="${insert eq 0}">
 	      
 	      	<c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
-		         <button type="button" class="btn btn-apply" onclick="lectureApply();" >참여 신청하기</button>
+		         <button type="button" class="btn btn-apply" style="background:orange;" onclick="lectureApply();" >참여 신청하기</button>
 		         
 		         <!-- 찜 -->
 		         <c:if test="${wish eq 0}">
