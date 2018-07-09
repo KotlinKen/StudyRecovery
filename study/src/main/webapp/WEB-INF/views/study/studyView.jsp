@@ -23,14 +23,12 @@ function studyApply(sno){
 						if(data==-1){
 							alert("신청인원 최대 인원 100명을 넘었습니다.");
 						}
-						else if(data>0){
+						else if(data==0){
+							alert("이미 신청한 스터디입니다.");
+						}else{
 							alert("신청되었습니다.");
 							window.location.reload(true);
 						}
-						else{
-							alert("이미 신청한 스터디입니다.");
-						}
-						
 						//신청 완료 후 button에 스타일 주어서 이미 신청했음을 표시하게 한다.
 					},error:function(){
 						
@@ -166,7 +164,6 @@ $(function(){
 	if(Number($("span.score-npoint").text())>Number($("span.score-npoint").next().text())){
 		$("span.score-npoint").css("color","green");
 	}else if(Number($("span.score-npoint").text())<Number($("span.score-npoint").next().text())){
-		console.log("ddd");
 		$("span.score-npoint").css("color","red");
 	}else{
 		$("span.score-npoint").css("color","orange");
@@ -538,17 +535,16 @@ p.rContent{
 		</c:if> 
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 		<div class="pointrange" id="pointrange">
-			<label for="">포인트 </label><br />
-			<span class="score-point">${study.POINT }/${memberAvg.AVGPOINT }</span><br />
-			<label for="">지식포인트 </label><br />
-			<span class="score-npoint">${study.NPOINT }/${memberAvg.AVGNPOINT }</span><br />
-			<label for="">경험치 </label><br />
-			<span class="score-exp">${study.EXP }/${memberAvg.AVGEXP }</span><br />
+			<label for="">포인트 </label>
+			<p class="score">${study.POINT }/${memberAvg.AVGPOINT }</p>
+			<label for="">지식포인트 </label>
+			<p class="score">${study.NPOINT }/${memberAvg.AVGNPOINT }</p>
+			<label for="">경험치 </label>
+			<p class="score">${study.EXP }/${memberAvg.AVGEXP }</p>
 		</div>
 		</header>
 	
 		<div class="center-leader section-content">
-			<span>${study.MID}(${study.MNAME })</span>
 			<span>${study.COVER }</span>
 		</div>
 	</div>
@@ -608,18 +604,13 @@ p.rContent{
 	<label for="">신청 기간 : </label> <span class="side-info">~${study.LDATE }</span><br />
 	<label for="">스터디일정 : </label> <span class="side-info">${study.SDATE }~${study.EDATE }</span><br />
 	<label for="">회비 : </label> <span class="price side-info">${study.PRICE }원</span><br />
-	<label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${study.APPLYCNT+study.CREWCNT }</span>/<span>${study.RECRUIT }명</span>
-	 <c:if test="${memberLoggedIn==null }">
-	 	<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여 신청하기</span></button><br /><br />
-	 	<button type="button" id="btn-wish" class="btn" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button><br /><br />
-	 </c:if>
-
-	<c:if test="${memberLoggedIn!=null&&memberLoggedIn.getMno()!=study.MNO}">
+	<label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${study.APPLYCNT }</span>/<span>${study.RECRUIT }명</span>
+	<c:if test="${memberLoggedIn==null||memberLoggedIn.getMno()!=study.MNO}">
 		<c:if test="${study.STATUS=='모집 중'||study.STATUS=='마감 임박' }">
 			<c:if test="${isApply eq 0}">
 				<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여 신청하기</span></button><br /><br />
 			</c:if>
-			<c:if test="${isApply ne 0 ||isApply eq -1 }">
+			<c:if test="${isApply ne 0 }">
 				<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여 취소하기</span></button><br /><br />
 			</c:if>
 			<c:if test="${isWish eq 0 }"> 

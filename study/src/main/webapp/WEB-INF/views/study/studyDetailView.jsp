@@ -97,9 +97,9 @@ $(window).scroll(function(){
 	console.log($scrollTop);
 	if($("#studyDetails").height() > $(".wingSection").height()+$scrollTop){
 	if($scrollTop > 100){
-		$wingSection.stop().animate({top: $scrollTop - 145});  
+		$wingSection.stop().animate({top: $scrollTop - 145}, 500);  
 	}else if($scrollTop <= 100 ){
-		$wingSection.stop().animate({top: 0});
+		$wingSection.stop().animate({top: 0}, 500);
 	}
 	console.log($(".container").height());
 	
@@ -117,8 +117,8 @@ $(window).scroll(function(){
 </script>
 
 <style>
-#studyDetails .container{position:relative; height:900px; margin-top: 10px;  }
-.content{background:red; width:75%;}
+#studyDetails .container{position:relative;  margin-top: 10px;  }
+.content{background:#fff; width:75%;}
 .wingSection{position:absolute; right:0px; top:10px; width:25%; padding:10px; background:#fff; }
 .wingSection > div{margin:20px 0px; line-height:1.8rem}
 .customBtn{width:100%; background:none; padding:15px 0px; border:none; margin-bottom:10px; cursor:pointer; }
@@ -131,7 +131,16 @@ $(window).scroll(function(){
 .levelBox .levelWrap span{}
 .levelBox .levelWrap .naming{color:#fff}
 .levelBox .levelWrap .levels{color:#fff; font-size:1.6rem;}
-.informBox{text-align:center;}
+.informBox{text-align:center; padding:0px 0px 40px 0px;}
+.informBox .title{padding:0px 70px 0px 70px; line-height:140%;}
+.contentBox{position:relative; overflow:hidden; padding-top:40px; border-top:1px solid #efefef;}
+.contentBox > div{float:left; padding-left:20px; box-sizing: border-box;;}
+.contentBoxTitle{width:25%; font-weight:bold;}
+.contentBoxprofile{padding-top:30px;}
+.contentBoxprofile img{width:80px; height:80px; border-radius:100px;  }
+.contentBoxContent{width:75%; padding:0px 30px;}
+.rm_touchTable{}
+.rm_touchTable td, .rm_touchTable th{padding:5px; }
 </style>
 
 <div id="studyDetails">
@@ -164,10 +173,78 @@ $(window).scroll(function(){
 				<div><h1 class="title">${study.TITLE }</h1></div>
 			</div>
 			<div class="contentBox">
-				<div></div>
-				<div>${study.CONTENT }</div>
-			
+				<div class="contentBoxTitle">스터디 소개</div>
+				<div class="contentBoxContent">${study.CONTENT }</div>
 			</div>
+			
+			<div class="contentBox">
+				<div class="contentBoxTitle">상세 정보</div>
+				<div class="contentBoxContent">
+					<table style="width:100%;" class="rm_touchTable">
+						<tr><th style="width:15%">지역 :</th><td style="width:45%">${study.LNAME } ${study.TNAME }</td><th style="width:15%">인원 :</th><td>${study.RECRUIT }명</td></tr>
+						<tr><th>일정 :</th><td>${study.SDATE } ~ ${study.EDATE }</td><th>주기 :</th><td>${study.FREQ } </td></tr>
+						<tr><th>시간 :</th><td>${study.TIME }</td><th>협의비 :</th><td>${study.PRICE }원 </td></tr>
+					</table>
+				</div>
+			</div>
+			<div class="contentBox">
+				<div class="contentBoxTitle"> 
+					<div>리더소개</div>
+					<div class="contentBoxprofile"><img src="${rootPath }/resources/upload/member/${study.MPROFILE}" alt="" class="profile" /></div>
+					<div class="pointBox">
+						<div>${study.POINT } <span>${memberAvg.AVGPOINT }</span> </div>
+						<div>${study.NPOINT } <span>${memberAvg.AVGNPOINT }</span></div>
+						<div>${study.EXP } <span>${memberAvg.AVGEXP }</span></div>
+					</div>
+				</div>
+				
+				
+				<div class="contentBoxContent">${study.CONTENT }</div>
+			</div>
+			
+			<div id="review-container"><!-- 팀장에 대한 후기 -->
+<h5 style="font-weight:bold; margin-left:20px; margin-bottom:10px;">리더에 대한 후기</h5>
+<c:if test="${reviewList!=null }">
+	<ul class="reviews">
+		<c:forEach var="r" items="${reviewList }">
+			<li class="review-one">
+				<div class="member-photo section-label">
+					<img src="${pageContext.request.contextPath }/resources/upload/member/${r.MPROFILE!=null? r.MPROFILE:'basicprofile.png'}" alt="" />
+					
+				</div>
+				<div class="review-detail section-content">
+					<span>${r.MNAME }</span>&nbsp;|&nbsp;
+					<c:if test="${r.POINT eq '1000' }">
+						<span style="color:blue;">${r.POINT }</span>점
+					</c:if>
+					<c:if test="${r.POINT ne '1000' }">
+						<span style="color:red;">${r.POINT }</span>점
+					</c:if>
+					
+					<p class="rContent">${r.CONTENT }</p>
+					<a href="studyView.do?sno=${r.SNO }">${r.TITLE }</a>
+					<p><fmt:formatDate value="${r.REGDATE }" pattern="yyyy-MM-dd"/></p>
+				
+					
+				</div>
+				
+			</li>
+			<hr />
+			
+		</c:forEach>
+	</ul>
+
+</c:if>
+<c:if test="${reviewList==null }">
+아직 평가가 없습니다.
+</c:if>
+
+</div>
+			
+			
+			
+			
+			
 			
 			
 			
