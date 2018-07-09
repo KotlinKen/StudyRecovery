@@ -322,23 +322,24 @@ function getCookie(cookieName) {
             var message = {type:'sendMessage',sender:'${mber.mno}', receiver:$('#receiver').val(), msg:$('#message').val() };
             console.log(message);
             sock.send(JSON.stringify(message));
-           
-            
             
     }
+    
     //evt 파라미터는 웹소켓을 보내준 데이터다.(자동으로 들어옴)
     function onMessage(evt){
         var data = evt.data;
         data = JSON.parse(data);
         console.log(data);
         if(data.type == "insert:crew"){
+        	$(".messageBox a").html(data.count);
         	console.log(data.msg);
         	alert(data.msg);
         }else if(data.type=="view:message"){
         	msgs = data.msg.split("^");
         	console.log(msgs);
-
         	
+
+        	$(".messageBox a").html(data.count);
         	$tds = $(".rm_table td");
         	for(var i=0; i<$tds.length; i++){
         		if($($tds[i]).text() == msgs[0]){
@@ -360,7 +361,6 @@ function getCookie(cookieName) {
     }
     
     function onClose(evt){
-        $("#data").append("연결 끊김");
     }
     
 </script>

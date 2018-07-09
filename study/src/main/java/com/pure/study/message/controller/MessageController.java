@@ -72,11 +72,14 @@ public class MessageController {
 		if(m != null) {
 			queryMap.put("sendermno", String.valueOf(m.getMno()));
 		}
+		
+		
+		
 		return mav; 
 	}
 	@RequestMapping(value="/message/messageWriteEnd", method=RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView messageWriteEnd(@RequestParam(value="receivermno", required = true, defaultValue="") int receivermno,
+	public ModelAndView messageWriteEnd(@RequestParam(value="receivermno", required = true, defaultValue="") String receivermno,
 			@RequestParam Map<String, String> queryMap, HttpServletRequest request){
 		ModelAndView mav = new ModelAndView("jsonView");
 		
@@ -85,8 +88,18 @@ public class MessageController {
 		if(m != null) {
 			queryMap.put("sendermno", String.valueOf(m.getMno()));
 		}else {
-			//널이면 접근 불가하게
+			
 		}
+		
+		if( String.valueOf(receivermno).equals("")) {
+			mav.addObject("msg", "해당되는 인원이 없습니다.");
+			mav.addObject("loc", "/member/memberMessageList");
+			mav.setViewName("common/msg");
+			
+			return mav;
+		}
+		
+		
 		
 		if(queryMap.get("sno") == null) {
 			queryMap.put("sno", null);
