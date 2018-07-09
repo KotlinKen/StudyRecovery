@@ -162,7 +162,7 @@
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd buttontd" >
-							<input type="submit" class='btncss' id="submit" value="찾기" />
+							<input type="submit" class="btn btn-primary" id="submit" value="찾기" />
 						</td>
 					</tr>
 				</table>
