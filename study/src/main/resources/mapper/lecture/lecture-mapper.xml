@@ -360,7 +360,6 @@
       FROM CREW C RIGHT JOIN STUDY S ON C.SNO = S.SNO
       </if>
       WHERE S.MNO = #{mno}
-      ORDER BY SNO
    </select>
    
    <select id="searchAdminLectureList" resultMap="map">

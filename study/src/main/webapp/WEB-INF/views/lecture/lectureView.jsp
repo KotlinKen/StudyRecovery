@@ -10,7 +10,9 @@
 	//참여신청 버튼 클릭 이벤트
 	function lectureApply(){
 		
-		if(${memberLoggedIn==null}) $("a#btn-login").trigger('click');
+		if(${memberLoggedIn==null}){
+			$("a#btn-login").trigger('click');			
+		}
 		else{
 			// 결제 도전!
 			var IMP = window.IMP;
@@ -431,18 +433,15 @@ li.review-one{
 }
 </style>
 <c:set var="imgs" value="${fn:split(lecture.UPFILE,',')}"/>
-<div class="leader-btn-wrap">
-	
-		<c:if test="${memberLoggedIn!=null }">
-			<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-				<c:if test="${lecture.STATUS eq '모집 중'||lecture.STATUS eq'마감 임박'}">
-					<button type="button" class="removeStudy btn" onclick="deleteLecture();">강의 삭제</button>
-				</c:if>
-		      
-		      <br />
-		   </c:if>
-		</c:if>
-
+<div class="leader-btn-wrap">	
+	<c:if test="${memberLoggedIn!=null }">
+		<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }"><
+			<c:if test="${lecture.STATUS=='모집 중'||lecture.STATUS=='마감 임박'}">
+				<button type="button" class="removeStudy btn" onclick="deleteLecture();">강의 삭제</button>
+			</c:if>		      
+	      <br />
+	   </c:if>
+	</c:if>
 </div>
 <div class="studyView-container">
 	
@@ -585,7 +584,7 @@ li.review-one{
 	      <c:if test="${insert eq 0}">
 	      
 	      	<c:if test="${lecture.STATUS == '마감 임박' || lecture.STATUS == '모집 중'}">
-		         <button type="button" class="btn btn-apply" onclick="lectureApply();" >참여 신청하기</button>
+		         <button type="button" class="btn btn-apply" style="background:orange;" onclick="lectureApply();" >참여 신청하기</button>
 		         
 		         <!-- 찜 -->
 		         <c:if test="${wish eq 0}">
