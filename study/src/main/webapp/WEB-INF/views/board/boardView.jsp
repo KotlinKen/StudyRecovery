@@ -66,7 +66,7 @@
 
 
 	<c:if test="${memberLoggedIn != null }">
-	<form action="${rootPath }/board/replyWrite" method="post">
+	<form action="${rootPath }/board/replyWrite" id="fn_commentWrite" method="post">
 		<div class="form-row">
 			<input type="hidden" name="mno" value="${mber.mno }"/>
 			<input type="hidden" name="bno" value="${board.BNO}"/>
@@ -85,7 +85,7 @@
 				<div class="commentCounter text-right"><span>0</span>/200</div>
 			</div>
 			<div class="form-group col-md-1">
-				<button type="submit" class="btn rm_custom_btn" onclick="return fn_commentCheck()">전송</button>
+				<button type="button" class="btn rm_custom_btn" id="fn_commentCheck">전송</button>
 			</div>
 		</div>
 	</form>
@@ -104,7 +104,7 @@
 		
 		</div>
 		<div class="form-group col-md-1">
-			<button type="button" class="btn rm_custom_btn" onclick="return commentLoginfirst()">로그인</button>
+			<button type="button" class="btn rm_custom_btn" id="commetLoginFirst" onclick="return commentLoginfirst()">로그인</button>
 		</div>
 	</div>
 	</c:if>
@@ -135,22 +135,29 @@
 </style>
 <script type="text/javascript">
 
+
+$("#fn_commentCheck").one("click", function(){
+	if(fn_commentCheck()){
+		$("#fn_commentWrite").submit();
+	}
+});
+
+
+
 function fn_commentCheck(){
 	$comment = $("#comment");
 	
 	var count = $comment.val().length;
 	var maxCount = 199;
-	
 	if($comment.val().trim() == ""){
 		alert("코멘트를 입력해 주세요.");
 		$comment.focus();
 		return false;
 	}
-
-    if(count > maxCount) {
+    if(count > maxCount){
     	$comment.val($comment.val().substring(0, 199));
     }
-	
+	return true; 
 	
 }
 

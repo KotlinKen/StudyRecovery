@@ -8,7 +8,7 @@
 	</div>
 </div>
 <div class="container" style="margin-bottom:80px;">
-	<form action="${rootPath}/board/boardWriteEnd"  method="post" enctype="multipart/form-data">
+	<form action="${rootPath}/board/boardWriteEnd"  id="boardWriteEnd" method="post" enctype="multipart/form-data">
 		<input type="hidden" name="mno" value="${memberLoggedIn.mno}"/>
 		<input type="hidden" name="type" value="${param.type }"/>
 		
@@ -39,10 +39,18 @@
 				</div>
 			</div>
 		</div>
-	  <button type="submit" class="btn btn-primary" onclick="return boardValidation()">등록</button>
+	  <button type="button" class="btn btn-primary" id="boardWriteEndBtn">등록</button>
 	</form>
 </div>
 <script>
+
+$("#boardWriteEndBtn").one("click", function(){
+	if(boardValidation()){
+		$("#boardWriteEnd").submit();
+	}
+});
+
+
 function boardValidation(){
 	$title = $("#title").val().trim();
 	$textAreaVal = $("#summernote").val().replace(/(<([^>]+)>)/ig,"");

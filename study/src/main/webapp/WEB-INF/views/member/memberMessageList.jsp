@@ -75,7 +75,7 @@
 	                  		<div class="modal-description">글을 작성하실때에는 상호 존중을 기본으로 서로 예의와 매너를 지켜가면서 작성 해주세요</div>
 		                  <div class="adverstingPopupCloseBtn closebtn close" data-dismiss="modal"></div>
 		               </div>
-		               <form action="${rootPath }/message/messageWriteEnd" method="post">
+		               <form action="${rootPath }/message/messageWriteEnd" id="messageWriteEnd" method="post">
 						<div class="modal-body">
                            <input type="text" class="form-control" id="searchMember" placeholder="받는이" required />
                            
@@ -91,7 +91,7 @@
 							<div class="container">
 								<div class="row">
 									<div class="col-md-6" style="padding-left:0px;">
-										<button type="submit" class="btn btn-outline-success btn-lg btn-block" onclick="return checkWrite()" >전송</button>
+										<button type="button" id="messageWriteEndBtn" class="btn btn-outline-success btn-lg btn-block dbclickChk" onclick="checkWrite()" >전송</button>
 									</div>
 									<div class="col-md-6" style="padding-right:0px;">
 										<button type="button" class="btn btn-secondary btn-lg btn-block" data-dismiss="modal" >취소</button>
@@ -124,7 +124,7 @@
 							<div class="container">
 								<div class="row">
 									<div class="col-md-6" style="padding-left:0px;">
-										<button type="button" class="btn btn-outline-success btn-lg btn-block showReturnModal" data-toggle="modal" data-target="#messageReturnModal">답장</button>
+										<button type="button" class="btn btn-outline-success btn-lg btn-block showReturnModal dbclickChk" data-toggle="modal" data-target="#messageReturnModal">답장</button>
 									</div>
 									<div class="col-md-6" style="padding-right:0px;">
 										<button type="button" class="btn btn-secondary btn-lg btn-block cancelBtn" data-dismiss="modal">취소</button>
@@ -165,7 +165,7 @@
 	                  		<div class="modal-description">글을 작성하실때에는 상호 존중을 기본으로 서로 예의와 매너를 지켜가면서 작성 해주세요</div>
 		                  <div class="adverstingPopupCloseBtn closebtn close" data-dismiss="modal"></div>
 		               </div>
-		               <form action="${rootPath }/message/messageWriteEnd" method="post">
+		               <form action="${rootPath }/message/messageWriteEnd" id="messageReturn" method="post">
 						<div class="modal-body">
                            <input type="text" class="form-control" id="returnMember" placeholder="받는이" required readonly="readonly" />
                            <input type="hidden" class="form-control" name="receivermno" id="returnmno" required />
@@ -176,7 +176,7 @@
 							<div class="container">
 								<div class="row">
 									<div class="col-md-6" style="padding-left:0px;">
-										<button type="submit" class="btn btn-outline-success btn-lg btn-block">전송</button>
+										<button type="button" id="messageReturnBtn" class="btn btn-outline-success btn-lg btn-block dbclickChk">전송</button>
 									</div>
 									<div class="col-md-6" style="padding-right:0px;">
 										<button type="button" class="btn btn-secondary btn-lg btn-block"  data-dismiss="modal">취소</button>
@@ -212,18 +212,26 @@
 <script>
 
 
+$("#messageWriteEndBtn").one("click", function(){
+	if(checkWrite()){
+		$("#messageWriteEnd").submit();
+	}
+});
+
+$("#messageReturnBtn").one("click", function(){
+	$("#messageReturn").submit();
+});
+
 
 //글쓰기 체크
 
 function checkWrite(){
 	$recivermno = $("#receivermno").val();
-	
 	if($recivermno == null || $recivermno == ""){
 		alert("회원을 검색후 선택해주세요");
 		return false;
 	}
-	
-	
+	return true;
 }
 
 function setMember(receiverMno, receiverName){

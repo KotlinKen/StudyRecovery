@@ -138,7 +138,6 @@ public class BoardController {
 			return mav;
 		}
 		
-		System.out.println("testddddddddddddddddd");
 		
 		/*		Member m = (Member) request.getSession().getAttribute("memberLoggedIn");
 		if(board.getType().equals("event") || board.getType().equals("공지")) {
@@ -151,7 +150,7 @@ public class BoardController {
 				}
 			}
 		}*/
-		if(board.getType() == null) {
+		if(board.getType() == null || board.getType() =="") {
 			board.setType("일반");
 		}
 		
@@ -197,7 +196,7 @@ public class BoardController {
 			
 			if(result>0) {
 				msg = "게시물 등록 성공";
-				loc = "/"+location+"/boardList";
+				loc = "/"+location+"/boardList?type="+board.getType();
 			}else {
 				msg = "게시물 등록 실패";
 			}
