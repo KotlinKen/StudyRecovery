@@ -533,7 +533,7 @@ h3#totalcountt{
 					</td>	
 					<td>
 						<button type="button" id="sort-deadline" class="btn sortBy">마감임박순</button>
-						<button type="button" id="sort-pop" class="btn sortBy">인기스터디순</button>
+						<!-- <button type="button" id="sort-pop" class="btn sortBy">인기스터디순</button> -->
 					</td>	
 					<td>
 						<input type="button" id="filterSearch" value="필터 검색" class="btn btn-dark"/>

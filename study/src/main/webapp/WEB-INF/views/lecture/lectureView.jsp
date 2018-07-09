@@ -351,6 +351,8 @@ section.leader-information{
    position:relative;
    background:white;
    overflow: hidden;
+   width:700px;
+   height:400px;
 }
 div.introduce-wrap{
    overflow: hidden;
@@ -462,6 +464,7 @@ p.rContent{
 	margin-top:10px;
 }
 
+
 </style>
 <c:set var="imgs" value="${fn:split(lecture.UPFILE,',')}"/>
 <div class="leader-btn-wrap">   
@@ -565,6 +568,7 @@ p.rContent{
       </header>
    
       <div class="center-leader section-content">
+      	 <span>${lecture.MID}(${lecture.MNAME })</span>
          <span>${lecture.COVER }</span>
       </div>
    </div>

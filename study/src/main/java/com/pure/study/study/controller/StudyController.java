@@ -445,6 +445,9 @@ public class StudyController {
 			isCrew = studyService.isCrewStudy(map);
 			if(isCrew==0) {
 				isApply = studyService.isApplyStudy(map);
+				System.out.println("$$$$$$$$$$$ isApply"+isApply);
+			}else {
+				isApply=-1;//팀원으로 있어서 이미 신청한 것.
 			}
 			mav.addObject("isApply",isApply);			
 		}	
@@ -486,7 +489,13 @@ public class StudyController {
 			//먼저 이미 신청했는지 검사한다.
 			int cnt = studyService.preinsertApply(map);
 			if(cnt == 0 ) {
-				 result = studyService.insertApplyStudy(map);
+				   result = studyService.preinsertApplyCrew(map);
+				 if(result==0) {
+					 result = studyService.insertApplyStudy(map);
+				 }else {
+					 result=-2;//이미 참여한 스터디에 신청하고 있다. 
+				 }
+				 
 				 
 				 //참여신청을 하면, 찜목록에서 삭제됨. 
 				 if(result>0) deleteWish=studyService.deleteWish(map);
@@ -802,6 +811,7 @@ public class StudyController {
 		map.put("sno", sno);
 		map.put("mno", mno);
 		result = studyService.applyStudyDelete(map);
+		result =studyService.crewStudyDelete(map); //크루에잇는거 취소하는 것임.
 		
 		return result;	
 	}

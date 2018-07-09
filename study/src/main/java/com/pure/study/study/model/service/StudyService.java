@@ -81,6 +81,10 @@ public interface StudyService {
 
 	List<Map<String, Object>> selectRankList();
 
+	int preinsertApplyCrew(Map<String, Integer> map);
+
+	int crewStudyDelete(Map<String, Object> map);
+
 	
 
 

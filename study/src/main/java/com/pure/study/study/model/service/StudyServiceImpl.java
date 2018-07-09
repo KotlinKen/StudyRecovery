@@ -232,6 +232,18 @@ public class StudyServiceImpl implements StudyService {
 		return studyDAO.selectRankList();
 	}
 
+	@Override
+	public int preinsertApplyCrew(Map<String, Integer> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.preinsertApplyCrew(map);
+	}
+
+	@Override
+	public int crewStudyDelete(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return studyDAO.crewStudyDelete(map);
+	}
+
 	
 
 

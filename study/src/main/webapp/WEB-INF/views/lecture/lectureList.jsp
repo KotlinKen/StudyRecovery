@@ -50,15 +50,15 @@ a#reFilter{
 	color:black;
 	text-shadow: 5px 5px 5px white;
 }
-button.clicked{
-	background:black;
-	color:white;
-}
 button.sortBy{
 	background:white;
 	border:1px solid lightgray;
 }
 button.sortBy:hover{
+	background:black;
+	color:white;
+}
+button.clicked{
 	background:black;
 	color:white;
 }
