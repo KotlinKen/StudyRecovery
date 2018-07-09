@@ -2878,7 +2878,6 @@ public class MemberController {
 	
 
 	
-	
 	/*****   장익순 작업 ****/
 	@RequestMapping("/member/selectViewInstructor.do")
 	public ModelAndView selectViewInstructor(@RequestParam(value="mid") String mid,@RequestParam(value="size" ,required=false , defaultValue="-1") int size) {

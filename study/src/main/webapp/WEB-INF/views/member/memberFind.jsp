@@ -167,6 +167,7 @@
 					<tr  class="id-pwd">
 						<td  class="id-pwd buttontd" ><br />
 							<input type="submit" class='btn btn-primary' id="submit" value="찾기" />
+
 						</td>
 					</tr>
 				</table>

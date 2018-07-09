@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="adminSub">
+	<insert id="instructorSubEnd">
+		INSERT INTO SUBJECT VALUES(seq_subject.nextval , #{subno} , #{subjectname} , #{snameename})
+	</insert>
+	<delete id="deleteSubEnd">
+		delete from SUBJECT where subno = #{subno}
+	</delete>
+	<update id="updateSubEnd">
+		update SUBJECT set subjectname = #{subjectname},
+							snameename = #{snameename}
+							where subno = #{subno}
+	</update>
+	<insert id="instructorKindEnd">
+		INSERT INTO KIND VALUES(seq_kind.nextval , #{kindname} , #{knameename})
+	</insert>
+	<delete id="deleteKindEnd">
+		delete from KIND where kno = #{kno}
+	</delete>
+	<insert id="instructorTownEnd">
+		Insert into town values(seq_town.nextval, #{lno} , #{townname})
+	</insert>
+	<update id="updateTownEnd">
+		update town set TOWNNAME = #{townname}
+							where tno = #{tno}
+	</update>
+	<delete id="deleteTowonEnd">
+		delete from KIND where kno = #{kno}
+	</delete>
+	<insert id="instructorLocalEnd">
+		insert into local values (seq_local.nextval,#{local})
+	</insert>
+	<delete id="deleteLocalEnd">
+		delete from local where lno = #{lno}
+	</delete>
+</mapper>

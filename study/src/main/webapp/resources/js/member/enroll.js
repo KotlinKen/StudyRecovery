@@ -509,6 +509,7 @@
 				alert("이메일 인증을 바랍니다");
 				emailaddr.focus();
 				return false;
+				console.log("불")
 			}
 		
 			return true;
