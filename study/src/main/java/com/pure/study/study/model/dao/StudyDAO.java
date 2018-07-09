@@ -79,6 +79,8 @@ public interface StudyDAO {
 
 	int applyStudyDelete(Map<String, Object> map);
 
+	List<Map<String, Object>> selectRankList();
+
 	
 
 }

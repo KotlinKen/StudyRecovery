@@ -355,11 +355,12 @@
              SUBSTR(S.TIME,INSTR(TIME,'~')+1,INSTR(TIME,':',-1)-INSTR(TIME,'~')-1) AS ETIME 
       <if test="key=='study'">
       FROM STUDY S
+      WHERE S.MNO = #{mno}
       </if>
       <if test="key=='crew'">
       FROM CREW C RIGHT JOIN STUDY S ON C.SNO = S.SNO
+      WHERE C.MNO = #{mno} OR S.MNO = #{mno}
       </if>
-      WHERE S.MNO = #{mno}
    </select>
    
    <select id="searchAdminLectureList" resultMap="map">

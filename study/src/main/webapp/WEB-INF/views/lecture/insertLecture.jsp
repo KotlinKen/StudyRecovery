@@ -7,6 +7,34 @@
 div.forCopy{
    display:none;
 }
+div.btn-form{
+	text-align:center;
+}
+div.btn-form input[type=submit]{
+	background:#0056e9;
+	color:white;
+}
+div.btn-form input[type=reset]{
+	background:black;
+	color:white;
+	opacity: 0.6;
+}
+button.btn-upfile{
+	background:black;
+	color:white;
+	opacity: 0.6;
+}
+select#local, select#kind, select#sub, select#town, select#diff, select#endTime, select#startTime, select#recruit{
+	width:150px;
+}
+select#town, select#kind, select#diff{
+	width:200px;
+}
+select#town{
+	width:240px;
+}
+
+
 </style>
 <script src="${pageContext.request.contextPath }/resources/js/jquery-3.3.1.js"></script>
 <script>
@@ -285,8 +313,8 @@ $(function(){
 	   <input type="hidden" name="mno" value="${memberLoggedIn.getMno()}"/>
 	   <!-- 지역 -->
 	   <label for="local">지역 : </label>
-	   <select name="local" id="local">
-	      <option value="" selected>지역</option>
+	   <select name="local" id="local" class="custom-select">
+	      <option value="" selected>선택하세요</option>
 	      <c:if test="${!empty locList}">
 	         <c:forEach var="loc" items="${locList }" varStatus="vs">
 	            <option value="${loc.LNO }">${loc.LOCAL }</option>
@@ -295,7 +323,7 @@ $(function(){
 	   </select>
 	   
 	   <!-- 시,군,구 -->
-	   <select name="tno" id="town">
+	   <select name="tno" id="town" class="custom-select">
 	   
 	   </select>   
 	   <!-- 지역 end -->   
@@ -307,7 +335,7 @@ $(function(){
 	
 	   <!-- 카테고리 -->
 	   <label for="kind">카테고리</label>
-	   <select name="kind" id="kind"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
+	   <select name="kind" id="kind" class="custom-select"> <!-- kind선택시 ajax로 그에 맞는 과목 가져오기 -->
 	      <option value="">과목을 선택하세요.</option>
 	      
 	      <c:if test="${!empty kindList }">
@@ -316,14 +344,14 @@ $(function(){
 	      </c:forEach>
 	      </c:if>
 	   </select>
-	   <select name="subno" id="sub"> <!-- ajax로 kind가져오기 -->
+	   <select name="subno" id="sub" class="custom-select"> <!-- ajax로 kind가져오기 -->
 	   
 	   </select>
 	   <!-- 카테고리 end -->
 	   &nbsp;&nbsp;&nbsp;
 	   
 	   <label for="diff">난이도 : </label>
-	   <select name="dno" id="diff">
+	   <select name="dno" id="diff" class="custom-select">
 	      <option value="">난이도를 선택하세요</option>
 	      
 	      <c:if test="${!empty diffList }">
@@ -347,12 +375,12 @@ $(function(){
 	    <label>토 </label><input type="checkbox" class="day" name="freqs" value="토" />
 		    
 		<label for="starttime">스터디 시간</label>
-		<select name="startTime" id="startTime" class="time">
+		<select name="startTime" id="startTime" class="time custom-select">
 			<c:forEach var="i" begin="6" end="23">
 				<option value="${i }:00">${i }:00</option>		
 			</c:forEach>
 		</select>
-		<select name="endTime" id="endTime" class="time">
+		<select name="endTime" id="endTime" class="time custom-select">
 			<c:forEach var="j" begin="7" end="24">
 				<c:if test="${j < 24}">
 					<option value="${j }:00">${j }:00</option>	
@@ -371,7 +399,7 @@ $(function(){
 		<br />
 		
 		<label for="recruit">모집 인원 : </label>
-		<select name="recruit" id="recruit">
+		<select name="recruit" id="recruit" class="custom-select">
 			<c:forEach var="i" begin="2" end="10">
 				<option value="${i }">${i }명</option>
 			</c:forEach>
@@ -390,13 +418,14 @@ $(function(){
 			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required >
 			    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
 			  </div>
-			  <button type="button" class="addFile btn btn-primary">+</button>
-			  <button type="button" class="removeFile btn btn-primary">-</button>
+			  &nbsp;
+			  <button type="button" class="addFile btn btn-upfile">+</button>&nbsp;
+			  <button type="button" class="removeFile btn btn-upfile">-</button>
 		</div>
 		
-		<div style="text-align:center;" >
-			<input type="submit" class="btn btn-primary btn-lg" value="등록"/>
-			<input type="reset" class="btn btn-primary btn-lg"value="취소하기" />
+		<div class="btn-form">
+			<input type="reset" class="btn"value="취소하기" />
+			<input type="submit" class="btn" value="등록하기"/>
 		</div>
 		</form>
 			
@@ -408,8 +437,9 @@ $(function(){
 			    <input type="file" class="custom-file-input" name="upFile" accept="image/*" required>
 			    <label class="custom-file-label" for="upFile1">파일을 선택하세요</label>
 			  </div>
-			  <button type="button" class="addFile btn btn-dark">+</button>
-			  <button type="button" class="removeFile btn btn-dark">-</button>
+			  &nbsp;
+			  <button type="button" class="addFile btn btn-upfile">+</button>&nbsp;
+			  <button type="button" class="removeFile btn btn-upfile">-</button>
 		</div>
 	</div>
 </div>

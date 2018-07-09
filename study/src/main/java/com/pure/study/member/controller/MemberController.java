@@ -1507,7 +1507,7 @@ public class MemberController {
 	            else if (lectureSdate >= sdate.getTime() || lectureEdate <= edate.getTime()) {
 	               // 요일을 검사해보자...
 	               for (int j = 0; j < freqs.length; j++) {
-	                  if (list.get(i).containsValue(freqs[j])) {
+	                  if (list.get(i).get("FREQ").toString().contains(freqs[j])) {
 	                	  System.out.println("요일겹치기..");
 	                     // 등록이 가능한 경우.
 	                

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -159,10 +160,15 @@ public class StudyController {
 		System.out.println("eHour="+eHour);
 		String msg="";
 		String loc="/";
+		
+		Map<String,Object> map = new HashMap<>();
+		map.put("mno",m.getMno());
+		map.put("key", "crew");
 		// 같은 날짜, 요일, 시간에 있는지를 검사해봅시다..
-		List<Map<String,Object>> ownStudyList=studyService.selectOwnStudyList(m.getMno());
+		List<Map<String,Object>> ownStudyList=studyService.selectStudyListBySno(map);
 	      long lectureSdate = study.getSdate().getTime();
 	      long lectureEdate = study.getEdate().getTime();
+	      System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 	      
 	      for(int j = 0; j < ownStudyList.size(); j++) {
 	         Date sdate =(Date) ownStudyList.get(j).get("SDATE");
@@ -177,13 +183,12 @@ public class StudyController {
 		        	 System.out.println("포함되는 경우");
 		            // 요일을 검사해보자...
 		        	for(int k=0;k<freq.length;k++) {
-		        		System.out.println("####### k freq.length"+k);
-		        		if(ownStudyList.get(j).containsValue(freq[k])) {
-		        			System.out.println("ddddddd"+Integer.parseInt(ownStudyList.get(j).get("STARTTIME").toString()));
-		        			
+		        		System.out.println("####### map "+ownStudyList.get(j).get("FREQ"));
+		        		if(ownStudyList.get(j).get("FREQ").toString().contains(freq[k])/* containsValue(freq[k])*/) {
+		        			System.out.println("ddddddd"+Integer.parseInt(ownStudyList.get(j).get("STIME").toString()));
 		        			
 		        			//등록된 시간에 포함되지 않는 경우
-		        			if(Integer.parseInt(ownStudyList.get(j).get("STARTTIME").toString()) > eHour || sHour > Integer.parseInt(ownStudyList.get(j).get("ENDTIME").toString()) ) {
+		        			if(Integer.parseInt(ownStudyList.get(j).get("STIME").toString()) > eHour || sHour > Integer.parseInt(ownStudyList.get(j).get("ETIME").toString()) ) {
 		        				 System.out.println("등록된 시간에 포함되지 않는 경우");
 		        			}else {
 		        				System.out.println("등록된 시간에 포함되는 경우 중복이다!!!!!!!!!!!!!!!!");
@@ -394,40 +399,62 @@ public class StudyController {
 	public ModelAndView selectStudyOne(@RequestParam(value="sno", required=true) int sno,HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		
-		
-		
 		//스터디 정보 가져오기 +보고 있는 유저의 점수들 가져와야함..
 		Map<String,Object> study = studyService.selectStudyOne(sno);
 		System.out.println("study="+study);
 		
-		Member  m= (Member)session.getAttribute("memberLoggedIn");
+		Member  m = (Member)session.getAttribute("memberLoggedIn");		
+		
 		int isWish=0;
 		int isCrew=0;
 		int isApply=0;
+		
+		int mno = Integer.parseInt(study.get("MNO").toString());
+		String ratio = "";
+		
+		// 랭크 뽑아오기
+		List<Map<String, Object>> rankList = studyService.selectRankList();	
+		boolean trig = false;		
+		
+		for (Map<String, Object> rankMap : rankList) {
+			for( Map.Entry<String, Object> entry : rankMap.entrySet() ) {
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				
+				if( key.equals("MNO") && Integer.parseInt(value.toString()) == mno) 
+					trig = true;
+				
+				if( trig && key.equals("PER") ) {
+					ratio = value.toString();
+					trig = false;
+				}				
+			}
+		}
+		
+		System.out.println("ratio = " + ratio);
+		
+		mav.addObject("ratio", ratio);			
+
+		
+		//이미 찜했는지 여부 검사 
 		if(m!=null) {
-			//이미 찜했는지 여부 검사 
 			Map<String,Integer> map = new HashMap<>();
-			map.put("mno", m.getMno());
+			map.put("mno", mno);
 			map.put("sno", sno);
 			isWish = studyService.isWishStudy(map);
 			isCrew = studyService.isCrewStudy(map);
 			if(isCrew==0) {
 				isApply = studyService.isApplyStudy(map);
 			}
-			mav.addObject("isApply",isApply);
-			
-		}
-		
-		
-		
-		
+			mav.addObject("isApply",isApply);			
+		}	
 		
 		//팀장에 리뷰 가져오기.
 		List<Map<String,Object>> reviewList= studyService.selectReview(sno);
 		if(!reviewList.isEmpty()) mav.addObject("reviewList",reviewList);
 		
 		Map<String,Object> memberAvg = studyService.selectMemberAvg();
-		System.out.println("%%%%%%%%%%%%memberAvg"+memberAvg);
+		
 		
 		
 		mav.addObject("memberAvg", memberAvg);
@@ -776,9 +803,7 @@ public class StudyController {
 		map.put("mno", mno);
 		result = studyService.applyStudyDelete(map);
 		
-		return result;
-		
-		
+		return result;	
 	}
 	
 	
@@ -830,6 +855,5 @@ public class StudyController {
 		
 		return list;
 	}	
-
-
+	
 }
