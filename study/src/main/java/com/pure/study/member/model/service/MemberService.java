@@ -179,4 +179,8 @@ public interface MemberService {
 
 	int selectEvalCnt(Map<String, Object> map);
 
+	List<Map<String, String>> selectPayList(int cPage, int numPerPage, Map<String, Object> map);
+
+	int selectPayListCnt(Map<String, Object> map);
+
 }

@@ -28,7 +28,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +48,10 @@ import com.pure.study.member.model.vo.Review;
 import com.pure.study.rest.RestMemberService;
 import com.pure.study.study.model.service.StudyService;
 import com.pure.study.study.model.vo.Study;
+import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.request.CancelData;
+import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
 
 @SessionAttributes({ "memberLoggedIn" })
 @Controller
@@ -437,6 +440,8 @@ public class MemberController {
 								
 				if(admin==null) {
 					if(prev.contains("memberSuccess")) {
+						mav.setViewName("redirect:/");
+					}else if(prev.contains("FindPage.do")||prev.contains("memberPwd.do")) {
 						mav.setViewName("redirect:/");
 					}else {
 						mav.setViewName("redirect:"+prev);
@@ -1523,7 +1528,129 @@ public class MemberController {
 		
 	return mav; 
 	}
+	@RequestMapping(value="/member/paymentList.do")
+	public ModelAndView paymentList(@ModelAttribute("memberLoggedIn") Member m
+									,@RequestParam(value="searchKwd", required=false, defaultValue="title") String searchKwd
+									,@RequestParam(value="kwd", required=false, defaultValue="") String kwd
+									,@RequestParam(value="myPage", required=false, defaultValue="") String myPage
+									,@RequestParam(value="lno", required=false, defaultValue="0") String lno 
+									,@RequestParam(value="tno",required=false,defaultValue="0") String tno 
+									,@RequestParam(value="kno",required=false,defaultValue="0") String kno 
+									,@RequestParam(value="subno",	required=false, defaultValue="0") String subno 						
+									,@RequestParam(value="cPage", required=false, defaultValue="1") int cPage									
+									) {
+		
+		ModelAndView mav = new ModelAndView();
+		lno = lno.split(",")[0];
+		tno = tno.split(",")[0];
+		kno = kno.split(",")[0];
+		subno = subno.split(",")[0];
+		
+		//지역 리스트
+		List<Map<String,Object>> localList=studyService.selectLocal();
+		
+		//카테고리 리스트
+		List<Map<String,Object>> kindList=studyService.selectKind();
+		
+		//난이도 리스트
+		List<Map<String,Object>> diffList=studyService.selectLv();
+		Map<String, Object> map = new HashMap<>();
+		map.put("mno", m.getMno());
+		map.put("lno", lno);
+		map.put("tno", tno);
+		map.put("kno", kno);
+		map.put("subno", subno);
+		map.put("searchKwd", searchKwd);
+		map.put("kwd", kwd);
+		if("term".equals(searchKwd)) { 
+			String[] termKwd = kwd.split(","); 
+			map.put("kwd", termKwd[0]); 
+			if(termKwd.length>1) { 
+				for(int i=1; i<termKwd.length; i++) {
+					map.put("kwd"+i, termKwd[i]); 
+					System.out.println(termKwd[i]); 
+				} 
+			} 
+		} else if(kwd==null ){ 
+			map.put("kwd", null); 
+		} else{ 
+			map.put("kwd", kwd); 
+		}
+		
+		int numPerPage = 2;
+		int count = memberService.selectPayListCnt(map);
+		
+		List<Map<String, String>> list = memberService.selectPayList(cPage, numPerPage, map);
+
+		System.out.println(list);
+
+		mav.addObject("list", list);
+		mav.addObject("cPage", cPage);
+		mav.addObject("numPerPage", numPerPage);
+		mav.addObject("count", count);
+		mav.addObject("localList", localList);
+		mav.addObject("kindList", kindList);
+		mav.addObject("diffList", diffList);
+		mav.addObject("lno",lno);//지역 리스트
+		mav.addObject("tno",tno);//지역 리스트
+		mav.addObject("kno",kno);//카테고리 리스트
+		mav.addObject("subno",subno);//과목 리스트
+		mav.addObject("searchKwd",searchKwd);
+		mav.addObject("kwd",kwd);
+		mav.setViewName("member/memberPaymentList");
+		
+		return mav;
+	}
 	
+	
+	@RequestMapping(value="/member/paymentCancel.do")
+	public String paymentcancel(@RequestParam int mno, 
+									@RequestParam int sno, 
+									@RequestParam long pno,
+									@RequestParam int price) {
+		
+		Map<String, Integer> map = new HashMap<>();
+
+		map.put("mno", mno);
+		map.put("sno", sno);
+
+		int result = 0;
+		result = ls.lectureCancel(map);
+
+		String originNo = "imp_" + String.valueOf(pno);
+		String api_key = "6308212829698507";
+		String api_secret = "UM9NCLWi3ZclaqermTlctrUKXiMQ80q2NzPpkMIoMUKWlYoHSKUmbO697SZfTpiGZ86kUOJGJtD4r2Mj";
+
+		// 토큰 얻어오기.
+		IamportClient imp = new IamportClient(api_key, api_secret);
+		imp.getAuth();
+
+		IamportResponse<Payment> p = imp.cancelPaymentByImpUid(new CancelData(originNo, true));
+
+		int success = p.getCode();
+		String msg = "";
+		System.out.println("tokkens = " + success);
+
+		// 아임포트에서 결제취소가 성공한 경우.
+		if (success == 1 || success == 0) {
+			msg = "결제취소";
+
+			ls.successAdminPayCancel(pno);
+		}
+		// 이미 취소한 경우.
+		else if ( success == -1 ) {
+			msg = "이미 취소된 결제입니다.";
+			
+			ls.successAdminPayCancel(pno);
+		}
+		// 실패한 경우
+		else {
+			msg = "결제 취소가 실패했습니다. 관리자에게 문의하세요.";
+		}
+
+		
+		return msg;
+	}
 	
 	///////////////////////////////////////
 	//admin설정 시작

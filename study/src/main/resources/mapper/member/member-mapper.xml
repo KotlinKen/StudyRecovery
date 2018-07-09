@@ -1156,8 +1156,99 @@
 		<if test="point != 0 and point!=null">
 		and r.point=#{point}
 		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.ldate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.ldate)
+		</if>
 	</select>
 	
+	<select id="selectPayList" resultMap="map">
+   		SELECT P.PNO AS PNO, 
+		       S.SNO AS SNO,
+		       M.MNO AS MNO,
+		       M.MNAME AS MNAME, 
+		       S.TITLE AS TITLE, 
+		       TO_CHAR(S.REGDATE, 'YYYY-MM-DD') AS REGDATE,
+		       TO_CHAR(S.SDATE, 'YYYY-MM-DD') AS SDATE,
+		       S.FREQ AS FREQ,
+		       S.TIME AS TIME,
+		       S.PRICE AS PRICE, 
+		       (SELECT COUNT(*) AS CNT FROM CREW C WHERE C.SNO = S.SNO) CNT,
+		       S.RECRUIT AS RECRUIT, 
+		       L.LOCAL AS LOCAL, 
+		       T.TOWNNAME AS TOWNNAME, 
+		       K.KINDNAME AS KNAME,
+		       SUB.SUBJECTNAME AS SUBNAME,
+		       S.STATUS AS STATUS,
+		       P.STATUS AS PSTATUS       
+		FROM PAY P, STUDY S, MEMBER M, TOWN T, LOCAL L, KIND K, SUBJECT SUB 
+		WHERE P.SNO = S.SNO AND P.MNO = M.MNO AND S.TNO = T.TNO AND T.LNO = L.LNO AND S.SUBNO = SUB.SUBNO AND SUB.KNO = K.KNO AND S.TYPE = 'lecture'
+		<if test="mno!=''">
+			AND M.MNO=#{mno}
+		</if>
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
+		</if>
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
+		</if>
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.regdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.regdate)
+		</if>
+		ORDER BY REGDATE
+   </select>
+   <select id="selectPayListCnt" resultType="_int">
+   		select count(*)
+   		FROM PAY P, STUDY S, MEMBER M, TOWN T, LOCAL L, KIND K, SUBJECT SUB 
+		WHERE P.SNO = S.SNO AND P.MNO = M.MNO AND S.TNO = T.TNO AND T.LNO = L.LNO AND S.SUBNO = SUB.SUBNO AND SUB.KNO = K.KNO AND S.TYPE = 'lecture'
+		<if test="mno!=''">
+			AND M.MNO=#{mno}
+		</if>
+		<if test="kno != 0 and kno!=null">
+		and k.kno=${kno}
+		</if>
+		<if test="subno != 0 and subno!=null">
+		and s.subno=${subno}
+		</if>
+		<if test="tno != 0 and tno!=null">
+		and t.tno=${tno}
+		</if>
+		<if test="lno != 0 and lno!=null">
+		and l.lno=${lno}
+		</if>
+		<if test="kwd != null and searchKwd== 'title'">
+		and s.title like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'captain'">
+		and (select mm.mname||'('||mm.mid||')' from member mm where s.mno=mm.mno) like '%'||#{kwd}||'%'
+		</if>
+		<if test="kwd != null and searchKwd== 'term'  ">
+		and #{kwd} = extract( year from s.regdate) 
+		</if>
+		<if test="kwd != null and searchKwd== 'term' and kwd1 != null ">
+		and #{kwd1} = extract( month from s.regdate)
+		</if>
+   </select>
+	<resultMap type="map" id="map">
+      <result property="CONTENT" column="content" jdbcType="CLOB" javaType="java.lang.String"/>
+   </resultMap>
 	<!-- 김회진 mapper 끝 -->
 
  	<insert id="insertMailCertification">

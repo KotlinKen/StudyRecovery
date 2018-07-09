@@ -30,18 +30,8 @@
 		/*height: 20%; */
 		/* position: relative;
 		top: 25px; */
-		
 		left: -80px;
 		z-index: 100; 
-		
-	}
-	input[type=text] {
-	    width: 100%;
-	    padding: 12px 20px;
-	    margin: 8px 0;
-	    box-sizing: border-box;
-	    border: none;
-	    border-bottom: 1px solid #cccccc;
 	}
 	input[type=email] {
 	  	width: 100%;
@@ -52,21 +42,14 @@
 	    border-bottom: 1.5px solid #0000ff;
 	    background: #f8f9fb;
 	}
-	input[type=text] {
+	input.textcss {
 	    width: 100%;
 	    padding: 12px 20px;
 	    margin: 8px 0;
 	    box-sizing: border-box;
 	    border: none;
 	    border-bottom: 1.5px solid #0000ff;
-	    background: #f8f9fb;
-	}
-	#findid{
-		width: 300px; 
-		margin-left:-60px;
-		margin-right:7.5%;
-		margin-bottom:1%;
-		margin-top:5%;
+	    background: #ffffff;
 	}
 	#findpwd{
 		width: 300px; 
@@ -82,22 +65,44 @@
 		left:35%; */
 		margin:auto;
 		top:0;
-		background: #f8f9fb;
-		
+		background: #ffffff;
 	}
-	.spanidpass{
-	font-size: 25px;
-	width: 100px;
-	}
+	
 	.blank-div{
 	height: 50px;
 	width: 100%;
 	padding: 20px;
 	text-align: center;
 	}
+	#findid{
+		position: relative;
+		top: -20px;
+		left: 70px;
+	}
+	#findpwd{
+		position: relative;
+		top: 20px;
+		left: 125px;
+		/* width: 330px;
+		height: 90px; */
+	}
 	.buttontd{text-align: center;}
+	#page-all{
+		background: #ffffff;
+		padding-top: 50px;
+	}
+	span#checkid{
+		position: relative;
+		top: 200px;
+		left: 0;
+		padding: 100px;
+		border: 1px solid #666;
+		border-radius: 15px;
+		font-size: 20px;
+		background-image: url('${rootPath }/resources/upload/member/checkid.jpg');
+	}
 </style>
-<div class="page-all">
+<div id="page-all">
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="${findType } 찾기" name="pageTitle"/>
 	</jsp:include>
@@ -105,17 +110,16 @@
 		String findType = String.valueOf(request.getAttribute("findType"));
 		System.out.println("아이디?"+findType);
 	%>
-	<div class="blank-div">	</div>
 	<div class="page">
 		<c:if test="${mid==null and findType eq '아이디' }">
 			<form class="find" action="${pageContext.request.contextPath }/member/memberFindIdPwd.do" onsubmit="return validate();">
-			<span id="idServiceLogo" class="spanidpass"><b>아이디 찾기</b></span>
+			<!-- <span id="idServiceLogo" class="spanidpass"><b>아이디 찾기</b></span> -->
 			<div class="blank-div">	</div>
-				<%-- <img src="${rootPath }/resources/upload/member/findid.PNG" alt="아이디 찾기" id="findid"/> --%>
+				<img src="${rootPath }/resources/upload/member/findid.PNG" alt="아이디 찾기" id="findid"/> 
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-						<input type="text" name="mname" id="name" placeholder="회원 이름" maxlength="7" autocomplete="off" required/>	
+						<input type="text" class="textcss" name="mname" id="name" placeholder="회원 이름" maxlength="7" autocomplete="off" required/>	
 						<br /> 
 					
 						<span id="nameerr" class="name"></span> 
@@ -124,7 +128,7 @@
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="email" name="email" id="email" maxlength="30" required placeholder="이메일" autocomplete="off" required/>						
+							<input type="email" class="textcss" name="email" id="email" maxlength="30" required placeholder="이메일" autocomplete="off" required/>						
 						</td>
 					</tr>
 					<tr  class="id-pwd">
@@ -141,28 +145,28 @@
 			</form>
 		</c:if>
 		<c:if test="${mid!=null }">
-			당신의 아이디는 ${mid }** 입니다.
+			<span id="checkid">당신의 아이디는 <strong>${mid }**</strong> 입니다.</span>
 		</c:if>
 		<c:if test="${pwd==null and findType eq '비밀번호' }">
 			<span id="pwdServiceLogo" class="link_findpw"></span>
 			<form class="find" action="${rootPath }/member/mailSending.do" method="post" onsubmit="return confirm();">
-				<%-- <img src="${rootPath }/resources/upload/member/findpwd.PNG" alt="비밀번호 찾기" id="findpwd"/> --%>
-				<span id="pwdServiceLogo" class="spanidpass"><b>비밀번호 찾기</b></span>
+				<img src="${rootPath }/resources/upload/member/findpwd.PNG" alt="비밀번호 찾기" id="findpwd"/>
+				<!-- <span id="pwdServiceLogo" class="spanidpass"><b>비밀번호 찾기</b></span> -->
 				<div class="blank-div">	</div>
 				<table  class="id-pwd">
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="text" name="mid" id="mid" placeholder="아이디" autocomplete="off" maxlength="15" required/>
+							<input type="text" class="textcss" name="mid" id="mid" placeholder="아이디" autocomplete="off" maxlength="15" required/>
 						</td>
 					</tr>
 					<tr  class="id-pwd">
 						<td  class="id-pwd">
-							<input type="email" name="email" id="email" placeholder="이메일" autocomplete="off" maxlength="35" required/>
+							<input type="email" class="textcss" name="email" id="email" placeholder="이메일" autocomplete="off" maxlength="35" required/>
 						</td>
 					</tr>
 					<tr  class="id-pwd">
-						<td  class="id-pwd buttontd" >
-							<input type="submit" class='btncss' id="submit" value="찾기" />
+						<td  class="id-pwd buttontd" ><br />
+							<input type="submit" class='btn btn-primary' id="submit" value="찾기" />
 						</td>
 					</tr>
 				</table>

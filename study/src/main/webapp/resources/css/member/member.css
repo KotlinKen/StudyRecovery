@@ -149,5 +149,8 @@ button[name=evaluationView] {
 }
 div.page{
 	margin-left: 20%;
-	margin-right: 20%;
+	margin-right: 10%;
+}
+div.background{
+	background: #ffffff;
 }

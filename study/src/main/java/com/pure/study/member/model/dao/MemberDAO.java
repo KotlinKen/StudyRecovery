@@ -179,4 +179,8 @@ public interface MemberDAO {
 
 	int selectEvalCnt(Map<String, Object> map);
 
+	List<Map<String, String>> selectPayList(Map<String, Object> map, int numPerPage, int cPage);
+
+	int selectPayList(Map<String, Object> map);
+
 }

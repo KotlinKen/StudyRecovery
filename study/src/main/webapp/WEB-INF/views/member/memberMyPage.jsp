@@ -48,6 +48,9 @@
 	<li class='btn-page'>
 		<a href="${rootPath }/member/messageList" >쪽지</a>
 	</li>
+	<li class='btn-page'>
+		<a href="${rootPath }/member/paymentList.do" >결제</a>
+	</li>
 </ul>
 	
 	
@@ -69,7 +72,7 @@
 $(document).ready(function(){
 	console.log("?")
 	instruct( ${memberLoggedIn.mno } )
-});
+);
 function instruct(mno) {
 	console.log(mno)
 	$.ajax({
