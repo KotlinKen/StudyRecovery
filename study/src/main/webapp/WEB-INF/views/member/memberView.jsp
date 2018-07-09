@@ -72,6 +72,9 @@
 	    display: inline-block;
 	    word-wrap: break-word;
 	}
+	input[type=file]{
+		background: white;
+	}
 </style>
 <div class="background">
    <jsp:include page="/WEB-INF/views/common/header.jsp"> 
