@@ -204,4 +204,9 @@ public class LectureServiceImpl implements LectureService {
 		return ld.recruitCnt(sno);
 	}
 
+	@Override
+	public List<Map<String, Object>> selectReviewList(int sno) {
+		return ld.selectReviewList(sno);
+	}
+
 }

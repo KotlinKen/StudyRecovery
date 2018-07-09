@@ -80,14 +80,18 @@ function loadPay(cPage, pageBarSize){
     				// 결제 실패 빨간색 처리.
     				if(pay.PSTATUS == '결제실패')
     					rmHtml += "<td><span style='color:red;'>" + pay.PSTATUS + "</span></td>";
+    				else if(pay.PSTATUS == '결제완료')
+       					rmHtml += "<td><span style='color:mediumseagreen;'>" + pay.PSTATUS + "</span></td>";
     				else
     					rmHtml += "<td>" + pay.PSTATUS + "</td>";
     				
     				// 결제 취소 맹글어보기.
-    				if( pay.PSTATUS == "결제완료" && ( pay.STATUS == '모집 마감' || pay.STATUS == "마감 임박" || pay.STATUS == "모집 중"))
+    				if( pay.PSTATUS == "결제완료" && ( pay.STATUS == "마감 임박" || pay.STATUS == "모집 중"))
     					rmHtml += "<td><button type='button' onclick='lectureAdminCancel(" + pay.SNO + "," + pay.MNO + "," + pay.PNO + "," + pay.PRICE + ")'>결제 취소</button></td>";	
     				else if(pay.PSTATUS == "결제완료" && ( pay.STATUS == "진행 중" || pay.STATUS == "강의 종료"))
     					rmHtml += "<td>" + pay.PSTATUS + "</td>";
+    				else if(pay.PSTATUS == "결제완료" && pay.STATUS == '모집 마감')
+    					rmHtml += "<td><span style='color:mediumseagreen;'>입금완료</span></td>";
    					else if( pay.PSTATUS == "결제실패" )
    						rmHtml += "<td><span style='color:red;'>"+ pay.PSTATUS + "</span></td>";
 					else if( pay.PSTATUS == "결제취소" )
