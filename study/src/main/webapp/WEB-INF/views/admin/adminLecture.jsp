@@ -331,7 +331,7 @@ function loadLecture(cPage, pageBarSize, type){
 	    		
 	    		var upfile = (data.list[index].UPFILE);
 	    		
-	    		rmHtml += "<tr>"
+	    		rmHtml += "<tr onclick=location.href='${rootPath}/lecture/lectureView.do?sno="+lecture.SNO+"'>"
     				rmHtml += "<td>"+lecture.SNO+"</td>";
 	    			rmHtml += "<td>" +lecture.TITLE+"</td>";
 	    			rmHtml += "<td>" +lecture.LOCAL + "/" + lecture.TNAME+"</td>";
@@ -410,7 +410,7 @@ function searchAdminLecture(cPage, pageBarSize){
 	    	for(index in data.list){
 	    		lecture = data.list[index];
 	    		
-    			rmHtml += "<tr>"
+    			rmHtml += "<tr onclick=location.href='${rootPath}/lecture/lectureView.do?sno="+lecture.SNO+"'>"
     				rmHtml += "<td>"+lecture.SNO+"</td>";
 	    			rmHtml += "<td>" +lecture.TITLE+"</td>";
 	    			rmHtml += "<td>" +lecture.LOCAL + "/" + lecture.TOWNNAME+"</td>";
