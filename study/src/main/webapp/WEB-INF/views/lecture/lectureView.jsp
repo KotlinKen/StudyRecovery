@@ -435,7 +435,7 @@ li.review-one{
 	
 		<c:if test="${memberLoggedIn!=null }">
 			<c:if test="${memberLoggedIn.getMno() eq lecture.MNO  }">
-				<c:if test="${lecutre.STATUS=='모집 중'||lecutre.STATUS=='마감 임박'}">
+				<c:if test="${lecture.STATUS eq '모집 중'||lecture.STATUS eq'마감 임박'}">
 					<button type="button" class="removeStudy btn" onclick="deleteLecture();">강의 삭제</button>
 				</c:if>
 		      
