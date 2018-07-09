@@ -484,11 +484,7 @@ div#enroll button#insertLectureBtn{
 			$("input[name=case]").val("none");
 			
 			console.log("검색 조건 초기화");		
-		});
-		
-		
-		
-		
+		});		
    });
 </script>
 <div class="container section-content container rm_study_list">

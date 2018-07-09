@@ -237,8 +237,4 @@ public class StudyDAOImpl implements StudyDAO {
 		// TODO Auto-generated method stub
 		return sqlSession.delete("study.applyStudyDelete",map);
 	}
-
-
-
-
 }

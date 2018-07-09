@@ -267,6 +267,8 @@ div.study-description{
 }
 section.leader-information{
 	position:relative;
+	width: 700px;
+	height: 400px;
 	background:white;
 	overflow: hidden;
 }
@@ -489,17 +491,16 @@ li.review-one{
 <section class="leader-information">
 	<hr />
 	<div class="leader-wrap">
-		<header class="front-leader section-label" style="
-    margin-bottom: 20px;">
+		<header class="front-leader section-label" style="margin-bottom: 20px;">
 			
 		<h3 class="leader-label">리더소개</h3>
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 		<div class="pointrange" id="pointrange">
-			<label for="">포인트 </label><br /> 
+			<label for="">포인트 </label>
 			<p class="score">${study.POINT }/${memberAvg.AVGPOINT }</p>
-			<label for="">지식포인트 </label><br /> 
+			<label for="">지식포인트 </label>
 			<p class="score">${study.NPOINT }/${memberAvg.AVGNPOINT }</p>
-			<label for="">경험치 </label><br /> 
+			<label for="">경험치 </label>
 			<p class="score">${study.EXP }/${memberAvg.AVGEXP }</p>
 		</div>
 		</header>
