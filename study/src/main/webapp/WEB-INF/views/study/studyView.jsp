@@ -84,8 +84,9 @@ function studyWish(sno){
 					console.log("찜했다");
 					$("button#btn-wish").val("찜취소");
 					if(confirm("찜했하시겠습니까?")){
-						
-						location.href="${pageContext.request.contextPath}/member/searchMyPageKwd.do?myPage=wish";
+						alert("찜되었습니다.");
+						window.location.reload(true);
+						//location.href="${pageContext.request.contextPath}/member/searchMyPageKwd.do?myPage=wish";
 					}
 					
 				},error:function(){
@@ -159,9 +160,14 @@ $(function(){
 		$("span.score-point").css("color","green");
 	}else if(Number($("span.score-point").text())<Number($("span.score-point").next().text())){
 		$("span.score-point").css("color","red");
+		
+		
 	}else{
 		$("span.score-point").css("color","orange");
 	}
+	
+	console.log(Number($("span.score-point").text()));
+	console.log(Number($("span.score-point").next().text()));
 	
 	if(Number($("span.score-npoint").text())>Number($("span.score-npoint").next().text())){
 		$("span.score-npoint").css("color","green");
@@ -538,12 +544,13 @@ p.rContent{
 		</c:if> 
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 		<div class="pointrange" id="pointrange">
+			<label for="" style="font-size:13px;">점수 / 평균점수</label><br />
 			<label for="">포인트 </label><br />
-			<span class="score-point">${study.POINT }/${memberAvg.AVGPOINT }</span><br />
+			<span class="score-point">${study.POINT }</span>/<span>${memberAvg.AVGPOINT }</span><br />
 			<label for="">지식포인트 </label><br />
-			<span class="score-npoint">${study.NPOINT }/${memberAvg.AVGNPOINT }</span><br />
+			<span class="score-npoint">${study.NPOINT }</span>/<span>${memberAvg.AVGNPOINT }</span><br />
 			<label for="">경험치 </label><br />
-			<span class="score-exp">${study.EXP }/${memberAvg.AVGEXP }</span><br />
+			<span class="score-exp">${study.EXP }</span>/<span>${memberAvg.AVGEXP }</span><br />
 		</div>
 		</header>
 	
@@ -608,7 +615,8 @@ p.rContent{
 	<label for="">신청 기간 : </label> <span class="side-info">~${study.LDATE }</span><br />
 	<label for="">스터디일정 : </label> <span class="side-info">${study.SDATE }~${study.EDATE }</span><br />
 	<label for="">회비 : </label> <span class="price side-info">${study.PRICE }원</span><br />
-	<label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${study.APPLYCNT+study.CREWCNT }</span>/<span>${study.RECRUIT }명</span>
+	<label for="">모집인원 : </label>&nbsp;&nbsp;<span>${study.RECRUIT }명</span><br />
+	<label for="">신청인원 : </label>&nbsp;&nbsp;<span>${study.APPLYCNT+study.CREWCNT }명</span>
 	 <c:if test="${memberLoggedIn==null }">
 	 	<button type="button" id="btn-apply" class="btn" onclick="studyApply('${study.SNO}');"><span>참여 신청하기</span></button><br /><br />
 	 	<button type="button" id="btn-wish" class="btn" onclick="studyWish('${study.SNO}');"><span>찜하기</span></button><br /><br />

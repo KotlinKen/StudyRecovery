@@ -9,30 +9,6 @@
 p.noMore{
 	display:none;
 }
-.pixler .inforSection::before{
-   position: absolute;
-    top: -81px;
-    left: 56%;
-    content: "";
-    display: block;
-    width: 125px;
-    height: 107px;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 156px auto;
-    background-image: url(${rootPath}/resources/images/before.svg);
-    clip: rect(-13px, 199px, 60px, 0px);
-    z-index: 0;
-}
-
-@media (min-width: 1025px) {
-
-.pixler .inforSection::before{
-    top: -81px;
-    left: 64%;
-}
-  
-}
 span#totalcount{
 	font-family: 'Song Myung', serif;
 }
@@ -74,6 +50,30 @@ div#enroll button#insertLectureBtn{
 	position:relative;
 	left:90%;
 	top:0px;
+}
+.pixler .inforSection::before{
+    position: absolute;
+    top: -81px;
+    left: 56%;
+    content: "";
+    display: block;
+    width: 125px;
+    height: 107px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 156px auto;
+    background-image: url(${rootPath}/resources/images/before.svg);
+    clip: rect(-13px, 199px, 60px, 0px);
+    z-index: 0;
+}
+
+@media (min-width: 1025px) {
+
+.pixler .inforSection::before{
+    top: -81px;
+    left: 64%;
+}
+  
 }
 </style>
 <script>
@@ -485,6 +485,22 @@ div#enroll button#insertLectureBtn{
 			
 			console.log("검색 조건 초기화");		
 		});		
+		
+
+		$(".rm_study_list").on("mouseenter mouseleave", ".profile", function(e){
+			   $pf = $(this);
+			   console.log($pf.siblings("div.profileInfors"));
+			   
+			   
+			   console.log(e.type);
+			   
+			   if(e.type=="mouseenter"){
+			      $pf.siblings("div.profileInfors").css({"display":"block"}).stop().animate({ "opacity" : "0.9"}, 100);
+			   }else{
+			      $pf.siblings("div.profileInfors").stop().animate({ "opacity" : "0"}, 100,"linear", function(){console.log($(this).css({"display": "none"}))});
+			   }
+			   
+		 });
    });
 </script>
 <div class="container section-content container rm_study_list">

@@ -559,6 +559,7 @@ p.rContent{
       <h3 class="leader-label">강사 소개</h3>
       <img src="${pageContext.request.contextPath }/resources/upload/member/${lecture.PROFILE}" alt="" class="leader-profile-image" />
       <div class="pointrange" id="pointrange">
+      		<label for="" style="font-size:13px;">점수 / 평균점수</label><br />
 			<label for="">포인트 </label><br /> 
 			<span class="score-point">${lecture.POINT }</span>/<span>${memberAvg.AVGPOINT }</span><br />
 			<span class="score-npoint">${lecture.NPOINT }</span>/<span>${memberAvg.AVGNPOINT }</span><br />
@@ -626,7 +627,8 @@ p.rContent{
       <label for="">신청 기간 : </label> <span class="side-info">~${lecture.LDATE }</span><br />
       <label for="">스터디일정 : </label> <span class="side-info">${lecture.SDATE }~${lecture.EDATE }</span><br />
       <label for="">강의료 : </label> <span class="price side-info">${lecture.PRICE }원</span><br />
-      <label for="">신청 현황 : </label>&nbsp;&nbsp;<span>${lecture.CNT }</span>/<span>${lecture.RECRUIT }명</span>
+      <label for="">모집인원 : </label>&nbsp;&nbsp;<span>${lecture.RECRUIT }명</span><br />
+	  <label for="">신청인원 : </label>&nbsp;&nbsp;<span>${lecture.CNT }명</span>
         <c:if test="${memberLoggedIn== null || memberLoggedIn.getMno() ne lecture.MNO  }">
          <!-- 참여, 찜 -->
          <c:if test="${insert eq 0}">
