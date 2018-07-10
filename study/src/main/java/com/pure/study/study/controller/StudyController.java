@@ -439,7 +439,7 @@ public class StudyController {
 		//이미 찜했는지 여부 검사 
 		if(m!=null) {
 			Map<String,Integer> map = new HashMap<>();
-			map.put("mno", mno);
+			map.put("mno", m.getMno());
 			map.put("sno", sno);
 			isWish = studyService.isWishStudy(map);
 			isCrew = studyService.isCrewStudy(map);
@@ -811,7 +811,13 @@ public class StudyController {
 		map.put("sno", sno);
 		map.put("mno", mno);
 		result = studyService.applyStudyDelete(map);
-		result =studyService.crewStudyDelete(map); //크루에잇는거 취소하는 것임.
+		System.out.println("%%%%%%%%%%%%% map"+map);
+		if(result>0) {//apply에 있어서 삭제함.
+			
+		}else {//크루에 있어서 삭제함.
+			result = studyService.crewStudyDelete(map); //크루에잇는거 취소하는 것임.
+		}
+		
 		
 		return result;	
 	}
