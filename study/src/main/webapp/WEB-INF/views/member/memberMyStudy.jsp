@@ -272,21 +272,21 @@
 					<c:set var="sysdate"><fmt:formatDate value="${now}" pattern="yyyy/MM/dd" /></c:set>
 					
 					<!-- 신청 중 & 신청 마감 & 스터디 진행 전 => 팀원 취소 하기 기능-->
-					<c:if test="${(sysdate lt ms.sdate) or (sysdate eq ms.sdate)  }">
-						<button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal" style="margin-bottom:10px;" >신청 현황</button> <br />
-					</c:if>
-					
-					<!-- 스터디 진행 중 => 팀원 목록 분기하기(신청현황에서) -->
-					<c:if test="${((sysdate gt ms.sdate) or (sysdate eq ms.sdate)) and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) }">
-						<button type=button id="crewList${ms.sno }" value="1" name="crewListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#crewListModal" >팀원 목록</button>						
-					</c:if>
-					
-					<!-- 스터디 종료 -->
-					<c:if test="${sysdate gt ms.edate  }">
-						<button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#reviewModal">평가</button>
-						<button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal">평가 보기</button>					
-						<!-- 내가 한 평가도 보여주기 -->
-					</c:if>
+               <c:if test="${(sysdate lt ms.ldate) or (sysdate eq ms.ldate)  }">
+                  <button type=button id="applyList${ms.sno }" value="1" name="applyListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal" >신청 현황</button>
+               </c:if>
+               
+               <!-- 스터디 진행 중 => 팀원 목록 분기하기(신청현황에서) -->
+               <c:if test="${((sysdate gt ms.ldate) ) and ((sysdate lt ms.edate) or (sysdate eq ms.edate)) }">
+                  <button type=button id="crewList${ms.sno }" value="1" name="crewListView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#crewListModal" >팀원 목록</button>                  
+               </c:if>
+               
+               <!-- 스터디 종료 -->
+               <c:if test="${sysdate gt ms.edate  }">
+                  <button type=button id="${ms.sno }" value="1" name="evaluation" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#reviewModal">평가</button>
+                  <button type=button id="evalView${ms.sno }" value="1" name="evaluationView" class="btn btn-outline-success btncss" data-toggle="modal" data-target="#viewModal">평가 보기</button>               
+                  <!-- 내가 한 평가도 보여주기 -->
+               </c:if>
 					
 					
 					</td>

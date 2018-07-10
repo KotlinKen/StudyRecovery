@@ -18,8 +18,8 @@ span.phone{ position: relative;top:0px;left:2%;}
 span#phoneerr{color: red;}
 span#pwd {font-size: 15px;position: absolute;right:2%;top:135px;color:red;}
 span#pwdok {font-size:15px;position:absolute;right:2%;top:135px;color:green;}
-span#pwd2 {font-size: 15px;position: absolute;right:2%;top:200px;color:red;}
-span#pwd2ok {font-size:15px;position:absolute;right:2%;top:200px;color:green;}
+span#pwd2 {font-size: 15px;position: absolute;right:2%;top:222px;color:red;}
+span#pwd2ok {font-size:15px;position:absolute;right:2%;top:222px;color:green;}
 div{width: 600px; min-height: 25px;margin: auto; }
 div#enroll-container{ padding: 25px;  }
 div#inindivik2{margin: auto; text-align: center;}
