@@ -21,11 +21,11 @@
 	<!-- log4jdbc-remix 관련 logger 시작 -->
 	<!-- Query Loggers  -->
 	<logger name="jdbc.sqlonly" additivity="false">
-		<level value="INFO" />
+		<level value="FATAL" />
 		<appender-ref ref="sqlLogger"/>
 	</logger>
 	<logger name="jdbc.resultsettable" additivity="false">
-		<level value="INFO" />
+		<level value="FATAL" />
 		<appender-ref ref="sqlLogger"/>
 	</logger>
 	
