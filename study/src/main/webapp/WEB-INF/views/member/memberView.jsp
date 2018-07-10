@@ -67,7 +67,7 @@
 		background: #ffffff;
 	}
 	p#covercss{
-		width: 900px;
+		width: 100%;
 		height: auto;
 	    display: inline-block;
 	    word-wrap: break-word;
@@ -85,7 +85,7 @@
          
          <form id="update-form" action="${pageContext.request.contextPath }/member/updateUser.do" method="post" enctype="multipart/form-data" onsubmit="return submitCheck();" >
             <c:if test="${memberLoggedIn != null }">
-         <table>
+         <table style="margin-bottom:30px;">
          	<tr>
          		<th style="width:30%">회원 아이디</th>
          		<td>
