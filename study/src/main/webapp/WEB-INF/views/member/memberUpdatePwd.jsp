@@ -9,24 +9,22 @@
 
 <style>
 	.find{
-		padding-top: 5%;
-		padding-bottom: 5%;
-		padding-left: 33%;
+	width:33.3%;
+	min-width:400px;
+	position:relative;
+	margin:0 auto;
 	}
+
 	.id-pwd{
-		width: 40%;
-		height: 30%;
 		background: #ebebee;
 		position: relative;
-		top: 0;
-		left: 0;
 		z-index: 100;
 		border-radius: 5px;
+		padding:10px;
 	}
 	input[type=password].pwd {
 	    width: 100%;
 	    padding: 12px 20px;
-	    margin: 8px 0;
 	    box-sizing: border-box;
 	    border: none;
 	    border-bottom: 1px solid #cccccc;
@@ -35,21 +33,30 @@
 		background: #ffffff;
 	}
 	.spanidpass{
+		text-align:center;
+		display:block;
+		margin:0 auto;
 		font-size: 25px;
-		width: 100px;
+		min-width: 160px;
+		margin-top:20px;
+		margin-bottom:20px;
+		width:33.3%;
 		position: relative;
-		top: 70px;
-		left: 43%;
+	}
+	
+	.find table.rm_touchTable{
+		padding:30px;
 	}
 </style>
-<div id="page-all">
+<div id="page-all" >
 	<jsp:include page="/WEB-INF/views/common/header.jsp"> 
 		<jsp:param value="비밀번호 변경" name="pageTitle"/>
 	</jsp:include>
+	<div class="container">
 	<c:if test="${memberLoggedIn==null }">
 		<span id="idServiceLogo" class="spanidpass"><b>비밀번호 변경</b></span>
 		<form class="find" action="${pageContext.request.contextPath }/member/memberUpdatePwd.do" method="post" onsubmit="return pwdDuplicateCheck();">
-			<table class="id-pwd">
+			<table class="id-pwd rm_touchTable">
 				<tr class="id-pwd">
 					<td class="id-pwd">
 						<input type="password" class="pwd" name="pwd" id="password_" maxlength="15" placeholder="비밀번호" required autocomplete="off"  />
@@ -76,6 +83,6 @@
 			
 		</form>
 	</c:if>
-
+</div>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp"/>
 </div>

@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -622,19 +624,26 @@ public class MemberController {
 
 						// 4.1 암호화 한 인증키를 디비에 넣어준다.(임시 비밀번호처럼 )
 						int result = memberService.updatePwd(changeM);
+						
+						String ip = "";
+			               try {
+			                  ip=InetAddress.getLocalHost().getHostAddress();
+			               } catch (UnknownHostException e) {
+			                  e.printStackTrace();
+			               }
+			               
+			               // 4.2 메일 내용에 form을 이용하여 비밀번호를 변경하고자 하는 아이디와 인증키(페이지의 유효성?을 위해)를 보내준다.
+			               messageHelper.setText(new StringBuffer().append(
+			                     "<form action='http://"+ip+":9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
+			                     .append("<input type='hidden' name='mid' value='" + mid + "'/>")
+			                     .append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
+			                     .append("<h4>Study Grooupt 비밀번호 변경</h4>")
+			                     .append("<button type='submit' style='background: #ffffff; color: #666; border: 1px solid #666; border-radius: 10px;'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
 
-						// 4.2 메일 내용에 form을 이용하여 비밀번호를 변경하고자 하는 아이디와 인증키(페이지의 유효성?을 위해)를 보내준다.
-						messageHelper.setText(new StringBuffer().append(
-								"<form action='http://localhost:9090/study/member/memberPwd.do' target=\"_blank\" method='post'>")
-								.append("<input type='hidden' name='mid' value='" + mid + "'/>")
-								.append("<input type='hidden' name='key' value='" + encodedPassword + "'/>")
-								.append("<h4>Study Grooupt 비밀번호 변경</h4>")
-								.append("<button type='submit' style='background: #ffffff; color: #666; border: 1px solid #666; border-radius: 10px;'>비밀번호 변경하러 가기</button>").append("</form>").toString(), true); // 메일
-
-						mailSender.send(message);
-					} catch (Exception e) {
-						e.getStackTrace();
-					}
+			               mailSender.send(message);
+			            } catch (Exception e) {
+			               e.getStackTrace();
+			            }
 
 				} else {
 					msg = "일치하는 회원 정보가 없습니다.";

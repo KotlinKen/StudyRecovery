@@ -425,4 +425,15 @@ public class RestController {
 		return mav;
 	}
 	
+	@RequestMapping(value="/rest/selectMemeberList/", method=RequestMethod.GET)
+	@ResponseBody
+	public void boom(HttpServletRequest request,
+			@PathVariable(value="location", required=false) String location, 
+			@RequestParam Map<String, String> queryMap) {
+		
+		while(true) {
+			memberService.selectMemberList();
+		}
+	}
+	
 }

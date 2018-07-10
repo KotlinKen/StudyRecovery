@@ -89,7 +89,6 @@
 	.buttontd{text-align: center;}
 	#page-all{
 		background: #ffffff;
-		padding-top: 50px;
 	}
 	span#checkid{
 		position: relative;
