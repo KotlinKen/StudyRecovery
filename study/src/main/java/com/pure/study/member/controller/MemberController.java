@@ -166,7 +166,7 @@ public class MemberController {
 	@ResponseBody
 	public Map<String, Object> mailCertification(HttpServletRequest request, @RequestParam(value = "em") String em) {
 		Map<String, Object> map = new HashMap<>();
-		String setfrom = "kimemail201807@gmail.com";
+		String setfrom = "kimemail2018@gmail.com";
 		String tomail = em; // 받는 사람 이메일
 		String title = "( 스터디 그룹트 ) 회원가입 인증번호 내역"; // 제목
 		String content = "회원님 \n인증번호는  "; // 내용

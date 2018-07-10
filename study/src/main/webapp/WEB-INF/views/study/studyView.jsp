@@ -541,14 +541,6 @@ p.rContent{
 		</c:if> 
 		<img src="${pageContext.request.contextPath }/resources/upload/member/${study.MPROFILE}" alt="" class="leader-profile-image" />
 		<div class="pointrange" id="pointrange">
-<<<<<<< HEAD
-			<label for="">포인트 </label>
-			<p class="score">${study.POINT }/${memberAvg.AVGPOINT }</p>
-			<label for="">지식포인트 </label>
-			<p class="score">${study.NPOINT }/${memberAvg.AVGNPOINT }</p>
-			<label for="">경험치 </label>
-			<p class="score">${study.EXP }/${memberAvg.AVGEXP }</p>
-=======
 			<label for="" style="font-size:13px;">점수 / 평균점수</label><br />
 			<label for="">포인트 </label><br />
 			<span class="score-point">${study.POINT }</span>/<span>${memberAvg.AVGPOINT }</span><br />
@@ -556,7 +548,6 @@ p.rContent{
 			<span class="score-npoint">${study.NPOINT }</span>/<span>${memberAvg.AVGNPOINT }</span><br />
 			<label for="">경험치 </label><br />
 			<span class="score-exp">${study.EXP }</span>/<span>${memberAvg.AVGEXP }</span><br />
->>>>>>> branch 'HeoKyeong' of https://github.com/KotlinKen/StudyRecovery.git
 		</div>
 		</header>
 	

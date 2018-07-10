@@ -282,7 +282,7 @@
 <script>
 
 	$(function() {
-		var len = 2000;
+		var len = 1000;
 		$("#length").html($("textarea[name=cover]").val().length + "/" + len);
 		$("#newPwdCheck").on("keyup", function() {
 			var p1 = $("#newPwd").val();
@@ -344,10 +344,10 @@
 		//텍스트 길이 제한
 		$("textarea[name=cover]").keyup(function() {
 			var textLength = $(this).val().length;
-			if (len <= 2000) {
+			if (len <= 1000) {
 				$(this).val($(this).val().substr(0, len));
 				$("p#length").html(textLength + "/" + len);
-				if (textLength == 2000) {
+				if (textLength == 1000) {
 					alert("최대 길이는 " + len + "자 입니다.");
 				}
 			}

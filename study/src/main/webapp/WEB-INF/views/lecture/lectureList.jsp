@@ -556,7 +556,7 @@ div#enroll button#insertLectureBtn{
 					</td>	
 					<td>
 						<button type="button" id="sortDeadlineBtn" class="btn sortBy">마감임박순</button>
-      					<button type="button" id="sortPopularBtn"  class="btn sortBy">인기강의순</button>
+      					<button type="button" id="sortPopularBtn"  class="btn sortBy">인기강사순</button>
 					
 					</td>	
 					<td>
