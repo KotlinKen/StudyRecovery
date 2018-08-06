@@ -113,21 +113,11 @@ body { background: #efefef;}
 			<div id="div-img-ik"></div>
 			<div>
 			<br />
-			<textarea rows="10" cols="50" name="cover" placeholder="자기 소개...(선택)" maxlength="1000" ></textarea>
+
 			</div>
 			<br />
 			
-			관심사.(선택) : <br />
-				<c:forEach var="v" items="${list }">
-				<span class="category">
-					<input type="checkbox" class="form-check-input" value="${v.KINDNAME }"
-						name="favor" id="${v.KINDNAME }" />
-					<label for="${v.KINDNAME }" class="form-check-input">${v.KINDNAME }</label>
-				</span>
-				</c:forEach>
-			
-			
-			<br />
+		
 			<%-- <button type="button"
 				onclick="location.href='${pageContext.request.contextPath}'">취소</button> --%>
 			<input type="submit" id="submit" value="가입하기" class="btn btn-primary"/>

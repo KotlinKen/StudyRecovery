@@ -131,8 +131,10 @@ public class StudyController {
 	
 	
 	@RequestMapping("/study/studyFormEnd.do") 
-	public ModelAndView insertStudy(Study study, @RequestParam(value="freq") String[] freq, @RequestParam(value="upFile", required=false) MultipartFile[] upFiles,
+	public ModelAndView insertStudy(Study study, @RequestParam(value="freq") String[] freq, 
+			@RequestParam(value="upFile", required=false) MultipartFile[] upFiles,
 			HttpServletRequest request, @ModelAttribute("memberLoggedIn") Member m) {
+		
 		ModelAndView mav= new ModelAndView();
 		String dayname="";
 		int i=0;
@@ -168,7 +170,6 @@ public class StudyController {
 		List<Map<String,Object>> ownStudyList=studyService.selectStudyListBySno(map);
 	      long lectureSdate = study.getSdate().getTime();
 	      long lectureEdate = study.getEdate().getTime();
-	      System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
 	      
 	      for(int j = 0; j < ownStudyList.size(); j++) {
 	         Date sdate =(Date) ownStudyList.get(j).get("SDATE");
@@ -184,7 +185,7 @@ public class StudyController {
 		            // 요일을 검사해보자...
 		        	for(int k=0;k<freq.length;k++) {
 		        		System.out.println("####### map "+ownStudyList.get(j).get("FREQ"));
-		        		if(ownStudyList.get(j).get("FREQ").toString().contains(freq[k])/* containsValue(freq[k])*/) {
+		        		if(ownStudyList.get(j).get("FREQ").toString().contains(freq[k])) {
 		        			System.out.println("ddddddd"+Integer.parseInt(ownStudyList.get(j).get("STIME").toString()));
 		        			
 		        			//등록된 시간에 포함되지 않는 경우
@@ -216,7 +217,6 @@ public class StudyController {
 			//스터디 생성 성공하면, 첨부 사진들 폴더에 저장, db에 저장
 			if(result>0) {
 				try { //최초 메소드 부른 곳은 controller이기때문에 여기서 에러 처리함. 
-					
 					//1. 파일 업로드 처리 
 					String saveDirectory = request.getSession().getServletContext().getRealPath("/resources/upload/study");
 					System.out.println("save"+saveDirectory);
@@ -232,8 +232,6 @@ public class StudyController {
 							String renamedFileName = sdf.format(new Date(System.currentTimeMillis()))+"_"+rndNum+"."+ext;
 							
 							try {
-								
-								//저장하는 걸, study insert 성공하고 해야 하는 것이 아닌가.? 
 								f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제 저장하는 코드. 
 							} catch (IllegalStateException e) {
 								// TODO Auto-generated catch block
@@ -272,11 +270,8 @@ public class StudyController {
 		loc="/study/studyList.do";
 		
 		//3. view단 분기
-		
-		
 		mav.addObject("msg",msg);
 		mav.addObject("loc",loc);
-		/*mav.addObject("memberLoggedIn",m);*/
 		mav.setViewName("common/msg");
 		
 		return mav;
@@ -338,9 +333,9 @@ public class StudyController {
 	
 	//검색결과에서 무한스크롤시 리스트를 페이징 처리해서 더 가져오기.
 	@RequestMapping("/study/searchStudyAdd.do")
-	public ModelAndView selectSearchStudyAdd(@RequestParam(value="lno") int lno,@RequestParam(value="tno", defaultValue="null") int tno, @RequestParam(value="subno") int subno,
-			@RequestParam(value="kno") int kno,@RequestParam(value="dno") int dno,@RequestParam(value="leadername") String leadername
-			,@RequestParam(value="cPage", required=false) int cPage,
+	public ModelAndView selectSearchStudyAdd(@RequestParam(value="lno") int lno,@RequestParam(value="tno", defaultValue="null") int tno, 
+			@RequestParam(value="subno") int subno,	@RequestParam(value="kno") int kno,@RequestParam(value="dno") int dno,
+			@RequestParam(value="leadername") String leadername, @RequestParam(value="cPage", required=false) int cPage,
 			@RequestParam(value="searchCase") String searchCase){
 		
 		ModelAndView mav = new ModelAndView("jsonView");
@@ -359,8 +354,6 @@ public class StudyController {
 		terms.put("numPerPage", numPerPage);
 		terms.put("searchCase", searchCase);
 		
-		
-		
 		List<Map<String,Object>> studyList=null;
 		if(searchCase.equals("deadline")) {
 			studyList=studyService.selectByDeadline(terms);
@@ -369,15 +362,10 @@ public class StudyController {
 		}else {//신청자순
 			studyList = studyService.selectByApply(terms);
 		}
-		
-		//List<Map<String,Object>> list = studyService.selectStudyForSearch(terms);
 		mav.addObject("list",studyList);
 		mav.addObject("cPage",cPage+1);
-		
-		System.out.println("searchListAdd="+studyList);
+
 		return mav;
-		
-		
 	}
 	
 	//스터디 리스트 추가로 페이징해서 가져오기 - 처음에 아무 조건 없을 때
@@ -548,7 +536,8 @@ public class StudyController {
 	}
 	
 	@RequestMapping("/study/studyUpdateEnd.do")
-	public ModelAndView updateStudy(Study study, @RequestParam(value="freq") String[] freq, @RequestParam(value="upFile", required=false, defaultValue="null") MultipartFile[] upFiles,
+	public ModelAndView updateStudy(Study study, @RequestParam(value="freq") String[] freq, 
+			@RequestParam(value="upFile", required=false, defaultValue="null") MultipartFile[] upFiles,
 			@RequestParam(value="originFile",defaultValue="") String originFile, HttpServletRequest request) {
 		
 		ModelAndView mav = new ModelAndView();
@@ -565,12 +554,6 @@ public class StudyController {
 		
 		String newImgs="";
 		i=0;
-		
-		System.out.println("upFiles.length="+upFiles.length);
-		 
-		System.out.println("study="+study);
-		
-		
 		//스터디 업데이트 (수정) 하기 
 		int result = studyService.updateStudy(study);
 		
@@ -612,13 +595,10 @@ public class StudyController {
 							
 							try {
 								
-								//저장하는 걸, study insert 성공하고 해야 하는 것이 아닌가.? 
 								f.transferTo(new File(saveDirectory+"/"+renamedFileName)); //실제 저장하는 코드. 
 							} catch (IllegalStateException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							if(i!=0) {
@@ -639,9 +619,6 @@ public class StudyController {
 			}//if isImgUpdate 끝
 				study.setUpfile(originFile);
 				result = studyService.updateStudyImg(study);
-			
-			
-			
 			/********* MultipartFile을 이용한 파일 업로드 처리 로직 끝 ********/
 			
 		}//result>0 if문 끝

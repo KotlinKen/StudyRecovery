@@ -415,27 +415,19 @@ function validate(){
    $("input#time").val(starttime + "~" + endtime);
 	   
 	   
-	   //기존의 파일 이름 연결해서 보내기 
-	   var oldFiles="";
-	   $("input[name=isNew]").each(function(index){
+   //기존의 파일 이름 연결해서 보내기 
+   var oldFiles="";
+   $("input[name=isNew]").each(function(index){
+	   if($(this).val()=="false"){
+		   if(index!=0) oldFiles+=",";
+		   oldFiles+=$(this).next("label").text();
 		   
-		   if($(this).val()=="false"){
-			   if(index!=0) oldFiles+=",";
-			   oldFiles+=$(this).next("label").text();
-			   
-		   }
-	   });
-	   console.log("oldFiles ="+oldFiles );
-	   $("input#originFile").val(oldFiles);
-	   
-	   
-	   
+	   }
+   });
+   $("input#originFile").val(oldFiles);
 	return true;
 }
 
-/* $(document).ready(function(){
-	$(".day").attr("disabled", true);
-}); */
 
 
 </script>

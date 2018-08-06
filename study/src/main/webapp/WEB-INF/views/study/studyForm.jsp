@@ -502,7 +502,7 @@ $(function(){
 		</select>
 		<br />
 		
-		<label for="etc">기타 : </label><textarea name="etc" id="etc" cols="30" rows="10" class="form-control" maxlength="1000"></textarea><br /> 
+		<label for="etc">기타 : </label><textarea name="etc" id="etc" cols="20" rows="10" class="form-control" maxlength="1000"></textarea><br /> 
 		
 		<!-- 첨부파일 영역 -->
 		<div class="input-group mb-3 fileWrapper" style="padding:0px">
@@ -537,7 +537,7 @@ $(function(){
 		    <label class="custom-file-label" >파일을 선택하세요</label>
 		  </div>
 		  
-		  <button type="button" class="addFile btn-upfile btn">+</button>
+		  <button type="button" class="addFile btn-upfile btn">+</button>&nbsp;
 		  <button type="button" class="removeFile btn-upfile btn">-</button>
 	</div>
 </div>

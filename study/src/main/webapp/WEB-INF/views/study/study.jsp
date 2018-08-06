@@ -292,8 +292,7 @@ $(function(){
 		var listCase=$("input[name=case]").val();
 		var dataForList={cPage:cPage};//페이징 처리에 보낼 data 값.
 		
-		
-		//아무 조건없이 페이징 하느냐, 있이 하느냐, 마감임박순으로 하느냐, 인기스터디 순으로 하느냐에 따라 url분기. 보낼 data값 설정.
+		//아무 조건없이 페이징 하느냐, 검색조긴 있느냐에 따라 url분기. 보낼 data값 설정.
 	    if(listCase=="none"){
 	    	urlPath="studyListAdd.do";
 	    	
@@ -303,14 +302,9 @@ $(function(){
 					subno:$("select#subject option:selected").val(),kno:$("select#kind option:selected").val(),
 					dno:$("select#diff option:selected").val(),leadername:$("input#leadername").val(),cPage:cPage,
 					searchCase:$("input[name=case]").val(),	status:$("select#status").val()};
-						
-			console.log(dataForList);			
 	    }
 		
-		console.log("cPage="+cPage);
 		var isPage=Math.floor(total/numPerPage)+1;
-		console.log("isPage="+isPage);
-		
 		 //최대 가져올 수 있는 cPage 검사. 
 		 if (cPage<=isPage) {
 		      $.ajax({
@@ -533,7 +527,7 @@ h3#totalcountt{
 					</td>	
 					<td>
 						<button type="button" id="sort-deadline" class="btn sortBy">마감임박순</button>
-						<!-- <button type="button" id="sort-pop" class="btn sortBy">인기스터디순</button> -->
+						<button type="button" id="sort-pop" class="btn sortBy">인기스터디순</button>
 					</td>	
 					<td>
 						<input type="button" id="filterSearch" value="필터 검색" class="btn btn-dark"/>

@@ -1363,6 +1363,8 @@ public class MemberController {
 									){ 
 		ModelAndView mav = new ModelAndView("jsonView"); 
 		Map<String, String> map = new HashMap<>();
+		
+	
 		map.put("studyNo", sno); 
 		//map.put("forCrewList", "forCrewList");
 		map.put("mno", mno);
